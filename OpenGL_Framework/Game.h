@@ -51,6 +51,7 @@ private:
 
 	GameObject player;
 	GameObject platOne;
+	bool collided = false;
 
 	//vector<GameObject> platform;
 

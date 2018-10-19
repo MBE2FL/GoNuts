@@ -18,7 +18,9 @@ ColliderBounds::ColliderBounds(const float minX, const float maxX, const float m
 	points[7] = vec3(maxX, maxY, maxZ);	// Top back right
 }
 
-ColliderBounds::ColliderBounds(MeshBounds meshBounds)
+ColliderBounds::ColliderBounds(MeshBounds meshBounds) : 
+	Bounds(meshBounds.getMin().x, meshBounds.getMax().x, meshBounds.getMin().y, meshBounds.getMax().y, 
+		meshBounds.getMin().z, meshBounds.getMax().z)
 {
 	float minX = meshBounds.getMin().x;
 	float minY = meshBounds.getMin().y;
@@ -60,7 +62,7 @@ void ColliderBounds::update(const Transform& transform)
 
 void ColliderBounds::updatePoints(const Transform& transform)
 {
-	//setCentre(transform.getPosition());
+	setCentre(transform.getPosition());
 
 	for (int i = 0; i < 8; i++)
 	{
@@ -111,10 +113,10 @@ void ColliderBounds::updatePoint(const Transform& transform)
 
 	// Create translation matrix
 	mat4 minTran;
-	minTran.Translate(points[0] + getCentre());
+	minTran.Translate(getCentre());
 
 	mat4 maxTran;
-	maxTran.Translate(points[7] + getCentre());
+	maxTran.Translate(getCentre());
 
 	// Create scale matrix
 	mat4 scale;

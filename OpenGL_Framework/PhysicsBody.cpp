@@ -60,15 +60,17 @@ bool PhysicsBody::collision(PhysicsBody physicsBody)
 void PhysicsBody::updatePhysicsBody(Transform& transform, float deltaTime)
 {
 	dt = deltaTime;
-	vec2 gravity(0, 0.981f);
+	vec2 gravity(0, -0.981f);
 
 	if (useGravity)
 		force = force + gravity;
 
 	acceleration = force * 1.0f / mass;
 	velocity = velocity + acceleration * dt;
-	_collisionBounds.setCentre(_collisionBounds.getCentre() + vec3(velocity, 0.0f) * dt);
+	//_collisionBounds.setCentre(_collisionBounds.getCentre() + vec3(velocity, 0.0f) * dt);
+	transform.setPosition(transform.getPosition() + vec3(velocity, 0.0f) * dt);
 	_collisionBounds.update(transform);
+
 
 	force = vec2(0, 0);
 }

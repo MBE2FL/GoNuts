@@ -43,7 +43,7 @@ void Game::initializeGame()
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
-	ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
+	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 
@@ -94,10 +94,21 @@ void Game::update()
 	player.update(deltaTime);
 	platOne.update(deltaTime);
 
-	if (player.checkCollisions(platOne))
+
+	bool colliding = player.checkCollisions(platOne);
+	if (colliding && !collided)
 	{
-		player.getPhysicsBody().addForce(vec2(0.0f, 2.0f));
+		//player.addForce(vec2(0.0f, 20.0f));
+		player.useGravity(false);
+		player.setVelocity(vec2::Zero);
+		collided = true;
 	}
+	else if (!colliding && collided)
+	{
+		player.useGravity(true);
+		collided = false;
+	}
+
 	//monkey.setRotationAngleY(TotalGameTime * 45.0f);
 	//monkeyTwo.setRotationAngleY(TotalGameTime * -25.0f);
 	//cube.setRotationAngleY(TotalGameTime * 25.0f);
@@ -142,6 +153,9 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 27: // the escape key
 	case 'q': // the 'q' key
 		exit(1);
+		break;
+	case 'd':
+		player.addForce(vec2(5.0f, 0.0f));
 		break;
 	}
 }

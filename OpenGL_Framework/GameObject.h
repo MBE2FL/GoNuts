@@ -45,8 +45,10 @@ public:
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);
 	PhysicsBody getPhysicsBody() const;
-	bool checkCollisions(GameObject other);
-
+	bool checkCollisions(GameObject& other);
+	void addForce(const vec2& force);
+	void useGravity(const bool _useGravity);
+	void setVelocity(const vec2& velocity);
 	
 private:
 	Transform _transform;
