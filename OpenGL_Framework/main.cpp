@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <windows.h>
 #include <iostream>
@@ -66,11 +67,111 @@ void MouseMotionCallbackFunction(int x, int y)
 	glutPostRedisplay();
 }
 
+
+
+void CALLBACK OpenGLDebugCallback(
+	GLenum source, GLenum type, GLuint id, GLenum severity,
+	GLsizei length, const GLchar* msg, const void* data)
+{
+	cout << "CALLBACK\n";
+	char buffer[9] = { '\0' };
+	sprintf(buffer, "%.8x", id);
+
+	string message("OpenGL(0x");
+	message += buffer;
+	message += "): ";
+
+	switch (type)
+	{
+	case GL_DEBUG_TYPE_ERROR:
+		message += "Error";
+		break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		message += "Deprecated behaviour";
+		break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		message += "Undefined behaviour";
+		break;
+	case GL_DEBUG_TYPE_PORTABILITY:
+		message += "Portability issue";
+		break;
+	case GL_DEBUG_TYPE_MARKER:
+		message += "Stream annotation";
+		break;
+	case GL_DEBUG_TYPE_OTHER:
+	default:
+		message += "Other";
+	}
+
+	message += "\nSource: ";
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API:
+		message += "API";
+		break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+		message += "Window system";
+		break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+		message += "Shader compiler";
+		break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:
+		message += "Third Party";
+		break;
+	case GL_DEBUG_SOURCE_APPLICATION:
+		message += "Application";
+		break;
+	case GL_DEBUG_SOURCE_OTHER:
+	default:
+		message += "Other";
+	}
+
+	message += "\nSeverity: ";
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:
+		message += "HIGH";
+		break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		message += "Medium";
+		break;
+	case GL_DEBUG_SEVERITY_LOW:
+		message += "Low";
+		break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		message += "NOT AN ERROR, IT'S A NOTIFICATION";
+		break;
+	default:
+		message += "I don't even know";
+	}
+
+	message += "\n";
+	message += msg;
+	message += "\n";
+
+	if (type == GL_DEBUG_TYPE_ERROR)
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+
+	cout << message << endl;
+
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+}
+
+void InitOpenGLDebugCallback()
+{
+	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(OpenGLDebugCallback, NULL);
+}
+
+
+
 int main(int argc, char **argv)
 {
 	/* initialize the window and OpenGL properly */
 	glutInit(&argc, argv);
-	//glutInitContextVersion(4, 2);
+	glutInitContextVersion(4, 2);
+	glutInitContextFlags(GLUT_CORE_PROFILE);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutCreateWindow("OpenGL Framework");
@@ -93,6 +194,10 @@ int main(int argc, char **argv)
 	glutMouseFunc(MouseClickCallbackFunction);
 	glutMotionFunc(MouseMotionCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
+
+#ifdef _DEBUG
+	InitOpenGLDebugCallback();
+#endif
 	
 	/* init the game */
 	theGame = new Game();

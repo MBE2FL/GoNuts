@@ -80,7 +80,7 @@ void Transform::update(float dt)
 	// Create translation matrix
 	mat4 tran;
 	tran.Translate(m_pLocalPosition);
-	std::cout << "Position: X: " << m_pLocalPosition.x << " Y: " << m_pLocalPosition.y << " Z: " << m_pLocalPosition.z << std::endl;
+	//std::cout << "Position: X: " << m_pLocalPosition.x << " Y: " << m_pLocalPosition.y << " Z: " << m_pLocalPosition.z << std::endl;
 
 	// Create scale matrix
 	mat4 scale; 
@@ -92,6 +92,6 @@ void Transform::update(float dt)
 	// If a game object has a parent, then we must apply the parent's transform
 	m_pLocalToWorldMatrix = tran * m_pLocalRotation * scale;
 
-	std::cout << m_pLocalToWorldMatrix[12] << ", " << m_pLocalToWorldMatrix[13] << ", " << m_pLocalToWorldMatrix[14] 
-		<< ", " << m_pLocalToWorldMatrix[15] << std::endl;
+	//std::cout << m_pLocalToWorldMatrix[12] << ", " << m_pLocalToWorldMatrix[13] << ", " << m_pLocalToWorldMatrix[14] 
+	//	<< ", " << m_pLocalToWorldMatrix[15] << std::endl;
 }
