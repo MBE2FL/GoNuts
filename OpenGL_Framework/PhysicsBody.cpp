@@ -60,10 +60,16 @@ bool PhysicsBody::collision(PhysicsBody physicsBody)
 void PhysicsBody::updatePhysicsBody(Transform& transform, float deltaTime)
 {
 	dt = deltaTime;
-	vec2 gravity(0, -0.981f);
+	vec2 gravity(0, GRAVITY);
 
-	if (useGravity)
+	if (useGravity && velocity.y > -4.0f)
 		force = force + gravity;
+
+	if (velocity.x > 0)
+		addForce(vec2(2.2f*GRAVITY, 0.0f));
+	else if (velocity.x < 0)
+		addForce(vec2(2.2f*-GRAVITY, 0.0f));
+
 
 	acceleration = force * 1.0f / mass;
 	velocity = velocity + acceleration * dt;

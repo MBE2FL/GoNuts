@@ -5,6 +5,8 @@
 #include "MeshBounds.h"
 #include "Transform.h"
 
+#define GRAVITY -2.2f
+
 class PhysicsBody
 {
 public:

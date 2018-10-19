@@ -69,7 +69,7 @@ void Game::initializeGame()
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
-	player.setPosition(vec3(0.0f, 2.0f, 0.0f));
+	player.setPosition(vec3(0.0f, 10.0f, 0.0f));
 
 	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	platOne.setMesh(ObjectLoader::getMesh("Platform"));
@@ -100,7 +100,10 @@ void Game::update()
 	{
 		//player.addForce(vec2(0.0f, 20.0f));
 		player.useGravity(false);
-		player.setVelocity(vec2::Zero);
+		//player.setVelocity(vec2::Zero);
+		float ySpeed = player.getPhysicsBody().getVelocity().y;
+		player.addForce(vec2(0.0f, -ySpeed/deltaTime *1.2f));
+
 		collided = true;
 	}
 	else if (!colliding && collided)
@@ -154,9 +157,27 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'q': // the 'q' key
 		exit(1);
 		break;
-	case 'd':
-		player.addForce(vec2(5.0f, 0.0f));
-		break;
+//	case 'd':
+//		player.addForce(vec2(5.0f, 0.0f));
+//		break;
+//	case 'a':
+//		player.addForce(vec2(-5.0f, 0.0f));
+//		break;
+//	case 'w':
+//		player.addForce(vec2(0.0f, 10.0f));
+//		break;
+	}
+	if (key == 'd' && player.getPhysicsBody().getVelocity().x < 5.0f)
+	{
+		player.addForce(vec2(20.0f, 0.0f));
+	}
+	else if (key == 'a' && player.getPhysicsBody().getVelocity().x > -5.0f)
+	{
+		player.addForce(vec2(-20.0f, 0.0f));
+	}
+	if (key == 'w' && collided)
+	{
+		player.addForce(vec2(0.0f, 100.0f));
 	}
 }
 
