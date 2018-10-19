@@ -33,7 +33,7 @@ Game::~Game()
 {
 	delete updateTimer;
 
-	monkey.unLoad();
+	//monkey.unLoad();
 }
 
 void Game::initializeGame()
@@ -45,6 +45,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
+	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 
 	// Load shaders
 	//monkey.loadShaderProgram("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
@@ -52,17 +53,29 @@ void Game::initializeGame()
 	// Load mesh
 	//monkey.loadMesh("./Assets/Models/Monkey.obj");
 
-	monkey.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	monkey.setMesh(ObjectLoader::getMesh("Monkey"));
+	//monkey.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//monkey.setMesh(ObjectLoader::getMesh("Monkey"));
 
-	monkeyTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	monkeyTwo.setMesh(ObjectLoader::getMesh("Monkey"));
+	//monkeyTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//monkeyTwo.setMesh(ObjectLoader::getMesh("Monkey"));
 
-	cube.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	cube.setMesh(ObjectLoader::getMesh("Cube"));
+	//cube.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//cube.setMesh(ObjectLoader::getMesh("Cube"));
 
-	monkeyTwo.setPosition(vec3(3.0f, 0.0f, 0.0f));
-	cube.setPosition(vec3(-3.0f, 2.0f, 0.0f));
+	//monkeyTwo.setPosition(vec3(3.0f, 0.0f, 0.0f));
+	//cube.setPosition(vec3(-3.0f, 2.0f, 0.0f));
+
+
+	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	player.setMesh(ObjectLoader::getMesh("Cube"));
+	player.addPhysicsBody(true);
+	player.setPosition(vec3(0.0f, 2.0f, 0.0f));
+
+	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	platOne.setMesh(ObjectLoader::getMesh("Platform"));
+	platOne.addPhysicsBody(false);
+	platOne.setPosition(vec3(0.0f, -2.0f, 0.0f));
+	//platOne.setScale(0.4f);
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
@@ -78,15 +91,21 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	
-	monkey.setRotationAngleY(TotalGameTime * 45.0f);
-	monkeyTwo.setRotationAngleY(TotalGameTime * -25.0f);
-	cube.setRotationAngleY(TotalGameTime * 25.0f);
+	player.update(deltaTime);
+	platOne.update(deltaTime);
+
+	if (player.checkCollisions(platOne))
+	{
+		player.getPhysicsBody().addForce(vec2(0.0f, 2.0f));
+	}
+	//monkey.setRotationAngleY(TotalGameTime * 45.0f);
+	//monkeyTwo.setRotationAngleY(TotalGameTime * -25.0f);
+	//cube.setRotationAngleY(TotalGameTime * 25.0f);
 
 	camera.update(deltaTime);
 	//monkey.update(deltaTime);
 	//monkeyTwo.update(deltaTime);
-	cube.update(deltaTime);
+	//cube.update(deltaTime);
 }
 
 void Game::draw()
@@ -95,9 +114,12 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	monkey.draw(camera);
-	monkeyTwo.draw(camera);
-	cube.draw(camera);
+	//monkey.draw(camera);
+	//monkeyTwo.draw(camera);
+	//cube.draw(camera);
+
+	player.draw(camera);
+	platOne.draw(camera);
 	   
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.

@@ -65,6 +65,7 @@ mat4 GameObject::getLocalToWorldMatrix() const
 void GameObject::update(float deltaTime)
 {
 	_transform.update(deltaTime);
+	_physicsBody.updatePhysicsBody(_transform, deltaTime);
 }
 
 void GameObject::loadShaderProgram(const string & vertFile, const string & fragFile)
@@ -117,6 +118,22 @@ void GameObject::draw(Camera& camera)
 	glBindVertexArray(GL_NONE);
 
 	_shaderProgram.unBind();
+}
+
+void GameObject::addPhysicsBody(const bool _useGravity)
+{
+	_physicsBody = PhysicsBody(_mesh.getMeshBounds());
+	_physicsBody.setUseGravity(_useGravity);
+}
+
+PhysicsBody GameObject::getPhysicsBody() const
+{
+	return _physicsBody;
+}
+
+bool GameObject::checkCollisions(GameObject other)
+{
+	return _physicsBody.collision(other.getPhysicsBody());
 }
 
 //MeshBounds GameObject::getMeshBounds() const

@@ -1,36 +1,46 @@
 #pragma once
-#include "mathlib.h"
+//#include "mathlib.h"
+#include "MiniMath/Core.h"
+#include "ColliderBounds.h"
+#include "MeshBounds.h"
+#include "Transform.h"
 
 class PhysicsBody
 {
 public:
-	PhysicsBody(Vector2 f, Vector2 v, Vector2 a, Vector2 p,
-		float m, float w, float h);
+	PhysicsBody();
+	PhysicsBody(MeshBounds meshBounds, vec2 f = vec2::Zero, vec2 v = vec2::Zero, vec2 a = vec2::Zero,
+		float m = 1.0f);
 	~PhysicsBody();
 
-	bool collision(Vector2 position, float w, float h);
+	bool collision(vec2 position, float w, float h);
 	bool collision(PhysicsBody physicsBody);
 
-	void updatePhysicsBody();
+	void updatePhysicsBody(Transform& transform, float deltaTime);
 
-	void addForce(Vector2 f);
+	void addForce(vec2 f);
 
-	Vector2 getForce()const;
-	Vector2 getVelocity()const;
-	Vector2 getAcceleration()const;
-	Vector2 getPosition()const;
+	vec2 getForce()const;
+	vec2 getVelocity()const;
+	vec2 getAcceleration()const;
+	vec3 getPosition()const;
 	float getMass()const;
 
-	void setForce(Vector2 f);
-	void setVelocity(Vector2 v);
-	void setAcceleration(Vector2 a);
-	void setPosition(Vector2 p);
+	void setForce(vec2 f);
+	void setVelocity(vec2 v);
+	void setAcceleration(vec2 a);
+	void setPosition(vec3 p);
 	void setMass(float m);
+	void setUseGravity(const bool _useGravity);
 	
+	ColliderBounds getCollisionBounds() const;
 
 private:
-	Vector2 force, velocity, acceleration, position;
-	float mass, width, height;
+	vec2 force, velocity, acceleration;
+	float mass;
 	float dt = 0;
+	bool useGravity = false;
+
+	ColliderBounds _collisionBounds;
 };
 

@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
+#include "PhysicsBody.h"
 
 enum class Tag
 {
@@ -42,9 +43,14 @@ public:
 	void draw(Camera& camera);
 
 	//MeshBounds getMeshBounds() const;
+	void addPhysicsBody(const bool _useGravity);
+	PhysicsBody getPhysicsBody() const;
+	bool checkCollisions(GameObject other);
+
 	
 private:
 	Transform _transform;
 	Mesh _mesh;
 	ShaderProgram _shaderProgram;
+	PhysicsBody _physicsBody;
 };

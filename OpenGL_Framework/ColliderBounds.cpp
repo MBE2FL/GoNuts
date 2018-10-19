@@ -18,9 +18,29 @@ ColliderBounds::ColliderBounds(const float minX, const float maxX, const float m
 	points[7] = vec3(maxX, maxY, maxZ);	// Top back right
 }
 
+ColliderBounds::ColliderBounds(MeshBounds meshBounds)
+{
+	float minX = meshBounds.getMin().x;
+	float minY = meshBounds.getMin().y;
+	float minZ = meshBounds.getMin().z;
+
+	float maxX = meshBounds.getMax().x;
+	float maxY = meshBounds.getMax().y;
+	float maxZ = meshBounds.getMax().z;
+
+	points[0] = vec3(minX, minY, minZ); // Bot left
+	points[1] = vec3(minX, minY, maxZ);	// Bot back left
+	points[2] = vec3(minX, maxY, minZ);	// Top left
+	points[3] = vec3(minX, maxY, maxZ); // Top back left
+	points[4] = vec3(maxX, minY, minZ);	// Bot right
+	points[5] = vec3(maxX, minY, maxZ);	// Bot back right
+	points[6] = vec3(maxX, maxY, minZ);	// Top right
+	points[7] = vec3(maxX, maxY, maxZ);	// Top back right
+}
+
 void ColliderBounds::update(const Transform& transform)
 {
-	updatePoints(transform);
+	updatePoint(transform);
 }
 
 
@@ -40,7 +60,7 @@ void ColliderBounds::update(const Transform& transform)
 
 void ColliderBounds::updatePoints(const Transform& transform)
 {
-	setCentre(transform.getPosition());
+	//setCentre(transform.getPosition());
 
 	for (int i = 0; i < 8; i++)
 	{

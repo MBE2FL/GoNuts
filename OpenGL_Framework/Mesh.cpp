@@ -216,6 +216,11 @@ unsigned int Mesh::getNumVertices() const
 	return _numVertices;
 }
 
+MeshBounds Mesh::getMeshBounds() const
+{
+	return _meshBounds;
+}
+
 void Mesh::computeMinMax(const vec3 & vertex)
 {
 	// Found new max x

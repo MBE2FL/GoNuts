@@ -16,8 +16,8 @@
 #include "Camera.h"
 
 
-#define WINDOW_WIDTH			1600
-#define WINDOW_HEIGHT			900
+#define WINDOW_WIDTH			1900
+#define WINDOW_HEIGHT			1000
 #define FRAMES_PER_SECOND		60
 
 const int FRAME_DELAY_SPRITE = 1000 / FRAMES_PER_SECOND;
@@ -45,9 +45,14 @@ public:
 private:
 	// Scene Objects.
 	Camera camera;
-	GameObject monkey;
-	GameObject monkeyTwo;
-	GameObject cube;
+	//GameObject monkey;
+	//GameObject monkeyTwo;
+	//GameObject cube;
+
+	GameObject player;
+	GameObject platOne;
+
+	//vector<GameObject> platform;
 
 
 	// OpenGL Handles
