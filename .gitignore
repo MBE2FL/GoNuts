@@ -13,7 +13,9 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
+[Dd]ebug/*
+![Dd]ebug/*.dll
+OpenGL_Framework/[Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -64,6 +66,7 @@ StyleCopReport.xml
 *.ilk
 *.meta
 *.obj
+!OpenGL_Framework/Assets/Models/*.obj
 *.iobj
 *.pch
 *.pdb
