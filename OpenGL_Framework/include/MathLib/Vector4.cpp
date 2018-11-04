@@ -1,7 +1,17 @@
 #include "Vector4.h"
 
+Vector4 Vector4::Zero = Vector4(0, 0, 0, 0);
+
 Vector4::Vector4()
 {
+}
+
+Vector4::Vector4(Vector3 vec3, float Q)
+{
+	x = vec3.x;
+	y = vec3.y;
+	z = vec3.z;
+	q = Q;
 }
 
 Vector4::~Vector4()

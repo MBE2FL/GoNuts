@@ -1,7 +1,16 @@
 #include "Vector3.h"
 
+Vector3 Vector3::Zero = Vector3(0, 0, 0);
+
 Vector3::Vector3()
 {
+}
+
+Vector3::Vector3(Vector2 vec2, float Z)
+{
+	x = vec2.x;
+	y = vec2.y;
+	z = Z;
 }
 
 Vector3::~Vector3()
@@ -37,7 +46,7 @@ Vector3 Vector3::ProjPoint(Vector3 v)
 
 float Vector3::ProjAngle(Vector3 v)
 {
-	return ((acos(DotProduct(v) / (Length() * v.Length()))) *(180 / PI));
+	return ((acosf(DotProduct(v) / (Length() * v.Length()))) *(180 / PI));
 
 }
 

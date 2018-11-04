@@ -35,4 +35,7 @@ public:
 
 	void Translate(const Vector3 &translation);
 	void Scale(float scale);
+
+	static Matrix44 PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar);
+	static Matrix44 OrthographicProjection(float left, float right, float top, float bottom, float near, float far);
 };

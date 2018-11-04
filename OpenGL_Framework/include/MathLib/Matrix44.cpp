@@ -40,22 +40,22 @@ Matrix44 Matrix44::operator*(const Matrix44 rhs) const
 {
 	Matrix44 result;
 
-	result.mV[0] = mV[0] * rhs.mV[0] + mV[1] * rhs.mV[4] + mV[2] * rhs.mV[8] + mV[3] * rhs.mV[12];
+	result.mV[0] = mV[0] * rhs.mV[0]     + mV[1] * rhs.mV[4]     + mV[2] * rhs.mV[8]     + mV[3] * rhs.mV[12    ];
 	result.mV[1] = mV[0] * rhs.mV[0 + 1] + mV[1] * rhs.mV[4 + 1] + mV[2] * rhs.mV[8 + 1] + mV[3] * rhs.mV[12 + 1];
 	result.mV[2] = mV[0] * rhs.mV[0 + 2] + mV[1] * rhs.mV[4 + 2] + mV[2] * rhs.mV[8 + 2] + mV[3] * rhs.mV[12 + 2];
 	result.mV[3] = mV[0] * rhs.mV[0 + 3] + mV[1] * rhs.mV[4 + 3] + mV[2] * rhs.mV[8 + 3] + mV[3] * rhs.mV[12 + 3];
 
-	result.mV[4] = mV[4] * rhs.mV[0] +     mV[5] * rhs.mV[4] +     mV[6] * rhs.mV[8] +     mV[7] * rhs.mV[12];
+	result.mV[4] = mV[4] * rhs.mV[0] +     mV[5] * rhs.mV[4]     + mV[6] * rhs.mV[8]     + mV[7] * rhs.mV[12    ];
 	result.mV[5] = mV[4] * rhs.mV[0 + 1] + mV[5] * rhs.mV[4 + 1] + mV[6] * rhs.mV[8 + 1] + mV[7] * rhs.mV[12 + 1];
 	result.mV[6] = mV[4] * rhs.mV[0 + 2] + mV[5] * rhs.mV[4 + 2] + mV[6] * rhs.mV[8 + 2] + mV[7] * rhs.mV[12 + 2];
 	result.mV[7] = mV[4] * rhs.mV[0 + 3] + mV[5] * rhs.mV[4 + 3] + mV[6] * rhs.mV[8 + 3] + mV[7] * rhs.mV[12 + 3];
 
-	result.mV[8]  = mV[8] * rhs.mV[0] +     mV[9] * rhs.mV[4] +     mV[10] * rhs.mV[8] +     mV[11] * rhs.mV[12];
+	result.mV[8]  = mV[8] * rhs.mV[0]     + mV[9] * rhs.mV[4] +     mV[10] * rhs.mV[8]     + mV[11] * rhs.mV[12    ];
 	result.mV[9]  = mV[8] * rhs.mV[0 + 1] + mV[9] * rhs.mV[4 + 1] + mV[10] * rhs.mV[8 + 1] + mV[11] * rhs.mV[12 + 1];
 	result.mV[10] = mV[8] * rhs.mV[0 + 2] + mV[9] * rhs.mV[4 + 2] + mV[10] * rhs.mV[8 + 2] + mV[11] * rhs.mV[12 + 2];
 	result.mV[11] = mV[8] * rhs.mV[0 + 3] + mV[9] * rhs.mV[4 + 3] + mV[10] * rhs.mV[8 + 3] + mV[11] * rhs.mV[12 + 3];
 
-	result.mV[12] = mV[12] * rhs.mV[0] +     mV[13] * rhs.mV[4] +     mV[14] * rhs.mV[8] +     mV[15] * rhs.mV[12];
+	result.mV[12] = mV[12] * rhs.mV[0]     + mV[13] * rhs.mV[4]     + mV[14] * rhs.mV[8]     + mV[15] * rhs.mV[12    ];
 	result.mV[13] = mV[12] * rhs.mV[0 + 1] + mV[13] * rhs.mV[4 + 1] + mV[14] * rhs.mV[8 + 1] + mV[15] * rhs.mV[12 + 1];
 	result.mV[14] = mV[12] * rhs.mV[0 + 2] + mV[13] * rhs.mV[4 + 2] + mV[14] * rhs.mV[8 + 2] + mV[15] * rhs.mV[12 + 2];
 	result.mV[15] = mV[12] * rhs.mV[0 + 3] + mV[13] * rhs.mV[4 + 3] + mV[14] * rhs.mV[8 + 3] + mV[15] * rhs.mV[12 + 3];
@@ -251,4 +251,50 @@ void Matrix44::Scale(float scale)
 	s.mV[15] = 1.0f;
 
 	*this = s;
+}
+
+Matrix44 Matrix44::PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar)
+{
+	Matrix44 result;
+	result.mV[0] = 1.0f / (aspect * tanf(FOVy / 2.0f));
+	result.mV[1] = 0;
+	result.mV[2] = 0;
+	result.mV[3] = 0;
+	result.mV[4] = 0;
+	result.mV[5] = 1.0f / tanf(FOVy / 2.0f);
+	result.mV[6] = 0;
+	result.mV[7] = 0;
+	result.mV[8] = 0;
+	result.mV[9] = 0;
+	result.mV[10] = -((zFar + zNear) / (zFar - zNear));
+	result.mV[11] = -1.0f;
+	result.mV[12] = 0;
+	result.mV[13] = 0;
+	result.mV[14] = -((2.0f * zFar * zNear) / (zFar - zNear));
+	result.mV[15] = 0;
+
+	return result;
+}
+
+Matrix44 Matrix44::OrthographicProjection(float left, float right, float top, float bottom, float near, float far)
+{
+	Matrix44 result;
+	result.mV[0] = 2.0f/(right - left);
+	result.mV[1] = 0;
+	result.mV[2] = 0;
+	result.mV[3] = 0;
+	result.mV[4] = 0;
+	result.mV[5] = 2.0f /(top - bottom);
+	result.mV[6] = 0;
+	result.mV[7] = 0;
+	result.mV[8] = 0;
+	result.mV[9] = 0;
+	result.mV[10] = -(-2.0f / (far - near));
+	result.mV[11] = 0;
+	result.mV[12] = -((right + left)/ (right - left));
+	result.mV[13] = -((top + bottom)/ (top - bottom));
+	result.mV[14] = -((far + near) / (far - near));
+	result.mV[15] = 1;
+
+	return result;
 }

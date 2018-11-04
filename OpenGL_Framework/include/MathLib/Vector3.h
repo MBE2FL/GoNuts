@@ -1,7 +1,8 @@
 #pragma once
 #include <ostream>
 #include <math.h>
-#define PI 3.141592635
+#include "MathLib/Vector2.h"
+#define PI 3.141592635f
 class Vector3
 {
 public:
@@ -10,6 +11,8 @@ public:
 	float x, y, z;
 
 	Vector3();
+	Vector3(Vector2 vec2, float Z);
+	Vector3(float num) : x(num), y(num), z(num) {}
 	//Vector3 vec1 = {x,y,z};
 	Vector3(float X, float Y, float Z) :x(X), y(Y), z(Z) {}
 
@@ -17,10 +20,21 @@ public:
 	//vec1.set(4,5,6)
 	void set(float X, float Y, float Z) { x = X; y = Y; z = Z; }
 
+	friend Vector3 operator*(const float scalar, Vector3 vec3)
+	{
+		///vec1 * 5
+		return Vector3((vec3.x*scalar), (vec3.y*scalar), (vec3.z*scalar));
+	}
+
 	Vector3 operator*(const float scalar) const
 	{
 		///vec1 * 5
 		return Vector3((x*scalar), (y*scalar), (z*scalar));
+	}
+	Vector3 operator/(const float divisor) const
+	{
+		///vec1 / 5
+		return Vector3((x/divisor), (y/divisor), (z/divisor));
 	}
 	Vector3 operator+(const Vector3 rhs) const
 	{
@@ -31,6 +45,11 @@ public:
 	{
 		//vec1 - vec2
 		return Vector3((x - rhs.x), (y - rhs.y), (z - rhs.z));
+	}
+	Vector3 operator-() const
+	{
+		//-vec
+		return Vector3((-x), (-y), (-z));
 	}
 	friend std::ostream& operator<< (std::ostream& out, const Vector3 source)
 	{
@@ -47,5 +66,6 @@ public:
 	float ProjAngle(Vector3 v);
 	float DistanceBetweenObj(Vector3 v);
 	Vector3 CrossProduct(Vector3 v);
+	static Vector3 Zero;
 
 };

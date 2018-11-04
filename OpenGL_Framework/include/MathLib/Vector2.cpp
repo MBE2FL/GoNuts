@@ -1,8 +1,6 @@
 #include "Vector2.h"
 
-Vector2::Vector2()
-{
-}
+Vector2 Vector2::Zero = Vector2(0, 0);
 
 Vector2::~Vector2()
 {
@@ -35,7 +33,7 @@ Vector2 Vector2::ProjPoint(Vector2 v)
 
 float Vector2::ProjAngle(Vector2 v)
 {
-	return (acos((DotProduct(v) / (Length() * v.Length()))) *(180 / PI));
+	return (acosf((DotProduct(v) / (Length() * v.Length()))) *(180 / PI));
 }
 
 float Vector2::DistanceBetweenObj(Vector2 v)
