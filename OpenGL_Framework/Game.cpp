@@ -101,7 +101,7 @@ void Game::update()
 		//player.addForce(Vector2(0.0f, 20.0f));
 		player.useGravity(false);
 		//player.setVelocity(Vector2::Zero);
-		float ySpeed = player.getPhysicsBody().getVelocity().y;
+		float ySpeed = player.getPhysicsBody()->getVelocity().y;
 		player.addForce(Vector2(0.0f, -ySpeed/deltaTime *1.2f));
 
 		collided = true;
@@ -167,11 +167,11 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 //		player.addForce(Vector2(0.0f, 10.0f));
 //		break;
 	}
-	if (key == 'd' && player.getPhysicsBody().getVelocity().x < 5.0f)
+	if (key == 'd' && player.getPhysicsBody()->getVelocity().x < 5.0f)
 	{
 		player.addForce(Vector2(20.0f, 0.0f));
 	}
-	else if (key == 'a' && player.getPhysicsBody().getVelocity().x > -5.0f)
+	else if (key == 'a' && player.getPhysicsBody()->getVelocity().x > -5.0f)
 	{
 		player.addForce(Vector2(-20.0f, 0.0f));
 	}

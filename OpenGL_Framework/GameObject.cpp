@@ -2,6 +2,10 @@
 
 GameObject::GameObject()
 {
+	_transform = new Transform();
+	_mesh = nullptr;
+	_shaderProgram = nullptr;
+	_physicsBody = nullptr;
 }
 
 GameObject::~GameObject()
