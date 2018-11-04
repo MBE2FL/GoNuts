@@ -4,6 +4,7 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "PhysicsBody.h"
+#include "Component.h"
 
 enum class Tag
 {
@@ -44,16 +45,15 @@ public:
 
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);
-	PhysicsBody getPhysicsBody() const;
+	PhysicsBody* getPhysicsBody() const;
 	bool checkCollisions(GameObject& other);
 	void addForce(const Vector2& force);
 	void useGravity(const bool _useGravity);
 	void setVelocity(const Vector2& velocity);
 	
 private:
-	Transform _transform;
+	Transform* _transform;
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
-	PhysicsBody _physicsBody;
-
+	PhysicsBody* _physicsBody;
 };

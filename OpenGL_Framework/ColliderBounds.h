@@ -12,9 +12,8 @@ public:
 	ColliderBounds(MeshBounds meshBounds);
 	~ColliderBounds() {};
 
-	void update(const Transform& transform);
-	/*void updatePoints(const Transform& transform);*/
-	void updatePoint(const Transform& transform);
+	void update(Transform* transform);
+	void updatePoint(Transform* transform);
 
 private:
 	Vector3 points[8];

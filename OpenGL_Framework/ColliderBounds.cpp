@@ -40,64 +40,14 @@ ColliderBounds::ColliderBounds(MeshBounds meshBounds) :
 	points[7] = Vector3(maxX, maxY, maxZ);	// Top back right
 }
 
-void ColliderBounds::update(const Transform& transform)
+void ColliderBounds::update(Transform* transform)
 {
 	updatePoint(transform);
 }
 
-
-//void ColliderBounds::recalculateMaxMin(const Vector3& point)
-//{
-//	// Found new max
-//	if ((point.x > getMax().x) && (point.y > getMax().y) && (point.z > getMax().z))
-//		setMax(point);
-//	// Found new min
-//	else if ((point.x < getMin().x) && (point.y < getMin().y) && (point.z < getMin().z))
-//		setMin(point);
-//
-//	// Update new size
-//	setSize(getMax() - getMin());
-//
-//}
-
-//void ColliderBounds::updatePoints(const Transform& transform)
-//{
-//	setCentre(transform.getPosition());
-//
-//	for (int i = 0; i < 8; i++)
-//	{
-//		Vector3 modifiedPoints[8];
-//		// Create 4x4 transformation matrix
-//
-//		// Create rotation matrix
-//		Matrix44 rx;
-//		Matrix44 ry;
-//		Matrix44 rz;
-//
-//		rx.RotateX(transform.getRotationAngleX());
-//		ry.RotateY(transform.getRotationAngleY());
-//		rz.RotateZ(transform.getRotationAngleZ());
-//		// Note: pay attention to rotation order, ZYX is not the same as XYZ
-//		Matrix44 rotation = rz * ry * rx;
-//
-//		// Create translation matrix
-//		Matrix44 tran;
-//		tran.Translate(points[i] + getCentre());
-//
-//		// Create scale matrix
-//		Matrix44 scale;
-//		scale.Scale(transform.getScale());
-//		
-//		Matrix44 newPointMatrix = tran * rotation * scale;
-//		Vector4 blah = (newPointMatrix * Vector4(points[i], 1.0f));
-//		
-//		modifiedPoints[i] = Vector3(blah.x, blah.y, blah.z);
-//	}
-//}
-
-void ColliderBounds::updatePoint(const Transform& transform)
+void ColliderBounds::updatePoint(Transform* transform)
 {
-	setCentre(transform.getPosition());
+	setCentre(transform->getPosition());
 	// Create 4x4 transformation matrix
 
 	// Create rotation matrix
@@ -105,9 +55,9 @@ void ColliderBounds::updatePoint(const Transform& transform)
 	Matrix44 ry;
 	Matrix44 rz;
 
-	rx.RotateX(transform.getRotationAngleX());
-	ry.RotateY(transform.getRotationAngleY());
-	rz.RotateZ(transform.getRotationAngleZ());
+	rx.RotateX(transform->getRotationAngleX());
+	ry.RotateY(transform->getRotationAngleY());
+	rz.RotateZ(transform->getRotationAngleZ());
 	// Note: pay attention to rotation order, ZYX is not the same as XYZ
 	Matrix44 rotation = rz * ry * rx;
 
@@ -120,7 +70,7 @@ void ColliderBounds::updatePoint(const Transform& transform)
 
 	// Create scale matrix
 	Matrix44 scale;
-	scale.Scale(transform.getScale());
+	scale.Scale(transform->getScale());
 
 	Matrix44 newMinMatrix = minTran * rotation * scale;
 	Matrix44 newMaxMatrix = maxTran * rotation * scale;
