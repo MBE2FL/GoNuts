@@ -10,12 +10,12 @@ GameObject::~GameObject()
 
 Vector3 GameObject::getPosition() const
 {
-	return _transform.getPosition();
+	return _transform->getPosition();
 }
 
 void GameObject::setPosition(const Vector3 & newPosition)
 {
-	_transform.setPosition(newPosition);
+	_transform->setPosition(newPosition);
 }
 
 float GameObject::getRotationAngleX() const
@@ -25,17 +25,17 @@ float GameObject::getRotationAngleX() const
 
 void GameObject::setRotationAngleX(const float newAngle)
 {
-	_transform.setRotationAngleX(newAngle);
+	_transform->setRotationAngleX(newAngle);
 }
 
 float GameObject::getRotationAngleY() const
 {
-	return _transform.getRotationAngleY();
+	return _transform->getRotationAngleY();
 }
 
 void GameObject::setRotationAngleY(const float newAngle)
 {
-	_transform.setRotationAngleY(newAngle);
+	_transform->setRotationAngleY(newAngle);
 }
 
 float GameObject::getRotationAngleZ() const
@@ -45,7 +45,7 @@ float GameObject::getRotationAngleZ() const
 
 void GameObject::setRotationAngleZ(const float newAngle)
 {
-	_transform.setRotationAngleZ(newAngle);
+	_transform->setRotationAngleZ(newAngle);
 }
 
 float GameObject::getScale() const
@@ -59,13 +59,13 @@ void GameObject::setScale(float newScale)
 
 Matrix44 GameObject::getLocalToWorldMatrix() const
 {
-	return _transform.getLocalToWorldMatrix();
+	return _transform->getLocalToWorldMatrix();
 }
 
 void GameObject::update(float deltaTime)
 {
-	_physicsBody.updatePhysicsBody(_transform, deltaTime);
-	_transform.update(deltaTime);
+	_physicsBody->updatePhysicsBody(_transform, deltaTime);
+	_transform->update(deltaTime);
 }
 
 void GameObject::loadShaderProgram(const string & vertFile, const string & fragFile)
@@ -122,33 +122,33 @@ void GameObject::draw(Camera& camera)
 
 void GameObject::addPhysicsBody(const bool _useGravity)
 {
-	_physicsBody = PhysicsBody(_mesh->getMeshBounds());
-	_physicsBody.setUseGravity(_useGravity);
+	_physicsBody = new PhysicsBody(_mesh->getMeshBounds());
+	_physicsBody->setUseGravity(_useGravity);
 }
 
-PhysicsBody GameObject::getPhysicsBody() const
+PhysicsBody* GameObject::getPhysicsBody() const
 {
 	return _physicsBody;
 }
 
 bool GameObject::checkCollisions(GameObject& other)
 {
-	return _physicsBody.collision(other.getPhysicsBody());
+	return _physicsBody->collision(other.getPhysicsBody());
 }
 
 void GameObject::addForce(const Vector2 & force)
 {
-	_physicsBody.addForce(force);
+	_physicsBody->addForce(force);
 }
 
 void GameObject::useGravity(const bool _useGravity)
 {
-	_physicsBody.setUseGravity(_useGravity);
+	_physicsBody->setUseGravity(_useGravity);
 }
 
 void GameObject::setVelocity(const Vector2 & velocity)
 {
-	_physicsBody.setVelocity(velocity);
+	_physicsBody->setVelocity(velocity);
 }
 
 //MeshBounds GameObject::getMeshBounds() const

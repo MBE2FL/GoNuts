@@ -1,5 +1,19 @@
 #include "Component.h"
 
+Component::Component()
+{
+	setCompType(CompType::Transform);
+}
+
+Component::Component(CompType compType)
+{
+	setCompType(compType);
+}
+
+Component::~Component()
+{
+}
+
 CompType Component::getCompType() const
 {
 	return _compType;
@@ -8,16 +22,6 @@ CompType Component::getCompType() const
 void Component::setCompType(const CompType & compType)
 {
 	_compType = compType;
-}
-
-string Component::getName() const
-{
-	return _name;
-}
-
-void Component::setName(const string & name)
-{
-	_name = name;
 }
 
 int Component::getID() const
