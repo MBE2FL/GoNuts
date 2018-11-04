@@ -2,11 +2,11 @@
 #include <iostream>
 
 Transform::Transform()
-	: color(vec4(1.0f))
+	: color(Vector4(1.0f))
 {
 }
 
-void Transform::setPosition(const vec3& newPosition)
+void Transform::setPosition(const Vector3& newPosition)
 {
 	m_pLocalPosition = newPosition;
 }
@@ -31,7 +31,7 @@ void Transform::setScale(const float newScale)
 	m_pScale = newScale;
 }
 
-vec3 Transform::getPosition() const
+Vector3 Transform::getPosition() const
 {
 	return m_pLocalPosition;
 }
@@ -56,7 +56,7 @@ float Transform::getScale() const
 	return m_pScale;
 }
 
-mat4 Transform::getLocalToWorldMatrix() const
+Matrix44 Transform::getLocalToWorldMatrix() const
 {
 	return m_pLocalToWorldMatrix;
 }
@@ -67,9 +67,9 @@ void Transform::update(float dt)
 
 	// Create rotation matrix
 
-	mat4 rx; 
-	mat4 ry; 
-	mat4 rz; 
+	Matrix44 rx; 
+	Matrix44 ry; 
+	Matrix44 rz; 
 
 	rx.RotateX(m_pRotX);
 	ry.RotateY(m_pRotY);
@@ -78,12 +78,12 @@ void Transform::update(float dt)
 	m_pLocalRotation = rz * ry * rx;
 
 	// Create translation matrix
-	mat4 tran;
+	Matrix44 tran;
 	tran.Translate(m_pLocalPosition);
 	//std::cout << "Position: X: " << m_pLocalPosition.x << " Y: " << m_pLocalPosition.y << " Z: " << m_pLocalPosition.z << std::endl;
 
 	// Create scale matrix
-	mat4 scale; 
+	Matrix44 scale; 
 	scale.Scale(m_pScale);
 
 	// Combine all above transforms into a single matrix

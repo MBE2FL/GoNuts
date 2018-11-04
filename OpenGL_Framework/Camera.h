@@ -22,11 +22,11 @@ public:
 		float bottom, float top,
 		float zNear, float zFar);
 
-	mat4 getView() const;
-	mat4 getProjection() const;
+	Matrix44 getView() const;
+	Matrix44 getProjection() const;
 	ProjectionType getProjType() const;
 
 private:
 	ProjectionType projectionType = ProjectionType::Perspective;
-	mat4 projection;
+	Matrix44 projection;
 };

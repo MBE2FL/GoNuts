@@ -4,7 +4,7 @@ PhysicsBody::PhysicsBody()
 {
 }
 
-PhysicsBody::PhysicsBody(MeshBounds meshBounds, vec2 f, vec2 v, vec2 a, float m)
+PhysicsBody::PhysicsBody(MeshBounds meshBounds, Vector2 f, Vector2 v, Vector2 a, float m)
 {
 	force = f;
 	velocity = v;
@@ -18,9 +18,9 @@ PhysicsBody::~PhysicsBody()
 {
 }
 
-bool PhysicsBody::collision(vec2 p, float w, float h)
+bool PhysicsBody::collision(Vector2 p, float w, float h)
 {
-	vec2 position = vec2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
+	Vector2 position = Vector2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
 	float width = _collisionBounds.getExtends().x;
 	float height = _collisionBounds.getExtends().y;
 
@@ -37,12 +37,12 @@ bool PhysicsBody::collision(vec2 p, float w, float h)
 
 bool PhysicsBody::collision(PhysicsBody physicsBody)
 {
-	vec2 position = vec2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
+	Vector2 position = Vector2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
 	float width = _collisionBounds.getExtends().x;
 	float height = _collisionBounds.getExtends().y;
 
 	ColliderBounds otherBounds = physicsBody.getCollisionBounds();
-	vec2 otherPosition = vec2(otherBounds.getCentre().x, otherBounds.getCentre().y);
+	Vector2 otherPosition = Vector2(otherBounds.getCentre().x, otherBounds.getCentre().y);
 	float otherWidth = otherBounds.getExtends().x;
 	float otherHeight = otherBounds.getExtends().y;
 
@@ -60,48 +60,48 @@ bool PhysicsBody::collision(PhysicsBody physicsBody)
 void PhysicsBody::updatePhysicsBody(Transform& transform, float deltaTime)
 {
 	dt = deltaTime;
-	vec2 gravity(0, GRAVITY);
+	Vector2 gravity(0, GRAVITY);
 
 	if (useGravity && velocity.y > -4.0f)
 		force = force + gravity;
 
 	if (velocity.x > 0)
-		addForce(vec2(2.2f*GRAVITY, 0.0f));
+		addForce(Vector2(2.2f*GRAVITY, 0.0f));
 	else if (velocity.x < 0)
-		addForce(vec2(2.2f*-GRAVITY, 0.0f));
+		addForce(Vector2(2.2f*-GRAVITY, 0.0f));
 
 
 	acceleration = force * 1.0f / mass;
 	velocity = velocity + acceleration * dt;
-	//_collisionBounds.setCentre(_collisionBounds.getCentre() + vec3(velocity, 0.0f) * dt);
-	transform.setPosition(transform.getPosition() + vec3(velocity, 0.0f) * dt);
+	//_collisionBounds.setCentre(_collisionBounds.getCentre() + Vector3(velocity, 0.0f) * dt);
+	transform.setPosition(transform.getPosition() + Vector3(velocity, 0.0f) * dt);
 	_collisionBounds.update(transform);
 
 
-	force = vec2(0, 0);
+	force = Vector2(0, 0);
 }
 
-void PhysicsBody::addForce(vec2 f)
+void PhysicsBody::addForce(Vector2 f)
 {
 	force = force + f;
 }
 
-vec2 PhysicsBody::getForce() const
+Vector2 PhysicsBody::getForce() const
 {
 	return force;
 }
 
-vec2 PhysicsBody::getVelocity() const
+Vector2 PhysicsBody::getVelocity() const
 {
 	return velocity;
 }
 
-vec2 PhysicsBody::getAcceleration() const
+Vector2 PhysicsBody::getAcceleration() const
 {
 	return acceleration;
 }
 
-vec3 PhysicsBody::getPosition() const
+Vector3 PhysicsBody::getPosition() const
 {
 	return _collisionBounds.getCentre();
 }
@@ -111,22 +111,22 @@ float PhysicsBody::getMass() const
 	return mass;
 }
 
-void PhysicsBody::setForce(vec2 f)
+void PhysicsBody::setForce(Vector2 f)
 {
 	force = f;
 }
 
-void PhysicsBody::setVelocity(vec2 v)
+void PhysicsBody::setVelocity(Vector2 v)
 {
 	velocity = v;
 }
 
-void PhysicsBody::setAcceleration(vec2 a)
+void PhysicsBody::setAcceleration(Vector2 a)
 {
 	acceleration = a;
 }
 
-void PhysicsBody::setPosition(vec3 p)
+void PhysicsBody::setPosition(Vector3 p)
 {
 	_collisionBounds.setCentre(p);
 }

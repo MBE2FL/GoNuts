@@ -8,12 +8,12 @@ GameObject::~GameObject()
 {
 }
 
-vec3 GameObject::getPosition() const
+Vector3 GameObject::getPosition() const
 {
 	return _transform.getPosition();
 }
 
-void GameObject::setPosition(const vec3 & newPosition)
+void GameObject::setPosition(const Vector3 & newPosition)
 {
 	_transform.setPosition(newPosition);
 }
@@ -57,7 +57,7 @@ void GameObject::setScale(float newScale)
 {
 }
 
-mat4 GameObject::getLocalToWorldMatrix() const
+Matrix44 GameObject::getLocalToWorldMatrix() const
 {
 	return _transform.getLocalToWorldMatrix();
 }
@@ -71,7 +71,7 @@ void GameObject::update(float deltaTime)
 void GameObject::loadShaderProgram(const string & vertFile, const string & fragFile)
 {
 	// Load shaders
-	if (!_shaderProgram.load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag"))
+	if (!_shaderProgram->load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag"))
 	{
 		cout << "Shaders failed to initialize." << endl;
 		system("pause");
@@ -82,7 +82,7 @@ void GameObject::loadShaderProgram(const string & vertFile, const string & fragF
 void GameObject::loadMesh(const string & file)
 {
 	// Load mesh
-	if (!_mesh.loadFromFile("./Assets/Models/Monkey.obj"))
+	if (!_mesh->loadFromFile("./Assets/Models/Monkey.obj"))
 	{
 		cout << "Model failed to load." << endl;
 		system("pause");
@@ -92,37 +92,37 @@ void GameObject::loadMesh(const string & file)
 
 void GameObject::setShaderProgram(ShaderProgram * shaderProgram)
 {
-	_shaderProgram = *shaderProgram;
+	_shaderProgram = shaderProgram;
 }
 
 void GameObject::setMesh(Mesh * mesh)
 {
-	_mesh = *mesh;
+	_mesh = mesh;
 }
 
 void GameObject::unLoad()
 {
-	_shaderProgram.unLoad();
-	_mesh.Unload();
+	_shaderProgram->unLoad();
+	_mesh->Unload();
 }
 
 void GameObject::draw(Camera& camera)
 {
-	_shaderProgram.bind();
-	_shaderProgram.sendUniformMat4("uModel", getLocalToWorldMatrix().data, false);
-	_shaderProgram.sendUniformMat4("uView", camera.getLocalToWorldMatrix().GetInverse().data, false);
-	_shaderProgram.sendUniformMat4("uProj", camera.getProjection().data, false);
+	_shaderProgram->bind();
+	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
+	_shaderProgram->sendUniformMat4("uView", camera.getLocalToWorldMatrix().Inverse().mV, false);
+	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
 
-	glBindVertexArray(_mesh.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, _mesh.getNumVertices());
+	glBindVertexArray(_mesh->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
 	glBindVertexArray(GL_NONE);
 
-	_shaderProgram.unBind();
+	_shaderProgram->unBind();
 }
 
 void GameObject::addPhysicsBody(const bool _useGravity)
 {
-	_physicsBody = PhysicsBody(_mesh.getMeshBounds());
+	_physicsBody = PhysicsBody(_mesh->getMeshBounds());
 	_physicsBody.setUseGravity(_useGravity);
 }
 
@@ -136,7 +136,7 @@ bool GameObject::checkCollisions(GameObject& other)
 	return _physicsBody.collision(other.getPhysicsBody());
 }
 
-void GameObject::addForce(const vec2 & force)
+void GameObject::addForce(const Vector2 & force)
 {
 	_physicsBody.addForce(force);
 }
@@ -146,7 +146,7 @@ void GameObject::useGravity(const bool _useGravity)
 	_physicsBody.setUseGravity(_useGravity);
 }
 
-void GameObject::setVelocity(const vec2 & velocity)
+void GameObject::setVelocity(const Vector2 & velocity)
 {
 	_physicsBody.setVelocity(velocity);
 }

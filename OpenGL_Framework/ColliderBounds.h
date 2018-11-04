@@ -13,9 +13,9 @@ public:
 	~ColliderBounds() {};
 
 	void update(const Transform& transform);
-	void updatePoints(const Transform& transform);
+	/*void updatePoints(const Transform& transform);*/
 	void updatePoint(const Transform& transform);
 
 private:
-	vec3 points[8];
+	Vector3 points[8];
 };

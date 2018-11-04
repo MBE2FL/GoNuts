@@ -1,6 +1,7 @@
 #pragma once
 
-#include "MiniMath/Core.h"
+//#include "MiniMath/Core.h"
+#include "MathLib/MathLibCore.h"
 
 class Bounds
 {
@@ -9,20 +10,20 @@ public:
 	Bounds(const float minX, const float maxX, const float minY, const float maxY, const float minZ, const float maxZ);
 	~Bounds();
 
-	vec3 getCentre() const;
-	void setCentre(const vec3& centre);
-	vec3 getExtends() const;
-	vec3 getMax() const;
-	void setMax(const vec3& max);
-	vec3 getMin() const;
-	void setMin(const vec3& min);
-	vec3 getSize() const;
-	void setSize(const vec3& size);
+	Vector3 getCentre() const;
+	void setCentre(const Vector3& centre);
+	Vector3 getExtends() const;
+	Vector3 getMax() const;
+	void setMax(const Vector3& max);
+	Vector3 getMin() const;
+	void setMin(const Vector3& min);
+	Vector3 getSize() const;
+	void setSize(const Vector3& size);
 
 private:
-	vec3 _centre;
-	vec3 _extends;
-	vec3 _max;
-	vec3 _min;
-	vec3 _size;
+	Vector3 _centre;
+	Vector3 _extends;
+	Vector3 _max;
+	Vector3 _min;
+	Vector3 _size;
 };

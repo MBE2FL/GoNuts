@@ -18,8 +18,8 @@ public:
 	GameObject();
 	~GameObject();
 
-	vec3 getPosition() const;
-	void setPosition(const vec3& newPosition);
+	Vector3 getPosition() const;
+	void setPosition(const Vector3& newPosition);
 	float getRotationAngleX() const;
 	void setRotationAngleX(const float newAngle);
 	float getRotationAngleY() const;
@@ -29,7 +29,7 @@ public:
 	float getScale() const;
 	void setScale(const float newScale);
 
-	mat4 getLocalToWorldMatrix() const;
+	Matrix44 getLocalToWorldMatrix() const;
 
 	virtual void update(float deltaTime);
 
@@ -46,13 +46,14 @@ public:
 	void addPhysicsBody(const bool _useGravity);
 	PhysicsBody getPhysicsBody() const;
 	bool checkCollisions(GameObject& other);
-	void addForce(const vec2& force);
+	void addForce(const Vector2& force);
 	void useGravity(const bool _useGravity);
-	void setVelocity(const vec2& velocity);
+	void setVelocity(const Vector2& velocity);
 	
 private:
 	Transform _transform;
-	Mesh _mesh;
-	ShaderProgram _shaderProgram;
+	Mesh* _mesh;
+	ShaderProgram* _shaderProgram;
 	PhysicsBody _physicsBody;
+
 };

@@ -6,7 +6,8 @@
 #include <GL/glew.h>
 #include <fstream>
 #include <iostream>
-#include <MiniMath/Core.h>	// Have to replace with own math library
+//#include <MiniMath/Core.h>	// Have to replace with own math library
+#include "MathLib/MathLibCore.h"
 
 #include "MeshBounds.h"
 
@@ -48,8 +49,8 @@ private:
 	unsigned int _numVertices = 0;
 
 	MeshBounds _meshBounds;
-	vec3 minPoint;
-	vec3 maxPoint;
+	Vector3 minPoint;
+	Vector3 maxPoint;
 
-	void computeMinMax(const vec3& vertex);
+	void computeMinMax(const Vector3& vertex);
 };

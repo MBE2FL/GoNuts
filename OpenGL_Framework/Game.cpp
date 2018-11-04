@@ -4,12 +4,12 @@
 
 //const char* vertexShaderSource = 
 //	"#version 330\n"
-//	"layout(location = 0) in vec3 mesh_position;\n"
-//	"layout(location = 1) in vec3 mesh_color;\n"
+//	"layout(location = 0) in Vector3 mesh_position;\n"
+//	"layout(location = 1) in Vector3 mesh_color;\n"
 //	"uniform mat4 u_model;\n"
 //	"uniform mat4 u_view;\n"
 //	"uniform mat4 u_projection;\n"
-//	"out vec3 color;\n"
+//	"out Vector3 color;\n"
 //	"void main()\n"
 //	"{\n"
 //	"	gl_Position = u_projection * u_view * u_model * vec4(mesh_position, 1.0);\n"
@@ -18,7 +18,7 @@
 //
 //const char* fragmentShaderSource = 
 //	"#version 330\n"
-//	"in vec3 color;\n"
+//	"in Vector3 color;\n"
 //	"out vec4 pixelColor;\n"
 //	"void main() { pixelColor = vec4(color, 1.0f); }\n";
 
@@ -62,24 +62,24 @@ void Game::initializeGame()
 	//cube.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//cube.setMesh(ObjectLoader::getMesh("Cube"));
 
-	//monkeyTwo.setPosition(vec3(3.0f, 0.0f, 0.0f));
-	//cube.setPosition(vec3(-3.0f, 2.0f, 0.0f));
+	//monkeyTwo.setPosition(Vector3(3.0f, 0.0f, 0.0f));
+	//cube.setPosition(Vector3(-3.0f, 2.0f, 0.0f));
 
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
-	player.setPosition(vec3(0.0f, 10.0f, 0.0f));
+	player.setPosition(Vector3(0.0f, 10.0f, 0.0f));
 
 	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	platOne.setMesh(ObjectLoader::getMesh("Platform"));
 	platOne.addPhysicsBody(false);
-	platOne.setPosition(vec3(0.0f, -2.0f, 0.0f));
+	platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
 	//platOne.setScale(0.4f);
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
-	camera.setPosition(vec3(0.0f, 0.0f, 5.0f));
+	camera.setPosition(Vector3(0.0f, 0.0f, 5.0f));
 	//camera.setRotationAngleX(-45.0f);
 }
 
@@ -98,11 +98,11 @@ void Game::update()
 	bool colliding = player.checkCollisions(platOne);
 	if (colliding && !collided)
 	{
-		//player.addForce(vec2(0.0f, 20.0f));
+		//player.addForce(Vector2(0.0f, 20.0f));
 		player.useGravity(false);
-		//player.setVelocity(vec2::Zero);
+		//player.setVelocity(Vector2::Zero);
 		float ySpeed = player.getPhysicsBody().getVelocity().y;
-		player.addForce(vec2(0.0f, -ySpeed/deltaTime *1.2f));
+		player.addForce(Vector2(0.0f, -ySpeed/deltaTime *1.2f));
 
 		collided = true;
 	}
@@ -158,26 +158,26 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 //	case 'd':
-//		player.addForce(vec2(5.0f, 0.0f));
+//		player.addForce(Vector2(5.0f, 0.0f));
 //		break;
 //	case 'a':
-//		player.addForce(vec2(-5.0f, 0.0f));
+//		player.addForce(Vector2(-5.0f, 0.0f));
 //		break;
 //	case 'w':
-//		player.addForce(vec2(0.0f, 10.0f));
+//		player.addForce(Vector2(0.0f, 10.0f));
 //		break;
 	}
 	if (key == 'd' && player.getPhysicsBody().getVelocity().x < 5.0f)
 	{
-		player.addForce(vec2(20.0f, 0.0f));
+		player.addForce(Vector2(20.0f, 0.0f));
 	}
 	else if (key == 'a' && player.getPhysicsBody().getVelocity().x > -5.0f)
 	{
-		player.addForce(vec2(-20.0f, 0.0f));
+		player.addForce(Vector2(-20.0f, 0.0f));
 	}
 	if (key == 'w' && collided)
 	{
-		player.addForce(vec2(0.0f, 100.0f));
+		player.addForce(Vector2(0.0f, 100.0f));
 	}
 }
 

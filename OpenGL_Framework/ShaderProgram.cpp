@@ -120,9 +120,9 @@ void ShaderProgram::unBind()
 
 void ShaderProgram::addAttribute(unsigned int index, const string & attribName)
 {
-	// in vec3 vert		0
-	// in vec2 uv		1
-	// in vec3 normals	2
+	// in Vector3 vert		0
+	// in Vector2 uv		1
+	// in Vector3 normals	2
 
 	glBindAttribLocation(_program, index, attribName.c_str());
 }
@@ -156,22 +156,22 @@ void ShaderProgram::sendUniform(const string & name, float scalar)
 	glUniform1f(location, scalar);
 }
 
-void ShaderProgram::sendUniform(const string & name, const vec2 & vector)
+void ShaderProgram::sendUniform(const string & name, const Vector2 & vector)
 {
 	GLint location = getUniformLocation(name);
 	glUniform2f(location, vector.x, vector.y);
 }
 
-void ShaderProgram::sendUniform(const string & name, const vec3 & vector)
+void ShaderProgram::sendUniform(const string & name, const Vector3 & vector)
 {
 	GLint location = getUniformLocation(name);
 	glUniform3f(location, vector.x, vector.y, vector.z);
 }
 
-void ShaderProgram::sendUniform(const string & name, const vec4 & vector)
+void ShaderProgram::sendUniform(const string & name, const Vector4 & vector)
 {
 	GLint location = getUniformLocation(name);
-	glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+	glUniform4f(location, vector.x, vector.y, vector.z, vector.q);
 }
 
 void ShaderProgram::sendUniformMat3(const string & name, float * matrix, bool transpose)

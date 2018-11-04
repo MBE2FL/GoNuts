@@ -63,9 +63,9 @@ bool Mesh::loadFromFile(const string & file)
 	char inputString[CHAR_BUFFER_SIZE];
 
 	// Unique data
-	vector<vec3> vertexData;
-	vector<vec2> textureData;
-	vector<vec3> normalData;
+	vector<Vector3> vertexData;
+	vector<Vector2> textureData;
+	vector<Vector3> normalData;
 
 	// Index/face data
 	vector<MeshFace> faceData;
@@ -87,7 +87,7 @@ bool Mesh::loadFromFile(const string & file)
 		// Found a normal
 		else if (strstr(inputString, "vn") != nullptr)
 		{
-			vec3 temp;
+			Vector3 temp;
 
 			sscanf(inputString, "vn %f %f %f", &temp.x, &temp.y, &temp.z);
 			normalData.push_back(temp);
@@ -95,7 +95,7 @@ bool Mesh::loadFromFile(const string & file)
 		// Found a texture UV
 		else if (strstr(inputString, "vt") != nullptr)
 		{
-			vec2 temp;
+			Vector2 temp;
 
 			sscanf(inputString, "vt %f %f", &temp.x, &temp.y);
 			textureData.push_back(temp);
@@ -103,7 +103,7 @@ bool Mesh::loadFromFile(const string & file)
 		// Found a vertex
 		else if (strstr(inputString, "v") != nullptr)
 		{
-			vec3 temp;
+			Vector3 temp;
 
 			sscanf(inputString, "v %f %f %f", &temp.x, &temp.y, &temp.z);
 			vertexData.push_back(temp);
@@ -221,7 +221,7 @@ MeshBounds Mesh::getMeshBounds() const
 	return _meshBounds;
 }
 
-void Mesh::computeMinMax(const vec3 & vertex)
+void Mesh::computeMinMax(const Vector3 & vertex)
 {
 	// Found new max x
 	if (vertex.x > maxPoint.x)

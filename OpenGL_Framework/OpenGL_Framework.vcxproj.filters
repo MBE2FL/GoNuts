@@ -11,6 +11,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{9967f2e5-91ec-4a03-8195-4fab88564a02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\MathLib">
+      <UniqueIdentifier>{2832b72e-a993-403e-a597-00dcb81af9a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -52,6 +55,21 @@
     <ClCompile Include="PhysicsBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\MathLib\Matrix33.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\Matrix44.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\Vector2.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\Vector3.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\Vector4.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -92,6 +110,24 @@
     </ClInclude>
     <ClInclude Include="PhysicsBody.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\Matrix33.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\Matrix44.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\Vector2.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\Vector3.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\Vector4.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\MathLibCore.h">
+      <Filter>Header Files\MathLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

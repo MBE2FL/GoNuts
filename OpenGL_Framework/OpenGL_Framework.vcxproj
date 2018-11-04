@@ -80,6 +80,11 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="include\MathLib\Matrix33.cpp" />
+    <ClCompile Include="include\MathLib\Matrix44.cpp" />
+    <ClCompile Include="include\MathLib\Vector2.cpp" />
+    <ClCompile Include="include\MathLib\Vector3.cpp" />
+    <ClCompile Include="include\MathLib\Vector4.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
@@ -95,6 +100,12 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="include\MathLib\MathLibCore.h" />
+    <ClInclude Include="include\MathLib\Matrix33.h" />
+    <ClInclude Include="include\MathLib\Matrix44.h" />
+    <ClInclude Include="include\MathLib\Vector2.h" />
+    <ClInclude Include="include\MathLib\Vector3.h" />
+    <ClInclude Include="include\MathLib\Vector4.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshBounds.h" />
     <ClInclude Include="ObjectLoader.h" />

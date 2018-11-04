@@ -16,7 +16,7 @@ Camera::Camera(ProjectionType projType)
 void Camera::perspective(float fovy, float aspect, float zNear, float zFar)
 {
 	projectionType = ProjectionType::Perspective;
-	projection = mat4::PerspectiveProjection(
+	projection = Matrix44::PerspectiveProjection(
 		fovy, aspect, 
 		zNear, zFar);
 }
@@ -24,18 +24,18 @@ void Camera::perspective(float fovy, float aspect, float zNear, float zFar)
 void Camera::orthographic(float left, float right, float bottom, float top, float zNear, float zFar)
 {
 	projectionType = ProjectionType::Orthographic;
-	projection = mat4::OrthographicProjection(
+	projection = Matrix44::OrthographicProjection(
 		left, right, 
 		bottom, top,
 		zNear, zFar);
 }
 
-mat4 Camera::getView() const
+Matrix44 Camera::getView() const
 {
 	return getLocalToWorldMatrix();
 }
 
-mat4 Camera::getProjection() const
+Matrix44 Camera::getProjection() const
 {
 	return projection;
 }
