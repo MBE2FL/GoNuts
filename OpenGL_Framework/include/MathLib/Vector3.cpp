@@ -4,6 +4,9 @@ Vector3 Vector3::Zero = Vector3(0, 0, 0);
 
 Vector3::Vector3()
 {
+	x = 0.0f;
+	y = 0.0f;
+	z = 0.0f;
 }
 
 Vector3::Vector3(Vector2 vec2, float Z)

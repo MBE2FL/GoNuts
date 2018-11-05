@@ -9,7 +9,7 @@ std::ostream & operator<<(std::ostream & out, const Matrix44 source)
 		//Column
 		for (int j = 0; j < 4; j++)
 		{
-			out << source.mV[i * 4 + j] << ' ';
+			out << source.mV[j * 4 + i] << ' ';
 		}
 		out << '|' << "\n";
 	}
