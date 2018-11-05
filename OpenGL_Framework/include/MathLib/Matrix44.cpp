@@ -104,6 +104,165 @@ Matrix44 Matrix44::Inverse()
 	return Matrix44();
 }
 
+Matrix44 Matrix44::GetInverse()
+{
+	float DetMOM[16];
+	DetMOM[0] = mV[5] * mV[10] * mV[15] + 
+				mV[6] * mV[11] * mV[13] +
+				mV[7] * mV[9]  * mV[14] -
+				mV[7] * mV[10] * mV[13] -
+				mV[6] * mV[9]  * mV[15] -
+				mV[5] * mV[11] * mV[14];
+
+	DetMOM[1] = mV[4] * mV[10] * mV[15] +
+				mV[6] * mV[11] * mV[12] +
+				mV[7] * mV[8]  * mV[14] -
+				mV[7] * mV[10] * mV[12] -
+				mV[6] * mV[8]  * mV[15] -
+				mV[4] * mV[11] * mV[14];
+
+	DetMOM[2] = mV[4] * mV[9]  * mV[15] +
+				mV[5] * mV[11] * mV[12] +
+				mV[7] * mV[8]  * mV[13] -
+				mV[7] * mV[9]  * mV[12] -
+				mV[5] * mV[8]  * mV[15] -
+				mV[4] * mV[11] * mV[13];
+
+	DetMOM[3] = mV[4] * mV[9]  * mV[14] +
+				mV[5] * mV[10] * mV[12] +
+				mV[6] * mV[8]  * mV[13] -
+				mV[6] * mV[9]  * mV[12] -
+				mV[5] * mV[8]  * mV[14] -
+				mV[4] * mV[10] * mV[13];
+
+	DetMOM[4] = mV[1] * mV[10] * mV[15] +
+				mV[2] * mV[11] * mV[13] +
+				mV[3] * mV[9]  * mV[14] -
+				mV[3] * mV[10] * mV[13] -
+				mV[2] * mV[9]  * mV[15] -
+				mV[1] * mV[11] * mV[14];
+
+	DetMOM[5] = mV[0] * mV[10] * mV[15] +
+				mV[2] * mV[11] * mV[12] +
+				mV[3] * mV[8]  * mV[14] -
+				mV[3] * mV[10] * mV[12] -
+				mV[2] * mV[8]  * mV[15] -
+				mV[0] * mV[11] * mV[14];
+
+	DetMOM[6] = mV[0] * mV[9]  * mV[15] +
+				mV[1] * mV[11] * mV[12] +
+				mV[3] * mV[8]  * mV[13] -
+				mV[3] * mV[9]  * mV[12] -
+				mV[1] * mV[8]  * mV[15] -
+				mV[0] * mV[11] * mV[13];
+
+	DetMOM[7] = mV[0] * mV[9]  * mV[14] +
+				mV[1] * mV[10] * mV[12] +
+				mV[2] * mV[8]  * mV[13] -
+				mV[2] * mV[9]  * mV[12] -
+				mV[1] * mV[8]  * mV[14] -
+				mV[0] * mV[10] * mV[13];
+
+	DetMOM[8] = mV[1] * mV[6]  * mV[15] +
+				mV[2] * mV[7]  * mV[13] +
+				mV[3] * mV[5]  * mV[14] -
+				mV[3] * mV[6]  * mV[13] -
+				mV[2] * mV[5]  * mV[15] -
+				mV[1] * mV[7]  * mV[14];
+
+	DetMOM[9] = mV[0] * mV[6]  * mV[15] +
+				mV[2] * mV[7]  * mV[12] +
+				mV[3] * mV[4]  * mV[14] -
+				mV[3] * mV[6]  * mV[12] -
+				mV[2] * mV[4]  * mV[15] -
+				mV[0] * mV[7]  * mV[14];
+
+	DetMOM[10] = mV[0] * mV[5] * mV[15] +
+				mV[1] * mV[7]  * mV[12] +
+				mV[3] * mV[4]  * mV[13] -
+				mV[3] * mV[5]  * mV[12] -
+				mV[1] * mV[4]  * mV[15] -
+				mV[0] * mV[7]  * mV[13];
+
+	DetMOM[11] = mV[0] * mV[5] * mV[14] +
+				mV[1] * mV[6]  * mV[12] +
+				mV[2] * mV[4]  * mV[13] -
+				mV[2] * mV[5]  * mV[12] -
+				mV[1] * mV[4]  * mV[14] -
+				mV[0] * mV[6]  * mV[13];
+
+	DetMOM[12] = mV[1] * mV[6] * mV[11] +
+				mV[2] * mV[7]  * mV[9]  +
+				mV[3] * mV[5]  * mV[10] -
+				mV[3] * mV[6]  * mV[9]  -
+				mV[2] * mV[5]  * mV[11] -
+				mV[1] * mV[7]  * mV[10];
+
+	DetMOM[13] = mV[0] * mV[6] * mV[11] +
+				mV[2] * mV[7]  * mV[8]  +
+				mV[3] * mV[4]  * mV[10] -
+				mV[3] * mV[6]  * mV[8]  -
+				mV[2] * mV[4]  * mV[11] -
+				mV[0] * mV[7]  * mV[10];
+
+	DetMOM[14] = mV[0] * mV[5] * mV[11] +
+				mV[1] * mV[7]  * mV[8]  +
+				mV[3] * mV[4]  * mV[9]  -
+				mV[3] * mV[5]  * mV[8]  -
+				mV[1] * mV[4]  * mV[11] -
+				mV[0] * mV[7]  * mV[9];
+
+	DetMOM[15] = mV[0] * mV[5] * mV[10] +
+				mV[1] * mV[6]  * mV[8]  +
+				mV[2] * mV[4]  * mV[9]  -
+				mV[2] * mV[5]  * mV[8]  -
+				mV[1] * mV[4]  * mV[10] -
+				mV[0] * mV[6]  * mV[9];
+				
+	Matrix44 Adjugate;
+	Adjugate.mV[0]  = DetMOM[0];
+	Adjugate.mV[4]  = -DetMOM[1];
+	Adjugate.mV[8]  = DetMOM[2];
+	Adjugate.mV[12] = -DetMOM[3];
+
+	Adjugate.mV[1]  = -DetMOM[4];
+	Adjugate.mV[5]  = DetMOM[5];
+	Adjugate.mV[9]  = -DetMOM[6];
+	Adjugate.mV[13] = DetMOM[7];
+
+	Adjugate.mV[2]  = DetMOM[8];
+	Adjugate.mV[6]  = -DetMOM[9];
+	Adjugate.mV[10] = DetMOM[10];
+	Adjugate.mV[14] = -DetMOM[11];
+
+	Adjugate.mV[3]  = -DetMOM[12];
+	Adjugate.mV[7]  = DetMOM[13];
+	Adjugate.mV[11] = -DetMOM[14];
+	Adjugate.mV[15] = DetMOM[15];
+
+	float Det = (mV[0] * mV[5] * mV[10] * mV[15]) + (mV[0] * mV[6] * mV[11] * mV[13]) + (mV[0] * mV[7] * mV[9] * mV[14])
+
+		- (mV[0] * mV[7] * mV[10] * mV[13]) - (mV[0] * mV[6] * mV[9] * mV[15]) - (mV[0] * mV[5] * mV[11] * mV[14])
+
+		- (mV[1] * mV[4] * mV[10] * mV[15]) - (mV[2] * mV[4] * mV[11] * mV[13]) - (mV[3] * mV[4] * mV[9] * mV[14])
+
+		+ (mV[3] * mV[4] * mV[10] * mV[13]) + (mV[2] * mV[4] * mV[9] * mV[15]) + (mV[1] * mV[4] * mV[11] * mV[14])
+
+		+ (mV[1] * mV[6] * mV[8] * mV[15]) + (mV[2] * mV[7] * mV[8] * mV[13]) + (mV[3] * mV[5] * mV[8] * mV[14])
+
+		- (mV[3] * mV[6] * mV[8] * mV[13]) - (mV[2] * mV[5] * mV[8] * mV[15]) - (mV[1] * mV[7] * mV[8] * mV[14])
+
+		- (mV[1] * mV[6] * mV[11] * mV[12]) - (mV[2] * mV[7] * mV[9] * mV[12]) - (mV[3] * mV[5] * mV[10] * mV[12])
+
+		+ (mV[3] * mV[6] * mV[9] * mV[12]) + (mV[2] * mV[5] * mV[11] * mV[12]) + (mV[1] * mV[7] * mV[10] * mV[12]);
+				
+	Matrix44 result;
+
+	result = Adjugate * (1 / Det);
+
+	return result;
+}
+
 Matrix44 Matrix44::Transpose()
 {
 	return Matrix44();
@@ -133,11 +292,11 @@ void Matrix44::RotateX(float angle)
 		
 	rotation.mV[4] = 0.f;
 	rotation.mV[5] = cosf(angle);
-	rotation.mV[6] = -sinf(angle);
+	rotation.mV[6] = sinf(angle);
 	rotation.mV[7] = 0.f;
 		
 	rotation.mV[8] = 0.f;
-	rotation.mV[9] = sinf(angle);
+	rotation.mV[9] = -sinf(angle);
 	rotation.mV[10] = cosf(angle);
 	rotation.mV[11] = 0.f;
 		
@@ -154,7 +313,7 @@ void Matrix44::RotateY(float angle)
 	Matrix44 rotation;
 	rotation.mV[0] = cosf(angle);
 	rotation.mV[1] = 0.f;
-	rotation.mV[2] = sinf(angle);
+	rotation.mV[2] = -sinf(angle);
 	rotation.mV[3] = 0.f;
 
 	rotation.mV[4] = 0.f;
@@ -162,7 +321,7 @@ void Matrix44::RotateY(float angle)
 	rotation.mV[6] = 0.f;
 	rotation.mV[7] = 0.f;
 
-	rotation.mV[8] = -sinf(angle);
+	rotation.mV[8] = sinf(angle);
 	rotation.mV[9] = 0.f;
 	rotation.mV[10] = cosf(angle);
 	rotation.mV[11] = 0.f;
@@ -179,11 +338,11 @@ void Matrix44::RotateZ(float angle)
 {
 	Matrix44 rotation;
 	rotation.mV[0] = cosf(angle);
-	rotation.mV[1] = -sinf(angle);
+	rotation.mV[1] = sinf(angle);
 	rotation.mV[2] = 0.f;
 	rotation.mV[3] = 0.f;
 
-	rotation.mV[4] = sinf(angle);
+	rotation.mV[4] = -sinf(angle);
 	rotation.mV[5] = cosf(angle);
 	rotation.mV[6] = 0.f;
 	rotation.mV[7] = 0.f;
@@ -207,21 +366,21 @@ void Matrix44::Translate(const Vector3 & translation)
 	tran.mV[0] = 1.0f;
 	tran.mV[1] = 0.f;
 	tran.mV[2] = 0.f;
-	tran.mV[3] = translation.x;
+	tran.mV[3] = 0.f;
 
 	tran.mV[4] = 0.f;
 	tran.mV[5] = 1.0f;
 	tran.mV[6] = 0.f;
-	tran.mV[7] = translation.y;
+	tran.mV[7] = 0.f;
 
 	tran.mV[8] = 0.f;
 	tran.mV[9] = 0.f;
 	tran.mV[10] = 1.0f;
-	tran.mV[11] = translation.z;
+	tran.mV[11] = 0.f;
 
-	tran.mV[12] = 0.f;
-	tran.mV[13] = 0.f;
-	tran.mV[14] = 0.f;
+	tran.mV[12] = translation.x;
+	tran.mV[13] = translation.y;
+	tran.mV[14] = translation.z;
 	tran.mV[15] = 1.0f;
 
 	*this = tran;
@@ -255,23 +414,24 @@ void Matrix44::Scale(float scale)
 
 Matrix44 Matrix44::PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar)
 {
+	FOVy = FOVy * 180.0f / PI;
 	Matrix44 result;
 	result.mV[0] = 1.0f / (aspect * tanf(FOVy / 2.0f));
-	result.mV[1] = 0;
-	result.mV[2] = 0;
-	result.mV[3] = 0;
-	result.mV[4] = 0;
+	result.mV[1] = 0.f;
+	result.mV[2] = 0.f;
+	result.mV[3] = 0.f;
+	result.mV[4] = 0.f;
 	result.mV[5] = 1.0f / tanf(FOVy / 2.0f);
-	result.mV[6] = 0;
-	result.mV[7] = 0;
-	result.mV[8] = 0;
-	result.mV[9] = 0;
+	result.mV[6] = 0.f;
+	result.mV[7] = 0.f;
+	result.mV[8] = 0.f;
+	result.mV[9] = 0.f;
 	result.mV[10] = -((zFar + zNear) / (zFar - zNear));
-	result.mV[11] = -1.0f;
-	result.mV[12] = 0;
-	result.mV[13] = 0;
-	result.mV[14] = -((2.0f * zFar * zNear) / (zFar - zNear));
-	result.mV[15] = 0;
+	result.mV[11] = -((2.0f * zFar * zNear) / (zFar - zNear));
+	result.mV[12] = 0.f;
+	result.mV[13] = 0.f;
+	result.mV[14] = -1.0f;
+	result.mV[15] = 0.f;
 
 	return result;
 }
@@ -280,21 +440,21 @@ Matrix44 Matrix44::OrthographicProjection(float left, float right, float top, fl
 {
 	Matrix44 result;
 	result.mV[0] = 2.0f/(right - left);
-	result.mV[1] = 0;
-	result.mV[2] = 0;
-	result.mV[3] = 0;
-	result.mV[4] = 0;
+	result.mV[1] = 0.f;
+	result.mV[2] = 0.f;
+	result.mV[3] = -((right + left)/ (right - left));
+	result.mV[4] = 0.f;
 	result.mV[5] = 2.0f /(top - bottom);
-	result.mV[6] = 0;
-	result.mV[7] = 0;
-	result.mV[8] = 0;
-	result.mV[9] = 0;
+	result.mV[6] = 0.f;
+	result.mV[7] = -((top + bottom) / (top - bottom));
+	result.mV[8] = 0.f;
+	result.mV[9] = 0.f;
 	result.mV[10] = -(-2.0f / (far - near));
-	result.mV[11] = 0;
-	result.mV[12] = -((right + left)/ (right - left));
-	result.mV[13] = -((top + bottom)/ (top - bottom));
-	result.mV[14] = -((far + near) / (far - near));
-	result.mV[15] = 1;
+	result.mV[11] = -((far + near) / (far - near));
+	result.mV[12] = 0.f;
+	result.mV[13] = 0.f;
+	result.mV[14] = 0.f;
+	result.mV[15] = 1.0f;
 
 	return result;
 }

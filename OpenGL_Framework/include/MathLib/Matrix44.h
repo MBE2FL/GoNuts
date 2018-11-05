@@ -24,6 +24,7 @@ public:
 	Vector3 GetColumn(int i);
 	//Manipulators
 	Matrix44 Inverse();
+	Matrix44 GetInverse();
 	Matrix44 Transpose();
 	void Identity();
 	float Determinant();

@@ -2,28 +2,6 @@
 
 #include <string>
 
-//const char* vertexShaderSource = 
-//	"#version 330\n"
-//	"layout(location = 0) in Vector3 mesh_position;\n"
-//	"layout(location = 1) in Vector3 mesh_color;\n"
-//	"uniform mat4 u_model;\n"
-//	"uniform mat4 u_view;\n"
-//	"uniform mat4 u_projection;\n"
-//	"out Vector3 color;\n"
-//	"void main()\n"
-//	"{\n"
-//	"	gl_Position = u_projection * u_view * u_model * vec4(mesh_position, 1.0);\n"
-//	"	color = mesh_color;\n"
-//	"}\n";
-//
-//const char* fragmentShaderSource = 
-//	"#version 330\n"
-//	"in Vector3 color;\n"
-//	"out vec4 pixelColor;\n"
-//	"void main() { pixelColor = vec4(color, 1.0f); }\n";
-
-
-
 Game::Game()
 {
 	updateTimer = new Timer();
@@ -47,29 +25,10 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 
-	// Load shaders
-	//monkey.loadShaderProgram("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
-
-	// Load mesh
-	//monkey.loadMesh("./Assets/Models/Monkey.obj");
-
-	//monkey.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//monkey.setMesh(ObjectLoader::getMesh("Monkey"));
-
-	//monkeyTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//monkeyTwo.setMesh(ObjectLoader::getMesh("Monkey"));
-
-	//cube.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//cube.setMesh(ObjectLoader::getMesh("Cube"));
-
-	//monkeyTwo.setPosition(Vector3(3.0f, 0.0f, 0.0f));
-	//cube.setPosition(Vector3(-3.0f, 2.0f, 0.0f));
-
-
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(0.0f, 10.0f, 0.0f));
+	player.setPosition(Vector3(0.0f, 4.0f, 0.0f));
 
 	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	platOne.setMesh(ObjectLoader::getMesh("Platform"));
@@ -77,8 +36,16 @@ void Game::initializeGame()
 	platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
 	//platOne.setScale(0.4f);
 
+	Matrix44 test;
+	test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
+	test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
+	test.mV[14] = 15; test.mV[15] = 16;
+
+	test.GetInverse();
+
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
+	//camera.orthographic(-10, 10, -10, 10, -100, 100);
 	camera.setPosition(Vector3(0.0f, 0.0f, 5.0f));
 	//camera.setRotationAngleX(-45.0f);
 }
@@ -112,25 +79,15 @@ void Game::update()
 		collided = false;
 	}
 
-	//monkey.setRotationAngleY(TotalGameTime * 45.0f);
-	//monkeyTwo.setRotationAngleY(TotalGameTime * -25.0f);
-	//cube.setRotationAngleY(TotalGameTime * 25.0f);
-
+	//Vector3 offset(0, 0, 2);
+	//camera.setPosition(player.getPosition() - offset);
 	camera.update(deltaTime);
-	//monkey.update(deltaTime);
-	//monkeyTwo.update(deltaTime);
-	//cube.update(deltaTime);
 }
 
 void Game::draw()
 {
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-	//monkey.draw(camera);
-	//monkeyTwo.draw(camera);
-	//cube.draw(camera);
 
 	player.draw(camera);
 	platOne.draw(camera);
@@ -177,7 +134,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 	if (key == 'w' && collided)
 	{
-		player.addForce(Vector2(0.0f, 100.0f));
+		player.addForce(Vector2(0.0f, -100.0f));
 	}
 }
 

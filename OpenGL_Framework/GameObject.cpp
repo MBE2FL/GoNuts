@@ -114,7 +114,7 @@ void GameObject::draw(Camera& camera)
 {
 	_shaderProgram->bind();
 	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
-	_shaderProgram->sendUniformMat4("uView", camera.getLocalToWorldMatrix().Inverse().mV, false);
+	_shaderProgram->sendUniformMat4("uView", camera.getLocalToWorldMatrix().GetInverse().mV, false);
 	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
 
 	glBindVertexArray(_mesh->VAO);
