@@ -9,10 +9,17 @@ layout(location = 1) in vec2 in_uv;
 layout(location = 2) in vec3 in_normal;
 
 out vec3 normal;
+out vec3 position;
 
 void main()
 {
-	normal = (uModel * vec4(in_normal, 0.0f)).xyz;
+	//normal = (uModel * vec4(in_normal, 0.0f)).xyz;
+	normal = mat3(uView) * mat3(uModel) * in_normal;
 
-	gl_Position = uProj * uView * uModel * vec4(in_vert, 1.0f);
+
+	vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f);
+
+	gl_Position = uProj * viewSpace;
+
+	position = viewSpace.xyz;
 }
