@@ -28,7 +28,7 @@ void Game::initializeGame()
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(0.0f, 4.0f, 0.0f));
+	player.setPosition(Vector3(0.0f, 1.0f, 0.0f));
 
 	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	platOne.setMesh(ObjectLoader::getMesh("Platform"));
@@ -61,15 +61,24 @@ void Game::update()
 	player.update(deltaTime);
 	platOne.update(deltaTime);
 
+	int col = player.checkCollisions(platOne);
+	bool colliding = (col == 1 || col == 2 || col == 3);
 
-	bool colliding = player.checkCollisions(platOne);
 	if (colliding && !collided)
 	{
 		//player.addForce(Vector2(0.0f, 20.0f));
 		player.useGravity(false);
 		//player.setVelocity(Vector2::Zero);
-		float ySpeed = player.getPhysicsBody()->getVelocity().y;
-		player.addForce(Vector2(0.0f, -ySpeed/deltaTime *1.2f));
+		if (col == 1)
+		{
+			float ySpeed = player.getPhysicsBody()->getVelocity().y;
+			player.addForce(Vector2(0.0f, -ySpeed / deltaTime * 1.2f));
+		}
+		else
+		{
+			float xSpeed = player.getPhysicsBody()->getVelocity().x;
+			player.addForce(Vector2(-xSpeed / deltaTime * 1.2f, 0.0f));
+		}
 
 		collided = true;
 	}

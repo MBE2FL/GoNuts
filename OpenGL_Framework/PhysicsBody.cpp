@@ -35,7 +35,7 @@ bool PhysicsBody::collision(Vector2 p, float w, float h)
 		return false;
 }
 
-bool PhysicsBody::collision(PhysicsBody* physicsBody)
+int PhysicsBody::collision(PhysicsBody* physicsBody)
 {
 	Vector2 position = Vector2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
 	float width = _collisionBounds.getExtends().x;
@@ -46,15 +46,74 @@ bool PhysicsBody::collision(PhysicsBody* physicsBody)
 	float otherWidth = otherBounds.getExtends().x;
 	float otherHeight = otherBounds.getExtends().y;
 
+	unsigned int left, right, up, down;
+	left = 0; right = 0; up = 0; down = 0;
+
+	//if (up == 1||down ==1)
+	//	return 1;
+	//else if (left == 1)
+	//	return 2;
+	//else if (right == 1)
+	//	return 3;
+	//else
+	//	return 0;
+
+
 	if (position.x - width < otherPosition.x + otherWidth &&
 		position.x + width > otherPosition.x - otherWidth &&
 		position.y - height < otherPosition.y + otherHeight &&
 		position.y + height > otherPosition.y - otherHeight)
 	{
-		return true;
+		//Vector2 toLeftCorner(otherPosition.x - otherWidth, otherPosition.y + otherHeight);
+		//toLeftCorner = toLeftCorner - otherPosition;
+		//Vector2 toRightCorner(otherPosition.x + otherWidth, otherPosition.y + otherHeight);
+		//toRightCorner = toRightCorner - otherPosition;
+		////std::cout << toCorner << std::endl;
+		//float angleToLeftCorner;
+		//angleToLeftCorner = atanh(toLeftCorner.y / toLeftCorner.x) * 180.0f / PI;
+		//float angleToRightCorner;
+		//angleToRightCorner = atanh(toRightCorner.y / toRightCorner.x) * 180.0f / PI;
+		////std::cout << angleToLeftCorner << std::endl;
+		//Vector2 toPlayer(position - otherPosition);
+		//float angleToPlayer;
+		//angleToPlayer = atanh(toPlayer.y / toPlayer.x) * 180.0f / PI;
+		//std::cout << std::endl;
+		////std::cout << angleToLeftCorner << std::endl;
+		//std::cout << angleToPlayer << std::endl;
+		//std::cout << std::endl;
+		//if (angleToPlayer <= 0.0f)
+		//{
+		//	if (angleToLeftCorner > angleToPlayer)
+		//		return 1;
+		//	else
+		//		return 2;
+		//}
+		//else
+		//{
+		//	if (angleToRightCorner < angleToPlayer)
+		//		return 1;
+		//	else
+		//		return 2;
+		//}
+
+		if (position.y + height > otherPosition.y + otherHeight &&
+			position.y - height < otherPosition.y + otherHeight)
+			return 1;
+
+		//else if (position.x - width <= otherPosition.x + otherWidth &&
+		//	position.x + width > otherPosition.x + otherWidth)
+		//	return 2;
+		//else if (position.x + width >= otherPosition.x - otherWidth &&
+		//	position.x - width < otherPosition.x + otherWidth)
+		//	return 2;
+		else
+			return 2;
+
+		
+
 	}
 	else
-		return false;
+		return 0;
 }
 
 void PhysicsBody::updatePhysicsBody(Transform* transform, float deltaTime)

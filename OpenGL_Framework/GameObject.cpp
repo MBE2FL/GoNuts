@@ -147,7 +147,7 @@ PhysicsBody* GameObject::getPhysicsBody() const
 	return _physicsBody;
 }
 
-bool GameObject::checkCollisions(GameObject& other)
+int GameObject::checkCollisions(GameObject& other)
 {
 	return _physicsBody->collision(other.getPhysicsBody());
 }

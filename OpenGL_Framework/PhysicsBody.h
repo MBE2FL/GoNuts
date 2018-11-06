@@ -4,6 +4,7 @@
 #include "ColliderBounds.h"
 #include "MeshBounds.h"
 #include "Transform.h"
+#include <iostream>
 
 #define GRAVITY -2.2f
 
@@ -16,7 +17,7 @@ public:
 	~PhysicsBody();
 
 	bool collision(Vector2 position, float w, float h);
-	bool collision(PhysicsBody* physicsBody);
+	int collision(PhysicsBody* physicsBody);
 
 	void updatePhysicsBody(Transform* transform, float deltaTime);
 
