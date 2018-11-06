@@ -79,8 +79,8 @@ void Game::update()
 		collided = false;
 	}
 
-	//Vector3 offset(0, 0, 2);
-	//camera.setPosition(player.getPosition() - offset);
+	Vector3 offset(0, -2, -4);
+	camera.setPosition(player.getPosition() - offset);
 	camera.update(deltaTime);
 }
 
@@ -134,7 +134,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 	if (key == 'w' && collided)
 	{
-		player.addForce(Vector2(0.0f, -100.0f));
+		player.addForce(Vector2(0.0f, 100.0f));
 	}
 }
 
