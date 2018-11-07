@@ -5,10 +5,11 @@
 #include "MeshBounds.h"
 #include "Transform.h"
 #include <vector>
+#include <iostream>
 
 using std::vector;
 
-#define GRAVITY -2.2f
+#define GRAVITY -4.2f
 
 
 enum class Tags
@@ -40,6 +41,7 @@ public:
 	Vector2 getAcceleration()const;
 	Vector3 getPosition()const;
 	float getMass()const;
+	bool getUseGravity()const;
 
 	void setForce(Vector2 f);
 	void setVelocity(Vector2 v);

@@ -24,16 +24,35 @@ void Game::initializeGame()
 	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
+	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
+	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
+	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(0.0f, 4.0f, 0.0f));
+	player.setPosition(Vector3(-3.0f, -1.0f, 0.0f));
 
-	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	platOne.setMesh(ObjectLoader::getMesh("Platform"));
-	platOne.addPhysicsBody(false);
-	platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
+	for (float i = 0.0f; i < 20; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Platform"));
+		plat->addPhysicsBody(false);
+		plat->setPosition(Vector3(i * 9.0f, -2.0f, 0.0f));
+
+		platforms.push_back(*plat);
+	}
+	//platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//platOne.setMesh(ObjectLoader::getMesh("Platform"));
+	//platOne.addPhysicsBody(false);
+	//platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
+	//
+	//platTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//platTwo.setMesh(ObjectLoader::getMesh("Platform"));
+	//platTwo.addPhysicsBody(false);
+	//platTwo.setPosition(Vector3(9.0f, -2.0f, 0.0f));
+
 	//platOne.setScale(0.4f);
 
 	Matrix44 test;
@@ -59,28 +78,56 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	player.update(deltaTime);
-	platOne.update(deltaTime);
-
-
-	bool colliding = player.checkCollisions(platOne);
-	if (colliding && !collided)
+	for (unsigned int i = 0; i < 20; i++)
 	{
-		//player.addForce(Vector2(0.0f, 20.0f));
-		player.useGravity(false);
-		//player.setVelocity(Vector2::Zero);
-		float ySpeed = player.getPhysicsBody()->getVelocity().y;
-		player.addForce(Vector2(0.0f, -ySpeed/deltaTime *1.2f));
-
-		collided = true;
+		platforms[i].update(deltaTime);
 	}
-	else if (!colliding && collided)
+	//platOne.update(deltaTime);
+	//platTwo.update(deltaTime);
+	for (unsigned int i = 0; i < 20; i++)
 	{
-		player.useGravity(true);
-		collided = false;
+		collided = player.checkCollisions(platforms[i]);
+		if (collided)
+			break;
 	}
+	
+	
+	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
+		player.addForce(Vector2(20.0f, 0.0f));
 
-	//Vector3 offset(0, 0, 2);
-	//camera.setPosition(player.getPosition() - offset);
+	if (player.getPosition().y < -4.0f)
+	{
+		player.setPosition(Vector3(-3.0f, -0.99f, 0.0f));
+		player.setVelocity(Vector2(-2.0f, 0.0f));
+	}
+	
+	//std::cout << deltaTime << std::endl;
+	//if (colliding && !collided)
+	//{
+	//	//player.addForce(Vector2(0.0f, 20.0f));
+	//	player.useGravity(false);
+	//	//player.setVelocity(Vector2::Zero);
+	//	if (col == 1)
+	//	{
+	//		float ySpeed = player.getPhysicsBody()->getVelocity().y;
+	//		player.addForce(Vector2(0.0f, -ySpeed / deltaTime * 1.2f));
+	//	}
+	//	else
+	//	{
+	//		float xSpeed = player.getPhysicsBody()->getVelocity().x;
+	//		player.addForce(Vector2(-xSpeed / deltaTime * 1.2f, 0.0f));
+	//	}
+
+	//	collided = true;
+	//}
+	//else if (!colliding && collided)
+	//{
+	//	player.useGravity(true);
+	//	collided = false;
+	//}
+
+	Vector3 offset(0, -2, -4);
+	camera.setPosition(player.getPosition() - offset);
 	camera.update(deltaTime);
 }
 
@@ -90,7 +137,10 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	player.draw(camera);
-	platOne.draw(camera);
+	for (unsigned int i = 0; i < 20; i++)
+	{
+		platforms[i].draw(camera);
+	}
 	   
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
@@ -124,17 +174,17 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 //		player.addForce(Vector2(0.0f, 10.0f));
 //		break;
 	}
-	if (key == 'd' && player.getPhysicsBody()->getVelocity().x < 5.0f)
-	{
-		player.addForce(Vector2(20.0f, 0.0f));
-	}
-	else if (key == 'a' && player.getPhysicsBody()->getVelocity().x > -5.0f)
-	{
-		player.addForce(Vector2(-20.0f, 0.0f));
-	}
+	//if (key == 'd' && player.getPhysicsBody()->getVelocity().x < 5.0f)
+	//{
+	//	player.addForce(Vector2(20.0f, 0.0f));
+	//}
+	//if (key == 'a' && player.getPhysicsBody()->getVelocity().x > -5.0f)
+	//{
+	//	player.addForce(Vector2(-20.0f, 0.0f));
+	//}
 	if (key == 'w' && collided)
 	{
-		player.addForce(Vector2(0.0f, -100.0f));
+		player.addForce(Vector2(0.0f, 100.0f));
 	}
 }
 

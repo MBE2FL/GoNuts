@@ -117,6 +117,18 @@ void GameObject::draw(Camera& camera)
 	_shaderProgram->sendUniformMat4("uView", camera.getLocalToWorldMatrix().GetInverse().mV, false);
 	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
 
+
+	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(4.0f, 0.0f, 0.0f, 1.0f));
+	_shaderProgram->sendUniform("lightAmbient", Vector3(0.10f, 0.10f, 0.10f));
+	_shaderProgram->sendUniform("lightDiffuse", Vector3(0.7f, 0.1f, 0.2f));
+	_shaderProgram->sendUniform("lightSpecular", Vector3(1.0f, 0.1f, 0.1f));
+	_shaderProgram->sendUniform("lightSpecularExponent", 100.0f);
+	_shaderProgram->sendUniform("attenuationConstant", 1.0f);
+	_shaderProgram->sendUniform("attenuationLinear", 0.1f);
+	_shaderProgram->sendUniform("attenuationQuadratic", 0.01f);
+
+
+
 	glBindVertexArray(_mesh->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
 	glBindVertexArray(GL_NONE);

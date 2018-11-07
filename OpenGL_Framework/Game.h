@@ -50,7 +50,9 @@ private:
 	//GameObject cube;
 
 	GameObject player;
-	GameObject platOne;
+	GameObject platOne, platTwo;
+	GameObject* plat;
+	vector<GameObject> platforms;
 	bool collided = false;
 
 	//vector<GameObject> platform;

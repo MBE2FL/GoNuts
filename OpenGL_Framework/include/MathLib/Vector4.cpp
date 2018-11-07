@@ -4,6 +4,10 @@ Vector4 Vector4::Zero = Vector4(0, 0, 0, 0);
 
 Vector4::Vector4()
 {
+	x = 0.0f;
+	y = 0.0f;
+	z = 0.0f;
+	q = 0.0f;
 }
 
 Vector4::Vector4(Vector3 vec3, float Q)

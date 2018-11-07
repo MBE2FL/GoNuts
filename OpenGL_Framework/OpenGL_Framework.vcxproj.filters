@@ -70,6 +70,9 @@
     <ClCompile Include="include\MathLib\Vector4.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -128,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="include\MathLib\MathLibCore.h">
       <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
