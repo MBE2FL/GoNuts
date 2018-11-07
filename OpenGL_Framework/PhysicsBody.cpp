@@ -145,3 +145,66 @@ ColliderBounds PhysicsBody::getCollisionBounds() const
 {
 	return _collisionBounds;
 }
+
+void PhysicsBody::onCollisionEnter(PhysicsBody * other)
+{
+	// Check if the collision is just occuring for the first time.
+	vector<PhysicsBody*>::iterator it;
+	for (it = _colliding.begin(); it != _colliding.end(); it++)
+	{
+		// Physics body is already in the vector
+		if (other == (*it))
+			return;
+	}
+
+	// The first time these two physics bodies are colliding.
+	_colliding.push_back(other);
+
+	// Perform certain behaviour, depending on the type of objects colliding.
+	onCollisionHelper(other->getTag(), true);
+}
+
+void PhysicsBody::onCollisionExit(PhysicsBody * other)
+{
+	// Check if the collision is just occuring for the first time.
+	vector<PhysicsBody*>::iterator it;
+	for (it = _colliding.begin(); it != _colliding.end(); it++)
+	{
+		// Remove physics body from vector
+		if (other == (*it))
+		{
+			_colliding.erase(it);
+			break;
+		}
+	}
+
+	// Perform certain behaviour, depending on the type of objects colliding.
+	onCollisionHelper(other->getTag(), false);
+}
+
+Tags PhysicsBody::getTag() const
+{
+	return _tag;
+}
+
+void PhysicsBody::onCollisionHelper(Tags tag, bool enter)
+{
+	switch (tag)
+	{
+	// Player colliding with platform
+	case Tags::Platform:
+	{
+		if (enter)
+		{
+			useGravity = false;
+			_canJump = true;
+		}
+		else
+		{
+			useGravity = true;
+			_canJump = false;
+		}
+		break;
+	}
+	}
+}

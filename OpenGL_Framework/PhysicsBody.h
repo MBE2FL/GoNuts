@@ -4,8 +4,21 @@
 #include "ColliderBounds.h"
 #include "MeshBounds.h"
 #include "Transform.h"
+#include <vector>
+
+using std::vector;
 
 #define GRAVITY -2.2f
+
+
+enum class Tags
+{
+	Player,
+	Platform,
+	Enemy,
+	PowerUp
+};
+
 
 class PhysicsBody
 {
@@ -37,12 +50,25 @@ public:
 	
 	ColliderBounds getCollisionBounds() const;
 
+	void onCollisionEnter(PhysicsBody* other);
+	void onCollisionExit(PhysicsBody* other);
+
+	Tags getTag() const;
+
 private:
 	Vector2 force, velocity, acceleration;
 	float mass;
 	float dt = 0;
 	bool useGravity = false;
+	bool _canJump = false;
+	Tags _tag;
+
+
 
 	ColliderBounds _collisionBounds;
+	vector<PhysicsBody*> _colliding;
+
+
+	void onCollisionHelper(Tags tag, bool enter);
 };
 
