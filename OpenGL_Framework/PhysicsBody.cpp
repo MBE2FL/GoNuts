@@ -109,7 +109,7 @@ bool PhysicsBody::collision(PhysicsBody* physicsBody)
 			{
 				float ySpeed = getVelocity().y;
 				addForce(Vector2(0.0f, -ySpeed / (dt * 0.8f)));
-				std::cout << -ySpeed / (dt * 0.8f) << std::endl;
+				std::cout << -ySpeed / (dt * 10.2f) << std::endl;
 			}
 			//if (ySpeed < 0.05f && ySpeed > -0.05)
 			//	addForce(Vector2(0.0f, -GRAVITY * 1.002f));

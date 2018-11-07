@@ -6,7 +6,7 @@
 #include "Transform.h"
 #include <iostream>
 
-#define GRAVITY -3.2f
+#define GRAVITY -4.2f
 
 class PhysicsBody
 {

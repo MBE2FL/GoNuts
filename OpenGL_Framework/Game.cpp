@@ -24,21 +24,34 @@ void Game::initializeGame()
 	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
+	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
+	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
+	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, -1.0f, 0.0f));
 
-	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	platOne.setMesh(ObjectLoader::getMesh("Platform"));
-	platOne.addPhysicsBody(false);
-	platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
+	for (float i = 0.0f; i < 20; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Platform"));
+		plat->addPhysicsBody(false);
+		plat->setPosition(Vector3(i * 9.0f, -2.0f, 0.0f));
 
-	platTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	platTwo.setMesh(ObjectLoader::getMesh("Platform"));
-	platTwo.addPhysicsBody(false);
-	platTwo.setPosition(Vector3(9.0f, -2.0f, 0.0f));
+		platforms.push_back(*plat);
+	}
+	//platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//platOne.setMesh(ObjectLoader::getMesh("Platform"));
+	//platOne.addPhysicsBody(false);
+	//platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
+	//
+	//platTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//platTwo.setMesh(ObjectLoader::getMesh("Platform"));
+	//platTwo.addPhysicsBody(false);
+	//platTwo.setPosition(Vector3(9.0f, -2.0f, 0.0f));
 
 	//platOne.setScale(0.4f);
 
@@ -65,20 +78,27 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	player.update(deltaTime);
-	platOne.update(deltaTime);
-	platTwo.update(deltaTime);
-
-	collided = player.checkCollisions(platOne);
-	if (!collided)
-		collided = player.checkCollisions(platTwo);
+	for (unsigned int i = 0; i < 20; i++)
+	{
+		platforms[i].update(deltaTime);
+	}
+	//platOne.update(deltaTime);
+	//platTwo.update(deltaTime);
+	for (unsigned int i = 0; i < 20; i++)
+	{
+		collided = player.checkCollisions(platforms[i]);
+		if (collided)
+			break;
+	}
+	
 	
 	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
 		player.addForce(Vector2(20.0f, 0.0f));
 
 	if (player.getPosition().y < -4.0f)
 	{
-		player.setPosition(Vector3(-3.0f, -0.7f, 0.0f));
-		player.setVelocity(Vector2(-1.0f, 0.0f));
+		player.setPosition(Vector3(-3.0f, -0.99f, 0.0f));
+		player.setVelocity(Vector2(-2.0f, 0.0f));
 	}
 	
 	//std::cout << deltaTime << std::endl;
@@ -117,8 +137,10 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	player.draw(camera);
-	platOne.draw(camera);
-	platTwo.draw(camera);
+	for (unsigned int i = 0; i < 20; i++)
+	{
+		platforms[i].draw(camera);
+	}
 	   
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.

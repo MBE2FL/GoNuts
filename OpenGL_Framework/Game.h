@@ -51,6 +51,8 @@ private:
 
 	GameObject player;
 	GameObject platOne, platTwo;
+	GameObject* plat;
+	vector<GameObject> platforms;
 	bool collided = false;
 
 	//vector<GameObject> platform;
