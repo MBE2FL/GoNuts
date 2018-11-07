@@ -8,11 +8,13 @@ layout(location = 0) in vec3 in_vert;
 layout(location = 1) in vec2 in_uv;
 layout(location = 2) in vec3 in_normal;
 
+out vec2 texCoord;
 out vec3 normal;
 out vec3 position;
 
 void main()
 {
+	texCoord = in_uv;
 	//normal = (uModel * vec4(in_normal, 0.0f)).xyz;
 	normal = mat3(uView) * mat3(uModel) * in_normal;
 

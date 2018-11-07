@@ -15,11 +15,11 @@ public:
 	Texture() = default;
 	~Texture();
 
-	bool Load(const string& file);
-	void Unload();
+	bool load(const string& file);
+	void unload();
 
-	void Bind();
-	void UnBind();
+	void bind();
+	void unBind();
 
 	//- The handle to the texture object
 	GLuint texObj = GL_NONE;

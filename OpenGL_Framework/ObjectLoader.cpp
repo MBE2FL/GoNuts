@@ -2,6 +2,7 @@
 
 map<string, Mesh*> ObjectLoader::_meshes = map<string, Mesh*>();
 map<string, ShaderProgram*> ObjectLoader::_shaderPrograms = map<string, ShaderProgram*>();
+map<string, Texture*> ObjectLoader::_textures = map<string, Texture*>();
 
 ObjectLoader::ObjectLoader()
 {
@@ -62,6 +63,32 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file)
 	exit(0);
 }
 
+void ObjectLoader::loadTexture(const string & texName, const string & file)
+{
+	// No mesh with shaderProgramName currently exists
+	if (_textures.count(texName) == 0)
+	{
+		// Load mesh
+		Texture* texture = new Texture();;
+		// Load shaders
+		if (!texture->load(file))
+		{
+			cout << "Shaders failed to initialize." << endl;
+			system("pause");
+			exit(0);
+		}
+
+		// Store mesh for later use
+		_textures[texName] = texture;
+		return;
+	}
+
+	// Mesh already exists with shaderProgramName
+	cout << "Shaders with name, " << texName << ", already exists." << endl;
+	system("pause");
+	exit(0);
+}
+
 ShaderProgram * ObjectLoader::getShaderProgram(const string & shaderProgramName)
 {
 	return _shaderPrograms[shaderProgramName];
@@ -70,4 +97,9 @@ ShaderProgram * ObjectLoader::getShaderProgram(const string & shaderProgramName)
 Mesh * ObjectLoader::getMesh(const string & meshName)
 {
 	return _meshes[meshName];
+}
+
+Texture * ObjectLoader::getTexture(const string & texName)
+{
+	return _textures[texName];
 }
