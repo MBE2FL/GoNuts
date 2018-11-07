@@ -54,11 +54,12 @@ void GameObject::setRotationAngleZ(const float newAngle)
 
 float GameObject::getScale() const
 {
-	return 0.0f;
+	return _transform->getScale();
 }
 
 void GameObject::setScale(float newScale)
 {
+	_transform->setScale(newScale);
 }
 
 Matrix44 GameObject::getLocalToWorldMatrix() const

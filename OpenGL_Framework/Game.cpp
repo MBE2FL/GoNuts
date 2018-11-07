@@ -43,7 +43,7 @@ void Game::initializeGame()
 		plat->setMesh(ObjectLoader::getMesh("Platform"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, -2.0f, 0.0f));
+		plat->setPosition(Vector3(i * 9.0f, i - 2.0f, 0.0f));
 
 		platforms.push_back(*plat);
 	}
@@ -189,7 +189,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	//}
 	if (key == 'w' && collided)
 	{
-		player.addForce(Vector2(0.0f, 100.0f));
+		player.addForce(Vector2(0.0f, 200.0f));
+	}
+	if (key == 's')
+	{
+		player.setScale(0.7f);
+		//player.addForce(Vector2(0.0f, 200.0f));
 	}
 }
 
@@ -203,6 +208,12 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	case 'q': // the 'q' key
 		exit(1);
 		break;
+	}
+
+	if (key == 's')
+	{
+		player.setScale(1);
+		//player.addForce(Vector2(0.0f, 200.0f));
 	}
 }
 
