@@ -120,7 +120,7 @@ bool PhysicsBody::collision(PhysicsBody* physicsBody)
 		{
 			float xSpeed = getVelocity().x;
 			addForce(Vector2(-xSpeed / (dt * 0.6f), 0.0f));
-			//std::cout << -xSpeed / dt * 1.2f << std::endl;
+			
 		}
 		else if (position.x + width > otherPosition.x - otherWidth &&
 			position.x - width < otherPosition.x + otherWidth &&
@@ -128,17 +128,8 @@ bool PhysicsBody::collision(PhysicsBody* physicsBody)
 		{
 			float xSpeed = getVelocity().x;
 			addForce(Vector2(-xSpeed / (dt * 0.6f), 0.0f));
+			
 		}
-
-
-		//else if (position.x - width <= otherPosition.x + otherWidth &&
-		//	position.x + width > otherPosition.x + otherWidth)
-		//	return 2;
-		//else if (position.x + width >= otherPosition.x - otherWidth &&
-		//	position.x - width < otherPosition.x + otherWidth)
-		//	return 2;
-		
-
 		
 		return true;
 	}
