@@ -66,7 +66,7 @@ void Game::initializeGame()
 	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
 	//camera.orthographic(-10, 10, -10, 10, -100, 100);
 	camera.setPosition(Vector3(0.0f, 0.0f, 5.0f));
-	//camera.setRotationAngleX(-45.0f);
+	camera.setRotationAngleX(camera.getRotationAngleX() - 0.2f);
 }
 
 void Game::update()
@@ -126,9 +126,10 @@ void Game::update()
 	//	collided = false;
 	//}
 
-	Vector3 offset(0, -2, -4);
+	Vector3 offset(-3, -1.5f, -4);
 	camera.setPosition(player.getPosition() - offset);
 	camera.update(deltaTime);
+
 }
 
 void Game::draw()
