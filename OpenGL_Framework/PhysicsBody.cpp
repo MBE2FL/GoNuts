@@ -105,11 +105,11 @@ bool PhysicsBody::collision(PhysicsBody* physicsBody)
 		{
 			//if (position.y - height < otherPosition.y + otherHeight)
 			//	position.y = position.y + 0.5f;//(otherPosition.y + otherHeight - position.y - height);
-			if (getVelocity().y <= 0.01f)
+			if (getVelocity().y <= -0.01f)
 			{
 				float ySpeed = getVelocity().y;
-				addForce(Vector2(0.0f, -ySpeed / (dt * 0.8f)));
-				std::cout << -ySpeed / (dt * 10.2f) << std::endl;
+				addForce(Vector2(0.0f, -ySpeed / dt));
+				
 			}
 			//if (ySpeed < 0.05f && ySpeed > -0.05)
 			//	addForce(Vector2(0.0f, -GRAVITY * 1.002f));
