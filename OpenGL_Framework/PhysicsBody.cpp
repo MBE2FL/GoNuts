@@ -95,10 +95,41 @@ int PhysicsBody::collision(PhysicsBody* physicsBody)
 		//	else
 		//		return 2;
 		//}
+		setUseGravity(false);
 
-		if (position.y + height > otherPosition.y + otherHeight &&
-			position.y - height < otherPosition.y + otherHeight)
-			return 1;
+		
+
+		if (position.y - (height * 0.8f) >= otherPosition.y + otherHeight &&
+			position.y - height <= otherPosition.y + otherHeight 
+			)
+		{
+			//if (position.y - height < otherPosition.y + otherHeight)
+			//	position.y = position.y + 0.5f;//(otherPosition.y + otherHeight - position.y - height);
+			if (getVelocity().y <= 0.01f)
+			{
+				float ySpeed = getVelocity().y;
+				addForce(Vector2(0.0f, -ySpeed / (dt * 0.8f)));
+				std::cout << -ySpeed / (dt * 0.8f) << std::endl;
+			}
+			//if (ySpeed < 0.05f && ySpeed > -0.05)
+			//	addForce(Vector2(0.0f, -GRAVITY * 1.002f));
+		}
+		else if (position.x - width < otherPosition.x + otherWidth &&
+			position.x + width > otherPosition.x + otherWidth &&
+			getVelocity().x < -0.1f)
+		{
+			float xSpeed = getVelocity().x;
+			addForce(Vector2(-xSpeed / (dt * 0.6f), 0.0f));
+			//std::cout << -xSpeed / dt * 1.2f << std::endl;
+		}
+		else if (position.x + width > otherPosition.x - otherWidth &&
+			position.x - width < otherPosition.x + otherWidth &&
+			getVelocity().x > 0.1f)
+		{
+			float xSpeed = getVelocity().x;
+			addForce(Vector2(-xSpeed / (dt * 0.6f), 0.0f));
+		}
+
 
 		//else if (position.x - width <= otherPosition.x + otherWidth &&
 		//	position.x + width > otherPosition.x + otherWidth)
@@ -106,14 +137,17 @@ int PhysicsBody::collision(PhysicsBody* physicsBody)
 		//else if (position.x + width >= otherPosition.x - otherWidth &&
 		//	position.x - width < otherPosition.x + otherWidth)
 		//	return 2;
-		else
-			return 2;
-
 		
 
+		
+		return 1;
 	}
 	else
+	{
+		setUseGravity(true);
+		
 		return 0;
+	}
 }
 
 void PhysicsBody::updatePhysicsBody(Transform* transform, float deltaTime)
@@ -168,6 +202,11 @@ Vector3 PhysicsBody::getPosition() const
 float PhysicsBody::getMass() const
 {
 	return mass;
+}
+
+bool PhysicsBody::getUseGravity() const
+{
+	return useGravity;
 }
 
 void PhysicsBody::setForce(Vector2 f)

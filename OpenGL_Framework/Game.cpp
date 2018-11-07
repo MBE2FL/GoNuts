@@ -28,12 +28,18 @@ void Game::initializeGame()
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(0.0f, 1.0f, 0.0f));
+	player.setPosition(Vector3(-3.0f, -1.0f, 0.0f));
 
 	platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	platOne.setMesh(ObjectLoader::getMesh("Platform"));
 	platOne.addPhysicsBody(false);
 	platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
+
+	platTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	platTwo.setMesh(ObjectLoader::getMesh("Platform"));
+	platTwo.addPhysicsBody(false);
+	platTwo.setPosition(Vector3(9.0f, -2.0f, 0.0f));
+
 	//platOne.setScale(0.4f);
 
 	Matrix44 test;
@@ -60,33 +66,40 @@ void Game::update()
 
 	player.update(deltaTime);
 	platOne.update(deltaTime);
+	platTwo.update(deltaTime);
 
-	int col = player.checkCollisions(platOne);
-	bool colliding = (col == 1 || col == 2 || col == 3);
+	player.checkCollisions(platOne);
+	player.checkCollisions(platTwo);
+	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
+		player.addForce(Vector2(20.0f, 0.0f));
 
-	if (colliding && !collided)
-	{
-		//player.addForce(Vector2(0.0f, 20.0f));
-		player.useGravity(false);
-		//player.setVelocity(Vector2::Zero);
-		if (col == 1)
-		{
-			float ySpeed = player.getPhysicsBody()->getVelocity().y;
-			player.addForce(Vector2(0.0f, -ySpeed / deltaTime * 1.2f));
-		}
-		else
-		{
-			float xSpeed = player.getPhysicsBody()->getVelocity().x;
-			player.addForce(Vector2(-xSpeed / deltaTime * 1.2f, 0.0f));
-		}
+	if (player.getPosition().y < -5.0f)
+		player.setPosition(Vector3(-3.0f, -0.5f, 0.0f));
+	
+	//std::cout << deltaTime << std::endl;
+	//if (colliding && !collided)
+	//{
+	//	//player.addForce(Vector2(0.0f, 20.0f));
+	//	player.useGravity(false);
+	//	//player.setVelocity(Vector2::Zero);
+	//	if (col == 1)
+	//	{
+	//		float ySpeed = player.getPhysicsBody()->getVelocity().y;
+	//		player.addForce(Vector2(0.0f, -ySpeed / deltaTime * 1.2f));
+	//	}
+	//	else
+	//	{
+	//		float xSpeed = player.getPhysicsBody()->getVelocity().x;
+	//		player.addForce(Vector2(-xSpeed / deltaTime * 1.2f, 0.0f));
+	//	}
 
-		collided = true;
-	}
-	else if (!colliding && collided)
-	{
-		player.useGravity(true);
-		collided = false;
-	}
+	//	collided = true;
+	//}
+	//else if (!colliding && collided)
+	//{
+	//	player.useGravity(true);
+	//	collided = false;
+	//}
 
 	Vector3 offset(0, -2, -4);
 	camera.setPosition(player.getPosition() - offset);
@@ -100,6 +113,7 @@ void Game::draw()
 
 	player.draw(camera);
 	platOne.draw(camera);
+	platTwo.draw(camera);
 	   
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
@@ -133,15 +147,15 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 //		player.addForce(Vector2(0.0f, 10.0f));
 //		break;
 	}
-	if (key == 'd' && player.getPhysicsBody()->getVelocity().x < 5.0f)
-	{
-		player.addForce(Vector2(20.0f, 0.0f));
-	}
-	else if (key == 'a' && player.getPhysicsBody()->getVelocity().x > -5.0f)
-	{
-		player.addForce(Vector2(-20.0f, 0.0f));
-	}
-	if (key == 'w' && collided)
+	//if (key == 'd' && player.getPhysicsBody()->getVelocity().x < 5.0f)
+	//{
+	//	player.addForce(Vector2(20.0f, 0.0f));
+	//}
+	//if (key == 'a' && player.getPhysicsBody()->getVelocity().x > -5.0f)
+	//{
+	//	player.addForce(Vector2(-20.0f, 0.0f));
+	//}
+	if (key == 'w' && !player.getPhysicsBody()->getUseGravity())
 	{
 		player.addForce(Vector2(0.0f, 100.0f));
 	}
