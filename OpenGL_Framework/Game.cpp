@@ -95,10 +95,10 @@ void Game::update()
 	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
 		player.addForce(Vector2(20.0f, 0.0f));
 
-	if (player.getPosition().y < -4.0f)
+	if (player.getPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
 	{
 		player.setPosition(Vector3(-3.0f, -0.99f, 0.0f));
-		player.setVelocity(Vector2(-2.0f, 0.0f));
+		player.setVelocity(Vector2(0.0f, 0.0f));
 	}
 	
 	//std::cout << deltaTime << std::endl;
