@@ -80,6 +80,11 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GUIHelper.cpp" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl.cpp" />
     <ClCompile Include="include\MathLib\Matrix33.cpp" />
     <ClCompile Include="include\MathLib\Matrix44.cpp" />
     <ClCompile Include="include\MathLib\Vector2.cpp" />
@@ -101,6 +106,13 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GUIHelper.h" />
+    <ClInclude Include="include\imgui\imgui.h" />
+    <ClInclude Include="include\imgui\imgui_impl.h" />
+    <ClInclude Include="include\imgui\imgui_internal.h" />
+    <ClInclude Include="include\imgui\stb_rect_pack.h" />
+    <ClInclude Include="include\imgui\stb_textedit.h" />
+    <ClInclude Include="include\imgui\stb_truetype.h" />
     <ClInclude Include="include\MathLib\MathLibCore.h" />
     <ClInclude Include="include\MathLib\Matrix33.h" />
     <ClInclude Include="include\MathLib\Matrix44.h" />

@@ -198,7 +198,7 @@ int main(int argc, char **argv)
 #ifdef _DEBUG
 	InitOpenGLDebugCallback();
 #endif
-	
+
 	/* init the game */
 	theGame = new Game();
 	theGame->initializeGame();

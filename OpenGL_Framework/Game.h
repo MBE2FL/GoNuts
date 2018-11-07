@@ -15,6 +15,8 @@
 #include "Transform.h"
 #include "Camera.h"
 
+#include "GUIHelper.h"
+
 
 #define WINDOW_WIDTH			1900
 #define WINDOW_HEIGHT			1000

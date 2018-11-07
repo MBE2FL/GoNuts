@@ -154,6 +154,9 @@ void Game::draw()
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
+	//ImGuiIO& io = ImGui::GetIO();
+	//io.KeysDown[key] = true;
+
 	switch(key)
 	{
 	case 32:
@@ -195,6 +198,9 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
+	//ImGuiIO& io = ImGui::GetIO();
+	//io.KeysDown[key] = false;
+
 	switch(key)
 	{
 	case 32: // the space bar
@@ -208,6 +214,9 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 
 void Game::mouseClicked(int button, int state, int x, int y)
 {
+	//ImGuiIO& io = ImGui::GetIO();
+	//io.MouseDown[button] = state;
+
 	if(state == GLUT_DOWN) 
 	{
 		switch(button)
