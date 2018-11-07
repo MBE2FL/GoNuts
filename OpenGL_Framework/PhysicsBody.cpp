@@ -35,7 +35,7 @@ bool PhysicsBody::collision(Vector2 p, float w, float h)
 		return false;
 }
 
-int PhysicsBody::collision(PhysicsBody* physicsBody)
+bool PhysicsBody::collision(PhysicsBody* physicsBody)
 {
 	Vector2 position = Vector2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
 	float width = _collisionBounds.getExtends().x;
@@ -140,13 +140,13 @@ int PhysicsBody::collision(PhysicsBody* physicsBody)
 		
 
 		
-		return 1;
+		return true;
 	}
 	else
 	{
 		setUseGravity(true);
 		
-		return 0;
+		return false;
 	}
 }
 

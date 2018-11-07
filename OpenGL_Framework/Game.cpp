@@ -68,13 +68,18 @@ void Game::update()
 	platOne.update(deltaTime);
 	platTwo.update(deltaTime);
 
-	player.checkCollisions(platOne);
-	player.checkCollisions(platTwo);
+	collided = player.checkCollisions(platOne);
+	if (!collided)
+		collided = player.checkCollisions(platTwo);
+	
 	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
 		player.addForce(Vector2(20.0f, 0.0f));
 
-	if (player.getPosition().y < -5.0f)
-		player.setPosition(Vector3(-3.0f, -0.5f, 0.0f));
+	if (player.getPosition().y < -4.0f)
+	{
+		player.setPosition(Vector3(-3.0f, -0.7f, 0.0f));
+		player.setVelocity(Vector2(-1.0f, 0.0f));
+	}
 	
 	//std::cout << deltaTime << std::endl;
 	//if (colliding && !collided)
@@ -155,7 +160,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	//{
 	//	player.addForce(Vector2(-20.0f, 0.0f));
 	//}
-	if (key == 'w' && !player.getPhysicsBody()->getUseGravity())
+	if (key == 'w' && collided)
 	{
 		player.addForce(Vector2(0.0f, 100.0f));
 	}

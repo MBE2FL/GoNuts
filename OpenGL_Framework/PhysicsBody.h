@@ -17,7 +17,7 @@ public:
 	~PhysicsBody();
 
 	bool collision(Vector2 position, float w, float h);
-	int collision(PhysicsBody* physicsBody);
+	bool collision(PhysicsBody* physicsBody);
 
 	void updatePhysicsBody(Transform* transform, float deltaTime);
 
