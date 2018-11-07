@@ -18,18 +18,21 @@ void Game::initializeGame()
 {
 	// OpenGL will not draw triangles hidden behind other geometry
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
+	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
 	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
+	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, -1.0f, 0.0f));
 
@@ -38,6 +41,7 @@ void Game::initializeGame()
 		plat = new GameObject;
 		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 		plat->setMesh(ObjectLoader::getMesh("Platform"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
 		plat->setPosition(Vector3(i * 9.0f, -2.0f, 0.0f));
 

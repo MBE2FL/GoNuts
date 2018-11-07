@@ -13,7 +13,9 @@ uniform float attenuationConstant;
 uniform float attenuationLinear;
 uniform float attenuationQuadratic;
 
+uniform sampler2D uTex;
 
+in vec2 texCoord;
 in vec3 normal;
 in vec3 position;
 
@@ -53,5 +55,8 @@ void main()
 		outColour.rgb += lightSpecular * pow(NdotHV, lightSpecularExponent) * attenuation;
 	}
 
+	vec4 textureColour = texture(uTex, texCoord);
+	outColour.rgb *= textureColour.rgb;
+	outColour.a = textureColour.a;
 
 }

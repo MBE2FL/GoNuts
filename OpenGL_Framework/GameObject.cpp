@@ -104,6 +104,11 @@ void GameObject::setMesh(Mesh * mesh)
 	_mesh = mesh;
 }
 
+void GameObject::setTexture(Texture * texture)
+{
+	_texture = texture;
+}
+
 void GameObject::unLoad()
 {
 	_shaderProgram->unLoad();
@@ -118,6 +123,9 @@ void GameObject::draw(Camera& camera)
 	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
 
 
+	_shaderProgram->sendUniform("uTex", 0);
+
+
 	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(4.0f, 0.0f, 0.0f, 1.0f));
 	_shaderProgram->sendUniform("lightAmbient", Vector3(0.10f, 0.10f, 0.10f));
 	_shaderProgram->sendUniform("lightDiffuse", Vector3(0.7f, 0.1f, 0.2f));
@@ -127,11 +135,13 @@ void GameObject::draw(Camera& camera)
 	_shaderProgram->sendUniform("attenuationLinear", 0.1f);
 	_shaderProgram->sendUniform("attenuationQuadratic", 0.01f);
 
-
+	_texture->bind();
 
 	glBindVertexArray(_mesh->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
 	glBindVertexArray(GL_NONE);
+
+	_texture->unBind();
 
 	_shaderProgram->unBind();
 }

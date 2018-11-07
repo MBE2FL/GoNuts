@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "PhysicsBody.h"
 #include "Component.h"
+#include "Texture.h"
 
 enum class Tag
 {
@@ -39,6 +40,7 @@ public:
 
 	void setShaderProgram(ShaderProgram* shaderProgram);
 	void setMesh(Mesh* mesh);
+	void setTexture(Texture* texture);
 
 	void unLoad();
 	void draw(Camera& camera);
@@ -56,4 +58,5 @@ private:
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	PhysicsBody* _physicsBody;
+	Texture* _texture;
 };

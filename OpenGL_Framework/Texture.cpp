@@ -2,10 +2,10 @@
 
 Texture::~Texture()
 {
-	Unload();
+	unload();
 }
 
-bool Texture::Load(const string & file)
+bool Texture::load(const string & file)
 {
 	texObj = SOIL_load_OGL_texture(file.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
@@ -25,7 +25,7 @@ bool Texture::Load(const string & file)
 	return true;
 }
 
-void Texture::Unload()
+void Texture::unload()
 {
 	if (texObj != GL_NONE)
 	{
@@ -35,12 +35,12 @@ void Texture::Unload()
 	}
 }
 
-void Texture::Bind()
+void Texture::bind()
 {
 	glBindTexture(GL_TEXTURE_2D, texObj);
 }
 
-void Texture::UnBind()
+void Texture::unBind()
 {
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 }
