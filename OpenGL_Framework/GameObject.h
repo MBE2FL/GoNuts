@@ -28,8 +28,8 @@ public:
 	void setRotationAngleY(const float newAngle);
 	float getRotationAngleZ() const;
 	void setRotationAngleZ(const float newAngle);
-	float getScale() const;
-	void setScale(const float newScale);
+	Vector3 getScale() const;
+	void setScale(const Vector3 newScale);
 
 	Matrix44 getLocalToWorldMatrix() const;
 

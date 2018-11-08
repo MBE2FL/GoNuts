@@ -52,12 +52,12 @@ void GameObject::setRotationAngleZ(const float newAngle)
 	_transform->setRotationAngleZ(newAngle);
 }
 
-float GameObject::getScale() const
+Vector3 GameObject::getScale() const
 {
 	return _transform->getScale();
 }
 
-void GameObject::setScale(float newScale)
+void GameObject::setScale(Vector3 newScale)
 {
 	_transform->setScale(newScale);
 }

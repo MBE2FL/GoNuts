@@ -55,9 +55,9 @@ void ColliderBounds::updatePoint(Transform* transform)
 	Matrix44 ry;
 	Matrix44 rz;
 
-	rx.RotateX(transform->getRotationAngleX());
-	ry.RotateY(transform->getRotationAngleY());
-	rz.RotateZ(transform->getRotationAngleZ());
+	rx.RotateX(0);
+	ry.RotateY(0);
+	rz.RotateZ(0);
 	// Note: pay attention to rotation order, ZYX is not the same as XYZ
 	Matrix44 rotation = rz * ry * rx;
 
@@ -72,12 +72,14 @@ void ColliderBounds::updatePoint(Transform* transform)
 	Matrix44 scale;
 	scale.Scale(transform->getScale());
 
-	Matrix44 newMinMatrix = minTran * rotation * scale;
-	Matrix44 newMaxMatrix = maxTran * rotation * scale;
+	Matrix44 newMinMatrix = scale * rotation * minTran;
+	Matrix44 newMaxMatrix = scale * rotation * maxTran;
 
 	Vector4 newMin = (newMinMatrix * Vector4(points[0], 1.0f));
 	setMin(Vector3(newMin.x, newMin.y, newMin.z));
 
 	Vector4 newMax = (newMaxMatrix * Vector4(points[7], 1.0f));
 	setMax(Vector3(newMax.x, newMax.y, newMax.z));
+
+	setSize(getMax() - getMin());
 }

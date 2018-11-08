@@ -34,7 +34,7 @@ void Game::initializeGame()
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(-3.0f, -1.0f, 0.0f));
+	player.setPosition(Vector3(-3.0f, 3.0f, -5.0f));
 
 	for (float i = 0.0f; i < 20; i++)
 	{
@@ -43,10 +43,11 @@ void Game::initializeGame()
 		plat->setMesh(ObjectLoader::getMesh("Platform"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, i - 2.0f, 0.0f));
+		plat->setPosition(Vector3(i * 9.0f, 2.0f, -5.0f));
 
 		platforms.push_back(*plat);
 	}
+
 	//platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//platOne.setMesh(ObjectLoader::getMesh("Platform"));
 	//platOne.addPhysicsBody(false);
@@ -101,10 +102,12 @@ void Game::update()
 
 	if (player.getPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
 	{
-		player.setPosition(Vector3(-3.0f, -0.99f, 0.0f));
+		player.setPosition(Vector3(-3.0f, 3, -5.0f));
 		player.setVelocity(Vector2(0.0f, 0.0f));
 	}
 	
+	counter += deltaTime;
+	player.setRotationAngleY(counter);
 	//std::cout << deltaTime << std::endl;
 	//if (colliding && !collided)
 	//{
@@ -130,7 +133,7 @@ void Game::update()
 	//	collided = false;
 	//}
 
-	Vector3 offset(-3, -1.5f, -4);
+	Vector3 offset(-3, -1.5f, -8);
 	camera.setPosition(player.getPosition() - offset);
 	camera.update(deltaTime);
 
@@ -192,12 +195,11 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	//}
 	if (key == 'w' && collided)
 	{
-		player.addForce(Vector2(0.0f, 200.0f));
+		player.addForce(Vector2(0.0f, 100.0f));
 	}
 	if (key == 's')
 	{
-		player.setScale(0.7f);
-		//player.addForce(Vector2(0.0f, 200.0f));
+		player.setScale(Vector3(1, 0.5, 1));
 	}
 }
 
@@ -219,7 +221,6 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	if (key == 's')
 	{
 		player.setScale(1);
-		//player.addForce(Vector2(0.0f, 200.0f));
 	}
 }
 

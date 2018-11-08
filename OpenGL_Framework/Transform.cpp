@@ -26,9 +26,24 @@ void Transform::setRotationAngleZ(const float newAngle)
 	m_pRotZ = newAngle;
 }
 
-void Transform::setScale(const float newScale)
+void Transform::setScale(const Vector3 newScale)
 {
 	m_pScale = newScale;
+}
+
+void Transform::setScaleX(const float _x)
+{
+	m_pScale.x = _x;
+}
+
+void Transform::setScaleY(const float _y)
+{
+	m_pScale.y = _y;
+}
+
+void Transform::setScaleZ(const float _z)
+{
+	m_pScale.z = _z;
 }
 
 Vector3 Transform::getPosition() const
@@ -51,9 +66,24 @@ float Transform::getRotationAngleZ() const
 	return m_pRotZ;
 }
 
-float Transform::getScale() const
+Vector3 Transform::getScale() const
 {
 	return m_pScale;
+}
+
+float Transform::getScaleX() const
+{
+	return m_pScale.x;
+}
+
+float Transform::getScaleY() const
+{
+	return m_pScale.y;
+}
+
+float Transform::getScaleZ() const
+{
+	return m_pScale.z;
 }
 
 Matrix44 Transform::getLocalToWorldMatrix() const
@@ -90,7 +120,7 @@ void Transform::update(float dt)
 	// This is the local transformation matrix, ie. where is this game object relative to it's parent
 	// If a game object has no parent (it is a root node) then its local transform is also it's global transform
 	// If a game object has a parent, then we must apply the parent's transform
-	m_pLocalToWorldMatrix = tran * m_pLocalRotation * scale;
+	m_pLocalToWorldMatrix = scale * m_pLocalRotation * tran;
 
 	//std::cout << m_pLocalToWorldMatrix[12] << ", " << m_pLocalToWorldMatrix[13] << ", " << m_pLocalToWorldMatrix[14] 
 	//	<< ", " << m_pLocalToWorldMatrix[15] << std::endl;
