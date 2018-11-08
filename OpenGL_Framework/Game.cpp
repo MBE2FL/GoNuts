@@ -23,6 +23,7 @@ void Game::initializeGame()
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
+	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
@@ -92,7 +93,7 @@ void Game::initializeGame()
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
-	light->setAmbient(Vector3(0.10f, 0.10f, 0.10f));
+	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
 	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
 	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
 	light->setSpecularExp(100.0f);
@@ -330,6 +331,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	if (key == 's')
 	{
 		player.setScale(1);
+		player.setPosition(Vector3(player.getPosition().x, 2.8f, player.getPosition().z));
 	}
 }
 
