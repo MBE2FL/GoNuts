@@ -25,6 +25,7 @@ void Game::initializeGame()
 	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
+	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
@@ -44,9 +45,37 @@ void Game::initializeGame()
 		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
 		plat->setPosition(Vector3(i * 9.0f, 2.0f, -5.0f));
+		plat->setScale(Vector3(1, 1, 2));
 
 		platforms.push_back(*plat);
 	}
+
+	for (float i = 5.0f; i < 10; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Platform"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->addPhysicsBody(false);
+		plat->setPosition(Vector3(i * 9.0f, 3.5f, -5.0f));
+		plat->setScale(Vector3(0.5, 1, 1));
+
+		platforms.push_back(*plat);
+	}
+
+	for (float i = 15.0f; i < 20; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Platform"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->addPhysicsBody(false);
+		plat->setPosition(Vector3(i * 9.0f, 3.5f, -5.0f));
+		plat->setScale(Vector3(0.5, 1, 1));
+
+		platforms.push_back(*plat);
+	}
+
 
 	//platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//platOne.setMesh(ObjectLoader::getMesh("Platform"));
@@ -83,13 +112,13 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	player.update(deltaTime);
-	for (unsigned int i = 0; i < 20; i++)
+	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].update(deltaTime);
 	}
 	//platOne.update(deltaTime);
 	//platTwo.update(deltaTime);
-	for (unsigned int i = 0; i < 20; i++)
+	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		collided = player.checkCollisions(platforms[i]);
 		if (collided)
@@ -145,7 +174,7 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	player.draw(camera);
-	for (unsigned int i = 0; i < 20; i++)
+	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].draw(camera);
 	}
