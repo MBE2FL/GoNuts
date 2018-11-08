@@ -9,7 +9,7 @@ class MathLibCore
 {
 public:
 	template<typename T>
-	T lerp(const T& begin, const T& end, float interValue);
+	static T lerp(const T& begin, const T& end, float interValue);
 };
 
 template<typename T>
