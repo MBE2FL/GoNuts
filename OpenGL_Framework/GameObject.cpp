@@ -69,6 +69,7 @@ Matrix44 GameObject::getLocalToWorldMatrix() const
 
 void GameObject::update(float deltaTime)
 {
+	//if(_physicsBody)
 	_physicsBody->updatePhysicsBody(_transform, deltaTime);
 	_transform->update(deltaTime);
 }

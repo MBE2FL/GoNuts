@@ -24,18 +24,35 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
-	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
-	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
+	//ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
+	//ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
-	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
-	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
-	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
+	ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
+	ObjectLoader::loadMesh("Board", "./Assets/Models/roof board.obj");
+	ObjectLoader::loadMesh("BoardEdge", "./Assets/Models/roof board edge.obj");
+
+	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
+	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
+	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
+	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
+	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 3.0f, -5.0f));
+
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Acorn"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));
+	plat->addPhysicsBody(false);
+	plat->setPosition(Vector3(1.0f, 2.0f, 0.0f));
+	plat->setScale(Vector3(1, 1, 1));
+	//plat->setRotationAngleY(PI/2.0f);
+
+	platforms.push_back(*plat);
 
 	for (float i = 0.0f; i < 20; i++)
 	{
@@ -44,10 +61,22 @@ void Game::initializeGame()
 		plat->setMesh(ObjectLoader::getMesh("Platform"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, 2.0f, -5.0f));
-		plat->setScale(Vector3(1, 1, 2));
+		plat->setPosition(Vector3(i * 7.0f, 2.0f, -5.0f));
+		plat->setScale(Vector3(1, 1, 1));
+		//plat->setRotationAngleY(PI/2.0f);
 
 		platforms.push_back(*plat);
+
+	//	plat = new GameObject;
+	//	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//	plat->setMesh(ObjectLoader::getMesh("Board"));
+	//	plat->setTexture(ObjectLoader::getTexture("Default"));
+	//	//plat->addPhysicsBody(false);
+	//	plat->setPosition(Vector3(i * 5.0f, 2.0f, -5.0f));
+	//	plat->setScale(Vector3(1, 1, 2));
+	//	plat->setRotationAngleY(PI / 2.0f);
+	//
+	//	SceneObjects.push_back(*plat);
 	}
 
 	for (float i = 5.0f; i < 10; i++)
@@ -57,7 +86,7 @@ void Game::initializeGame()
 		plat->setMesh(ObjectLoader::getMesh("Platform"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, 3.5f, -5.0f));
+		plat->setPosition(Vector3(i * 7.0f, 3.5f, -5.0f));
 		plat->setScale(Vector3(0.5, 1, 1));
 
 		platforms.push_back(*plat);
@@ -70,7 +99,7 @@ void Game::initializeGame()
 		plat->setMesh(ObjectLoader::getMesh("Platform"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
 		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, 3.5f, -5.0f));
+		plat->setPosition(Vector3(i * 7.0f, 3.5f, -5.0f));
 		plat->setScale(Vector3(0.5, 1, 1));
 
 		platforms.push_back(*plat);
@@ -178,7 +207,10 @@ void Game::draw()
 	{
 		platforms[i].draw(camera);
 	}
-	   
+	//for (unsigned int i = 0; i < SceneObjects.size(); i++)
+	//{
+	//	SceneObjects[i].draw(camera);
+	//}
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
