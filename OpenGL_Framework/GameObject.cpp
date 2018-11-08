@@ -69,7 +69,9 @@ Matrix44 GameObject::getLocalToWorldMatrix() const
 
 void GameObject::update(float deltaTime)
 {
-	_physicsBody->updatePhysicsBody(_transform, deltaTime);
+	if (_physicsBody)
+		_physicsBody->updatePhysicsBody(_transform, deltaTime);
+
 	_transform->update(deltaTime);
 }
 
@@ -160,22 +162,28 @@ PhysicsBody* GameObject::getPhysicsBody() const
 
 bool GameObject::checkCollisions(GameObject& other)
 {
-	return _physicsBody->collision(other.getPhysicsBody());
+	if (_physicsBody)
+		return _physicsBody->collision(other.getPhysicsBody());
+
+	return false;
 }
 
 void GameObject::addForce(const Vector2 & force)
 {
-	_physicsBody->addForce(force);
+	if (_physicsBody)
+		_physicsBody->addForce(force);
 }
 
 void GameObject::useGravity(const bool _useGravity)
 {
-	_physicsBody->setUseGravity(_useGravity);
+	if (_physicsBody)
+		_physicsBody->setUseGravity(_useGravity);
 }
 
 void GameObject::setVelocity(const Vector2 & velocity)
 {
-	_physicsBody->setVelocity(velocity);
+	if (_physicsBody)
+		_physicsBody->setVelocity(velocity);
 }
 
 //MeshBounds GameObject::getMeshBounds() const
