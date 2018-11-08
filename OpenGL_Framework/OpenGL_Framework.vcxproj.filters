@@ -85,11 +85,20 @@
     <ClCompile Include="include\imgui\imgui_draw.cpp">
       <Filter>Header Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="include\imgui\imgui_impl.cpp">
+    <ClCompile Include="include\imgui\imgui_impl_freeglut.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_widgets.cpp">
       <Filter>Header Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="GUIHelper.cpp">
       <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,26 +162,35 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\imgui\imconfig.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
     <ClInclude Include="include\imgui\imgui.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="include\imgui\imgui_impl.h">
+    <ClInclude Include="include\imgui\imgui_impl_freeglut.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="include\imgui\imgui_internal.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="include\imgui\stb_rect_pack.h">
+    <ClInclude Include="include\imgui\imstb_rectpack.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="include\imgui\stb_textedit.h">
+    <ClInclude Include="include\imgui\imstb_textedit.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="include\imgui\stb_truetype.h">
+    <ClInclude Include="include\imgui\imstb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="GUIHelper.h">
       <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

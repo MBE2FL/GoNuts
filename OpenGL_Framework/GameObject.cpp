@@ -116,7 +116,7 @@ void GameObject::unLoad()
 	_mesh->Unload();
 }
 
-void GameObject::draw(Camera& camera)
+void GameObject::draw(Camera& camera, Light* light)
 {
 	_shaderProgram->bind();
 	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
@@ -127,14 +127,14 @@ void GameObject::draw(Camera& camera)
 	_shaderProgram->sendUniform("uTex", 0);
 
 
-	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(4.0f, 0.0f, 0.0f, 1.0f));
-	_shaderProgram->sendUniform("lightAmbient", Vector3(0.10f, 0.10f, 0.10f));
-	_shaderProgram->sendUniform("lightDiffuse", Vector3(0.7f, 0.1f, 0.2f));
-	_shaderProgram->sendUniform("lightSpecular", Vector3(1.0f, 0.1f, 0.1f));
-	_shaderProgram->sendUniform("lightSpecularExponent", 100.0f);
-	_shaderProgram->sendUniform("attenuationConstant", 1.0f);
-	_shaderProgram->sendUniform("attenuationLinear", 0.1f);
-	_shaderProgram->sendUniform("attenuationQuadratic", 0.01f);
+	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(light->getPosition(), 1.0f));
+	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
+	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
+	_shaderProgram->sendUniform("lightSpecular", light->getSpecular());
+	_shaderProgram->sendUniform("lightSpecularExponent", light->getSpecularExp());
+	_shaderProgram->sendUniform("attenuationConstant", light->getAttenuationConstant());
+	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
+	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
 
 	_texture->bind();
 
