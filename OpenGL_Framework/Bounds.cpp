@@ -65,4 +65,5 @@ Vector3 Bounds::getSize() const
 void Bounds::setSize(const Vector3 & size)
 {
 	_size = size;
+	_extends = _size * 0.5f;
 }

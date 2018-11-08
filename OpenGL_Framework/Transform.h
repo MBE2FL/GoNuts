@@ -13,13 +13,19 @@ public:
 	void setRotationAngleX(const float newAngle);
 	void setRotationAngleY(const float newAngle);
 	void setRotationAngleZ(const float newAngle);
-	void setScale(const float newScale);
+	void setScale(const Vector3 newScale);
+	void setScaleX(const float _x);
+	void setScaleY(const float _y);
+	void setScaleZ(const float _z);
 	
 	Vector3 getPosition() const;
 	float getRotationAngleX() const;
 	float getRotationAngleY() const;
 	float getRotationAngleZ() const;
-	float getScale() const;
+	Vector3 getScale() const;
+	float getScaleX() const;
+	float getScaleY() const;
+	float getScaleZ() const;
 
 	Matrix44 getLocalToWorldMatrix() const;
 
@@ -31,7 +37,7 @@ private:
 	std::string name;
 	Vector4 color;
 
-	float m_pScale = 1.0f;
+	Vector3 m_pScale = 1.0f;
 	float m_pRotX = 0.0f;
 	float m_pRotY = 0.0f;
 	float m_pRotZ = 0.0f;

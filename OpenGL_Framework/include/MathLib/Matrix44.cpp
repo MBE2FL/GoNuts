@@ -386,22 +386,22 @@ void Matrix44::Translate(const Vector3 & translation)
 	*this = tran;
 }
 
-void Matrix44::Scale(float scale)
+void Matrix44::Scale(Vector3 scale)
 {
 	Matrix44 s;
-	s.mV[0] = scale;
+	s.mV[0] = scale.x;
 	s.mV[1] = 0.f;
 	s.mV[2] = 0.f;
 	s.mV[3] = 0.f;
 	
 	s.mV[4] = 0.f;
-	s.mV[5] = scale;
+	s.mV[5] = scale.y;
 	s.mV[6] = 0.f;
 	s.mV[7] = 0.f;
 	
 	s.mV[8] = 0.f;
 	s.mV[9] = 0.f;
-	s.mV[10] = scale;
+	s.mV[10] = scale.z;
 	s.mV[11] = 0.f;
 	
 	s.mV[12] = 0.f;
