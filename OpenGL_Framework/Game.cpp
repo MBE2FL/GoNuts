@@ -59,6 +59,18 @@ void Game::initializeGame()
 
 	//platOne.setScale(0.4f);
 
+
+	light = new Light();
+	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
+	light->setAmbient(Vector3(0.10f, 0.10f, 0.10f));
+	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
+	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
+	light->setSpecularExp(100.0f);
+	light->setAttenuationConstant(1.0f);
+	light->setAttenuationLinear(0.1f);
+	light->setAttenuationQuadratic(0.01f);
+
+
 	Matrix44 test;
 	test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
 	test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
@@ -141,21 +153,88 @@ void Game::draw()
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	player.draw(camera);
+	// New imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplFreeGLUT_NewFrame();
+
+	// Update imgui widgets
+	imguiDraw();
+
+	// Render imgui
+	ImGui::Render();
+
+	// Draw game objects
+	player.draw(camera, light);
 	for (unsigned int i = 0; i < 20; i++)
 	{
-		platforms[i].draw(camera);
+		platforms[i].draw(camera, light);
 	}
 	   
+	// Update imgui draw data
+	glUseProgram(GL_NONE);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
 }
 
+void Game::imguiDraw()
+{
+	{
+		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+		Vector3 pos = camera.getPosition();
+		ImGui::Text("Camera Position: (%f, %f, %f)", pos.x, pos.y, pos.z);
+		pos = player.getPosition();
+		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
+
+		// Light settings
+		if (ImGui::CollapsingHeader("Light Settings:"))
+		{
+			// Position settings
+			Vector3 position = light->getPosition();
+			ImGui::DragFloat3("Light Position: ", &position.x, 0.5f);
+			light->setPosition(position);
+			// Ambient settings
+			Vector3 ambient = light->getAmbient();
+			ImGui::ColorEdit3("Ambient Colour: ", &ambient.x);
+			light->setAmbient(ambient);
+			// Diffuse settings
+			Vector3 diffuse = light->getDiffuse();
+			ImGui::ColorEdit3("Diffuse Colour: ", &diffuse.x);
+			light->setDiffuse(diffuse);
+			// Specular settings
+			Vector3 specular = light->getSpecular();
+			ImGui::ColorEdit3("Specular Colour: ", &specular.x);
+			light->setSpecular(specular);
+			// Specular exponent settings
+			float specularExp = light->getSpecularExp();
+			ImGui::SliderFloat("Specular Exp: ", &specularExp, 0.0f, 250.0f);
+			light->setSpecularExp(specularExp);
+			// Attenuation constant settings
+			float attenuationConstant = light->getAttenuationConstant();
+			ImGui::SliderFloat("Attenuation Constant: ", &attenuationConstant, 0.0f, 20.0f);
+			light->setAttenuationConstant(attenuationConstant);
+			// Attenuation linear settings
+			float attenuationLinear = light->getAttenuationLinear();
+			ImGui::SliderFloat("Attenuation Linear: ", &attenuationLinear, 0.0f, 5.0f);
+			light->setAttenuationLinear(attenuationLinear);
+			// Attenuation quadratic settings
+			float attenuationQuadratic = light->getAttenuationQuadratic();
+			ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
+			light->setAttenuationQuadratic(attenuationQuadratic);
+		}
+
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+	}
+}
+
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
-	//ImGuiIO& io = ImGui::GetIO();
-	//io.KeysDown[key] = true;
+	ImGuiIO& io = ImGui::GetIO();
+	io.KeysDown[key] = true;
 
 	switch(key)
 	{
@@ -203,8 +282,8 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
-	//ImGuiIO& io = ImGui::GetIO();
-	//io.KeysDown[key] = false;
+	ImGuiIO& io = ImGui::GetIO();
+	io.KeysDown[key] = false;
 
 	switch(key)
 	{
@@ -225,7 +304,8 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 
 void Game::mouseClicked(int button, int state, int x, int y)
 {
-	//ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
+	io.MousePos = ImVec2((float)x, (float)y);
 	//io.MouseDown[button] = state;
 
 	if(state == GLUT_DOWN) 
@@ -233,19 +313,30 @@ void Game::mouseClicked(int button, int state, int x, int y)
 		switch(button)
 		{
 		case GLUT_LEFT_BUTTON:
-
+			io.MouseDown[0] = true;
 			break;
 		case GLUT_RIGHT_BUTTON:
-		
+			io.MouseDown[1] = true;
 			break;
 		case GLUT_MIDDLE_BUTTON:
-
+			io.MouseDown[2] = true;
 			break;
 		}
 	}
 	else
 	{
-
+		switch (button)
+		{
+		case GLUT_LEFT_BUTTON:
+			io.MouseDown[0] = false;
+			break;
+		case GLUT_RIGHT_BUTTON:
+			io.MouseDown[1] = false;
+			break;
+		case GLUT_MIDDLE_BUTTON:
+			io.MouseDown[2] = false;
+			break;
+		}
 	}
 }
 
@@ -259,4 +350,6 @@ void Game::mouseClicked(int button, int state, int x, int y)
  */
 void Game::mouseMoved(int x, int y)
 {
+	ImGuiIO& io = ImGui::GetIO();
+	io.MousePos = ImVec2((float)x, (float)y);
 }

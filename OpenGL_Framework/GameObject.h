@@ -6,6 +6,7 @@
 #include "PhysicsBody.h"
 #include "Component.h"
 #include "Texture.h"
+#include "Light.h"
 
 enum class Tag
 {
@@ -43,7 +44,7 @@ public:
 	void setTexture(Texture* texture);
 
 	void unLoad();
-	void draw(Camera& camera);
+	void draw(Camera& camera, Light* light);
 
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);

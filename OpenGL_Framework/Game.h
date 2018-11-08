@@ -33,6 +33,7 @@ public:
 	void initializeGame();
 	void update();
 	void draw();
+	void imguiDraw();
 
 	/* input callback functions */
 	void keyboardDown(unsigned char key, int mouseX, int mouseY);
@@ -56,14 +57,9 @@ private:
 	GameObject* plat;
 	vector<GameObject> platforms;
 	bool collided = false;
-
+	
 	//vector<GameObject> platform;
 
+	Light* light;
 
-	// OpenGL Handles
-	//unsigned int VBO = GL_NONE;
-	//unsigned int VAO = GL_NONE;
-	//unsigned int shaderProgram = GL_NONE;
-	//unsigned int vertShader = GL_NONE;
-	//unsigned int fragShader = GL_NONE;
 };
