@@ -55,7 +55,6 @@ private:
 	GameObject platOne, platTwo;
 	GameObject* plat;
 	vector<GameObject> platforms;
-	//vector<GameObject> SceneObjects;
 	bool collided = false;
 
 	float counter = 0.0f;
