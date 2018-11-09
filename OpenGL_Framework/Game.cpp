@@ -249,6 +249,7 @@ void Game::update()
 
 	if (player.getPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
 	{
+		//player.setPosition(MathLibCore::lerp(player.getPosition(), Vector3(-3.0f, 4, -5.0f), deltaTime * 2));
 		player.setPosition(Vector3(-3.0f, 4, -5.0f));
 		player.setVelocity(Vector2(0.0f, 0.0f));
 	}
@@ -281,7 +282,7 @@ void Game::update()
 	//}
 
 	Vector3 offset(-3, -1.5f, -8);
-	camera.setPosition(player.getPosition() - offset);
+	camera.setPosition(MathLibCore::lerp( camera.getPosition(), player.getPosition() - offset, deltaTime * 3));
 	camera.update(deltaTime);
 }
 
