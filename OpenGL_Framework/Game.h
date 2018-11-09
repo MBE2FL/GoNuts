@@ -59,7 +59,6 @@ private:
 	bool collided = false;
 
 	float counter = 0.0f;
-
 	//vector<GameObject> platform;
 
 	Light* light;
