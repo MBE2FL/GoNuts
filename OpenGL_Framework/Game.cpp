@@ -411,6 +411,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	if (key == 's')
 	{
 		player.setScale(0.1f);
+		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
 		//player.setScale(Vector3(1, 0.5f, 1));
 	}
 }
@@ -433,7 +434,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	if (key == 's' && !io.KeysDown['s'])
 	{
 		//player.setScale(1);
-		player.setPosition(Vector3(player.getPosition().x, 3.8f, player.getPosition().z));
+		player.setPosition(Vector3(player.getPosition().x, 3.5f, player.getPosition().z));
 		player.setScale(0.2f);
 	}
 }
