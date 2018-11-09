@@ -150,7 +150,7 @@ void Game::initializeGame()
 		plat->setPosition(Vector3(i * 9.0f, 4.2f, -5.0f));
 		plat->setScale(Vector3(0.4f, 1, 1));
 
-		platforms.push_back(*plat);
+		upperPlatforms.push_back(*plat);
 	}
 
 	for (float i = 15.0f; i < 20; i++)
@@ -163,7 +163,7 @@ void Game::initializeGame()
 		plat->setPosition(Vector3(i * 9.0f, 4.2f, -5.0f));
 		plat->setScale(Vector3(0.4f, 1, 1));
 
-		platforms.push_back(*plat);
+		upperPlatforms.push_back(*plat);
 	}
 
 
@@ -232,6 +232,11 @@ void Game::update()
 	{
 		platforms[i].update(deltaTime);
 	}
+	for (unsigned int i = 0; i < upperPlatforms.size(); i++)
+	{
+		upperPlatforms[i].update(deltaTime);
+		player.checkCollisions(upperPlatforms[i]);
+	}
 	//platOne.update(deltaTime);
 	//platTwo.update(deltaTime);
 	for (unsigned int i = 0; i < platforms.size(); i++)
@@ -240,6 +245,7 @@ void Game::update()
 		if (collided)
 			break;
 	}
+
 	
 		
 	
@@ -320,6 +326,10 @@ void Game::draw()
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].draw(camera, light);
+	}
+	for (unsigned int i = 0; i < upperPlatforms.size(); i++)
+	{
+		upperPlatforms[i].draw(camera, light);
 	}
 	   
 	// Update imgui draw data

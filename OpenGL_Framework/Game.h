@@ -58,6 +58,7 @@ private:
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
 	vector<GameObject> Background;
+	vector<GameObject> upperPlatforms;
 
 	bool collided = false;
 
