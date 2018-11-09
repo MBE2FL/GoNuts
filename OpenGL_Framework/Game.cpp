@@ -31,12 +31,54 @@ void Game::initializeGame()
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
 	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
+	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
+	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
+	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
+	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
+	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(-3.0f, 3.0f, -5.0f));
+	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
+
+
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Acorn"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));	
+	plat->setPosition(Vector3(0.0f, 4.0f, -5.0f));
+	sceneObjects.push_back(*plat);
+
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Coin"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));
+	plat->setPosition(Vector3(2.0f, 4.5f, -5.0f));
+	sceneObjects.push_back(*plat);
+
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Cone"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));
+	plat->setPosition(Vector3(4.0f, 4.0f, -5.0f));
+	sceneObjects.push_back(*plat);
+
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Spikes"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));
+	plat->setPosition(Vector3(6.0f, 4.0f, -5.0f));
+	sceneObjects.push_back(*plat);
+
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Vent"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));
+	plat->setPosition(Vector3(8.0f, 4.0f, -5.0f));
+	sceneObjects.push_back(*plat);
 
 	for (float i = 0.0f; i < 20; i++)
 	{
@@ -125,6 +167,11 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	player.update(deltaTime);
+	for (unsigned int i = 0; i < sceneObjects.size(); i++)
+	{
+		sceneObjects[i].update(deltaTime);
+		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.05f);
+	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].update(deltaTime);
@@ -199,6 +246,10 @@ void Game::draw()
 
 	// Draw game objects
 	player.draw(camera, light);
+	for (unsigned int i = 0; i < sceneObjects.size(); i++)
+	{
+		sceneObjects[i].draw(camera, light);
+	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].draw(camera, light);
