@@ -28,7 +28,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
-	//ObjectLoader::loadTexture("Background", "./Assets/Textures/Default.png");
+	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
 
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
@@ -46,7 +46,7 @@ void Game::initializeGame()
 		plat = new GameObject;
 		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 		plat->setMesh(ObjectLoader::getMesh("Background"));
-		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setTexture(ObjectLoader::getTexture("Background"));
 		plat->setPosition(Vector3(i * 100.0f, -5.0f, -20.0f));
 		plat->setScale(25);
 		Background.push_back(*plat);
