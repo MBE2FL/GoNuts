@@ -60,14 +60,34 @@ void Game::initializeGame()
 	player.setScale(0.2f);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 
+	plat = new GameObject;
+	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	plat->setMesh(ObjectLoader::getMesh("Coin"));
+	plat->setTexture(ObjectLoader::getTexture("Default"));
+	plat->addPhysicsBody(false);
+	plat->setPosition(Vector3(35.0f, 4.0f, -5.0f));
+	coins.push_back(*plat);
+
+
 	for (float i = 0.0f; i < 3.0f; i++)
 	{
 		plat = new GameObject;
 		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 		plat->setMesh(ObjectLoader::getMesh("Acorn"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->addPhysicsBody(false);
 		plat->setPosition(Vector3(i * 2.0f, 4.0f, -5.0f));
-		sceneObjects.push_back(*plat);
+		coins.push_back(*plat);
+	}
+	for (float i = 0.0f; i < 3.0f; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Acorn"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->addPhysicsBody(false);
+		plat->setPosition(Vector3(i * 2.0f + 37.0f, 4.0f, -5.0f));
+		coins.push_back(*plat);
 	}
 	for (float i = 0.0f; i < 3.0f; i++)
 	{
@@ -75,8 +95,9 @@ void Game::initializeGame()
 		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 		plat->setMesh(ObjectLoader::getMesh("Coin"));
 		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->addPhysicsBody(false);
 		plat->setPosition(Vector3(6.0f + i * 2.0f, 4.5f, -5.0f));
-		sceneObjects.push_back(*plat);
+		coins.push_back(*plat);
 	}
 	for (float i = 0.0f; i < 3.0f; i++)
 	{
@@ -193,6 +214,11 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	player.update(deltaTime);
+	for (unsigned int i = 0; i < coins.size(); i++)
+	{
+		coins[i].update(deltaTime); 
+		player.checkCoinCollisions(coins[i]);
+	}
 	for (unsigned int i = 0; i < Background.size(); i++)
 	{
 		Background[i].update(deltaTime);
@@ -214,6 +240,8 @@ void Game::update()
 		if (collided)
 			break;
 	}
+	
+		
 	
 	
 	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
@@ -275,6 +303,11 @@ void Game::draw()
 
 	// Draw game objects
 	player.draw(camera, light);
+	
+	for (unsigned int i = 0; i < coins.size(); i++)
+	{
+		coins[i].draw(camera, light);
+	}
 	for (unsigned int i = 0; i < Background.size(); i++)
 	{
 		Background[i].draw(camera, light);

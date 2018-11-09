@@ -168,6 +168,14 @@ bool GameObject::checkCollisions(GameObject& other)
 	return false;
 }
 
+bool GameObject::checkCoinCollisions(GameObject & other)
+{
+	if (_physicsBody)
+		return _physicsBody->coinCollision(other.getPhysicsBody());
+
+	return false;
+}
+
 void GameObject::addForce(const Vector2 & force)
 {
 	if (_physicsBody)

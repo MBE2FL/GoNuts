@@ -50,6 +50,7 @@ public:
 	void addPhysicsBody(const bool _useGravity);
 	PhysicsBody* getPhysicsBody() const;
 	bool checkCollisions(GameObject& other);
+	bool checkCoinCollisions(GameObject& other);
 	void addForce(const Vector2& force);
 	void useGravity(const bool _useGravity);
 	void setVelocity(const Vector2& velocity);

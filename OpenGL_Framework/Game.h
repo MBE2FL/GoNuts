@@ -53,7 +53,7 @@ private:
 	//GameObject cube;
 
 	GameObject player;
-	GameObject platOne, platTwo;
+	vector<GameObject> coins;
 	GameObject* plat;
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
