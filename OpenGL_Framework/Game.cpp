@@ -58,41 +58,51 @@ void Game::initializeGame()
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Acorn"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));	
-	plat->setPosition(Vector3(0.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Coin"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(2.0f, 4.5f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Cone"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(4.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Spikes"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(6.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Vent"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(8.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
+	for (float i = 0.0f; i < 3.0f; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Acorn"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setPosition(Vector3(i * 2.0f, 4.0f, -5.0f));
+		sceneObjects.push_back(*plat);
+	}
+	for (float i = 0.0f; i < 3.0f; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Coin"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setPosition(Vector3(6.0f + i * 2.0f, 4.5f, -5.0f));
+		sceneObjects.push_back(*plat);
+	}
+	for (float i = 0.0f; i < 3.0f; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Cone"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setPosition(Vector3(12.0f + i * 2.0f, 4.0f, -5.0f));
+		sceneObjects.push_back(*plat);
+	}
+	for (float i = 0.0f; i < 3.0f; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Spikes"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setPosition(Vector3(18.0f + i * 2.0f, 4.0f, -5.0f));
+		sceneObjects.push_back(*plat);
+	}
+	for (float i = 0.0f; i < 3.0f; i++)
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Vent"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setPosition(Vector3(24.0f + i * 3.0f, 4.0f, -5.0f));
+		sceneObjects.push_back(*plat);
+	}
 
 	for (float i = 0.0f; i < 20; i++)
 	{
@@ -188,7 +198,7 @@ void Game::update()
 	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		sceneObjects[i].update(deltaTime);
-		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.05f);
+		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.25f + i);
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
