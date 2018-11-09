@@ -28,6 +28,8 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
+	//ObjectLoader::loadTexture("Background", "./Assets/Textures/Default.png");
+
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
 	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
@@ -36,7 +38,19 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 
+
+	for (float i = 0.0f; i < 20.0f; i++) 
+	{
+		plat = new GameObject;
+		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+		plat->setMesh(ObjectLoader::getMesh("Background"));
+		plat->setTexture(ObjectLoader::getTexture("Default"));
+		plat->setPosition(Vector3(i * 100.0f, -5.0f, -20.0f));
+		plat->setScale(25);
+		Background.push_back(*plat);
+	}
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("Cube"));
@@ -167,6 +181,10 @@ void Game::update()
 	TotalGameTime += deltaTime;
 
 	player.update(deltaTime);
+	for (unsigned int i = 0; i < Background.size(); i++)
+	{
+		Background[i].update(deltaTime);
+	}
 	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		sceneObjects[i].update(deltaTime);
@@ -246,6 +264,10 @@ void Game::draw()
 
 	// Draw game objects
 	player.draw(camera, light);
+	for (unsigned int i = 0; i < Background.size(); i++)
+	{
+		Background[i].draw(camera, light);
+	}
 	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		sceneObjects[i].draw(camera, light);

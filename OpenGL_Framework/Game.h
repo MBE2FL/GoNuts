@@ -57,6 +57,8 @@ private:
 	GameObject* plat;
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
+	vector<GameObject> Background;
+
 	bool collided = false;
 
 	float counter = 0.0f;
