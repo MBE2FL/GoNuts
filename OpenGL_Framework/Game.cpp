@@ -38,6 +38,8 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 
+
+
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("FatBoi"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
@@ -46,6 +48,92 @@ void Game::initializeGame()
 	player.setScale(0.2f);
 	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
 	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
