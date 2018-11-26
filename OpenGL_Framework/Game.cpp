@@ -39,6 +39,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
+	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 
 
 	for (float i = 0.0f; i < 20.0f; i++) 
@@ -59,6 +60,78 @@ void Game::initializeGame()
 	player.setPosition(Vector3(-3.0f, 4.0f, -5.0f));
 	player.setScale(0.2f);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	footEmitter = new ParticleEmitter;
+
+	
+	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	footEmitter->setMesh(ObjectLoader::getMesh("Plane"));
+	footEmitter->setTexture(ObjectLoader::getTexture("Default"));
+	footEmitter->addPhysicsBody(false);
+	footEmitter->setPosition(Vector3(9.0f, 2.0f, -5.0f));
+	footEmitter->setScale(Vector3(1, 1, 1));
+	
+	// Physics properties
+	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity0 = Vector3(-0.1f, -0.01f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity1 = Vector3(-0.1f, -0.01f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->massRange = Vector2(1.0f, 2.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
+
+	// Visual Properties
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorBegin0 = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorBegin1 = Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorEnd0 = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorEnd1 = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->lifeRange = Vector2(0.5f, 1.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeRange = Vector2(15.0f, 25.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeBegin = Vector2(5.0f, 10.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeEnd = Vector2(50.0f, 100.0f);
+
+	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
+
+	// Create the particles
+	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(10);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	plat = new GameObject;
 	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -213,6 +286,8 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
+	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
+	footEmitter->update(deltaTime);
 	player.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
@@ -309,6 +384,12 @@ void Game::draw()
 	ImGui::Render();
 
 	// Draw game objects
+	footEmitter->draw(camera, light);
+
+	//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
+	//{
+	//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
+	//}
 	player.draw(camera, light);
 	
 	for (unsigned int i = 0; i < coins.size(); i++)

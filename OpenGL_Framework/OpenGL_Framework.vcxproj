@@ -102,6 +102,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="PhysicsBody.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshBounds.h" />
     <ClInclude Include="ObjectLoader.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PhysicsBody.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Texture.h" />

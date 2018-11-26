@@ -14,6 +14,7 @@
 #include "Timer.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "ParticleEmitter.h"
 
 #include "GUIHelper.h"
 
@@ -59,6 +60,8 @@ private:
 	vector<GameObject> sceneObjects;
 	vector<GameObject> Background;
 	vector<GameObject> upperPlatforms;
+
+	GameObject* footEmitter;
 
 	bool collided = false;
 
