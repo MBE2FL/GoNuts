@@ -149,6 +149,7 @@ void GameObject::draw(Camera& camera, Light* light)
 	_shaderProgram->unBind();
 }
 
+
 void GameObject::addPhysicsBody(const bool _useGravity)
 {
 	_physicsBody = new PhysicsBody(_mesh->getMeshBounds());

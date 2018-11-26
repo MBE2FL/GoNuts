@@ -33,6 +33,8 @@ public:
 	void initializeGame();
 	void update();
 	void draw();
+	void objectSetup(GameObject* object, vector<GameObject> objectVec, const string shader, const string mesh, const string texture,
+		const bool physics, const Vector3 position, const float scale, const int amount);
 	void imguiDraw();
 
 	/* input callback functions */
@@ -48,9 +50,6 @@ public:
 private:
 	// Scene Objects.
 	Camera camera;
-	//GameObject monkey;
-	//GameObject monkeyTwo;
-	//GameObject cube;
 
 	GameObject player;
 	vector<GameObject> coins;
@@ -63,8 +62,6 @@ private:
 	bool collided = false;
 
 	float counter = 0.0f;
-
-	//vector<GameObject> platform;
 
 	Light* light;
 

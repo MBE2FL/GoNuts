@@ -51,14 +51,15 @@ void Game::initializeGame()
 		plat->setScale(25);
 		Background.push_back(*plat);
 	}
+	
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("FatBoi"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(-3.0f, 4.0f, -5.0f));
-	player.setScale(0.2f);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
+	player.setScale(0.2f);
+	
 
 	plat = new GameObject;
 	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -338,6 +339,23 @@ void Game::draw()
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
+}
+
+void Game::objectSetup(GameObject* object, vector<GameObject> objectVec, const string shader, const string mesh,
+	const string texture, const bool physics, const Vector3 position, const float scale, const int amount)
+{
+
+	for (int i = 0; i < amount; i++)
+	{
+		object = new GameObject;
+		object->setShaderProgram(ObjectLoader::getShaderProgram(shader));
+		object->setMesh(ObjectLoader::getMesh(mesh));
+		object->setTexture(ObjectLoader::getTexture(texture));
+		object->addPhysicsBody(physics);
+		object->setPosition(Vector3(position.x * i, position.y, position.z));
+		object->setScale(scale);
+		objectVec.push_back(*object);
+	}
 }
 
 void Game::imguiDraw()
