@@ -33,8 +33,10 @@ public:
 	void initializeGame();
 	void update();
 	void draw();
-	void objectSetup(GameObject* object, vector<GameObject> objectVec, const string shader, const string mesh, const string texture,
-		const bool physics, const Vector3 position, const float scale, const int amount);
+
+	vector<GameObject> add(vector<GameObject> objectVec1, vector<GameObject> objectVec2);
+	vector<GameObject> objectSetup(const string shader, const string mesh, const string texture,const bool physics,
+								   const Vector3 position, const Vector3 scale, const int amount, const int startNum, float offset);
 	void imguiDraw();
 
 	/* input callback functions */
@@ -52,8 +54,8 @@ private:
 	Camera camera;
 
 	GameObject player;
+
 	vector<GameObject> coins;
-	GameObject* plat;
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
 	vector<GameObject> Background;
