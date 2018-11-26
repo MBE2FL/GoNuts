@@ -404,6 +404,8 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 
 void Game::mouseClicked(int button, int state, int x, int y)
 {
+#ifdef _DEBUG
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
 	//io.MouseDown[button] = state;
@@ -438,6 +440,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
 			break;
 		}
 	}
+#endif
 }
 
 /*
