@@ -63,8 +63,8 @@ void Game::initializeGame()
 	footEmitter->setScale(Vector3(1, 1, 1));
 	
 	// Physics properties
-	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity0 = Vector3(-0.1f, -0.01f, 0.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity1 = Vector3(-0.1f, -0.01f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity0 = Vector3(-0.1f, -0.01f, -0.0001f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity1 = Vector3(-0.1f, -0.01f, 0.0001f);
 	dynamic_cast<ParticleEmitter*>(footEmitter)->massRange = Vector2(1.0f, 2.0f);
 	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
 
@@ -81,7 +81,7 @@ void Game::initializeGame()
 	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
 
 	// Create the particles
-	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(10);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
@@ -134,11 +134,13 @@ void Game::initializeGame()
 
 void Game::update()
 {
+
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
+	drawTime += deltaTime;
 
 	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
 	footEmitter->update(deltaTime);
@@ -193,56 +195,68 @@ void Game::update()
 
 void Game::draw()
 {
-	// Completely clear the Back-Buffer before doing any work.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//std::cout << "HELLO WORLD" << std::endl;
 
-
-	// New imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplFreeGLUT_NewFrame();
-
-	// Update imgui widgets
-	imguiDraw();
-
-	// Render imgui
-	ImGui::Render();
-
-	// Draw game objects
-	footEmitter->draw(camera, light);
-
-	//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
-	//{
-	//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
-	//}
-	player.draw(camera, light);
-	
-	for (unsigned int i = 0; i < coins.size(); i++)
+	//if (drawTime >= 0.033f)
 	{
-		coins[i].draw(camera, light);
-	}
-	for (unsigned int i = 0; i < Background.size(); i++)
-	{
-		Background[i].draw(camera, light);
-	}
-	for (unsigned int i = 0; i < sceneObjects.size(); i++)
-	{
-		sceneObjects[i].draw(camera, light);
-	}
-	for (unsigned int i = 0; i < platforms.size(); i++)
-	{
-		platforms[i].draw(camera, light);
-	}
-	for (unsigned int i = 0; i < upperPlatforms.size(); i++)
-	{
-		upperPlatforms[i].draw(camera, light);
-	}
-	   
-	// Update imgui draw data
-	glUseProgram(GL_NONE);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//std::cout << drawTime << std::endl;
+		// Completely clear the Back-Buffer before doing any work.
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
-	glutSwapBuffers();
+#ifdef _DEBUG
+
+		// New imgui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplFreeGLUT_NewFrame();
+
+		// Update imgui widgets
+		imguiDraw();
+
+		// Render imgui
+		ImGui::Render();
+#endif
+
+		// Draw game objects
+		footEmitter->draw(camera, light);
+
+		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
+		//{
+		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
+		//}
+		player.draw(camera, light);
+
+		for (unsigned int i = 0; i < coins.size(); i++)
+		{
+			coins[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < Background.size(); i++)
+		{
+			Background[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < sceneObjects.size(); i++)
+		{
+			sceneObjects[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < platforms.size(); i++)
+		{
+			platforms[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < upperPlatforms.size(); i++)
+		{
+			upperPlatforms[i].draw(camera, light);
+		}
+
+		// Update imgui draw data
+		glUseProgram(GL_NONE);
+#ifdef _DEBUG
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
+
+		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
+		glutSwapBuffers();
+		drawTime = 0.0f;
+	}
 }
 
 vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> objectVec2)
@@ -328,8 +342,11 @@ void Game::imguiDraw()
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
+#ifdef _DEBUG
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = true;
+#endif
 
 	switch (key)
 	{
@@ -360,8 +377,11 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
+#ifdef _DEBUG
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = false;
+#endif
 
 	switch(key)
 	{
@@ -372,8 +392,10 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
+#ifdef _DEBUG
 
-	if (key == 's' && !io.KeysDown['s'])
+#endif
+	if (key == 's' )
 	{
 		player.setPosition(Vector3(player.getPosition().x, 3.5f, player.getPosition().z));
 		player.setScale(0.2f);

@@ -50,6 +50,8 @@ public:
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
 
+	float drawTime = 0.0f;
+
 private:
 	// Scene Objects.
 	Camera camera;
