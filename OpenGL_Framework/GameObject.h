@@ -7,6 +7,7 @@
 #include "Component.h"
 #include "Texture.h"
 #include "Light.h"
+#include "ObjectLoader.h"
 
 enum class Tag
 {
