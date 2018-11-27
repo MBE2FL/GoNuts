@@ -39,8 +39,6 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 
-
-
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	player.setMesh(ObjectLoader::getMesh("FatBoi"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
@@ -48,13 +46,7 @@ void Game::initializeGame()
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);
 	
-
-
-
-
 	footEmitter = new ParticleEmitter;
-
-	
 	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	footEmitter->setMesh(ObjectLoader::getMesh("Plane"));
 	footEmitter->setTexture(ObjectLoader::getTexture("Default"));
@@ -88,7 +80,6 @@ void Game::initializeGame()
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
 	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
 
-
 	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 0));
 
 	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 37.0f));
@@ -117,12 +108,10 @@ void Game::initializeGame()
 	light->setAttenuationLinear(0.1f);
 	light->setAttenuationQuadratic(0.01f);
 
-
-	Matrix44 test;
-	test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
-	test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
-	test.mV[14] = 15; test.mV[15] = 16;
-
+	//Matrix44 test;
+	//test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
+	//test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
+	//test.mV[14] = 15; test.mV[15] = 16;
 	//test.GetInverse();
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
@@ -183,6 +172,8 @@ void Game::update()
 	{
 		player.setPosition(Vector3(-3.0f, 4, -5.0f));
 		player.setVelocity(Vector2(0.0f, 0.0f));
+		player.setScale(0.2f);
+		sliding = false;
 	}
 	
 	counter += deltaTime;
@@ -364,14 +355,15 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
-	if (key == 'w' && collided)
+	if (key == 'w' && collided && !sliding)
 	{
 		player.addForce(Vector2(0.0f, 100.0f));
 	}
-	if (key == 's')
+	if (key == 's' && collided)
 	{
 		player.setScale(0.1f);
 		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
+		sliding = true;
 	}
 }
 
@@ -395,9 +387,11 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 #ifdef _DEBUG
 
 #endif
-	if (key == 's' )
+	if (key == 's' && collided)
 	{
+		//if(collided)
 		player.setPosition(Vector3(player.getPosition().x, 3.5f, player.getPosition().z));
+		sliding = false;
 		player.setScale(0.2f);
 	}
 }
