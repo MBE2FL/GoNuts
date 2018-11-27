@@ -104,6 +104,7 @@
     <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="PhysicsBody.cpp" />
+    <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PhysicsBody.h" />
+    <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
