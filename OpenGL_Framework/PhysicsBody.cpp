@@ -117,13 +117,13 @@ void PhysicsBody::updatePhysicsBody(Transform* transform, float deltaTime)
 	dt = deltaTime;
 	Vector2 gravity(0, GRAVITY);
 
-	if (useGravity && velocity.y > -4.0f)
+	if (useGravity && velocity.y > -6.0f)
 		force = force + gravity;
 
 	if (velocity.x > 0)
-		addForce(Vector2(2.2f*GRAVITY, 0.0f));
+		addForce(Vector2(1.0f*GRAVITY, 0.0f));
 	else if (velocity.x < 0)
-		addForce(Vector2(2.2f*-GRAVITY, 0.0f));
+		addForce(Vector2(1.0f*-GRAVITY, 0.0f));
 
 
 	acceleration = force * 1.0f / mass;

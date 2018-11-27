@@ -90,6 +90,7 @@ public:
 	///// Initial properties for newly spawned particles
 
 	Vector3 emitterPosition;
+	float spawnDelay = 0.0f;
 
 	// Storing ranges for each property so each particle has some randomness
 	Vector3 velocity0;

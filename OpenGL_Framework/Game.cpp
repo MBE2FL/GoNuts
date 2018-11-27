@@ -81,7 +81,7 @@ void Game::initializeGame()
 	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
 
 	// Create the particles
-	//dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
@@ -366,7 +366,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 	if (key == 'w' && collided && !sliding)
 	{
-		player.addForce(Vector2(0.0f, 100.0f));
+		player.addForce(Vector2(0.0f, 350.0f));
 	}
 	if (key == 's' && collided)
 	{

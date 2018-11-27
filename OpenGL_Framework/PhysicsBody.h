@@ -9,7 +9,7 @@
 
 using std::vector;
 
-#define GRAVITY -4.2f
+#define GRAVITY -16.2f
 
 
 enum class Tags
