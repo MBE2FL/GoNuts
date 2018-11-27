@@ -97,7 +97,7 @@ public:
 
 	Vector3 spawnRadius1;
 	Vector3 spawnRadius2;
-	float range = 0.1f;
+	float range = 0.0f;
 
 	// these properties are single floats, so we can pack the min and max into a vec2, just data!
 	Vector2 lifeRange;
