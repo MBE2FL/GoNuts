@@ -100,9 +100,13 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Animation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -195,7 +199,13 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

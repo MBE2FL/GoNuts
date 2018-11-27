@@ -67,6 +67,7 @@ private:
 	GameObject* footEmitter;
 
 	bool collided = false;
+	bool sliding = false;
 
 	float counter = 0.0f;
 

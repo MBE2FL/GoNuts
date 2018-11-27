@@ -156,6 +156,7 @@ bool Mesh::loadFromFile(const string & file)
 	glGenBuffers(1, &VBO_Vertices);
 	glGenBuffers(1, &VBO_UVs);
 	glGenBuffers(1, &VBO_Normals);
+	glGenBuffers(1, GL_NONE);
 
 	glBindVertexArray(VAO);
 
@@ -214,6 +215,11 @@ unsigned int Mesh::GetNumFaces() const
 unsigned int Mesh::getNumVertices() const
 {
 	return _numVertices;
+}
+
+GLuint Mesh::getVBO_Verts()
+{
+	return VBO_Vertices;
 }
 
 MeshBounds Mesh::getMeshBounds() const

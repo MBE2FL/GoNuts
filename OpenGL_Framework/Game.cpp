@@ -20,8 +20,11 @@ void Game::initializeGame()
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
+	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
+	ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
+	ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
@@ -39,22 +42,19 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 
-
-
-	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
+	player.Animated(true);
 	player.setMesh(ObjectLoader::getMesh("FatBoi"));
+	player.addMesh(ObjectLoader::getMesh("FatBoi2"));
+	player.addMesh(ObjectLoader::getMesh("FatBoi3"));
+	player.addMesh(ObjectLoader::getMesh("FatBoi"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);
+
 	
-
-
-
-
 	footEmitter = new ParticleEmitter;
-
-	
 	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	footEmitter->setMesh(ObjectLoader::getMesh("Plane"));
 	footEmitter->setTexture(ObjectLoader::getTexture("Default"));
@@ -81,13 +81,12 @@ void Game::initializeGame()
 	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
 
 	// Create the particles
-	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
+	//dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
 	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
-
 
 	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 0));
 
@@ -117,12 +116,10 @@ void Game::initializeGame()
 	light->setAttenuationLinear(0.1f);
 	light->setAttenuationQuadratic(0.01f);
 
-
-	Matrix44 test;
-	test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
-	test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
-	test.mV[14] = 15; test.mV[15] = 16;
-
+	//Matrix44 test;
+	//test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
+	//test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
+	//test.mV[14] = 15; test.mV[15] = 16;
 	//test.GetInverse();
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
@@ -183,6 +180,8 @@ void Game::update()
 	{
 		player.setPosition(Vector3(-3.0f, 4, -5.0f));
 		player.setVelocity(Vector2(0.0f, 0.0f));
+		player.setScale(0.2f);
+		sliding = false;
 	}
 	
 	counter += deltaTime;
@@ -296,6 +295,7 @@ void Game::imguiDraw()
 		ImGui::Text("Camera Position: (%f, %f, %f)", pos.x, pos.y, pos.z);
 		pos = player.getPosition();
 		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
+		ImGui::Text("T Value: %f", player.getanimation().getT());
 
 		// Light settings
 		if (ImGui::CollapsingHeader("Light Settings:"))
@@ -364,14 +364,15 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
-	if (key == 'w' && collided)
+	if (key == 'w' && collided && !sliding)
 	{
 		player.addForce(Vector2(0.0f, 100.0f));
 	}
-	if (key == 's')
+	if (key == 's' && collided)
 	{
 		player.setScale(0.1f);
 		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
+		sliding = true;
 	}
 }
 
@@ -395,9 +396,11 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 #ifdef _DEBUG
 
 #endif
-	if (key == 's' )
+	if (key == 's' && collided)
 	{
+		//if(collided)
 		player.setPosition(Vector3(player.getPosition().x, 3.5f, player.getPosition().z));
+		sliding = false;
 		player.setScale(0.2f);
 	}
 }

@@ -8,6 +8,7 @@
 #include "Texture.h"
 #include "Light.h"
 #include "ObjectLoader.h"
+#include "Animation.h"
 
 enum class Tag
 {
@@ -44,6 +45,10 @@ public:
 	void setMesh(Mesh* mesh);
 	void setTexture(Texture* texture);
 
+	void Animated(bool animeted);
+	void addMesh(Mesh* mesh);
+	Animation getanimation();
+
 	void unLoad();
 	virtual void draw(Camera& camera, Light* light);
 
@@ -63,5 +68,7 @@ public:
 	Texture* _texture;
 
 private:
-	
+
+	Animation animation;
+	bool isAnimated = false;
 };
