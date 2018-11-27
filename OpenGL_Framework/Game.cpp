@@ -20,8 +20,11 @@ void Game::initializeGame()
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
+	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
+	ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
+	ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
@@ -39,12 +42,17 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 
-	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
+	player.Animated(true);
 	player.setMesh(ObjectLoader::getMesh("FatBoi"));
+	player.addMesh(ObjectLoader::getMesh("FatBoi2"));
+	player.addMesh(ObjectLoader::getMesh("FatBoi3"));
+	player.addMesh(ObjectLoader::getMesh("FatBoi"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);
+
 	
 	footEmitter = new ParticleEmitter;
 	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -73,7 +81,7 @@ void Game::initializeGame()
 	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
 
 	// Create the particles
-	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
+	//dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
@@ -287,6 +295,7 @@ void Game::imguiDraw()
 		ImGui::Text("Camera Position: (%f, %f, %f)", pos.x, pos.y, pos.z);
 		pos = player.getPosition();
 		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
+		ImGui::Text("T Value: %f", player.getanimation().getT());
 
 		// Light settings
 		if (ImGui::CollapsingHeader("Light Settings:"))

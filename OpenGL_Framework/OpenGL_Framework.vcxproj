@@ -80,6 +80,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Bounds.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColliderBounds.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshBounds.h" />
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PhysicsBody.h" />

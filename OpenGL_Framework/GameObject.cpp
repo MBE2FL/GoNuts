@@ -105,11 +105,33 @@ void GameObject::setShaderProgram(ShaderProgram * shaderProgram)
 void GameObject::setMesh(Mesh * mesh)
 {
 	_mesh = mesh;
+	if (isAnimated)
+	{
+		glBindVertexArray(mesh->VAO);
+		glEnableVertexAttribArray(3);	// Vertex
+		glBindVertexArray(GL_NONE);
+		animation.addMesh(mesh);
+	}
 }
 
 void GameObject::setTexture(Texture * texture)
 {
 	_texture = texture;
+}
+
+void GameObject::Animated(bool animeted)
+{
+	isAnimated = animeted;
+}
+
+void GameObject::addMesh(Mesh * mesh)
+{
+	animation.addMesh(mesh);
+}
+
+Animation GameObject::getanimation()
+{
+	return animation;
 }
 
 void GameObject::unLoad()
@@ -128,7 +150,7 @@ void GameObject::draw(Camera& camera, Light* light)
 
 	_shaderProgram->sendUniform("uTex", 0);
 
-
+	
 	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(light->getPosition(), 1.0f));
 	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
 	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
@@ -138,9 +160,15 @@ void GameObject::draw(Camera& camera, Light* light)
 	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
 	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
 
+
+
 	_texture->bind();
 
 	glBindVertexArray(_mesh->VAO);
+
+	if (isAnimated)
+		animation.animate(_shaderProgram);
+
 	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
 	glBindVertexArray(GL_NONE);
 

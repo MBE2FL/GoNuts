@@ -36,6 +36,8 @@ public:
 	unsigned int GetNumFaces() const;
 	unsigned int getNumVertices() const;
 
+	GLuint getVBO_Verts();
+
 	MeshBounds getMeshBounds() const;
 
 	// OpenGL buffers and objects
