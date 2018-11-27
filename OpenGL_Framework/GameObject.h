@@ -7,6 +7,7 @@
 #include "Component.h"
 #include "Texture.h"
 #include "Light.h"
+#include "ObjectLoader.h"
 
 enum class Tag
 {
@@ -44,20 +45,23 @@ public:
 	void setTexture(Texture* texture);
 
 	void unLoad();
-	void draw(Camera& camera, Light* light);
+	virtual void draw(Camera& camera, Light* light);
 
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);
 	PhysicsBody* getPhysicsBody() const;
 	bool checkCollisions(GameObject& other);
+	bool checkCoinCollisions(GameObject& other);
 	void addForce(const Vector2& force);
 	void useGravity(const bool _useGravity);
 	void setVelocity(const Vector2& velocity);
 	
-private:
 	Transform* _transform;
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	PhysicsBody* _physicsBody;
 	Texture* _texture;
+
+private:
+	
 };

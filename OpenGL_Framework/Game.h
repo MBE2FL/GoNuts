@@ -14,6 +14,7 @@
 #include "Timer.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "ParticleEmitter.h"
 
 #include "GUIHelper.h"
 
@@ -33,6 +34,10 @@ public:
 	void initializeGame();
 	void update();
 	void draw();
+
+	vector<GameObject> add(vector<GameObject> objectVec1, vector<GameObject> objectVec2);
+	vector<GameObject> objectSetup(const string shader, const string mesh, const string texture,const bool physics,
+								   const Vector3 position, const Vector3 scale, const int amount, const int startNum, float offset);
 	void imguiDraw();
 
 	/* input callback functions */
@@ -45,23 +50,25 @@ public:
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
 
+	float drawTime = 0.0f;
+
 private:
 	// Scene Objects.
 	Camera camera;
-	//GameObject monkey;
-	//GameObject monkeyTwo;
-	//GameObject cube;
 
 	GameObject player;
-	GameObject platOne, platTwo;
-	GameObject* plat;
+
+	vector<GameObject> coins;
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
+	vector<GameObject> Background;
+	vector<GameObject> upperPlatforms;
+
+	GameObject* footEmitter;
+
 	bool collided = false;
 
 	float counter = 0.0f;
-
-	//vector<GameObject> platform;
 
 	Light* light;
 

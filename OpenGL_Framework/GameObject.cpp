@@ -149,6 +149,7 @@ void GameObject::draw(Camera& camera, Light* light)
 	_shaderProgram->unBind();
 }
 
+
 void GameObject::addPhysicsBody(const bool _useGravity)
 {
 	_physicsBody = new PhysicsBody(_mesh->getMeshBounds());
@@ -164,6 +165,14 @@ bool GameObject::checkCollisions(GameObject& other)
 {
 	if (_physicsBody)
 		return _physicsBody->collision(other.getPhysicsBody());
+
+	return false;
+}
+
+bool GameObject::checkCoinCollisions(GameObject & other)
+{
+	if (_physicsBody)
+		return _physicsBody->coinCollision(other.getPhysicsBody());
 
 	return false;
 }

@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63B56134-FF26-44B6-BBC4-BF01AA3F55BA}</ProjectGuid>
     <RootNamespace>OpenGL_Framework</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -54,6 +54,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MiniMath.lib;opengl32.lib;glew32.lib;SOIL_ext.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S /E ".\bin\*.dll" "$(SolutionDir)$(Configuration)\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -72,6 +75,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MiniMath.lib;opengl32.lib;glew32.lib;SOIL_ext.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S /E ".\bin\*.dll" "$(SolutionDir)$(Configuration)\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bounds.cpp" />
@@ -96,6 +102,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="PhysicsBody.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -129,6 +136,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshBounds.h" />
     <ClInclude Include="ObjectLoader.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PhysicsBody.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="ShaderProgram.h" />

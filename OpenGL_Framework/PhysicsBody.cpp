@@ -86,6 +86,32 @@ bool PhysicsBody::collision(PhysicsBody* physicsBody)
 	}
 }
 
+bool PhysicsBody::coinCollision(PhysicsBody * physicsBody)
+{
+	Vector2 position = Vector2(_collisionBounds.getCentre().x, _collisionBounds.getCentre().y);
+	float width = _collisionBounds.getExtends().x;
+	float height = _collisionBounds.getExtends().y;
+
+	ColliderBounds otherBounds = physicsBody->getCollisionBounds();
+	Vector2 otherPosition = Vector2(otherBounds.getCentre().x, otherBounds.getCentre().y);
+	float otherWidth = otherBounds.getExtends().x;
+	float otherHeight = otherBounds.getExtends().y;
+
+	if (position.x - width < otherPosition.x + otherWidth &&
+		position.x + width > otherPosition.x - otherWidth &&
+		position.y - height < otherPosition.y + otherHeight &&
+		position.y + height > otherPosition.y - otherHeight)
+	{
+		physicsBody->setUseGravity(true);
+		return true;
+	}
+	else
+	{
+		
+		return false;
+	}
+}
+
 void PhysicsBody::updatePhysicsBody(Transform* transform, float deltaTime)
 {
 	dt = deltaTime;

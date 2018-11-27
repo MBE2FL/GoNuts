@@ -10,8 +10,6 @@ Game::Game()
 Game::~Game()
 {
 	delete updateTimer;
-
-	//monkey.unLoad();
 }
 
 void Game::initializeGame()
@@ -22,12 +20,14 @@ void Game::initializeGame()
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
-	//ObjectLoader::loadMesh("Monkey", "./Assets/Models/Monkey.obj");
+
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
+	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
+
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
 	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
@@ -36,102 +36,76 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
+	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
+
 
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	player.setMesh(ObjectLoader::getMesh("Cube"));
+	player.setMesh(ObjectLoader::getMesh("FatBoi"));
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
+	player.setScale(0.2f);
+	
 
 
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Acorn"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));	
-	plat->setPosition(Vector3(0.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Coin"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(2.0f, 4.5f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Cone"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(4.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Spikes"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(6.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	plat = new GameObject;
-	plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	plat->setMesh(ObjectLoader::getMesh("Vent"));
-	plat->setTexture(ObjectLoader::getTexture("Default"));
-	plat->setPosition(Vector3(8.0f, 4.0f, -5.0f));
-	sceneObjects.push_back(*plat);
-
-	for (float i = 0.0f; i < 20; i++)
-	{
-		plat = new GameObject;
-		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-		plat->setMesh(ObjectLoader::getMesh("Platform"));
-		plat->setTexture(ObjectLoader::getTexture("Default"));
-		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, 2.0f, -5.0f));
-		plat->setScale(Vector3(1, 1, 2));
-
-		platforms.push_back(*plat);
-	}
-
-	for (float i = 5.0f; i < 10; i++)
-	{
-		plat = new GameObject;
-		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-		plat->setMesh(ObjectLoader::getMesh("Platform"));
-		plat->setTexture(ObjectLoader::getTexture("Default"));
-		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, 3.5f, -5.0f));
-		plat->setScale(Vector3(0.5, 1, 1));
-
-		platforms.push_back(*plat);
-	}
-
-	for (float i = 15.0f; i < 20; i++)
-	{
-		plat = new GameObject;
-		plat->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-		plat->setMesh(ObjectLoader::getMesh("Platform"));
-		plat->setTexture(ObjectLoader::getTexture("Default"));
-		plat->addPhysicsBody(false);
-		plat->setPosition(Vector3(i * 9.0f, 3.5f, -5.0f));
-		plat->setScale(Vector3(0.5, 1, 1));
-
-		platforms.push_back(*plat);
-	}
 
 
-	//platOne.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//platOne.setMesh(ObjectLoader::getMesh("Platform"));
-	//platOne.addPhysicsBody(false);
-	//platOne.setPosition(Vector3(0.0f, -2.0f, 0.0f));
-	//
-	//platTwo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//platTwo.setMesh(ObjectLoader::getMesh("Platform"));
-	//platTwo.addPhysicsBody(false);
-	//platTwo.setPosition(Vector3(9.0f, -2.0f, 0.0f));
+	footEmitter = new ParticleEmitter;
 
-	//platOne.setScale(0.4f);
+	
+	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	footEmitter->setMesh(ObjectLoader::getMesh("Plane"));
+	footEmitter->setTexture(ObjectLoader::getTexture("Default"));
+	footEmitter->addPhysicsBody(false);
+	footEmitter->setPosition(Vector3(9.0f, 2.0f, -5.0f));
+	footEmitter->setScale(Vector3(1, 1, 1));
+	
+	// Physics properties
+	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity0 = Vector3(-0.1f, -0.01f, -0.0001f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity1 = Vector3(-0.1f, -0.01f, 0.0001f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->massRange = Vector2(1.0f, 2.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
 
+	// Visual Properties
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorBegin0 = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorBegin1 = Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorEnd0 = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->colorEnd1 = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->lifeRange = Vector2(0.5f, 1.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeRange = Vector2(15.0f, 25.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeBegin = Vector2(5.0f, 10.0f);
+	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeEnd = Vector2(50.0f, 100.0f);
+
+	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
+
+	// Create the particles
+	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
+
+
+	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
+	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
+	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
+
+
+	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 0));
+
+	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 37.0f));
+
+	coins = add(coins, objectSetup("Normal", "Coin", "Default", false, Vector3(2.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 6.0f));
+
+	sceneObjects = objectSetup("Normal", "Cone", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
+
+	sceneObjects = objectSetup("Normal", "Spikes", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 18.0f);
+
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
+
+	platforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 2.0f, -5.0f), Vector3(1, 1, 2), 20, 0, 0);
+
+	upperPlatforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 10, 5, 0);
+
+	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 20, 15, 0));
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
@@ -149,7 +123,7 @@ void Game::initializeGame()
 	test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
 	test.mV[14] = 15; test.mV[15] = 16;
 
-	test.GetInverse();
+	//test.GetInverse();
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
@@ -160,107 +134,157 @@ void Game::initializeGame()
 
 void Game::update()
 {
+
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
+	drawTime += deltaTime;
 
+	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
+	footEmitter->update(deltaTime);
 	player.update(deltaTime);
+	for (unsigned int i = 0; i < coins.size(); i++)
+	{
+		coins[i].update(deltaTime); 
+		player.checkCoinCollisions(coins[i]);
+	}
+	for (unsigned int i = 0; i < Background.size(); i++)
+	{
+		Background[i].update(deltaTime);
+	}
 	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		sceneObjects[i].update(deltaTime);
-		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.05f);
+		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.25f + i);
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].update(deltaTime);
 	}
-	//platOne.update(deltaTime);
-	//platTwo.update(deltaTime);
+	for (unsigned int i = 0; i < upperPlatforms.size(); i++)
+	{
+		upperPlatforms[i].update(deltaTime);
+		player.checkCollisions(upperPlatforms[i]);
+	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		collided = player.checkCollisions(platforms[i]);
 		if (collided)
 			break;
 	}
-	
+
 	
 	if (player.getPhysicsBody()->getVelocity().x < 5.0f)
 		player.addForce(Vector2(20.0f, 0.0f));
 
 	if (player.getPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
 	{
-		player.setPosition(Vector3(-3.0f, 3, -5.0f));
+		player.setPosition(Vector3(-3.0f, 4, -5.0f));
 		player.setVelocity(Vector2(0.0f, 0.0f));
 	}
 	
 	counter += deltaTime;
-	player.setRotationAngleY(counter);
-	//std::cout << deltaTime << std::endl;
-	//if (colliding && !collided)
-	//{
-	//	//player.addForce(Vector2(0.0f, 20.0f));
-	//	player.useGravity(false);
-	//	//player.setVelocity(Vector2::Zero);
-	//	if (col == 1)
-	//	{
-	//		float ySpeed = player.getPhysicsBody()->getVelocity().y;
-	//		player.addForce(Vector2(0.0f, -ySpeed / deltaTime * 1.2f));
-	//	}
-	//	else
-	//	{
-	//		float xSpeed = player.getPhysicsBody()->getVelocity().x;
-	//		player.addForce(Vector2(-xSpeed / deltaTime * 1.2f, 0.0f));
-	//	}
-
-	//	collided = true;
-	//}
-	//else if (!colliding && collided)
-	//{
-	//	player.useGravity(true);
-	//	collided = false;
-	//}
+	player.setRotationAngleY(90.0f);
 
 	Vector3 offset(-3, -1.5f, -8);
-	camera.setPosition(player.getPosition() - offset);
+	camera.setPosition(MathLibCore::lerp( camera.getPosition(), player.getPosition() - offset, deltaTime * 3));
 	camera.update(deltaTime);
-
 }
 
 void Game::draw()
 {
-	// Completely clear the Back-Buffer before doing any work.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//std::cout << "HELLO WORLD" << std::endl;
 
-
-	// New imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplFreeGLUT_NewFrame();
-
-	// Update imgui widgets
-	imguiDraw();
-
-	// Render imgui
-	ImGui::Render();
-
-	// Draw game objects
-	player.draw(camera, light);
-	for (unsigned int i = 0; i < sceneObjects.size(); i++)
+	//if (drawTime >= 0.033f)
 	{
-		sceneObjects[i].draw(camera, light);
-	}
-	for (unsigned int i = 0; i < platforms.size(); i++)
-	{
-		platforms[i].draw(camera, light);
-	}
-	   
-	// Update imgui draw data
-	glUseProgram(GL_NONE);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//std::cout << drawTime << std::endl;
+		// Completely clear the Back-Buffer before doing any work.
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
-	glutSwapBuffers();
+#ifdef _DEBUG
+
+		// New imgui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplFreeGLUT_NewFrame();
+
+		// Update imgui widgets
+		imguiDraw();
+
+		// Render imgui
+		ImGui::Render();
+#endif
+
+		// Draw game objects
+		footEmitter->draw(camera, light);
+
+		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
+		//{
+		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
+		//}
+		player.draw(camera, light);
+
+		for (unsigned int i = 0; i < coins.size(); i++)
+		{
+			coins[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < Background.size(); i++)
+		{
+			Background[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < sceneObjects.size(); i++)
+		{
+			sceneObjects[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < platforms.size(); i++)
+		{
+			platforms[i].draw(camera, light);
+		}
+		for (unsigned int i = 0; i < upperPlatforms.size(); i++)
+		{
+			upperPlatforms[i].draw(camera, light);
+		}
+
+		// Update imgui draw data
+		glUseProgram(GL_NONE);
+#ifdef _DEBUG
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
+
+		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
+		glutSwapBuffers();
+		drawTime = 0.0f;
+	}
+}
+
+vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> objectVec2)
+{
+	for (unsigned int i = 0; i < objectVec2.size(); i++)
+		objectVec1.push_back(objectVec2[i]);
+
+	return objectVec1;
+}
+
+vector<GameObject> Game::objectSetup( const string shader, const string mesh,const string texture, const bool physics,
+const Vector3 position, const Vector3 scale, const int amount, const int startNum, float offset)
+{
+	GameObject* object;
+	vector<GameObject> objectVec;
+
+	for (int i = startNum; i < amount; i++)
+	{
+		object = new GameObject;
+		object->setShaderProgram(ObjectLoader::getShaderProgram(shader));
+		object->setMesh(ObjectLoader::getMesh(mesh));
+		object->setTexture(ObjectLoader::getTexture(texture));
+		object->addPhysicsBody(physics);
+		object->setPosition(Vector3(i * position.x + offset, position.y, position.z));
+		object->setScale(scale);
+		objectVec.push_back(*object);
+	}
+	return objectVec;
 }
 
 void Game::imguiDraw()
@@ -318,10 +342,13 @@ void Game::imguiDraw()
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
+#ifdef _DEBUG
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = true;
+#endif
 
-	switch(key)
+	switch (key)
 	{
 	case 32:
 		if (camera.getProjType() == ProjectionType::Perspective)
@@ -336,38 +363,25 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'q': // the 'q' key
 		exit(1);
 		break;
-//	case 'd':
-//		player.addForce(Vector2(5.0f, 0.0f));
-//		break;
-//	case 'a':
-//		player.addForce(Vector2(-5.0f, 0.0f));
-//		break;
-//	case 'w':
-//		player.addForce(Vector2(0.0f, 10.0f));
-//		break;
 	}
-	//if (key == 'd' && player.getPhysicsBody()->getVelocity().x < 5.0f)
-	//{
-	//	player.addForce(Vector2(20.0f, 0.0f));
-	//}
-	//if (key == 'a' && player.getPhysicsBody()->getVelocity().x > -5.0f)
-	//{
-	//	player.addForce(Vector2(-20.0f, 0.0f));
-	//}
 	if (key == 'w' && collided)
 	{
 		player.addForce(Vector2(0.0f, 100.0f));
 	}
 	if (key == 's')
 	{
-		player.setScale(Vector3(1, 0.5, 1));
+		player.setScale(0.1f);
+		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
 	}
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
+#ifdef _DEBUG
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = false;
+#endif
 
 	switch(key)
 	{
@@ -378,11 +392,13 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
+#ifdef _DEBUG
 
-	if (key == 's')
+#endif
+	if (key == 's' )
 	{
-		player.setScale(1);
-		player.setPosition(Vector3(player.getPosition().x, 2.8f, player.getPosition().z));
+		player.setPosition(Vector3(player.getPosition().x, 3.5f, player.getPosition().z));
+		player.setScale(0.2f);
 	}
 }
 
