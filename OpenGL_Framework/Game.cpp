@@ -374,6 +374,27 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
 		sliding = true;
 	}
+
+	if (key == 'i')//up
+	{
+		Vector3 LP = light->getPosition();
+		light->setPosition(Vector3(LP.x, LP.y, ++LP.z));
+	}
+	if (key == 'k')//down
+	{
+		Vector3 LP = light->getPosition();
+		light->setPosition(Vector3(LP.x, LP.y, --LP.z));
+	}
+	if (key == 'j')//left
+	{
+		Vector3 LP = light->getPosition();
+		light->setPosition(Vector3(--LP.x, LP.y, LP.z));
+	}
+	if (key == 'l')//right
+	{
+		Vector3 LP = light->getPosition();
+		light->setPosition(Vector3(++LP.x, LP.y, LP.z));
+	}
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
