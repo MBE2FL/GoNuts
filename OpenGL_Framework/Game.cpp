@@ -17,6 +17,7 @@ void Game::initializeGame()
 	// OpenGL will not draw triangles hidden behind other geometry
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
@@ -47,50 +48,52 @@ void Game::initializeGame()
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
 	player.Animated(true);
-	player.setMesh(ObjectLoader::getMesh("FatBoi"));
+	player.setMesh(ObjectLoader::getMesh("TestBoi1"));
 	//player.addMesh(ObjectLoader::getMesh("FatBoi2"));
 	//player.addMesh(ObjectLoader::getMesh("FatBoi3"));
 	//player.addMesh(ObjectLoader::getMesh("FatBoi"));
-	player.addMesh("TestBoi", 20);
+	player.addMesh("TestBoi", 19);
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	coneBoi.setMesh(ObjectLoader::getMesh("Cone"));
+	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
 	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
 	coneBoi.addPhysicsBody(false);
 	coneBoi.setPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
-	footEmitter = new ParticleEmitter;
-	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	footEmitter->setMesh(ObjectLoader::getMesh("Plane"));
-	footEmitter->setTexture(ObjectLoader::getTexture("Default"));
-	footEmitter->addPhysicsBody(false);
-	footEmitter->setPosition(Vector3(9.0f, 2.0f, -5.0f));
-	footEmitter->setScale(Vector3(1, 1, 1));
+	particleTrail = new ParticleEmitter;
+	particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	particleTrail->setMesh(ObjectLoader::getMesh("Plane"));
+	particleTrail->setTexture(ObjectLoader::getTexture("Default"));
+	particleTrail->addPhysicsBody(false);
+	particleTrail->setPosition(Vector3(9.0f, 2.0f, -5.0f));
+	particleTrail->setScale(Vector3(1, 1, 1));
 	
+
+	dynamic_cast<ParticleEmitter*>(particleTrail)->initialize(50);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->playing = false;
+
+	jumpParticles = new ParticleEmitter;
+	jumpParticles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	jumpParticles->setMesh(ObjectLoader::getMesh("Plane"));
+	jumpParticles->setTexture(ObjectLoader::getTexture("Default"));
+	jumpParticles->addPhysicsBody(false);
+	jumpParticles->setPosition(Vector3(0));
+	jumpParticles->setScale(Vector3(0.1f));
+
 	// Physics properties
-	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity0 = Vector3(-0.1f, -0.01f, -0.0001f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->velocity1 = Vector3(-0.1f, -0.01f, 0.0001f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->massRange = Vector2(1.0f, 2.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = Vector3(-0.1f, 0.01f, -0.01f);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = Vector3(0.1f, 0.02f, 0.01f);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = Vector2(1.0f, 2.0f);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getPosition();
 
 	// Visual Properties
-	dynamic_cast<ParticleEmitter*>(footEmitter)->colorBegin0 = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->colorBegin1 = Vector4(1.0f, 0.0f, 1.0f, 1.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->colorEnd0 = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->colorEnd1 = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->lifeRange = Vector2(0.5f, 1.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeRange = Vector2(15.0f, 25.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeBegin = Vector2(5.0f, 10.0f);
-	dynamic_cast<ParticleEmitter*>(footEmitter)->sizeEnd = Vector2(50.0f, 100.0f);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = Vector2(0.08f, 0.1f);
 
-	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
-
-	// Create the particles
-	//dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(1);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
@@ -118,9 +121,7 @@ void Game::initializeGame()
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
 	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
-	//light->setAmbient(Vector3(0.f, 0.f, 0.f));
 	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
-	//light->setDiffuse(Vector3(0.f, 0.f, 0.f));
 	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
 	light->setSpecular(Vector3(0.f, 0.f, 0.f));
 	light->setSpecularExp(100.0f);
@@ -156,9 +157,15 @@ void Game::initializeGame()
 
 void Game::update()
 {
-	t += 0.01f;
+	if (!reverse)
+		t += 0.01f;
+	if (reverse)
+		t -= 0.01f;
+
 	if (t >= 1)
-		t = 0;
+		reverse = true;
+	if (t <= 0)
+		reverse = false;
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
@@ -166,14 +173,16 @@ void Game::update()
 	TotalGameTime += deltaTime;
 	drawTime += deltaTime;
 
-	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
+	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getPosition();
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = Vector3(player.getPosition().x,
+		player.getPosition().y - 1.f, player.getPosition().z);
 
-	footEmitter->update(deltaTime);
+	particleTrail->update(deltaTime);
+	jumpParticles->update(deltaTime);
 	player.update(deltaTime);
 
 	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
 
-	//cout << coneBoi.getPosition() << endl;
 	coneBoi.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
@@ -202,7 +211,14 @@ void Game::update()
 	{
 		collided = player.checkCollisions(platforms[i]);
 		if (collided)
+		{
+			dynamic_cast<ParticleEmitter*>(jumpParticles)->playing = true;
 			break;
+		}
+		else
+		{
+			dynamic_cast<ParticleEmitter*>(jumpParticles)->playing = false;
+		}
 	}
 
 	
@@ -228,16 +244,10 @@ void Game::update()
 
 void Game::draw()
 {
-	//std::cout << "HELLO WORLD" << std::endl;
-
-	//if (drawTime >= 0.033f)
-	{
-		//std::cout << drawTime << std::endl;
 		// Completely clear the Back-Buffer before doing any work.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef _DEBUG
-
 		// New imgui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplFreeGLUT_NewFrame();
@@ -248,14 +258,18 @@ void Game::draw()
 		// Render imgui
 		ImGui::Render();
 #endif
+		glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
+
 
 
 
 		//platforms[0].draw(UICamera, light, spotLight);
-		footEmitter->draw(UICamera, light, spotLight);
+		particleTrail->draw(UICamera, light, spotLight);
 		// Draw game objects
-		footEmitter->draw(camera, light, spotLight);
+		particleTrail->draw(camera, light, spotLight);
+		jumpParticles->draw(camera, light, spotLight);
 
+		coneBoi.draw(camera, light, spotLight);
 		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
 		//{
 		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
@@ -283,7 +297,7 @@ void Game::draw()
 		{
 			upperPlatforms[i].draw(camera, light, spotLight);
 		}
-
+		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
 		// Update imgui draw data
 		glUseProgram(GL_NONE);
 #ifdef _DEBUG
@@ -294,7 +308,6 @@ void Game::draw()
 		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 		glutSwapBuffers();
 		drawTime = 0.0f;
-	}
 }
 
 vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> objectVec2)

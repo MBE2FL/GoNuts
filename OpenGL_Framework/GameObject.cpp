@@ -135,7 +135,7 @@ void GameObject::addMesh(Mesh * mesh)
 
 void GameObject::addMesh(const string & meshName, const int totalMeshes)
 {
-	for (int i = 1; i <= totalMeshes; i++)
+	for (int i = 2; i <= totalMeshes; i++)
 	{
 		addMesh(ObjectLoader::getMesh(meshName + std::to_string(i)));
 	}

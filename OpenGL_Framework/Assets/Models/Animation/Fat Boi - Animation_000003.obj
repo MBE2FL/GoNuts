@@ -1,7 +1,5 @@
 # Blender v2.79 (sub 0) OBJ File: 'Dimitris Stefanakos - Assignment 5 - Rigged Model.blend'
 # www.blender.org
-mtllib Fat Boi - Animation_000003.mtl
-o AJ.002
 v 2.294537 4.953802 -0.813539
 v 1.743217 7.683240 -0.036145
 v 1.666116 7.293888 0.852675
@@ -14154,8 +14152,6 @@ vn 0.0247 0.7282 0.6849
 vn -0.3244 -0.9458 0.0153
 vn 0.5746 0.6865 0.4456
 vn -0.8916 0.2306 0.3897
-usemtl Character
-s 1
 f 77/1/1 349/2/2 303/3/3
 f 128/4/4 327/5/5 269/6/6
 f 263/7/7 57/8/8 127/9/9
