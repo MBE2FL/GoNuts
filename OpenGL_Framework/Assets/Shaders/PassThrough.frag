@@ -74,7 +74,7 @@ void main()
 
 	vec3 spotLightVector = spotLightPosition.xyz - position;
 	float spotDist = length(spotLightVector);
-	float angleBetweenLightAndVert = (dot(spotLightVector, vec3(-1.0,0.0,0.0)) / (spotDist * spotDist));
+	float angleBetweenLightAndVert = (dot(spotLightVector, vec3(0.0,0.0,-1.0)) / (spotDist * spotDist));
 	angleBetweenLightAndVert = acos(angleBetweenLightAndVert);
 	vec3 spotLightDir = spotLightVector / spotDist;
 

@@ -145,7 +145,9 @@ void Game::initializeGame()
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
 	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
+	//light->setAmbient(Vector3(0));
 	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
+	//light->setDiffuse(Vector3(0));
 	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
 	light->setSpecular(Vector3(0.f, 0.f, 0.f));
 	light->setSpecularExp(100.0f);
@@ -154,13 +156,13 @@ void Game::initializeGame()
 	light->setAttenuationQuadratic(0.01f);
 
 	spotLight = new Light();
-	spotLight->setPosition(Vector3(2.0f, 0.0f, 0.0f));
+	spotLight->setPosition(Vector3(-3.2f, 30.0f, -28.0f));
 	spotLight->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(Vector3(0.7f, 0.3f, 0.2f));
+	spotLight->setDiffuse(Vector3(1));
 	spotLight->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
 	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(1.0f);
-	spotLight->setAttenuationLinear(0.1f);
+	spotLight->setAttenuationConstant(0.1f);
+	spotLight->setAttenuationLinear(0.01f);
 	spotLight->setAttenuationQuadratic(0.01f);
 
 	//Matrix44 test;
@@ -418,6 +420,11 @@ void Game::imguiDraw()
 			float attenuationQuadratic = light->getAttenuationQuadratic();
 			ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
 			light->setAttenuationQuadratic(attenuationQuadratic);
+			
+			
+			Vector3 spotPositiion = spotLight->getPosition();
+			ImGui::SliderFloat3("Spot Position: ", &spotPositiion.x, -10.f, 10.f);
+			spotLight->setPosition(spotPositiion);
 		}
 
 		if (ImGui::CollapsingHeader("ConeBoi Catmull Settings:"))
