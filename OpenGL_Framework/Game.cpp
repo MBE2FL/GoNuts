@@ -42,12 +42,16 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 
+
+	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animation_", 20);
+
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
 	player.Animated(true);
 	player.setMesh(ObjectLoader::getMesh("FatBoi"));
-	player.addMesh(ObjectLoader::getMesh("FatBoi2"));
-	player.addMesh(ObjectLoader::getMesh("FatBoi3"));
-	player.addMesh(ObjectLoader::getMesh("FatBoi"));
+	//player.addMesh(ObjectLoader::getMesh("FatBoi2"));
+	//player.addMesh(ObjectLoader::getMesh("FatBoi3"));
+	//player.addMesh(ObjectLoader::getMesh("FatBoi"));
+	player.addMesh("TestBoi", 20);
 	player.setTexture(ObjectLoader::getTexture("Default"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
@@ -86,7 +90,7 @@ void Game::initializeGame()
 	dynamic_cast<ParticleEmitter*>(footEmitter)->interpolateColor = true;
 
 	// Create the particles
-	dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
+	//dynamic_cast<ParticleEmitter*>(footEmitter)->initialize(50);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);

@@ -63,6 +63,17 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file)
 	exit(0);
 }
 
+void ObjectLoader::loadMesh(const string & meshName, const string & file, const int totalObjs)
+{
+	for (int i = 1; i <= totalObjs; i++)
+	{
+		if (i < 10)
+			ObjectLoader::loadMesh(meshName + std::to_string(i) ,file + "00000" + std::to_string(i) + ".obj");
+		else
+			ObjectLoader::loadMesh(meshName + std::to_string(i), file + "0000" + std::to_string(i) + ".obj");
+	}
+}
+
 void ObjectLoader::loadTexture(const string & texName, const string & file)
 {
 	// No mesh with shaderProgramName currently exists

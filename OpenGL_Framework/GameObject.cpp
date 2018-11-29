@@ -6,6 +6,7 @@ GameObject::GameObject()
 	_mesh = nullptr;
 	_shaderProgram = nullptr;
 	_physicsBody = nullptr;
+	_parent = nullptr;
 }
 
 GameObject::~GameObject()
@@ -64,7 +65,10 @@ void GameObject::setScale(Vector3 newScale)
 
 Matrix44 GameObject::getLocalToWorldMatrix() const
 {
-	return _transform->getLocalToWorldMatrix();
+	if (_parent)
+		return (_parent->getLocalToWorldMatrix() * _transform->getLocalToWorldMatrix());
+	else
+		return _transform->getLocalToWorldMatrix();
 }
 
 void GameObject::update(float deltaTime)
@@ -129,6 +133,14 @@ void GameObject::addMesh(Mesh * mesh)
 	animation.addMesh(mesh);
 }
 
+void GameObject::addMesh(const string & meshName, const int totalMeshes)
+{
+	for (int i = 1; i <= totalMeshes; i++)
+	{
+		addMesh(ObjectLoader::getMesh(meshName + std::to_string(i)));
+	}
+}
+
 Animation GameObject::getanimation()
 {
 	return animation;
@@ -147,7 +159,7 @@ void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
 	_shaderProgram->sendUniformMat4("uView", camera.getLocalToWorldMatrix().GetInverse().mV, false);
 	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
 
-
+	
 	_shaderProgram->sendUniform("uTex", 0);
 
 	
@@ -231,6 +243,12 @@ void GameObject::setVelocity(const Vector2 & velocity)
 {
 	if (_physicsBody)
 		_physicsBody->setVelocity(velocity);
+}
+
+void GameObject::addChild(GameObject * child)
+{
+	child->_parent = this;
+	_children.push_back(child);
 }
 
 //MeshBounds GameObject::getMeshBounds() const
