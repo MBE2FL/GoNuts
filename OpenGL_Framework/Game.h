@@ -55,6 +55,7 @@ public:
 private:
 	// Scene Objects.
 	Camera camera;
+	Camera UICamera;
 
 	GameObject player;
 	GameObject coneBoi;

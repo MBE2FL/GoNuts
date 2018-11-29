@@ -145,6 +145,9 @@ void Game::initializeGame()
 	//camera.orthographic(-10, 10, -10, 10, -100, 100);
 	camera.setPosition(Vector3(0.0f, 0.0f, 5.0f));
 	camera.setRotationAngleX(camera.getRotationAngleX() - 0.2f);
+
+	UICamera.orthographic(-16, 16, 9, -9, -100, 100);
+	UICamera.setPosition(Vector3::Zero);
 }
 
 void Game::update()
@@ -216,6 +219,7 @@ void Game::update()
 	Vector3 offset(-3, -1.5f, -8);
 	camera.setPosition(MathLibCore::lerp( camera.getPosition(), player.getPosition() - offset, deltaTime * 3));
 	camera.update(deltaTime);
+	UICamera.update(deltaTime);
 }
 
 void Game::draw()
@@ -241,6 +245,10 @@ void Game::draw()
 		ImGui::Render();
 #endif
 
+
+
+		//platforms[0].draw(UICamera, light, spotLight);
+		footEmitter->draw(UICamera, light, spotLight);
 		// Draw game objects
 		footEmitter->draw(camera, light, spotLight);
 
