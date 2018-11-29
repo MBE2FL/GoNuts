@@ -17,6 +17,7 @@ void Game::initializeGame()
 	// OpenGL will not draw triangles hidden behind other geometry
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
@@ -54,7 +55,7 @@ void Game::initializeGame()
 	player.setScale(0.2f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	coneBoi.setMesh(ObjectLoader::getMesh("Cone"));
+	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
 	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
 	coneBoi.addPhysicsBody(false);
 	coneBoi.setPosition(Vector3(4.0f, 6.0f, -5.0f));
@@ -114,9 +115,7 @@ void Game::initializeGame()
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
 	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
-	//light->setAmbient(Vector3(0.f, 0.f, 0.f));
 	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
-	//light->setDiffuse(Vector3(0.f, 0.f, 0.f));
 	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
 	light->setSpecular(Vector3(0.f, 0.f, 0.f));
 	light->setSpecularExp(100.0f);
@@ -149,9 +148,15 @@ void Game::initializeGame()
 
 void Game::update()
 {
-	t += 0.01f;
+	if (!reverse)
+		t += 0.01f;
+	if (reverse)
+		t -= 0.01f;
+
 	if (t >= 1)
-		t = 0;
+		reverse = true;
+	if (t <= 0)
+		reverse = false;
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
@@ -166,7 +171,6 @@ void Game::update()
 
 	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
 
-	//cout << coneBoi.getPosition() << endl;
 	coneBoi.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
@@ -220,16 +224,10 @@ void Game::update()
 
 void Game::draw()
 {
-	//std::cout << "HELLO WORLD" << std::endl;
-
-	//if (drawTime >= 0.033f)
-	{
-		//std::cout << drawTime << std::endl;
 		// Completely clear the Back-Buffer before doing any work.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef _DEBUG
-
 		// New imgui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplFreeGLUT_NewFrame();
@@ -240,16 +238,11 @@ void Game::draw()
 		// Render imgui
 		ImGui::Render();
 #endif
-
+		glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
 		// Draw game objects
 		footEmitter->draw(camera, light, spotLight);
 
-		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
-		//{
-		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
-		//}
-		player.draw(camera, light);
-		coneBoi.draw(camera, light);
+		coneBoi.draw(camera, light, spotLight);
 		player.draw(camera, light, spotLight);
 
 		for (unsigned int i = 0; i < coins.size(); i++)
@@ -272,7 +265,7 @@ void Game::draw()
 		{
 			upperPlatforms[i].draw(camera, light, spotLight);
 		}
-
+		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
 		// Update imgui draw data
 		glUseProgram(GL_NONE);
 #ifdef _DEBUG
@@ -283,7 +276,6 @@ void Game::draw()
 		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 		glutSwapBuffers();
 		drawTime = 0.0f;
-	}
 }
 
 vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> objectVec2)
