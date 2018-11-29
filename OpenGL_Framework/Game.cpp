@@ -208,8 +208,8 @@ void Game::update()
 	time.update(deltaTime);
 
 	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
-	coneBoi.setScale((MathLibCore::catmull(p1, Vector3(1,1,1), Vector3(1, 1, 1), p4, t)));
-	coneBoi.setRotationAngleY((MathLibCore::catmull(0.0f, 30.0f, 60.0f,  180.0f, t)));
+	//coneBoi.setScale((MathLibCore::catmull(p1, Vector3(1,1,1), Vector3(1, 1, 1), p4, t)));
+	coneBoi.setRotationAngleY((MathLibCore::catmull(0.0f, -20.0f, 0.0f,  60.0f, t)));
 
 	coneBoi.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
