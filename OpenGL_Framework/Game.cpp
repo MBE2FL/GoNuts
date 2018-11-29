@@ -290,8 +290,6 @@ void Game::draw()
 
 		//platforms[0].draw(UICamera, light, spotLight);
 		particleTrail->draw(UICamera, light, spotLight);
-		nutOmeter.draw(UICamera, light, spotLight);
-		time.draw(UICamera, light, spotLight);
 
 		// Draw game objects
 		particleTrail->draw(camera, light, spotLight);
@@ -326,6 +324,11 @@ void Game::draw()
 			upperPlatforms[i].draw(camera, light, spotLight);
 		}
 		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
+		nutOmeter.draw(UICamera, light, spotLight);
+		time.draw(UICamera, light, spotLight);
+
+
+
 		// Update imgui draw data
 		glUseProgram(GL_NONE);
 #ifdef _DEBUG
