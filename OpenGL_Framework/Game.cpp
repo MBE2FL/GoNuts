@@ -27,11 +27,16 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
 	ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
-	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
+	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
+	
+	
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
 	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
+	//UI Textures
+	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
+	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
@@ -58,6 +63,24 @@ void Game::initializeGame()
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);
+
+	nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
+	nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
+	nutOmeter.addPhysicsBody(false);
+	nutOmeter.setPosition(Vector3(0.0f, -6.0f, 0.0f));
+	nutOmeter.setRotationAngleZ(3.14592f / 2.0f);
+	nutOmeter.setRotationAngleY(3.14592f);
+	nutOmeter.setScale(2.0f);
+
+	time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	time.setMesh(ObjectLoader::getMesh("Plane"));
+	time.setTexture(ObjectLoader::getTexture("Time"));
+	time.addPhysicsBody(false);
+	time.setPosition(Vector3(-13.5f, 7.5f, 0.0f));
+	time.setRotationAngleZ(3.14592f / 2.0f);
+	time.setRotationAngleY(3.14592f);
+	time.setScale(2.0f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
@@ -181,6 +204,8 @@ void Game::update()
 	particleTrail->update(deltaTime);
 	jumpParticles->update(deltaTime);
 	player.update(deltaTime);
+	nutOmeter.update(deltaTime);
+	time.update(deltaTime);
 
 	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
 
@@ -266,6 +291,7 @@ void Game::draw()
 
 		//platforms[0].draw(UICamera, light, spotLight);
 		particleTrail->draw(UICamera, light, spotLight);
+
 		// Draw game objects
 		particleTrail->draw(camera, light, spotLight);
 		jumpParticles->draw(camera, light, spotLight);
@@ -299,6 +325,11 @@ void Game::draw()
 			upperPlatforms[i].draw(camera, light, spotLight);
 		}
 		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
+		nutOmeter.draw(UICamera, light, spotLight);
+		time.draw(UICamera, light, spotLight);
+
+
+
 		// Update imgui draw data
 		glUseProgram(GL_NONE);
 #ifdef _DEBUG
