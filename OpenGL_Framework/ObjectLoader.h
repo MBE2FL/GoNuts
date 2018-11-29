@@ -14,6 +14,7 @@ public:
 	~ObjectLoader();
 	static void loadShaderProgram(const string& shaderProgramName, const string& vertFile, const string& fragFile);
 	static void loadMesh(const string& meshName, const string& file);
+	static void loadMesh(const string& meshName, const string& file, const int totalObjs);
 	static void loadTexture(const string& texName, const string& file);
 	static ShaderProgram* getShaderProgram(const string& shaderProgramName);
 	static Mesh* getMesh(const string& meshName);

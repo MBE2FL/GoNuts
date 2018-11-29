@@ -67,6 +67,7 @@ StyleCopReport.xml
 *.meta
 *.obj
 !OpenGL_Framework/Assets/Models/*.obj
+!OpenGL_Framework/Assets/Models/Animation/*.obj
 *.iobj
 *.pch
 *.pdb

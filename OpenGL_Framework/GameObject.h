@@ -47,6 +47,7 @@ public:
 
 	void Animated(bool animeted);
 	void addMesh(Mesh* mesh);
+	void addMesh(const string& meshName, const int totalMeshes);
 	Animation getanimation();
 
 	void unLoad();
@@ -60,6 +61,9 @@ public:
 	void addForce(const Vector2& force);
 	void useGravity(const bool _useGravity);
 	void setVelocity(const Vector2& velocity);
+
+
+	void addChild(GameObject* child);
 	
 	Transform* _transform;
 	Mesh* _mesh;
@@ -71,4 +75,7 @@ private:
 
 	Animation animation;
 	bool isAnimated = false;
+
+	GameObject* _parent;
+	vector<GameObject*> _children;
 };
