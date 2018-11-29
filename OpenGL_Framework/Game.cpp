@@ -248,7 +248,7 @@ void Game::update()
 	}
 
 	
-	if (player.getPhysicsBody()->getVelocity().x < 10.0f)
+	if (player.getPhysicsBody()->getVelocity().x < 7.5f)
 		player.addForce(Vector2(20.0f, 0.0f));
 
 	if (player.getPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
