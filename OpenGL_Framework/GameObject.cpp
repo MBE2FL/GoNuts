@@ -140,7 +140,7 @@ void GameObject::unLoad()
 	_mesh->Unload();
 }
 
-void GameObject::draw(Camera& camera, Light* light)
+void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
 {
 	_shaderProgram->bind();
 	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
@@ -159,6 +159,16 @@ void GameObject::draw(Camera& camera, Light* light)
 	_shaderProgram->sendUniform("attenuationConstant", light->getAttenuationConstant());
 	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
 	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
+
+	_shaderProgram->sendUniform("spotLightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(spotLight->getPosition(), 1.0f));
+	_shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
+	_shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
+	_shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
+	_shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
+	_shaderProgram->sendUniform("spotLightSpecularExponent", spotLight->getSpecularExp());
+	_shaderProgram->sendUniform("spotLightattenuationConstant", spotLight->getAttenuationConstant());
+	_shaderProgram->sendUniform("spotLightattenuationLinear", spotLight->getAttenuationLinear());
+	_shaderProgram->sendUniform("spotLightattenuationQuadratic", spotLight->getAttenuationQuadratic());
 
 
 

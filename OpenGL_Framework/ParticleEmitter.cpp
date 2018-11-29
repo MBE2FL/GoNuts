@@ -197,7 +197,7 @@ void ParticleEmitter::update(float dt)
 	}
 }
 
-void ParticleEmitter::draw(Camera &camera, Light *light)
+void ParticleEmitter::draw(Camera &camera, Light *light, Light* spotLight)
 {
 	// Draw the emitter position
 	// Note: not necessary
@@ -209,7 +209,7 @@ void ParticleEmitter::draw(Camera &camera, Light *light)
 		//Particle* p = m_pParticles[i];
 		if (!m_pParticles.empty() && m_pParticles[i]->life) // if particle is alive, draw it
 		{
-			(m_pParticles[i])->draw(camera, light);
+			(m_pParticles[i])->draw(camera, light, spotLight);
 
 			//TTK::Graphics::DrawTeapot(p->position, p->size, p->color); // low fps alert!! use with low particle count
 			//TTK::Graphics::DrawPoint(p->position, p->size, p->color);
