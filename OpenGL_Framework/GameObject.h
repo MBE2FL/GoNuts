@@ -50,7 +50,7 @@ public:
 	Animation getanimation();
 
 	void unLoad();
-	virtual void draw(Camera& camera, Light* light);
+	virtual void draw(Camera& camera, Light* light, Light* spotLight);
 
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);

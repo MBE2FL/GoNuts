@@ -13,6 +13,21 @@ uniform float attenuationConstant;
 uniform float attenuationLinear;
 uniform float attenuationQuadratic;
 
+
+uniform vec4 spotLightPosition;
+uniform vec3 spotLightDirection;
+
+// Colour
+uniform vec3 spotLightAmbient;
+uniform vec3 spotLightDiffuse;
+uniform vec3 spotLightSpecular;
+
+// Scalars
+uniform float spotLightSpecularExponent;
+uniform float spotLightattenuationConstant;
+uniform float spotLightattenuationLinear;
+uniform float spotLightattenuationQuadratic;
+
 uniform sampler2D uTex;
 
 in vec2 texCoord;
@@ -35,7 +50,9 @@ void main()
 	float dist = length(lightVector);
 	vec3 lightDir = lightVector / dist;
 
-	float NdotL = dot(normal, lightDir);
+	float NdotL = dot(tempNormal, lightDir);
+	
+
 
 	if (NdotL > 0.0)
 	{
@@ -54,6 +71,36 @@ void main()
 		// Calculate specular contribution
 		outColour.rgb += lightSpecular * pow(NdotHV, lightSpecularExponent) * attenuation;
 	}
+
+	vec3 spotLightVector = spotLightPosition.xyz - position;
+	float spotDist = length(spotLightVector);
+	float angleBetweenLightAndVert = (dot(spotLightVector, vec3(-1.0,0.0,0.0)) / (spotDist * spotDist));
+	angleBetweenLightAndVert = acos(angleBetweenLightAndVert);
+	vec3 spotLightDir = spotLightVector / spotDist;
+
+	float NdotSL = dot(tempNormal, spotLightDir);
+
+	if (NdotSL > 0.0 && angleBetweenLightAndVert < 1.552)
+	{
+		// The light contributes to this surface
+	
+		// Calculate attenuation (falloff)
+		float spotLightattenuation = 1.0 / (spotLightattenuationConstant + (spotLightattenuationLinear
+		* spotDist) + (spotLightattenuationQuadratic * spotDist));
+	
+		// Calculate diffuse contribution
+		outColour.rgb += spotLightDiffuse * NdotSL * spotLightattenuation;
+	
+		// Blinn-Phong half vector
+		// eyePosition - position -> eyePosition is vec3(0, 0, 0)
+		float NdotHV = max(dot(tempNormal, normalize(spotLightDir + normalize(-position))), 0.0);
+	
+		// Calculate specular contribution
+		outColour.rgb += spotLightSpecular * pow(NdotHV, spotLightSpecularExponent) * spotLightattenuation;
+	}
+
+
+
 
 	vec4 textureColour = texture(uTex, texCoord);
 	outColour.rgb *= textureColour.rgb;

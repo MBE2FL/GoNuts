@@ -72,5 +72,6 @@ private:
 	float counter = 0.0f;
 
 	Light* light;
+	Light* spotLight;
 
 };

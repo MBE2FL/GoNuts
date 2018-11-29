@@ -69,7 +69,7 @@ public:
 	void freeMemory();
 
 	virtual void update(float dt);
-	virtual void draw(Camera &camera, Light *light);
+	virtual void draw(Camera &camera, Light *light, Light* spotLight);
 
 	void applyForceToParticle(unsigned int idx, Vector3 force);
 

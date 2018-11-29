@@ -109,12 +109,25 @@ void Game::initializeGame()
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
 	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
+	//light->setAmbient(Vector3(0.f, 0.f, 0.f));
 	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
+	//light->setDiffuse(Vector3(0.f, 0.f, 0.f));
 	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
+	light->setSpecular(Vector3(0.f, 0.f, 0.f));
 	light->setSpecularExp(100.0f);
 	light->setAttenuationConstant(1.0f);
 	light->setAttenuationLinear(0.1f);
 	light->setAttenuationQuadratic(0.01f);
+
+	spotLight = new Light();
+	spotLight->setPosition(Vector3(2.0f, 0.0f, 0.0f));
+	spotLight->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
+	spotLight->setDiffuse(Vector3(0.7f, 0.3f, 0.2f));
+	spotLight->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
+	spotLight->setSpecularExp(100.0f);
+	spotLight->setAttenuationConstant(1.0f);
+	spotLight->setAttenuationLinear(0.1f);
+	spotLight->setAttenuationQuadratic(0.01f);
 
 	//Matrix44 test;
 	//test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
@@ -216,33 +229,29 @@ void Game::draw()
 #endif
 
 		// Draw game objects
-		footEmitter->draw(camera, light);
+		footEmitter->draw(camera, light, spotLight);
 
-		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
-		//{
-		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
-		//}
-		player.draw(camera, light);
+		player.draw(camera, light, spotLight);
 
 		for (unsigned int i = 0; i < coins.size(); i++)
 		{
-			coins[i].draw(camera, light);
+			coins[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < Background.size(); i++)
 		{
-			Background[i].draw(camera, light);
+			Background[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < sceneObjects.size(); i++)
 		{
-			sceneObjects[i].draw(camera, light);
+			sceneObjects[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < platforms.size(); i++)
 		{
-			platforms[i].draw(camera, light);
+			platforms[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < upperPlatforms.size(); i++)
 		{
-			upperPlatforms[i].draw(camera, light);
+			upperPlatforms[i].draw(camera, light, spotLight);
 		}
 
 		// Update imgui draw data
@@ -360,7 +369,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		}
 		break;
 	case 27: // the escape key
-	case 'q': // the 'q' key
+	//case 'q': // the 'q' key
 		exit(1);
 		break;
 	}
@@ -377,23 +386,31 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 	if (key == 'i')//up
 	{
-		Vector3 LP = light->getPosition();
-		light->setPosition(Vector3(LP.x, LP.y, ++LP.z));
+		Vector3 LP = spotLight->getPosition();
+		spotLight->setPosition(Vector3(LP.x, LP.y, --LP.z));
 	}
 	if (key == 'k')//down
 	{
-		Vector3 LP = light->getPosition();
-		light->setPosition(Vector3(LP.x, LP.y, --LP.z));
+		Vector3 LP = spotLight->getPosition();
+		spotLight->setPosition(Vector3(LP.x, LP.y, ++LP.z));
 	}
 	if (key == 'j')//left
 	{
-		Vector3 LP = light->getPosition();
-		light->setPosition(Vector3(--LP.x, LP.y, LP.z));
+		Vector3 LP = spotLight->getPosition();
+		spotLight->setPosition(Vector3(--LP.x, LP.y, LP.z));
 	}
 	if (key == 'l')//right
 	{
-		Vector3 LP = light->getPosition();
-		light->setPosition(Vector3(++LP.x, LP.y, LP.z));
+		Vector3 LP = spotLight->getPosition();
+		spotLight->setPosition(Vector3(++LP.x, LP.y, LP.z));
+	}if (key == 'u')//right
+	{
+		Vector3 LP = spotLight->getPosition();
+		spotLight->setPosition(Vector3(LP.x, ++LP.y, LP.z));
+	}if (key == 'o')//right
+	{
+		Vector3 LP = spotLight->getPosition();
+		spotLight->setPosition(Vector3(LP.x, --LP.y, LP.z));
 	}
 }
 
