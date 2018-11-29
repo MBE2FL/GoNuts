@@ -55,6 +55,7 @@ public:
 private:
 	// Scene Objects.
 	Camera camera;
+	Camera UICamera;
 
 	GameObject player;
 	GameObject coneBoi;
@@ -71,7 +72,8 @@ private:
 	vector<GameObject> Background;
 	vector<GameObject> upperPlatforms;
 
-	GameObject* footEmitter;
+	GameObject* particleTrail;
+	GameObject* jumpParticles;
 
 	bool collided = false;
 	bool sliding = false;
