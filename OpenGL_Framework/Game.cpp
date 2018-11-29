@@ -262,7 +262,7 @@ void Game::update()
 	counter += deltaTime;
 	player.setRotationAngleY(90.0f);
 
-	Vector3 offset(-3, -1.5f, -8);
+	Vector3 offset(-6, -1.5f, -8);
 	camera.setPosition(MathLibCore::lerp( camera.getPosition(), player.getPosition() - offset, deltaTime * 3));
 	camera.update(deltaTime);
 	UICamera.update(deltaTime);
