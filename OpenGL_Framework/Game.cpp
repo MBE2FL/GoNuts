@@ -31,6 +31,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
+	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
 
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
@@ -53,7 +54,7 @@ void Game::initializeGame()
 	//player.addMesh(ObjectLoader::getMesh("FatBoi3"));
 	//player.addMesh(ObjectLoader::getMesh("FatBoi"));
 	player.addMesh("TestBoi", 19);
-	player.setTexture(ObjectLoader::getTexture("Default"));
+	player.setTexture(ObjectLoader::getTexture("FatBoi"));
 	player.addPhysicsBody(true);
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);

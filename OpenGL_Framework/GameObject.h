@@ -69,7 +69,7 @@ public:
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	PhysicsBody* _physicsBody;
-	Texture* _texture;
+	vector<Texture*> _texture;
 
 private:
 

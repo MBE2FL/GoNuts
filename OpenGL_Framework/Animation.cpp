@@ -2,7 +2,7 @@
 
 void Animation::animate(ShaderProgram* shader)
 {	
-	T += 0.01f;
+	T += 0.6f;
 	if (T > 1.0f)
 	{
 		T = 0.0f;

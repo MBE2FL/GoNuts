@@ -44,3 +44,15 @@ void Texture::unBind()
 {
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 }
+
+void Texture::bind(const int textureSlot)
+{
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	bind();
+}
+
+void Texture::unBind(const int textureSlot)
+{
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	unBind();
+}

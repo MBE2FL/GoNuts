@@ -120,7 +120,7 @@ void GameObject::setMesh(Mesh * mesh)
 
 void GameObject::setTexture(Texture * texture)
 {
-	_texture = texture;
+	_texture.push_back(texture);
 }
 
 void GameObject::Animated(bool animeted)
@@ -183,8 +183,13 @@ void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
 	_shaderProgram->sendUniform("spotLightattenuationQuadratic", spotLight->getAttenuationQuadratic());
 
 
-
-	_texture->bind();
+	vector<Texture*>::iterator it;
+	unsigned int texLoc = 0;
+	for (it = _texture.begin(); it != _texture.end(); it++)
+	{
+		(*it)->bind(texLoc);
+		texLoc++;
+	}
 
 	glBindVertexArray(_mesh->VAO);
 
@@ -194,7 +199,12 @@ void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
 	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
 	glBindVertexArray(GL_NONE);
 
-	_texture->unBind();
+	vector<Texture*>::reverse_iterator revIt;
+	for (revIt = _texture.rbegin(); revIt != _texture.rend(); revIt++)
+	{
+		texLoc--;
+		(*revIt)->unBind(texLoc);
+	}
 
 	_shaderProgram->unBind();
 }

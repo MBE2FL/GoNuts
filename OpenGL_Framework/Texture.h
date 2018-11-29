@@ -20,6 +20,8 @@ public:
 
 	void bind();
 	void unBind();
+	void bind(const int textureSlot);
+	void unBind(const int textureSlot);
 
 	//- The handle to the texture object
 	GLuint texObj = GL_NONE;
