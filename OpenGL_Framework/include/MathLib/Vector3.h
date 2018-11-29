@@ -31,6 +31,11 @@ public:
 		///vec1 * 5
 		return Vector3((x*scalar), (y*scalar), (z*scalar));
 	}
+	Vector3 operator*(const Vector3 scalar) const
+	{
+		///vec1 * 5
+		return Vector3((x*scalar.x), (y*scalar.y), (z*scalar.z));
+	}
 	Vector3 operator/(const float divisor) const
 	{
 		///vec1 / 5
@@ -50,6 +55,14 @@ public:
 	{
 		//-vec
 		return Vector3((-x), (-y), (-z));
+	}
+	bool operator==(Vector3 vector) const
+	{
+		//-vec
+		if (x == vector.x && y == vector.y && z == vector.z)
+			return true;
+		else
+			return false;
 	}
 	friend std::ostream& operator<< (std::ostream& out, const Vector3 source)
 	{

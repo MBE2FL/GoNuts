@@ -38,8 +38,12 @@ inline T MathLibCore::invLerp(const T &v, const T &v0, const T &v1)
 	return ((v - v0) / (v1 - v0));
 }
 template<typename T>
-inline T MathLibCore::catmull(const T p0, const T p1, const T p2, const T p3, const float interValue)
+inline T MathLibCore::catmull(const T p0, const T p1, const T p2, const T p3, float t)
 {
+	if (t < 0)
+		t = 0;
+	if (t > 1)
+		t = 1;
 	return 0.5f *
 		(t * t * t * (		-p0 + 3.0f * p1 -3.0f * p2 + p3) +
 			 t * t * (2.0f * p0 - 5.0f * p1 + 4.0f * p2- p3) +
