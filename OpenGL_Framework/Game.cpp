@@ -50,7 +50,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 
 
-	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animation_", 20);
+	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
 	player.Animated(true);
