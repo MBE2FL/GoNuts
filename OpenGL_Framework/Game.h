@@ -57,6 +57,13 @@ private:
 	Camera camera;
 
 	GameObject player;
+	GameObject coneBoi;
+	float t = 0.0f;
+
+	Vector3 p1 = Vector3(0.0f, 0.0f, -5.0f);
+	Vector3 p2 = Vector3(2.0f, 6.0f, -5.0f);
+	Vector3 p3 = Vector3(10.0f, 5.0f, -5.0f);
+	Vector3 p4 = Vector3(7.0f, 2.0f, -5.0f);
 
 	vector<GameObject> coins;
 	vector<GameObject> platforms;

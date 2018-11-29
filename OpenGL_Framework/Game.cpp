@@ -53,6 +53,11 @@ void Game::initializeGame()
 	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	player.setScale(0.2f);
 
+	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	coneBoi.setMesh(ObjectLoader::getMesh("Cone"));
+	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
+	coneBoi.addPhysicsBody(false);
+	coneBoi.setPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
 	footEmitter = new ParticleEmitter;
 	footEmitter->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -131,7 +136,9 @@ void Game::initializeGame()
 
 void Game::update()
 {
-
+	t += 0.01f;
+	if (t >= 1)
+		t = 0;
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
@@ -140,8 +147,14 @@ void Game::update()
 	drawTime += deltaTime;
 
 	dynamic_cast<ParticleEmitter*>(footEmitter)->emitterPosition = player.getPosition();
+
 	footEmitter->update(deltaTime);
 	player.update(deltaTime);
+
+	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
+
+	//cout << coneBoi.getPosition() << endl;
+	coneBoi.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
 		coins[i].update(deltaTime); 
@@ -223,6 +236,7 @@ void Game::draw()
 		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
 		//}
 		player.draw(camera, light);
+		coneBoi.draw(camera, light);
 
 		for (unsigned int i = 0; i < coins.size(); i++)
 		{
@@ -334,6 +348,14 @@ void Game::imguiDraw()
 			light->setAttenuationQuadratic(attenuationQuadratic);
 		}
 
+		if (ImGui::CollapsingHeader("ConeBoi Catmull Settings:"))
+		{
+			ImGui::DragFloat3("p1 Position: ", &p1.x);
+			ImGui::DragFloat3("p2 Position: ", &p2.x);
+			ImGui::DragFloat3("p3 Position: ", &p3.x);
+			ImGui::DragFloat3("p4 Position: ", &p4.x);
+		}
+
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
@@ -374,7 +396,6 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
 		sliding = true;
 	}
-
 	if (key == 'i')//up
 	{
 		Vector3 LP = light->getPosition();
