@@ -83,7 +83,7 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->setTexture(ObjectLoader::getTexture("Default"));
 			Particles->addPhysicsBody(false);
 			Particles->setPosition(emitterPosition);
-			Particles->setScale(Vector3(1.f));
+			Particles->setScale(getScale());
 			m_pParticles.push_back(Particles);
 		}
 
