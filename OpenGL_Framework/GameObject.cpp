@@ -194,7 +194,7 @@ void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
 	glBindVertexArray(_mesh->VAO);
 
 	if (isAnimated)
-		animation.animate(_shaderProgram);
+		animation.animate(_shaderProgram, _physicsBody->getVelocity().x/ 10.0f);
 
 	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
 	glBindVertexArray(GL_NONE);

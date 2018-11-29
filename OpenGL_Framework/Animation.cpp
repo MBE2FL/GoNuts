@@ -1,8 +1,8 @@
 #include "Animation.h"
 
-void Animation::animate(ShaderProgram* shader)
+void Animation::animate(ShaderProgram* shader, float tValue)
 {	
-	T += 0.6f;
+	T += tValue;
 	if (T > 1.0f)
 	{
 		T = 0.0f;

@@ -19,7 +19,7 @@ public:
 	Animation() {};
 	~Animation() {};
 
-	void animate(ShaderProgram* shader);
+	void animate(ShaderProgram* shader, float tValue);
 	void addMesh(Mesh* mesh);
 	float getT() { return T; };
 
