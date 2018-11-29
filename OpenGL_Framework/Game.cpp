@@ -48,6 +48,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
+	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
@@ -136,7 +137,7 @@ void Game::initializeGame()
 
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
 
-	platforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 2.0f, -5.0f), Vector3(1, 1, 2), 20, 0, 0);
+	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(9.0f, -2.0f, -5.0f), Vector3(1, 1, 0.5f), 20, 0, 0);
 
 	upperPlatforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 10, 5, 0);
 
