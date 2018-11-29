@@ -460,10 +460,10 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 		player.addForce(Vector2(0.0f, 350.0f));
 	}
-	if (key == 's' && collided)
+	if (key == 's' && collided && !sliding)
 	{
 		player.setScale(0.1f);
-		player.setPosition(Vector3(player.getPosition().x, 3.0f, player.getPosition().z));
+		player.setPosition(Vector3(player.getPosition().x, player.getPosition().y - 0.4f, player.getPosition().z));
 		sliding = true;
 	}
 	if (key == 'i')//up
@@ -519,7 +519,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	if (key == 's' && collided)
 	{
 		//if(collided)
-		player.setPosition(Vector3(player.getPosition().x, 3.5f, player.getPosition().z));
+		player.setPosition(Vector3(player.getPosition().x, player.getPosition().y + 0.4f, player.getPosition().z));
 		sliding = false;
 		player.setScale(0.2f);
 	}
