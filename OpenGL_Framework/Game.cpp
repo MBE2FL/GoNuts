@@ -55,10 +55,14 @@ void Game::initializeGame()
 	
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
+	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture.png");
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
+	ObjectLoader::loadTexture("Chair", "./Assets/Textures/chair tex.png");
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
 	ObjectLoader::loadTexture("Chimney", "./Assets/Textures/Chimney Texture.png");
+	ObjectLoader::loadTexture("Clothesline", "./Assets/Textures/clothingline_texture.png");
+	ObjectLoader::loadTexture("Coin", "./Assets/Textures/coin_tex.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
 	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
@@ -70,6 +74,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
 	ObjectLoader::loadTexture("Table", "./Assets/Textures/Table_Texture.jpg");
+	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
 	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");
@@ -171,7 +176,7 @@ void Game::initializeGame()
 
 	Acorns = add(Acorns, objectSetup("Normal", "Acorn", "Acorn", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 54.0f));
 
-	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 35.0f);
+	coins = objectSetup("Normal", "Coin", "Coin", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 35.0f);
 
 	Spikes = objectSetup("Normal", "Spikes", "Spikes", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 28.0f);
 
@@ -198,10 +203,14 @@ void Game::initializeGame()
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Checkpoint Squirrel", "Checkpoint Squirrel", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 40.0f));
 	
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Lever", "Lever", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 44.0f));
+	
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Chair", "Chair", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 48.0f));
+	
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Clothesline", "Clothesline", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 52.0f));
 
-	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 98.0f);
+	Vents = objectSetup("Normal", "Vent", "Vent", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 98.0f);
 
-	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 15, 0);
+	platforms = objectSetup("Normal", "Building", "Building", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1.0f, 0.5f), 15, 0);
 
 	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 5, 125.0f));
 
