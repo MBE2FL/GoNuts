@@ -23,13 +23,30 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 
-	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
-	//ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
-	//ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
+	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
+	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
+	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
+	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
+	ObjectLoader::loadMesh("Button", "./Assets/Models/button_final_unwrap.obj");
+	ObjectLoader::loadMesh("Chair", "./Assets/Models/chair_final_unwrap.obj");
+	ObjectLoader::loadMesh("Chimney", "./Assets/Models/chimney_final_unwrap.obj");
+	ObjectLoader::loadMesh("Clothesline", "./Assets/Models/clothesline_unwrapped_final.obj");
+	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
+	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
+	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
+	ObjectLoader::loadMesh("Garbagecan", "./Assets/Models/garbagecan_final_unwrap.obj");
+	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
+	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
-	//ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
-	
+	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
+	ObjectLoader::loadMesh("Lamp", "./Assets/Models/Street Lamp_final_unwrap.obj");
+	ObjectLoader::loadMesh("Table", "./Assets/Models/table_final_unwrap.obj");
+	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+
+
+	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
+
 	
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
@@ -40,21 +57,6 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
 
-	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
-	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
-	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
-	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
-	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
-	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
-	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
-	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
-	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
-	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
-	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
-	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
-
-
-	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
 	player.Animated(true);
