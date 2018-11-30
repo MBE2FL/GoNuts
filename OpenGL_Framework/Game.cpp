@@ -133,9 +133,9 @@ void Game::initializeGame()
 
 	coins = add(coins, objectSetup("Normal", "Coin", "Default", false, Vector3(2.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 6.0f));
 
-	sceneObjects = objectSetup("Normal", "Cone", "Cone", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
+	Spikes = objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 0, 28.0f);
 
-	Spikes =  objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 14.0f);
+	sceneObjects = objectSetup("Normal", "Cone", "Cone", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
 
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
 
@@ -234,6 +234,13 @@ void Game::update()
 	for (unsigned int i = 0; i < Spikes.size(); i++)
 	{
 		Spikes[i].update(deltaTime);
+		if (player.checkSpikeCollisions(Spikes[i]))
+		{
+			player.setPosition(Vector3(-3.0f, 4, -5.0f));
+			player.setVelocity(Vector2(0.0f, 0.0f));
+			player.setScale(0.2f);
+			sliding = false;
+		}
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
