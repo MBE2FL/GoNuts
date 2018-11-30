@@ -24,11 +24,11 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
-	ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
-	ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
+	//ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
+	//ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
-	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
+	//ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
 	
 	
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
@@ -50,6 +50,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
+	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
