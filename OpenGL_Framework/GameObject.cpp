@@ -229,6 +229,14 @@ bool GameObject::checkCollisions(GameObject& other)
 	return false;
 }
 
+bool GameObject::checkSpikeCollisions(GameObject & other)
+{
+	if (_physicsBody)
+		return _physicsBody->spikeCollision(other.getPhysicsBody());
+
+	return false;
+}
+
 bool GameObject::checkCoinCollisions(GameObject & other)
 {
 	if (_physicsBody)
