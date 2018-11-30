@@ -129,7 +129,7 @@ void PhysicsBody::updatePhysicsBody(Transform* transform, float deltaTime)
 	acceleration = force * 1.0f / mass;
 	velocity = velocity + acceleration * dt;
 	//_collisionBounds.setCentre(_collisionBounds.getCentre() + Vector3(velocity, 0.0f) * dt);
-	transform->setPosition(transform->getPosition() + Vector3(velocity, 0.0f) * dt);
+	transform->setWorldPosition(transform->getWorldPosition() + Vector3(velocity, 0.0f) * dt);
 	_collisionBounds.update(transform);
 
 

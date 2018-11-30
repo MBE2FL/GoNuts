@@ -6,82 +6,82 @@ Transform::Transform()
 {
 }
 
-void Transform::setPosition(const Vector3& newPosition)
+void Transform::setLocalPosition(const Vector3& newPosition)
 {
 	m_pLocalPosition = newPosition;
 }
 
-void Transform::setRotationAngleX(const float newAngle)
+void Transform::setLocalRotationAngleX(const float newAngle)
 {
 	m_pRotX = newAngle;
 }
 
-void Transform::setRotationAngleY(const float newAngle)
+void Transform::setLocalRotationAngleY(const float newAngle)
 {
 	m_pRotY = newAngle;
 }
 
-void Transform::setRotationAngleZ(const float newAngle)
+void Transform::setLocalRotationAngleZ(const float newAngle)
 {
 	m_pRotZ = newAngle;
 }
 
-void Transform::setScale(const Vector3 newScale)
+void Transform::setLocalScale(const Vector3 newScale)
 {
 	m_pScale = newScale;
 }
 
-void Transform::setScaleX(const float _x)
+void Transform::setLocalScaleX(const float _x)
 {
 	m_pScale.x = _x;
 }
 
-void Transform::setScaleY(const float _y)
+void Transform::setLocalScaleY(const float _y)
 {
 	m_pScale.y = _y;
 }
 
-void Transform::setScaleZ(const float _z)
+void Transform::setLocalScaleZ(const float _z)
 {
 	m_pScale.z = _z;
 }
 
-Vector3 Transform::getPosition() const
+Vector3 Transform::getLocalPosition() const
 {
 	return m_pLocalPosition;
 }
 
-float Transform::getRotationAngleX() const
+float Transform::getLocalRotationAngleX() const
 {
 	return m_pRotX;
 }
 
-float Transform::getRotationAngleY() const
+float Transform::getLocalRotationAngleY() const
 {
 	return m_pRotY;
 }
 
-float Transform::getRotationAngleZ() const
+float Transform::getLocalRotationAngleZ() const
 {
 	return m_pRotZ;
 }
 
-Vector3 Transform::getScale() const
+Vector3 Transform::getLocalScale() const
 {
 	return m_pScale;
 }
 
-float Transform::getScaleX() const
+float Transform::getLocalScaleX() const
 {
 	return m_pScale.x;
 }
 
-float Transform::getScaleY() const
+float Transform::getLocalScaleY() const
 {
 	return m_pScale.y;
 }
 
-float Transform::getScaleZ() const
+float Transform::getLocalScaleZ() const
 {
 	return m_pScale.z;
 }
@@ -89,6 +89,65 @@ float Transform::getScaleZ() const
 Matrix44 Transform::getLocalToWorldMatrix() const
 {
 	return m_pLocalToWorldMatrix;
+}
+
+Vector3 Transform::getWorldPosition()
+{
+	if (_parent)
+	{
+		Vector4 temp = _parent->getLocalToWorldMatrix() * Vector4(m_pLocalPosition, 1.0f);
+		return Vector3(temp.x, temp.y, temp.z);
+	}
+	else
+		return m_pLocalPosition;
+}
+
+void Transform::setWorldPosition(const Vector3 & newPosition)
+{
+	if (_parent)
+		_parent->setWorldPosition(newPosition);
+	else
+		m_pLocalPosition = newPosition;
+}
+
+Matrix44 Transform::getWorldRotation()
+{
+	if (_parent)
+		return _parent->getWorldRotation() * m_pLocalRotation;
+	else
+		return m_pLocalRotation;
+}
+
+void Transform::setWorldRotation(const Matrix44 & newRotation)
+{
+	if (_parent)
+		_parent->setWorldRotation(newRotation);
+	else
+		m_pLocalRotation = newRotation;
+}
+
+void Transform::setWorldRotationAngleX(const float newAngle)
+{
+	if (_parent)
+		_parent->setWorldRotationAngleX(newAngle);
+	else
+		m_pRotX = newAngle;
+}
+
+void Transform::setWorldRotationAngleY(const float newAngle)
+{
+	if (_parent)
+		_parent->setWorldRotationAngleY(newAngle);
+	else
+		m_pRotY = newAngle;
+}
+
+void Transform::setWorldRotationAngleZ(const float newAngle)
+{
+	if (_parent)
+		_parent->setWorldRotationAngleZ(newAngle);
+	else
+		m_pRotZ = newAngle;
 }
 
 void Transform::update(float dt)
@@ -120,8 +179,31 @@ void Transform::update(float dt)
 	// This is the local transformation matrix, ie. where is this game object relative to it's parent
 	// If a game object has no parent (it is a root node) then its local transform is also it's global transform
 	// If a game object has a parent, then we must apply the parent's transform
-	m_pLocalToWorldMatrix = scale * m_pLocalRotation * tran;
+	m_pLocalTransformMatrix = tran * m_pLocalRotation * scale;
+
+	if (_parent)
+	{
+		//_parent->update(dt);
+		m_pLocalToWorldMatrix = _parent->getLocalToWorldMatrix() * m_pLocalTransformMatrix;
+	}
+	else
+		m_pLocalToWorldMatrix = m_pLocalTransformMatrix;
 
 	//std::cout << m_pLocalToWorldMatrix[12] << ", " << m_pLocalToWorldMatrix[13] << ", " << m_pLocalToWorldMatrix[14] 
 	//	<< ", " << m_pLocalToWorldMatrix[15] << std::endl;
+}
+
+void Transform::addChild(Transform * child)
+{
+	child->_parent = this;
+	_children.push_back(child);
+}
+
+void Transform::setParent(Transform * parent)
+{
+}
+
+Transform* Transform::getParent() const
+{
+	return _parent;
 }

@@ -10,6 +10,7 @@
 #include "ObjectLoader.h"
 #include "Animation.h"
 
+
 enum class Tag
 {
 	Floor,
@@ -20,21 +21,29 @@ enum class Tag
 class GameObject
 {
 public:
-	GameObject();
+	GameObject(const bool createParent = true);
 	~GameObject();
 
-	Vector3 getPosition() const;
-	void setPosition(const Vector3& newPosition);
-	float getRotationAngleX() const;
-	void setRotationAngleX(const float newAngle);
-	float getRotationAngleY() const;
-	void setRotationAngleY(const float newAngle);
-	float getRotationAngleZ() const;
-	void setRotationAngleZ(const float newAngle);
-	Vector3 getScale() const;
-	void setScale(const Vector3 newScale);
+	Vector3 getLocalPosition() const;
+	void setLocalPosition(const Vector3& newPosition);
+	Vector3 getWorldPosition() const;
+	void setWorldPosition(const Vector3& newPosition);
+	Matrix44 getWorldRotation() const;
+	void setWorldRotation(const Matrix44& newRotation);
+	float getLocalRotationAngleX() const;
+	void setLocalRotationAngleX(const float newAngle);
+	float getLocalRotationAngleY() const;
+	void setLocalRotationAngleY(const float newAngle);
+	float getLocalRotationAngleZ() const;
+	void setLocalRotationAngleZ(const float newAngle);
+	Vector3 getLocalScale() const;
+	void setLocalScale(const Vector3 newScale);
 
 	Matrix44 getLocalToWorldMatrix() const;
+
+	void setWorldRotationAngleX(const float newAngle);
+	void setWorldRotationAngleY(const float newAngle);
+	void setWorldRotationAngleZ(const float newAngle);
 
 	virtual void update(float deltaTime);
 
@@ -51,7 +60,7 @@ public:
 	Animation getanimation();
 
 	void unLoad();
-	virtual void draw(Camera& camera, Light* light, Light* spotLight);
+	virtual void draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse);
 
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);
@@ -64,6 +73,7 @@ public:
 
 
 	void addChild(GameObject* child);
+	void setParent(GameObject* parent);
 	
 	Transform* _transform;
 	Mesh* _mesh;
@@ -75,7 +85,4 @@ private:
 
 	Animation animation;
 	bool isAnimated = false;
-
-	GameObject* _parent;
-	vector<GameObject*> _children;
 };

@@ -1,6 +1,10 @@
 #pragma once
 #include "Vector3.h"
+//#include "Vector4.h"
 #include <ostream>
+
+class Vector4;
+
 class Matrix44
 {
 public:
@@ -24,8 +28,9 @@ public:
 	Vector3 GetColumn(int i);
 	//Manipulators
 	Matrix44 Inverse();
+	Matrix44 GetInverse(const Matrix44& rot, const Vector3& tran);
 	Matrix44 GetInverse();
-	Matrix44 Transpose();
+	Matrix44 Transpose() const;
 	void Identity();
 	float Determinant();
 	float Trace();

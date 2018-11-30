@@ -1,4 +1,5 @@
 #include "Matrix44.h"
+#include "Vector4.h"
 
 std::ostream & operator<<(std::ostream & out, const Matrix44 source)
 {
@@ -40,25 +41,25 @@ Matrix44 Matrix44::operator*(const Matrix44 rhs) const
 {
 	Matrix44 result;
 
-	result.mV[0] = mV[0] * rhs.mV[0]     + mV[1] * rhs.mV[4]     + mV[2] * rhs.mV[8]     + mV[3] * rhs.mV[12    ];
-	result.mV[1] = mV[0] * rhs.mV[0 + 1] + mV[1] * rhs.mV[4 + 1] + mV[2] * rhs.mV[8 + 1] + mV[3] * rhs.mV[12 + 1];
-	result.mV[2] = mV[0] * rhs.mV[0 + 2] + mV[1] * rhs.mV[4 + 2] + mV[2] * rhs.mV[8 + 2] + mV[3] * rhs.mV[12 + 2];
-	result.mV[3] = mV[0] * rhs.mV[0 + 3] + mV[1] * rhs.mV[4 + 3] + mV[2] * rhs.mV[8 + 3] + mV[3] * rhs.mV[12 + 3];
+	result.mV[0 ] = mV[0] * rhs.mV[0] + mV[4] * rhs.mV[1] + mV[8 ] * rhs.mV[2] + mV[12] * rhs.mV[3];
+	result.mV[1 ] = mV[1] * rhs.mV[0] + mV[5] * rhs.mV[1] + mV[9 ] * rhs.mV[2] + mV[13] * rhs.mV[3];
+	result.mV[2 ] = mV[2] * rhs.mV[0] + mV[6] * rhs.mV[1] + mV[10] * rhs.mV[2] + mV[14] * rhs.mV[3];
+	result.mV[3 ] = mV[3] * rhs.mV[0] + mV[7] * rhs.mV[1] + mV[11] * rhs.mV[2] + mV[15] * rhs.mV[3];
 
-	result.mV[4] = mV[4] * rhs.mV[0] +     mV[5] * rhs.mV[4]     + mV[6] * rhs.mV[8]     + mV[7] * rhs.mV[12    ];
-	result.mV[5] = mV[4] * rhs.mV[0 + 1] + mV[5] * rhs.mV[4 + 1] + mV[6] * rhs.mV[8 + 1] + mV[7] * rhs.mV[12 + 1];
-	result.mV[6] = mV[4] * rhs.mV[0 + 2] + mV[5] * rhs.mV[4 + 2] + mV[6] * rhs.mV[8 + 2] + mV[7] * rhs.mV[12 + 2];
-	result.mV[7] = mV[4] * rhs.mV[0 + 3] + mV[5] * rhs.mV[4 + 3] + mV[6] * rhs.mV[8 + 3] + mV[7] * rhs.mV[12 + 3];
+	result.mV[4 ] = mV[0] * rhs.mV[4] + mV[4] * rhs.mV[5] + mV[8 ] * rhs.mV[6] + mV[12] * rhs.mV[7];
+	result.mV[5 ] = mV[1] * rhs.mV[4] + mV[5] * rhs.mV[5] + mV[9 ] * rhs.mV[6] + mV[13] * rhs.mV[7];
+	result.mV[6 ] = mV[2] * rhs.mV[4] + mV[6] * rhs.mV[5] + mV[10] * rhs.mV[6] + mV[14] * rhs.mV[7];
+	result.mV[7 ] = mV[3] * rhs.mV[4] + mV[7] * rhs.mV[5] + mV[11] * rhs.mV[6] + mV[15] * rhs.mV[7];
 
-	result.mV[8]  = mV[8] * rhs.mV[0]     + mV[9] * rhs.mV[4] +     mV[10] * rhs.mV[8]     + mV[11] * rhs.mV[12    ];
-	result.mV[9]  = mV[8] * rhs.mV[0 + 1] + mV[9] * rhs.mV[4 + 1] + mV[10] * rhs.mV[8 + 1] + mV[11] * rhs.mV[12 + 1];
-	result.mV[10] = mV[8] * rhs.mV[0 + 2] + mV[9] * rhs.mV[4 + 2] + mV[10] * rhs.mV[8 + 2] + mV[11] * rhs.mV[12 + 2];
-	result.mV[11] = mV[8] * rhs.mV[0 + 3] + mV[9] * rhs.mV[4 + 3] + mV[10] * rhs.mV[8 + 3] + mV[11] * rhs.mV[12 + 3];
+	result.mV[8 ] = mV[0] * rhs.mV[8] + mV[4] * rhs.mV[9] + mV[8 ] * rhs.mV[10] + mV[12] * rhs.mV[11];
+	result.mV[9 ] = mV[1] * rhs.mV[8] + mV[5] * rhs.mV[9] + mV[9 ] * rhs.mV[10] + mV[13] * rhs.mV[11];
+	result.mV[10] = mV[2] * rhs.mV[8] + mV[6] * rhs.mV[9] + mV[10] * rhs.mV[10] + mV[14] * rhs.mV[11];
+	result.mV[11] = mV[3] * rhs.mV[8] + mV[7] * rhs.mV[9] + mV[11] * rhs.mV[10] + mV[15] * rhs.mV[11];
 
-	result.mV[12] = mV[12] * rhs.mV[0]     + mV[13] * rhs.mV[4]     + mV[14] * rhs.mV[8]     + mV[15] * rhs.mV[12    ];
-	result.mV[13] = mV[12] * rhs.mV[0 + 1] + mV[13] * rhs.mV[4 + 1] + mV[14] * rhs.mV[8 + 1] + mV[15] * rhs.mV[12 + 1];
-	result.mV[14] = mV[12] * rhs.mV[0 + 2] + mV[13] * rhs.mV[4 + 2] + mV[14] * rhs.mV[8 + 2] + mV[15] * rhs.mV[12 + 2];
-	result.mV[15] = mV[12] * rhs.mV[0 + 3] + mV[13] * rhs.mV[4 + 3] + mV[14] * rhs.mV[8 + 3] + mV[15] * rhs.mV[12 + 3];
+	result.mV[12] = mV[0] * rhs.mV[12] + mV[4] * rhs.mV[13] + mV[8 ] * rhs.mV[14] + mV[12] * rhs.mV[15];
+	result.mV[13] = mV[1] * rhs.mV[12] + mV[5] * rhs.mV[13] + mV[9 ] * rhs.mV[14] + mV[13] * rhs.mV[15];
+	result.mV[14] = mV[2] * rhs.mV[12] + mV[6] * rhs.mV[13] + mV[10] * rhs.mV[14] + mV[14] * rhs.mV[15];
+	result.mV[15] = mV[3] * rhs.mV[12] + mV[7] * rhs.mV[13] + mV[11] * rhs.mV[14] + mV[15] * rhs.mV[15];
 
 	return result;
 }
@@ -102,6 +103,23 @@ Vector3 Matrix44::GetColumn(int i)
 Matrix44 Matrix44::Inverse()
 {
 	return Matrix44();
+}
+
+Matrix44 Matrix44::GetInverse(const Matrix44 & rot, const Vector3 & tran)
+{
+	Matrix44 transRot;
+	transRot.mV[15] = 0.0f;
+	transRot = rot.Transpose(); // R^t
+
+	Vector4 rT = -(transRot * Vector4(tran, 1.0f)); // -R^t * T
+	
+	transRot.mV[12] = rT.x;
+	transRot.mV[13] = rT.y;
+	transRot.mV[14] = rT.z;
+	transRot.mV[15] = 1.0f;
+
+
+	return transRot;
 }
 
 Matrix44 Matrix44::GetInverse()
@@ -263,9 +281,33 @@ Matrix44 Matrix44::GetInverse()
 	return result;
 }
 
-Matrix44 Matrix44::Transpose()
+Matrix44 Matrix44::Transpose() const
 {
-	return Matrix44();
+	Matrix44 result;
+
+
+	result.mV[0] = mV[0];
+	result.mV[1] = mV[4];
+	result.mV[2] = mV[8];
+	result.mV[3] = mV[12];
+
+	result.mV[4] = mV[1];
+	result.mV[5] = mV[5];
+	result.mV[6] = mV[9];
+	result.mV[7] = mV[13];
+
+	result.mV[8] = mV[2];
+	result.mV[9] = mV[6];
+	result.mV[10] = mV[10];
+	result.mV[11] = mV[14];
+
+	result.mV[12] = mV[3];
+	result.mV[13] = mV[7];
+	result.mV[14] = mV[11];
+	result.mV[15] = mV[15];
+
+
+	return result;
 }
 
 void Matrix44::Identity()

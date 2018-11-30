@@ -47,7 +47,7 @@ void ColliderBounds::update(Transform* transform)
 
 void ColliderBounds::updatePoint(Transform* transform)
 {
-	setCentre(transform->getPosition());
+	setCentre(transform->getWorldPosition());
 	// Create 4x4 transformation matrix
 
 	// Create rotation matrix
@@ -70,7 +70,7 @@ void ColliderBounds::updatePoint(Transform* transform)
 
 	// Create scale matrix
 	Matrix44 scale;
-	scale.Scale(transform->getScale());
+	scale.Scale(transform->getLocalScale());
 
 	Matrix44 newMinMatrix = scale * rotation * minTran;
 	Matrix44 newMaxMatrix = scale * rotation * maxTran;

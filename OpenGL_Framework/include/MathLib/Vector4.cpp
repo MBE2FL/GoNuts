@@ -66,10 +66,10 @@ Vector4 operator*(const Matrix44 m, const Vector4 v)
 {
 	Vector4 result;
 
-	result.x = m.mV[0] * v.x + m.mV[1] * v.y + m.mV[2] * v.z + m.mV[3] * v.q;
-	result.y = m.mV[4] * v.x + m.mV[5] * v.y + m.mV[6] * v.z + m.mV[7] * v.q;
-	result.z = m.mV[8] * v.x + m.mV[9] * v.y + m.mV[10] * v.z + m.mV[11] * v.q;
-	result.q = m.mV[12] * v.x + m.mV[13] * v.y + m.mV[14] * v.z + m.mV[15] * v.q;
+	result.x = m.mV[0] * v.x + m.mV[4] * v.y + m.mV[8] * v.z + m.mV[12] * v.q;
+	result.y = m.mV[1] * v.x + m.mV[5] * v.y + m.mV[9] * v.z + m.mV[13] * v.q;
+	result.z = m.mV[2] * v.x + m.mV[6] * v.y + m.mV[10] * v.z + m.mV[14] * v.q;
+	result.q = m.mV[4] * v.x + m.mV[7] * v.y + m.mV[11] * v.z + m.mV[15] * v.q;
 
 	return result;
 }

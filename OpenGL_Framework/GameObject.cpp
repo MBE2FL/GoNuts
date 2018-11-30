@@ -1,80 +1,128 @@
 #include "GameObject.h"
 
-GameObject::GameObject()
+GameObject::GameObject(const bool createParent)
 {
 	_transform = new Transform();
 	_mesh = nullptr;
 	_shaderProgram = nullptr;
 	_physicsBody = nullptr;
-	_parent = nullptr;
+
+	if (createParent)
+	{
+		GameObject* parent = new GameObject(false);
+		parent->addChild(this);
+	}
+		
+
 }
 
 GameObject::~GameObject()
 {
 }
 
-Vector3 GameObject::getPosition() const
+Vector3 GameObject::getLocalPosition() const
 {
-	return _transform->getPosition();
+	return _transform->getLocalPosition();
 }
 
-void GameObject::setPosition(const Vector3 & newPosition)
+void GameObject::setLocalPosition(const Vector3 & newPosition)
 {
-	_transform->setPosition(newPosition);
+	_transform->setLocalPosition(newPosition);
 }
 
-float GameObject::getRotationAngleX() const
+Vector3 GameObject::getWorldPosition() const
 {
-	return 0.0f;
+	return _transform->getWorldPosition();
 }
 
-void GameObject::setRotationAngleX(const float newAngle)
+void GameObject::setWorldPosition(const Vector3 & newPosition)
 {
-	_transform->setRotationAngleX(newAngle);
+	_transform->setWorldPosition(newPosition);
 }
 
-float GameObject::getRotationAngleY() const
+Matrix44 GameObject::getWorldRotation() const
 {
-	return _transform->getRotationAngleY();
+	return _transform->getWorldRotation();
 }
 
-void GameObject::setRotationAngleY(const float newAngle)
+void GameObject::setWorldRotation(const Matrix44 & newRotation)
 {
-	_transform->setRotationAngleY(newAngle);
+	_transform->setWorldRotation(newRotation);
 }
 
-float GameObject::getRotationAngleZ() const
+float GameObject::getLocalRotationAngleX() const
 {
-	return 0.0f;
+	return _transform->getLocalRotationAngleX();
 }
 
-void GameObject::setRotationAngleZ(const float newAngle)
+void GameObject::setLocalRotationAngleX(const float newAngle)
 {
-	_transform->setRotationAngleZ(newAngle);
+	_transform->setLocalRotationAngleX(newAngle);
 }
 
-Vector3 GameObject::getScale() const
+float GameObject::getLocalRotationAngleY() const
 {
-	return _transform->getScale();
+	return _transform->getLocalRotationAngleY();
 }
 
-void GameObject::setScale(Vector3 newScale)
+void GameObject::setLocalRotationAngleY(const float newAngle)
 {
-	_transform->setScale(newScale);
+	_transform->setLocalRotationAngleY(newAngle);
+}
+
+float GameObject::getLocalRotationAngleZ() const
+{
+	return _transform->getLocalRotationAngleZ();
+}
+
+void GameObject::setLocalRotationAngleZ(const float newAngle)
+{
+	_transform->setLocalRotationAngleZ(newAngle);
+}
+
+Vector3 GameObject::getLocalScale() const
+{
+	return _transform->getLocalScale();
+}
+
+void GameObject::setLocalScale(Vector3 newScale)
+{
+	_transform->setLocalScale(newScale);
 }
 
 Matrix44 GameObject::getLocalToWorldMatrix() const
 {
-	if (_parent)
-		return (_parent->getLocalToWorldMatrix() * _transform->getLocalToWorldMatrix());
-	else
-		return _transform->getLocalToWorldMatrix();
+	//if (_parent)
+	//	return (_parent->getLocalToWorldMatrix() * _transform->getLocalToWorldMatrix());
+	//else
+	return _transform->getLocalToWorldMatrix();
+}
+
+void GameObject::setWorldRotationAngleX(const float newAngle)
+{
+	_transform->setWorldRotationAngleX(newAngle);
+}
+
+void GameObject::setWorldRotationAngleY(const float newAngle)
+{
+	_transform->setWorldRotationAngleY(newAngle);
+}
+
+void GameObject::setWorldRotationAngleZ(const float newAngle)
+{
+	_transform->setWorldRotationAngleZ(newAngle);
 }
 
 void GameObject::update(float deltaTime)
 {
+	if (_transform->getParent())
+		_transform->getParent()->update(deltaTime);
+
 	if (_physicsBody)
 		_physicsBody->updatePhysicsBody(_transform, deltaTime);
+
+	if (_transform->getParent())
+		_transform->getParent()->update(deltaTime);
 
 	_transform->update(deltaTime);
 }
@@ -152,18 +200,18 @@ void GameObject::unLoad()
 	_mesh->Unload();
 }
 
-void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
+void GameObject::draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse)
 {
 	_shaderProgram->bind();
 	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
-	_shaderProgram->sendUniformMat4("uView", camera.getLocalToWorldMatrix().GetInverse().mV, false);
+	_shaderProgram->sendUniformMat4("uView", cameraInverse.mV, false);
 	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
 
 	
 	_shaderProgram->sendUniform("uTex", 0);
 
 	
-	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(light->getPosition(), 1.0f));
+	_shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
 	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
 	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
 	_shaderProgram->sendUniform("lightSpecular", light->getSpecular());
@@ -172,7 +220,7 @@ void GameObject::draw(Camera& camera, Light* light, Light* spotLight)
 	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
 	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
 
-	_shaderProgram->sendUniform("spotLightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(spotLight->getPosition(), 1.0f));
+	_shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
 	_shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
 	_shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
 	_shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
@@ -257,8 +305,12 @@ void GameObject::setVelocity(const Vector2 & velocity)
 
 void GameObject::addChild(GameObject * child)
 {
-	child->_parent = this;
-	_children.push_back(child);
+	_transform->addChild(child->_transform);
+}
+
+void GameObject::setParent(GameObject * parent)
+{
+	parent->addChild(this);
 }
 
 //MeshBounds GameObject::getMeshBounds() const

@@ -61,40 +61,40 @@ void Game::initializeGame()
 	player.addMesh("TestBoi", 19);
 	player.setTexture(ObjectLoader::getTexture("FatBoi"));
 	player.addPhysicsBody(true);
-	player.setPosition(Vector3(-3.0f, 8.0f, -5.0f));
-	player.setScale(0.2f);
+	player.setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
+	player.setLocalScale(0.2f);
 
 	nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
 	nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
 	nutOmeter.addPhysicsBody(false);
-	nutOmeter.setPosition(Vector3(0.0f, -6.0f, 0.0f));
-	nutOmeter.setRotationAngleZ(3.14592f / 2.0f);
-	nutOmeter.setRotationAngleY(3.14592f);
-	nutOmeter.setScale(2.0f);
+	nutOmeter.setWorldPosition(Vector3(0.0f, -6.0f, 0.0f));
+	nutOmeter.setLocalRotationAngleZ(3.14592f / 2.0f);
+	nutOmeter.setLocalRotationAngleY(3.14592f);
+	nutOmeter.setLocalScale(2.0f);
 
 	time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	time.setMesh(ObjectLoader::getMesh("Plane"));
 	time.setTexture(ObjectLoader::getTexture("Time"));
 	time.addPhysicsBody(false);
-	time.setPosition(Vector3(-13.5f, 7.5f, 0.0f));
-	time.setRotationAngleZ(3.14592f / 2.0f);
-	time.setRotationAngleY(3.14592f);
-	time.setScale(2.0f);
+	time.setWorldPosition(Vector3(-13.5f, 7.5f, 0.0f));
+	time.setLocalRotationAngleZ(3.14592f / 2.0f);
+	time.setLocalRotationAngleY(3.14592f);
+	time.setLocalScale(2.0f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
 	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
 	coneBoi.addPhysicsBody(false);
-	coneBoi.setPosition(Vector3(4.0f, 6.0f, -5.0f));
+	coneBoi.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
 	particleTrail = new ParticleEmitter;
 	particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	particleTrail->setMesh(ObjectLoader::getMesh("Plane"));
 	particleTrail->setTexture(ObjectLoader::getTexture("Default"));
 	particleTrail->addPhysicsBody(false);
-	particleTrail->setPosition(Vector3(9.0f, 2.0f, -5.0f));
-	particleTrail->setScale(Vector3(1, 1, 1));
+	particleTrail->setWorldPosition(Vector3(9.0f, 2.0f, -5.0f));
+	particleTrail->setLocalScale(Vector3(1, 1, 1));
 	
 
 	dynamic_cast<ParticleEmitter*>(particleTrail)->initialize(50);
@@ -105,14 +105,14 @@ void Game::initializeGame()
 	jumpParticles->setMesh(ObjectLoader::getMesh("Plane"));
 	jumpParticles->setTexture(ObjectLoader::getTexture("Default"));
 	jumpParticles->addPhysicsBody(false);
-	jumpParticles->setPosition(Vector3(0));
-	jumpParticles->setScale(Vector3(0.1f));
+	jumpParticles->setWorldPosition(Vector3(0));
+	jumpParticles->setLocalScale(Vector3(0.1f));
 
 	// Physics properties
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = Vector3(-0.1f, 0.01f, -0.01f);
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = Vector3(0.1f, 0.02f, 0.01f);
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = Vector2(1.0f, 2.0f);
-	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getPosition();
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getWorldPosition();
 
 	// Visual Properties
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = Vector2(0.08f, 0.1f);
@@ -171,14 +171,21 @@ void Game::initializeGame()
 	//test.mV[14] = 15; test.mV[15] = 16;
 	//test.GetInverse();
 
+	
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
 	//camera.orthographic(-10, 10, -10, 10, -100, 100);
-	camera.setPosition(Vector3(0.0f, 0.0f, 5.0f));
-	camera.setRotationAngleX(camera.getRotationAngleX() - 0.2f);
+	camera.setWorldPosition(Vector3(0.0f, 0.0f, 5.0f));
+	camera.setLocalRotationAngleX(camera.getLocalRotationAngleX() - 0.2f);
 
 	UICamera.orthographic(-16, 16, 9, -9, -100, 100);
-	UICamera.setPosition(Vector3::Zero);
+	UICamera.setWorldPosition(Vector3::Zero);
+
+	//Matrix44 test;
+	//test.mV[0] = 1; test.mV[1] = 0; test.mV[2] = 10; test.mV[3] = 0; test.mV[4] = 0; test.mV[5] = 6; test.mV[6] = 0;
+	//test.mV[7] = 3; test.mV[8] = 2; test.mV[9] = 0; test.mV[10] = 9; test.mV[11] = 0; test.mV[12] = 0; test.mV[13] = 2;
+	//test.mV[14] = 0; test.mV[15] = 4;
+	//test.GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
 }
 
 void Game::update()
@@ -199,9 +206,9 @@ void Game::update()
 	TotalGameTime += deltaTime;
 	drawTime += deltaTime;
 
-	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getPosition();
-	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = Vector3(player.getPosition().x,
-		player.getPosition().y - 1.f, player.getPosition().z);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = Vector3(player.getWorldPosition().x,
+		player.getWorldPosition().y - 1.f, player.getWorldPosition().z);
 
 	particleTrail->update(deltaTime);
 	jumpParticles->update(deltaTime);
@@ -209,9 +216,9 @@ void Game::update()
 	nutOmeter.update(deltaTime);
 	time.update(deltaTime);
 
-	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
+	coneBoi.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
 	//coneBoi.setScale((MathLibCore::catmull(p1, Vector3(1,1,1), Vector3(1, 1, 1), p4, t)));
-	coneBoi.setRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
+	coneBoi.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
 
 	coneBoi.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
@@ -226,7 +233,7 @@ void Game::update()
 	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		sceneObjects[i].update(deltaTime);
-		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.25f + i);
+		sceneObjects[i].setLocalRotationAngleY(TotalGameTime * 1.25f + i);
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
@@ -255,19 +262,19 @@ void Game::update()
 	if (player.getPhysicsBody()->getVelocity().x < 7.5f)
 		player.addForce(Vector2(20.0f, 0.0f));
 
-	if (player.getPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
+	if (player.getWorldPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
 	{
-		player.setPosition(Vector3(-3.0f, 4, -5.0f));
+		player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
 		player.setVelocity(Vector2(0.0f, 0.0f));
-		player.setScale(0.2f);
+		player.setLocalScale(0.2f);
 		sliding = false;
 	}
 	
 	counter += deltaTime;
-	player.setRotationAngleY(90.0f);
+	player.setLocalRotationAngleY(90.0f);
 
 	Vector3 offset(-6, -1.5f, -8);
-	camera.setPosition(MathLibCore::lerp( camera.getPosition(), player.getPosition() - offset, deltaTime * 3));
+	camera.setWorldPosition(MathLibCore::lerp( camera.getWorldPosition(), player.getWorldPosition() - offset, deltaTime * 3));
 	camera.update(deltaTime);
 	UICamera.update(deltaTime);
 }
@@ -291,46 +298,48 @@ void Game::draw()
 		glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
 
 
+		Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
+		Matrix44 uiCameraInverse = UICamera.getLocalToWorldMatrix().GetInverse(UICamera.getWorldRotation(), UICamera.getWorldPosition());
 
 
 		//platforms[0].draw(UICamera, light, spotLight);
-		particleTrail->draw(UICamera, light, spotLight);
+		particleTrail->draw(UICamera, light, spotLight, cameraInverse);
 
 		// Draw game objects
-		particleTrail->draw(camera, light, spotLight);
-		jumpParticles->draw(camera, light, spotLight);
+		particleTrail->draw(camera, light, spotLight, cameraInverse);
+		jumpParticles->draw(camera, light, spotLight, cameraInverse);
 
-		coneBoi.draw(camera, light, spotLight);
+		coneBoi.draw(camera, light, spotLight, cameraInverse);
 		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
 		//{
 		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
 		//}
-		player.draw(camera, light, spotLight);
-		coneBoi.draw(camera, light, spotLight);
+		player.draw(camera, light, spotLight, cameraInverse);
+		coneBoi.draw(camera, light, spotLight, cameraInverse);
 
 		for (unsigned int i = 0; i < coins.size(); i++)
 		{
-			coins[i].draw(camera, light, spotLight);
+			coins[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		for (unsigned int i = 0; i < Background.size(); i++)
 		{
-			Background[i].draw(camera, light, spotLight);
+			Background[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		for (unsigned int i = 0; i < sceneObjects.size(); i++)
 		{
-			sceneObjects[i].draw(camera, light, spotLight);
+			sceneObjects[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		for (unsigned int i = 0; i < platforms.size(); i++)
 		{
-			platforms[i].draw(camera, light, spotLight);
+			platforms[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		for (unsigned int i = 0; i < upperPlatforms.size(); i++)
 		{
-			upperPlatforms[i].draw(camera, light, spotLight);
+			upperPlatforms[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
-		nutOmeter.draw(UICamera, light, spotLight);
-		time.draw(UICamera, light, spotLight);
+		nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
+		time.draw(UICamera, light, spotLight, uiCameraInverse);
 
 
 
@@ -367,8 +376,8 @@ const Vector3 position, const Vector3 scale, const int amount, const int startNu
 		object->setMesh(ObjectLoader::getMesh(mesh));
 		object->setTexture(ObjectLoader::getTexture(texture));
 		object->addPhysicsBody(physics);
-		object->setPosition(Vector3(i * position.x + offset, position.y, position.z));
-		object->setScale(scale);
+		object->setWorldPosition(Vector3(i * position.x + offset, position.y, position.z));
+		object->setLocalScale(scale);
 		objectVec.push_back(*object);
 	}
 	return objectVec;
@@ -379,9 +388,9 @@ void Game::imguiDraw()
 	{
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-		Vector3 pos = camera.getPosition();
+		Vector3 pos = camera.getWorldPosition();
 		ImGui::Text("Camera Position: (%f, %f, %f)", pos.x, pos.y, pos.z);
-		pos = player.getPosition();
+		pos = player.getWorldPosition();
 		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
 		ImGui::Text("T Value: %f", player.getanimation().getT());
 
@@ -471,8 +480,8 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 	if (key == 's' && !sliding)
 	{
-		player.setScale(0.1f);
-		player.setPosition(Vector3(player.getPosition().x, player.getPosition().y - 0.38f, player.getPosition().z));
+		player.setLocalScale(0.1f);
+		player.setWorldPosition(Vector3(player.getWorldPosition().x, player.getWorldPosition().y - 0.38f, player.getWorldPosition().z));
 		sliding = true;
 	}
 	if (key == 'i')//up
@@ -528,9 +537,9 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	if (key == 's')
 	{
 		//if(collided)
-		player.setPosition(Vector3(player.getPosition().x, player.getPosition().y + 0.45f, player.getPosition().z));
+		player.setWorldPosition(Vector3(player.getWorldPosition().x, player.getWorldPosition().y + 0.45f, player.getWorldPosition().z));
 		sliding = false;
-		player.setScale(0.2f);
+		player.setLocalScale(0.2f);
 	}
 }
 

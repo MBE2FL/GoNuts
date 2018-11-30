@@ -82,8 +82,8 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->setMesh(ObjectLoader::getMesh("Plane"));
 			Particles->setTexture(ObjectLoader::getTexture("Default"));
 			Particles->addPhysicsBody(false);
-			Particles->setPosition(emitterPosition);
-			Particles->setScale(getScale());
+			Particles->setWorldPosition(emitterPosition);
+			Particles->setLocalScale(getLocalScale());
 			m_pParticles.push_back(Particles);
 		}
 
@@ -141,7 +141,7 @@ void ParticleEmitter::update(float dt)
 				{
 					float randomTval1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					float randomTval2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					particle->_transform->setPosition(Vector3(MathLibCore::lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
+					particle->_transform->setWorldPosition(Vector3(MathLibCore::lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
 						MathLibCore::lerp(spawnRadius1.y, spawnRadius2.y, randomTval2), emitterPosition.z));
 				}
 
@@ -172,7 +172,7 @@ void ParticleEmitter::update(float dt)
 			// Update acceleration
 			particle->acceleration = particle->force / particle->mass;
 			particle->velocity = particle->velocity + (particle->acceleration * dt);
-			particle->_transform->setPosition(particle->_transform->getPosition() + particle->velocity * dt * 60.0f);
+			particle->_transform->setWorldPosition(particle->_transform->getWorldPosition() + particle->velocity * dt * 60.0f);
 			particle->_transform->update(dt);
 
 			// We've applied the force, let's remove it so it does not get applied next frame
@@ -197,7 +197,7 @@ void ParticleEmitter::update(float dt)
 	}
 }
 
-void ParticleEmitter::draw(Camera &camera, Light *light, Light* spotLight)
+void ParticleEmitter::draw(Camera &camera, Light *light, Light* spotLight, Matrix44& cameraInverse)
 {
 	// Draw the emitter position
 	// Note: not necessary
@@ -209,7 +209,7 @@ void ParticleEmitter::draw(Camera &camera, Light *light, Light* spotLight)
 		//Particle* p = m_pParticles[i];
 		if (!m_pParticles.empty() && m_pParticles[i]->life) // if particle is alive, draw it
 		{
-			(m_pParticles[i])->draw(camera, light, spotLight);
+			(m_pParticles[i])->draw(camera, light, spotLight, cameraInverse);
 
 			//TTK::Graphics::DrawTeapot(p->position, p->size, p->color); // low fps alert!! use with low particle count
 			//TTK::Graphics::DrawPoint(p->position, p->size, p->color);
@@ -238,7 +238,7 @@ Vector3 ParticleEmitter::getParticlePosition(unsigned int idx)
 		return Vector3();
 	}
 
-	return m_pParticles[idx]->_transform->getPosition();
+	return m_pParticles[idx]->_transform->getWorldPosition();
 }
 
 float ParticleEmitter::getParticleMass(unsigned int idx)
