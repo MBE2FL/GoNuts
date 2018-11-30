@@ -47,15 +47,31 @@ void Game::initializeGame()
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
-	
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
+	
+	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
-	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
-	//UI Textures
-	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
-	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
+	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture.png");
+	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
+	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
+	ObjectLoader::loadTexture("Garbage", "./Assets/Textures/garbage.png");
+	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
+	//UI Textures
+	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
+	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");
+	ObjectLoader::loadTexture("Nut20", "./Assets/Textures/Nut_20.png");
+	ObjectLoader::loadTexture("Nut30", "./Assets/Textures/Nut_30.png");
+	ObjectLoader::loadTexture("Nut40", "./Assets/Textures/Nut_40.png");
+	ObjectLoader::loadTexture("Nut50", "./Assets/Textures/Nut_50.png");
+	ObjectLoader::loadTexture("Nut60", "./Assets/Textures/Nut_60.png");
+	ObjectLoader::loadTexture("Nut70", "./Assets/Textures/Nut_70.png");
+	ObjectLoader::loadTexture("Nut80", "./Assets/Textures/Nut_80.png");
+	ObjectLoader::loadTexture("Nut90", "./Assets/Textures/Nut_90.png");
+	ObjectLoader::loadTexture("Nut100", "./Assets/Textures/Nut_100.png");
+	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
+	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
@@ -198,6 +214,7 @@ void Game::initializeGame()
 
 void Game::update()
 {
+	collided = false;
 	if (!reverse)
 		t += 0.01f;
 	if (reverse)
@@ -296,7 +313,8 @@ void Game::update()
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
-		collided = player.checkCollisions(platforms[i]);
+		if (player.checkCollisions(platforms[i]))
+			collided = true;
 		if (collided)
 		{
 			dynamic_cast<ParticleEmitter*>(jumpParticles)->playing = true;
