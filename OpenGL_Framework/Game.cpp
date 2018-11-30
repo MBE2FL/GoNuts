@@ -134,13 +134,13 @@ void Game::initializeGame()
 
 	sceneObjects = objectSetup("Normal", "Cone", "Cone", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
 
-	sceneObjects =add(sceneObjects, objectSetup("Normal", "Spikes", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 18.0f));
+	Spikes =  objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 14.0f);
 
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
 
-	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(9.0f, -2.0f, -5.0f), Vector3(1, 1, 0.5f), 20, 0, 0);
+	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 20, 0, 0);
 
-	upperPlatforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 10, 5, 0);
+	//upperPlatforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 10, 5, 0);
 
 	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 20, 15, 0));
 
@@ -229,6 +229,10 @@ void Game::update()
 	{
 		sceneObjects[i].update(deltaTime);
 		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.25f + i);
+	}
+	for (unsigned int i = 0; i < Spikes.size(); i++)
+	{
+		Spikes[i].update(deltaTime);
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
@@ -321,6 +325,10 @@ void Game::draw()
 		for (unsigned int i = 0; i < sceneObjects.size(); i++)
 		{
 			sceneObjects[i].draw(camera, light, spotLight);
+		}
+		for (unsigned int i = 0; i < Spikes.size(); i++)
+		{
+			Spikes[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < platforms.size(); i++)
 		{

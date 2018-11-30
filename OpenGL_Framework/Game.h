@@ -76,6 +76,7 @@ private:
 	Vector3 p4 = Vector3(2.0f, 3.0f, -5.0f);
 
 	vector<GameObject> coins;
+	vector<GameObject> Spikes;
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
 	vector<GameObject> Background;
