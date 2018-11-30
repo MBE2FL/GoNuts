@@ -29,18 +29,22 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
 	ObjectLoader::loadMesh("Button", "./Assets/Models/button_final_unwrap.obj");
 	ObjectLoader::loadMesh("Chair", "./Assets/Models/chair_final_unwrap.obj");
-	ObjectLoader::loadMesh("Chimney", "./Assets/Models/chimney_final_unwrap.obj");
+	ObjectLoader::loadMesh("Checkpoint Squirrel", "./Assets/Models/checkpointsquirrel_unwrap.obj");
+	ObjectLoader::loadMesh("Chimney", "./Assets/Models/chimney_unwrap.obj");
 	ObjectLoader::loadMesh("Clothesline", "./Assets/Models/clothesline_unwrapped_final.obj");
 	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
+	ObjectLoader::loadMesh("Flag", "./Assets/Models/flag_final_unwrap.obj");
 	ObjectLoader::loadMesh("Garbage", "./Assets/Models/garbagecan_final_unwrap.obj");
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Lamp", "./Assets/Models/Street Lamp_final_unwrap.obj");
+	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
+	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Table", "./Assets/Models/table_final_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 
@@ -53,11 +57,19 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture.png");
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
+	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
+	ObjectLoader::loadTexture("Chimney", "./Assets/Textures/Chimney Texture.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
 	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
+	ObjectLoader::loadTexture("Flag", "./Assets/Textures/flag tex.png");
 	ObjectLoader::loadTexture("Garbage", "./Assets/Textures/garbage.png");
+	ObjectLoader::loadTexture("Lamp", "./Assets/Textures/Lamp Post Texture.png");
+	ObjectLoader::loadTexture("Lever", "./Assets/Textures/Lever_Texture.png");
+	ObjectLoader::loadTexture("Raccoon", "./Assets/Textures/raccoon_texture.png");
 	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
+	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
+	ObjectLoader::loadTexture("Table", "./Assets/Textures/Table_Texture.jpg");
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
 	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");
@@ -167,6 +179,22 @@ void Game::initializeGame()
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Button", "Button", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 8.0f));
 
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Garbage", "Garbage", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 12.0f));
+
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Chimney", "Chimney", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(4.0f), 1, 16.0f));
+
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Raccoon", "Raccoon", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.5f), 1, 20.0f));
+
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Squirrel", "Squirrel", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 24.0f));
+
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Table", "Table", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 28.0f));
+	
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Lamp", "Lamp", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 32.0f));
+	
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Flag", "Flag", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 36.0f));
+	
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Checkpoint Squirrel", "Checkpoint Squirrel", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 40.0f));
+	
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Lever", "Lever", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 44.0f));
 
 	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 98.0f);
 
