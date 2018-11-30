@@ -80,7 +80,7 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->_physicsBody = nullptr;
 			Particles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 			Particles->setMesh(ObjectLoader::getMesh("Plane"));
-			Particles->setTexture(ObjectLoader::getTexture("Default"));
+			Particles->setTexture(ObjectLoader::getTexture(texName));
 			Particles->addPhysicsBody(false);
 			Particles->setPosition(emitterPosition);
 			Particles->setScale(getScale());

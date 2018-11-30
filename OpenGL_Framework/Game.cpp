@@ -38,6 +38,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
+	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
 
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
@@ -98,6 +99,14 @@ void Game::initializeGame()
 	particleTrail->addPhysicsBody(false);
 	particleTrail->setPosition(Vector3(9.0f, 2.0f, -5.0f));
 	particleTrail->setScale(Vector3(1, 1, 1));
+	dynamic_cast<ParticleEmitter*>(particleTrail)->texName = "Dust";
+	dynamic_cast<ParticleEmitter*>(particleTrail)->velocity0 = Vector3(-0.1f, -0.01f, -0.01f);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->velocity1 = Vector3(-0.1f, -0.01f, 0.01f);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->massRange = Vector2(1.0f, 2.0f);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getPosition();
+
+	// Visual Properties
+	dynamic_cast<ParticleEmitter*>(particleTrail)->lifeRange = Vector2(0.8f, 1.0f);
 	
 
 	dynamic_cast<ParticleEmitter*>(particleTrail)->initialize(50);
@@ -106,12 +115,13 @@ void Game::initializeGame()
 	jumpParticles = new ParticleEmitter;
 	jumpParticles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	jumpParticles->setMesh(ObjectLoader::getMesh("Plane"));
-	jumpParticles->setTexture(ObjectLoader::getTexture("Default"));
+	jumpParticles->setTexture(ObjectLoader::getTexture("Dust"));
 	jumpParticles->addPhysicsBody(false);
 	jumpParticles->setPosition(Vector3(0));
-	jumpParticles->setScale(Vector3(0.1f));
+	jumpParticles->setScale(Vector3(0.5f));
 
 	// Physics properties
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->texName = "Dust";
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = Vector3(-0.1f, 0.01f, -0.01f);
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = Vector3(0.1f, 0.02f, 0.01f);
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = Vector2(1.0f, 2.0f);
@@ -120,7 +130,7 @@ void Game::initializeGame()
 	// Visual Properties
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = Vector2(0.08f, 0.1f);
 
-	dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(1);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
@@ -204,7 +214,7 @@ void Game::update()
 
 	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getPosition();
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = Vector3(player.getPosition().x,
-		player.getPosition().y - 1.f, player.getPosition().z);
+		player.getPosition().y - 0.7f, player.getPosition().z);
 
 	particleTrail->update(deltaTime);
 	jumpParticles->update(deltaTime);
@@ -297,11 +307,11 @@ void Game::draw()
 
 
 		//platforms[0].draw(UICamera, light, spotLight);
-		particleTrail->draw(UICamera, light, spotLight);
+		//particleTrail->draw(UICamera, light, spotLight);
 
 		// Draw game objects
-		particleTrail->draw(camera, light, spotLight);
-		jumpParticles->draw(camera, light, spotLight);
+		
+		
 
 		coneBoi.draw(camera, light, spotLight);
 		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
@@ -334,6 +344,8 @@ void Game::draw()
 		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
 		nutOmeter.draw(UICamera, light, spotLight);
 		time.draw(UICamera, light, spotLight);
+		jumpParticles->draw(camera, light, spotLight);
+		particleTrail->draw(camera, light, spotLight);
 
 
 

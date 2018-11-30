@@ -84,6 +84,8 @@ public:
 	///// Playback properties
 	bool playing;
 
+	std::string texName;
+
 	//// Update flags
 	bool interpolateColor;
 
