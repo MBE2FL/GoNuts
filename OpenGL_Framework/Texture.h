@@ -51,10 +51,10 @@ public:
 	// Unbinds a specific texture slot
 	void unBind(int textureSlot) const;
 
+	std::string filename;
 private:
 	GLuint _TexHandle;
 
-	std::string filename;
 
 	GLenum _InternalFormat;
 	GLenum _Target;
