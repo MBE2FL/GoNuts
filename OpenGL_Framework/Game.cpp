@@ -280,7 +280,7 @@ void Game::update()
 	particleTrail->getParent()->update(deltaTime);
 	//jumpParticles->update(deltaTime);
 	player.getParent()->update(deltaTime);
-	spotLight->setPosition(player.getWorldPosition());
+	spotLight->setPosition(Vector3(player.getWorldPosition().x, 5.0f, player.getWorldPosition().z) + offse);
 	nutOmeter.getParent()->update(deltaTime);
 	time.getParent()->update(deltaTime);
 
@@ -566,9 +566,9 @@ void Game::imguiDraw()
 			light->setAttenuationQuadratic(attenuationQuadratic);
 			
 			
-			Vector3 spotPositiion = spotLight->getPosition();
-			ImGui::SliderFloat3("Spot Position: ", &spotPositiion.x, -10.f, 10.f);
-			spotLight->setPosition(spotPositiion);
+			//Vector3 spotPositiion = spotLight->getPosition();
+			ImGui::SliderFloat3("Spot Position: ", &offse.x, -60.f, 60.f);
+			//spotLight->setPosition(spotPositiion);
 		}
 
 		if (ImGui::CollapsingHeader("ConeBoi Catmull Settings:"))

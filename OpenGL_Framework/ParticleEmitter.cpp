@@ -85,7 +85,7 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->setParent(this);
 			//Particles->setWorldPosition(getWorldPosition());
 			Particles->setLocalPosition(Vector3::Zero);
-			Particles->setLocalScale(1.0f);
+			Particles->setLocalScale(getLocalScale());
 			m_pParticles.push_back(Particles);
 		}
 

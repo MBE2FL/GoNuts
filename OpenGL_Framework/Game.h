@@ -52,6 +52,8 @@ public:
 
 	float drawTime = 0.0f;
 
+	Vector3 offse = Vector3(0,18,-25.882f);
+
 private:
 	// Scene Objects.
 	Camera camera;
