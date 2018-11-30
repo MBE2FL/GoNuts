@@ -84,6 +84,8 @@ public:
 	///// Playback properties
 	bool playing;
 
+	std::string texName;
+
 	//// Update flags
 	bool interpolateColor;
 
@@ -111,6 +113,9 @@ public:
 	Vector4 colorBegin1;
 	Vector4 colorEnd0;
 	Vector4 colorEnd1;
+
+
+	Vector3 partLocalPos = Vector3(8.0f, -6.5f, 0.0f);
 
 	// ... other properties
 	// ... what would be a better way of doing this?

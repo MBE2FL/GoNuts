@@ -66,6 +66,7 @@ public:
 	void addPhysicsBody(const bool _useGravity);
 	PhysicsBody* getPhysicsBody() const;
 	bool checkCollisions(GameObject& other);
+	bool checkSpikeCollisions(GameObject& other);
 	bool checkCoinCollisions(GameObject& other);
 	void addForce(const Vector2& force);
 	void useGravity(const bool _useGravity);
@@ -74,6 +75,7 @@ public:
 
 	void addChild(GameObject* child);
 	void setParent(GameObject* parent);
+	GameObject* getParent() const;
 	
 	Transform* _transform;
 	Mesh* _mesh;
@@ -85,4 +87,7 @@ private:
 
 	Animation animation;
 	bool isAnimated = false;
+
+	GameObject* _parent;
+	vector<GameObject*> _children;
 };

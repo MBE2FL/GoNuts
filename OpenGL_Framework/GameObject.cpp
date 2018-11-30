@@ -115,16 +115,22 @@ void GameObject::setWorldRotationAngleZ(const float newAngle)
 
 void GameObject::update(float deltaTime)
 {
-	if (_transform->getParent())
-		_transform->getParent()->update(deltaTime);
+	//if (_transform->getParent())
+	//	_transform->getParent()->update(deltaTime);
+
 
 	if (_physicsBody)
+	{
 		_physicsBody->updatePhysicsBody(_transform, deltaTime);
-
-	if (_transform->getParent())
-		_transform->getParent()->update(deltaTime);
+		if (_transform->getParent())
+			_transform->getParent()->update(deltaTime);
+	}
+		
 
 	_transform->update(deltaTime);
+
+	for (GameObject* child : _children)
+		child->update(deltaTime);
 }
 
 void GameObject::loadShaderProgram(const string & vertFile, const string & fragFile)
@@ -277,6 +283,14 @@ bool GameObject::checkCollisions(GameObject& other)
 	return false;
 }
 
+bool GameObject::checkSpikeCollisions(GameObject & other)
+{
+	if (_physicsBody)
+		return _physicsBody->spikeCollision(other.getPhysicsBody());
+
+	return false;
+}
+
 bool GameObject::checkCoinCollisions(GameObject & other)
 {
 	if (_physicsBody)
@@ -306,11 +320,20 @@ void GameObject::setVelocity(const Vector2 & velocity)
 void GameObject::addChild(GameObject * child)
 {
 	_transform->addChild(child->_transform);
+
+	child->_parent = this;
+	_children.push_back(child);
 }
 
 void GameObject::setParent(GameObject * parent)
 {
 	parent->addChild(this);
+	_parent = parent;
+}
+
+GameObject * GameObject::getParent() const
+{
+	return _parent;
 }
 
 //MeshBounds GameObject::getMeshBounds() const

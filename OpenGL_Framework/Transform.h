@@ -47,6 +47,7 @@ public:
 	void addChild(Transform* child);
 	void setParent(Transform* parent);
 	Transform* getParent() const;
+	vector<Transform*> getChildren() const;
 
 private:
 	// Other Properties

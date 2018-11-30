@@ -23,34 +23,56 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 
-	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
-	ObjectLoader::loadMesh("FatBoi2", "./Assets/Models/Very_Happy_Boi.obj");
-	ObjectLoader::loadMesh("FatBoi3", "./Assets/Models/Not_Happy_Boi.obj");
-	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
-	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
-	ObjectLoader::loadMesh("Platform2", "./Assets/Models/monkey.obj");
-	
-	
-	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
-	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
-	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
-	//UI Textures
-	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
-	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
-
-	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
-	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
-	//ObjectLoader::loadMesh("BorderEdge", "./Assets/Models/roof board edge.obj");
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
-	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
-	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
-	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
-	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
+	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
+	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
+	ObjectLoader::loadMesh("Button", "./Assets/Models/button_final_unwrap.obj");
+	ObjectLoader::loadMesh("Chair", "./Assets/Models/chair_final_unwrap.obj");
+	ObjectLoader::loadMesh("Chimney", "./Assets/Models/chimney_final_unwrap.obj");
+	ObjectLoader::loadMesh("Clothesline", "./Assets/Models/clothesline_unwrapped_final.obj");
+	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
+	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
+	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
+	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
+	ObjectLoader::loadMesh("Garbagecan", "./Assets/Models/garbagecan_final_unwrap.obj");
+	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
+	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
+	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
+	ObjectLoader::loadMesh("Lamp", "./Assets/Models/Street Lamp_final_unwrap.obj");
+	ObjectLoader::loadMesh("Table", "./Assets/Models/table_final_unwrap.obj");
+	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
+
+	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
+	
+	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
+	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
+	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture.png");
+	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
+	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
+	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
+	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
+	ObjectLoader::loadTexture("Garbage", "./Assets/Textures/garbage.png");
+	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
+	//UI Textures
+	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
+	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");
+	ObjectLoader::loadTexture("Nut20", "./Assets/Textures/Nut_20.png");
+	ObjectLoader::loadTexture("Nut30", "./Assets/Textures/Nut_30.png");
+	ObjectLoader::loadTexture("Nut40", "./Assets/Textures/Nut_40.png");
+	ObjectLoader::loadTexture("Nut50", "./Assets/Textures/Nut_50.png");
+	ObjectLoader::loadTexture("Nut60", "./Assets/Textures/Nut_60.png");
+	ObjectLoader::loadTexture("Nut70", "./Assets/Textures/Nut_70.png");
+	ObjectLoader::loadTexture("Nut80", "./Assets/Textures/Nut_80.png");
+	ObjectLoader::loadTexture("Nut90", "./Assets/Textures/Nut_90.png");
+	ObjectLoader::loadTexture("Nut100", "./Assets/Textures/Nut_100.png");
+	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
+	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
+
 
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
 	player.Animated(true);
@@ -69,8 +91,8 @@ void Game::initializeGame()
 	nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
 	nutOmeter.addPhysicsBody(false);
 	nutOmeter.setWorldPosition(Vector3(0.0f, -6.0f, 0.0f));
-	nutOmeter.setLocalRotationAngleZ(3.14592f / 2.0f);
-	nutOmeter.setLocalRotationAngleY(3.14592f);
+	nutOmeter.setLocalRotationAngleZ(-3.14592f / 2.0f);
+	//nutOmeter.setLocalRotationAngleY(3.14592f);
 	nutOmeter.setLocalScale(2.0f);
 
 	time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -78,8 +100,8 @@ void Game::initializeGame()
 	time.setTexture(ObjectLoader::getTexture("Time"));
 	time.addPhysicsBody(false);
 	time.setWorldPosition(Vector3(-13.5f, 7.5f, 0.0f));
-	time.setLocalRotationAngleZ(3.14592f / 2.0f);
-	time.setLocalRotationAngleY(3.14592f);
+	time.setLocalRotationAngleZ(-3.14592f / 2.0f);
+	//time.setLocalRotationAngleY(3.14592f);
 	time.setLocalScale(2.0f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -95,6 +117,14 @@ void Game::initializeGame()
 	particleTrail->addPhysicsBody(false);
 	particleTrail->setWorldPosition(Vector3(9.0f, 2.0f, -5.0f));
 	particleTrail->setLocalScale(Vector3(1, 1, 1));
+	dynamic_cast<ParticleEmitter*>(particleTrail)->texName = "Dust";
+	dynamic_cast<ParticleEmitter*>(particleTrail)->velocity0 = Vector3(-0.1f, -0.01f, -0.01f);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->velocity1 = Vector3(-0.1f, -0.01f, 0.01f);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->massRange = Vector2(1.0f, 2.0f);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
+
+	// Visual Properties
+	dynamic_cast<ParticleEmitter*>(particleTrail)->lifeRange = Vector2(0.8f, 1.0f);
 	
 
 	dynamic_cast<ParticleEmitter*>(particleTrail)->initialize(50);
@@ -103,44 +133,48 @@ void Game::initializeGame()
 	jumpParticles = new ParticleEmitter;
 	jumpParticles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	jumpParticles->setMesh(ObjectLoader::getMesh("Plane"));
-	jumpParticles->setTexture(ObjectLoader::getTexture("Default"));
+	jumpParticles->setTexture(ObjectLoader::getTexture("Dust"));
 	jumpParticles->addPhysicsBody(false);
-	jumpParticles->setWorldPosition(Vector3(0));
-	jumpParticles->setLocalScale(Vector3(0.1f));
+	jumpParticles->setParent(&player);
+	//jumpParticles->setWorldPosition(Vector3(0));
+	jumpParticles->setLocalPosition(Vector3::Zero);
+	jumpParticles->setLocalScale(Vector3(0.5f));
+	jumpParticles->setLocalRotationAngleY(90.0f);
 
 	// Physics properties
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->texName = "Dust";
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = Vector3(-0.1f, 0.01f, -0.01f);
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = Vector3(0.1f, 0.02f, 0.01f);
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = Vector2(1.0f, 2.0f);
-	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getWorldPosition();
+	//dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getWorldPosition();
 
 	// Visual Properties
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = Vector2(0.08f, 0.1f);
 
-	dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(1);
+	dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
 
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
-	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
+	//coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
 
-	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 0));
+	Acorns = objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
 
-	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 37.0f));
+	Acorns = add(Acorns, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 54.0f));
 
-	coins = add(coins, objectSetup("Normal", "Coin", "Default", false, Vector3(2.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 6.0f));
+	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 35.0f);
 
-	sceneObjects = objectSetup("Normal", "Cone", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
+	Spikes = objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 0, 28.0f);
 
-	sceneObjects = objectSetup("Normal", "Spikes", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 18.0f);
+	Cones = objectSetup("Normal", "Cone", "Cone", false, Vector3(14.0f, 2.6f, -5.0f), Vector3(1, 1, 1), 2, 0, 70.0f);
 
-	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
+	sceneObjects = objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f);
 
-	platforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 2.0f, -5.0f), Vector3(1, 1, 2), 20, 0, 0);
+	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 0, 98.0f);
 
-	upperPlatforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 10, 5, 0);
+	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 15, 0, 0);
 
-	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 20, 15, 0));
+	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 5, 0, 125.0f));
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
@@ -190,6 +224,7 @@ void Game::initializeGame()
 
 void Game::update()
 {
+	collided = false;
 	if (!reverse)
 		t += 0.01f;
 	if (reverse)
@@ -206,47 +241,95 @@ void Game::update()
 	TotalGameTime += deltaTime;
 	drawTime += deltaTime;
 
-	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
-	dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = Vector3(player.getWorldPosition().x,
-		player.getWorldPosition().y - 1.f, player.getWorldPosition().z);
 
-	particleTrail->update(deltaTime);
-	jumpParticles->update(deltaTime);
-	player.update(deltaTime);
-	nutOmeter.update(deltaTime);
-	time.update(deltaTime);
+	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
+	//dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = Vector3(player.getWorldPosition().x,
+	//	player.getWorldPosition().y - 0.7f, player.getWorldPosition().z);
+	//jumpParticles->setWorldPosition(player.getWorldPosition());
+
+
+	particleTrail->getParent()->update(deltaTime);
+	//jumpParticles->update(deltaTime);
+	player.getParent()->update(deltaTime);
+	nutOmeter.getParent()->update(deltaTime);
+	time.getParent()->update(deltaTime);
+
 
 	coneBoi.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
 	//coneBoi.setScale((MathLibCore::catmull(p1, Vector3(1,1,1), Vector3(1, 1, 1), p4, t)));
 	coneBoi.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
 
-	coneBoi.update(deltaTime);
+	coneBoi.getParent()->update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
-		coins[i].update(deltaTime); 
+		coins[i].getParent()->update(deltaTime);
+		coins[i].setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f, 60.0f, t)));
 		player.checkCoinCollisions(coins[i]);
+	}
+	for (unsigned int i = 0; i < Acorns.size(); i++)
+	{
+		Acorns[i].getParent()->update(deltaTime);
+		player.checkCoinCollisions(Acorns[i]);
 	}
 	for (unsigned int i = 0; i < Background.size(); i++)
 	{
-		Background[i].update(deltaTime);
+		Background[i].getParent()->update(deltaTime);
 	}
 	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
-		sceneObjects[i].update(deltaTime);
+		sceneObjects[i].getParent()->update(deltaTime);
 		sceneObjects[i].setLocalRotationAngleY(TotalGameTime * 1.25f + i);
 	}
+
+	for (unsigned int i = 0; i < Cones.size(); i++)
+	{
+		Cones[i].getParent()->update(deltaTime);
+		if (player.checkSpikeCollisions(Cones[i]))
+		{
+			player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
+			player.setVelocity(Vector2(0.0f, 0.0f));
+			player.setLocalScale(0.2f);
+			sliding = false;
+		}
+	}
+
+	for (unsigned int i = 0; i < Spikes.size(); i++)
+	{
+		Spikes[i].getParent()->update(deltaTime);
+		if (player.checkSpikeCollisions(Spikes[i]))
+		{
+			player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
+			player.setVelocity(Vector2(0.0f, 0.0f));
+			player.setLocalScale(0.2f);
+			sliding = false;
+		}
+	}
+
+	for (unsigned int i = 0; i < Vents.size(); i++)
+	{
+		Vents[i].getParent()->update(deltaTime);
+		if (player.checkSpikeCollisions(Vents[i]))
+		{
+			player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
+			player.setVelocity(Vector2(0.0f, 0.0f));
+			player.setLocalScale(0.2f);
+			sliding = false;
+		}
+	}
+
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
-		platforms[i].update(deltaTime);
+		platforms[i].getParent()->update(deltaTime);
 	}
 	for (unsigned int i = 0; i < upperPlatforms.size(); i++)
 	{
-		upperPlatforms[i].update(deltaTime);
+		upperPlatforms[i].getParent()->update(deltaTime);
 		player.checkCollisions(upperPlatforms[i]);
 	}
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
-		collided = player.checkCollisions(platforms[i]);
+		if (player.checkCollisions(platforms[i]))
+			collided = true;
 		if (collided)
 		{
 			dynamic_cast<ParticleEmitter*>(jumpParticles)->playing = true;
@@ -303,11 +386,7 @@ void Game::draw()
 
 
 		//platforms[0].draw(UICamera, light, spotLight);
-		particleTrail->draw(UICamera, light, spotLight, cameraInverse);
 
-		// Draw game objects
-		particleTrail->draw(camera, light, spotLight, cameraInverse);
-		jumpParticles->draw(camera, light, spotLight, cameraInverse);
 
 		coneBoi.draw(camera, light, spotLight, cameraInverse);
 		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
@@ -321,6 +400,10 @@ void Game::draw()
 		{
 			coins[i].draw(camera, light, spotLight, cameraInverse);
 		}
+		for (unsigned int i = 0; i < Acorns.size(); i++)
+		{
+			Acorns[i].draw(camera, light, spotLight, cameraInverse);
+		}
 		for (unsigned int i = 0; i < Background.size(); i++)
 		{
 			Background[i].draw(camera, light, spotLight, cameraInverse);
@@ -328,6 +411,18 @@ void Game::draw()
 		for (unsigned int i = 0; i < sceneObjects.size(); i++)
 		{
 			sceneObjects[i].draw(camera, light, spotLight, cameraInverse);
+		}
+		for (unsigned int i = 0; i < Spikes.size(); i++)
+		{
+			Spikes[i].draw(camera, light, spotLight, cameraInverse);
+		}
+		for (unsigned int i = 0; i < Cones.size(); i++)
+		{
+			Cones[i].draw(camera, light, spotLight, cameraInverse);
+		}
+		for (unsigned int i = 0; i < Vents.size(); i++)
+		{
+			Vents[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		for (unsigned int i = 0; i < platforms.size(); i++)
 		{
@@ -338,8 +433,12 @@ void Game::draw()
 			upperPlatforms[i].draw(camera, light, spotLight, cameraInverse);
 		}
 		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
+
+
 		nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 		time.draw(UICamera, light, spotLight, uiCameraInverse);
+		jumpParticles->draw(camera, light, spotLight, cameraInverse);
+		//particleTrail->draw(camera, light, spotLight);
 
 
 
@@ -393,6 +492,12 @@ void Game::imguiDraw()
 		pos = player.getWorldPosition();
 		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
 		ImGui::Text("T Value: %f", player.getanimation().getT());
+		pos = jumpParticles->getWorldPosition();
+		ImGui::Text("jumpPart Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
+		pos = dynamic_cast<ParticleEmitter*>(jumpParticles)->getParticlePosition(0);
+		ImGui::Text("TestPart Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
+
+		ImGui::DragFloat3("Particles Local: ", &(dynamic_cast<ParticleEmitter*>(jumpParticles)->partLocalPos.x), 0.5f);
 
 		// Light settings
 		if (ImGui::CollapsingHeader("Light Settings:"))

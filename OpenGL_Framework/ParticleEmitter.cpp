@@ -80,10 +80,12 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->_physicsBody = nullptr;
 			Particles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 			Particles->setMesh(ObjectLoader::getMesh("Plane"));
-			Particles->setTexture(ObjectLoader::getTexture("Default"));
+			Particles->setTexture(ObjectLoader::getTexture(texName));
 			Particles->addPhysicsBody(false);
-			Particles->setWorldPosition(emitterPosition);
-			Particles->setLocalScale(getLocalScale());
+			Particles->setParent(this);
+			//Particles->setWorldPosition(getWorldPosition());
+			Particles->setLocalPosition(Vector3::Zero);
+			Particles->setLocalScale(2.0f);
 			m_pParticles.push_back(Particles);
 		}
 
@@ -110,6 +112,7 @@ void ParticleEmitter::update(float dt)
 	if (!m_pParticles.empty() && playing) // make sure memory is initialized and system is playing
 	{
 		// loop through each particle
+		_transform->update(dt);
 		
 		for (unsigned int i = 0; i < m_pNumParticles; ++i)
 		{
@@ -133,16 +136,16 @@ void ParticleEmitter::update(float dt)
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 				particle->mass = MathLibCore::lerp(massRange.x, massRange.y, randomTval);
 
-				spawnRadius1.x = emitterPosition.x + range;
-				spawnRadius1.y = emitterPosition.y + range;
-				spawnRadius2.x = emitterPosition.x - range;
-				spawnRadius2.y = emitterPosition.y - range;
+				spawnRadius1.x = getLocalPosition().x + range;
+				spawnRadius1.y = getLocalPosition().y + range;
+				spawnRadius2.x = getLocalPosition().x - range;
+				spawnRadius2.y = getLocalPosition().y - range;
 
 				{
 					float randomTval1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					float randomTval2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					particle->_transform->setWorldPosition(Vector3(MathLibCore::lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
-						MathLibCore::lerp(spawnRadius1.y, spawnRadius2.y, randomTval2), emitterPosition.z));
+					particle->setLocalPosition(Vector3(MathLibCore::lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
+						MathLibCore::lerp(spawnRadius1.y, spawnRadius2.y, randomTval2), getLocalPosition().z));
 				}
 
 				particle->sizeBegin = MathLibCore::lerp(sizeBegin.x, sizeBegin.y, randomTval);
@@ -172,7 +175,10 @@ void ParticleEmitter::update(float dt)
 			// Update acceleration
 			particle->acceleration = particle->force / particle->mass;
 			particle->velocity = particle->velocity + (particle->acceleration * dt);
-			particle->_transform->setWorldPosition(particle->_transform->getWorldPosition() + particle->velocity * dt * 60.0f);
+			particle->setLocalPosition(partLocalPos);
+			particle->setLocalPosition(particle->getLocalPosition() + particle->velocity * dt * 60.0f);
+			//particle->setLocalPosition(Vector3::Zero);
+			//particle->setLocalPosition(partLocalPos);
 			particle->_transform->update(dt);
 
 			// We've applied the force, let's remove it so it does not get applied next frame

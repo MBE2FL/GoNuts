@@ -207,3 +207,8 @@ Transform* Transform::getParent() const
 {
 	return _parent;
 }
+
+vector<Transform*> Transform::getChildren() const
+{
+	return _children;
+}
