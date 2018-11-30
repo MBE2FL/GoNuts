@@ -115,7 +115,7 @@ public:
 	Vector4 colorEnd1;
 
 
-	Vector3 partLocalPos = Vector3(8.0f, -6.5f, 0.0f);
+	Vector3 partLocalPos = Vector3(5.0f, -7.5f, 0.0f);
 
 	// ... other properties
 	// ... what would be a better way of doing this?

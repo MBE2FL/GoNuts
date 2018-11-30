@@ -85,7 +85,7 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->setParent(this);
 			//Particles->setWorldPosition(getWorldPosition());
 			Particles->setLocalPosition(Vector3::Zero);
-			Particles->setLocalScale(2.0f);
+			Particles->setLocalScale(1.0f);
 			m_pParticles.push_back(Particles);
 		}
 
@@ -146,6 +146,7 @@ void ParticleEmitter::update(float dt)
 					float randomTval2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					particle->setLocalPosition(Vector3(MathLibCore::lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
 						MathLibCore::lerp(spawnRadius1.y, spawnRadius2.y, randomTval2), getLocalPosition().z));
+					particle->setLocalPosition(partLocalPos);
 				}
 
 				particle->sizeBegin = MathLibCore::lerp(sizeBegin.x, sizeBegin.y, randomTval);
@@ -175,7 +176,6 @@ void ParticleEmitter::update(float dt)
 			// Update acceleration
 			particle->acceleration = particle->force / particle->mass;
 			particle->velocity = particle->velocity + (particle->acceleration * dt);
-			particle->setLocalPosition(partLocalPos);
 			particle->setLocalPosition(particle->getLocalPosition() + particle->velocity * dt * 60.0f);
 			//particle->setLocalPosition(Vector3::Zero);
 			//particle->setLocalPosition(partLocalPos);

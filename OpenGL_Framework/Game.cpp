@@ -280,6 +280,7 @@ void Game::update()
 	particleTrail->getParent()->update(deltaTime);
 	//jumpParticles->update(deltaTime);
 	player.getParent()->update(deltaTime);
+	spotLight->setPosition(player.getWorldPosition());
 	nutOmeter.getParent()->update(deltaTime);
 	time.getParent()->update(deltaTime);
 
