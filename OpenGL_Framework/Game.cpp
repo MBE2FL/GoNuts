@@ -37,6 +37,7 @@ void Game::initializeGame()
 	//UI Textures
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
+	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
 
 	//ObjectLoader::loadMesh("Platform", "./Assets/Models/roof tile.obj");
 	//ObjectLoader::loadMesh("Border", "./Assets/Models/roof board.obj");
@@ -70,8 +71,8 @@ void Game::initializeGame()
 	nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
 	nutOmeter.addPhysicsBody(false);
 	nutOmeter.setPosition(Vector3(0.0f, -6.0f, 0.0f));
-	nutOmeter.setRotationAngleZ(3.14592f / 2.0f);
-	nutOmeter.setRotationAngleY(3.14592f);
+	nutOmeter.setRotationAngleZ(-3.14592f / 2.0f);
+	//nutOmeter.setRotationAngleY(3.14592f);
 	nutOmeter.setScale(2.0f);
 
 	time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -79,13 +80,13 @@ void Game::initializeGame()
 	time.setTexture(ObjectLoader::getTexture("Time"));
 	time.addPhysicsBody(false);
 	time.setPosition(Vector3(-13.5f, 7.5f, 0.0f));
-	time.setRotationAngleZ(3.14592f / 2.0f);
-	time.setRotationAngleY(3.14592f);
+	time.setRotationAngleZ(-3.14592f / 2.0f);
+	//time.setRotationAngleY(3.14592f);
 	time.setScale(2.0f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
-	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
+	coneBoi.setMesh(ObjectLoader::getMesh("Cone"));
+	coneBoi.setTexture(ObjectLoader::getTexture("Cone"));
 	coneBoi.addPhysicsBody(false);
 	coneBoi.setPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
@@ -131,9 +132,9 @@ void Game::initializeGame()
 
 	coins = add(coins, objectSetup("Normal", "Coin", "Default", false, Vector3(2.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 6.0f));
 
-	sceneObjects = objectSetup("Normal", "Cone", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
+	sceneObjects = objectSetup("Normal", "Cone", "Cone", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
 
-	sceneObjects = objectSetup("Normal", "Spikes", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 18.0f);
+	sceneObjects =add(sceneObjects, objectSetup("Normal", "Spikes", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 18.0f));
 
 	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
 

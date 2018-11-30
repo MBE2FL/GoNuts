@@ -40,6 +40,7 @@ out vec4 outColour;
 void main()
 {
 	//outColour = vec4(normal, 1.0f);
+	vec2 tex = vec2(texCoord.x, -texCoord.y);
 
 	outColour.rgb = lightAmbient;
 
@@ -102,7 +103,7 @@ void main()
 
 
 
-	vec4 textureColour = texture(uTex, texCoord);
+	vec4 textureColour = texture(uTex, tex);
 	outColour.rgb *= textureColour.rgb;
 	outColour.a = textureColour.a;
 
