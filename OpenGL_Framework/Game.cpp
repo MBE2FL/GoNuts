@@ -35,7 +35,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
-	ObjectLoader::loadMesh("Garbagecan", "./Assets/Models/garbagecan_final_unwrap.obj");
+	ObjectLoader::loadMesh("Garbage", "./Assets/Models/garbagecan_final_unwrap.obj");
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
@@ -77,9 +77,6 @@ void Game::initializeGame()
 	player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
 	player.Animated(true);
 	player.setMesh(ObjectLoader::getMesh("TestBoi1"));
-	//player.addMesh(ObjectLoader::getMesh("FatBoi2"));
-	//player.addMesh(ObjectLoader::getMesh("FatBoi3"));
-	//player.addMesh(ObjectLoader::getMesh("FatBoi"));
 	player.addMesh("TestBoi", 19);
 	player.setTexture(ObjectLoader::getTexture("FatBoi"));
 	player.addPhysicsBody(true);
@@ -151,27 +148,31 @@ void Game::initializeGame()
 	dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
 
 
-	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
+	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0);
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
 	//coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
 
-	Acorns = objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
+	Acorns = objectSetup("Normal", "Acorn", "Acorn", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 12.0f);
 
-	Acorns = add(Acorns, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 54.0f));
+	Acorns = add(Acorns, objectSetup("Normal", "Acorn", "Acorn", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 54.0f));
 
-	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 35.0f);
+	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 35.0f);
 
-	Spikes = objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 0, 28.0f);
+	Spikes = objectSetup("Normal", "Spikes", "Spikes", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 28.0f);
 
-	Cones = objectSetup("Normal", "Cone", "Cone", false, Vector3(14.0f, 2.6f, -5.0f), Vector3(1, 1, 1), 2, 0, 70.0f);
+	Cones = objectSetup("Normal", "Cone", "Cone", false, Vector3(14.0f, 2.6f, -5.0f), Vector3(1, 1, 1), 2, 70.0f);
 
-	sceneObjects = objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f);
+	sceneObjects = objectSetup("Normal", "Billboard", "Billboard", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(0.7f), 1, 4.0f);
 
-	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 0, 98.0f);
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Button", "Button", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 8.0f));
 
-	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 15, 0, 0);
+	sceneObjects = add(sceneObjects, objectSetup("Normal", "Garbage", "Garbage", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 12.0f));
 
-	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 5, 0, 125.0f));
+	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 98.0f);
+
+	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 15, 0);
+
+	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 5, 125.0f));
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
@@ -448,12 +449,12 @@ vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> o
 }
 
 vector<GameObject> Game::objectSetup( const string shader, const string mesh,const string texture, const bool physics,
-const Vector3 position, const Vector3 scale, const int amount, const int startNum, float offset)
+const Vector3 position, const Vector3 scale, const int amount, float offset)
 {
 	GameObject* object;
 	vector<GameObject> objectVec;
 
-	for (int i = startNum; i < amount; i++)
+	for (int i = 0; i < amount; i++)
 	{
 		object = new GameObject;
 		object->setShaderProgram(ObjectLoader::getShaderProgram(shader));
