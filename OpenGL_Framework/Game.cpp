@@ -377,7 +377,7 @@ void Game::draw()
 		nutOmeter.draw(UICamera, light, spotLight);
 		time.draw(UICamera, light, spotLight);
 		jumpParticles->draw(camera, light, spotLight);
-		particleTrail->draw(camera, light, spotLight);
+		//particleTrail->draw(camera, light, spotLight);
 
 
 
