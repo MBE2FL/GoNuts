@@ -37,7 +37,7 @@ public:
 
 	vector<GameObject> add(vector<GameObject> objectVec1, vector<GameObject> objectVec2);
 	vector<GameObject> objectSetup(const string shader, const string mesh, const string texture,const bool physics,
-								   const Vector3 position, const Vector3 scale, const int amount, const int startNum, float offset);
+								   const Vector3 position, const Vector3 scale, const int amount, float offset);
 	void imguiDraw();
 
 	/* input callback functions */
