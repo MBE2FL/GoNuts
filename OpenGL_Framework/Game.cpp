@@ -89,8 +89,8 @@ void Game::initializeGame()
 	time.setScale(2.0f);
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	coneBoi.setMesh(ObjectLoader::getMesh("Cone"));
-	coneBoi.setTexture(ObjectLoader::getTexture("Cone"));
+	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
+	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
 	coneBoi.addPhysicsBody(false);
 	coneBoi.setPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
@@ -137,13 +137,13 @@ void Game::initializeGame()
 
 	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0, 0);
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
-	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
+	//coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
 
-	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f));
+	Acorns = objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
 
-	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 54.0f));
+	Acorns = add(Acorns, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 54.0f));
 
-	coins = add(coins, objectSetup("Normal", "Coin", "Default", false, Vector3(2.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 6.0f));
+	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 35.0f);
 
 	Spikes = objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 0, 28.0f);
 
@@ -151,13 +151,11 @@ void Game::initializeGame()
 
 	sceneObjects = objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f);
 
-	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 3.0f, -5.0f), Vector3(0.7f), 2, 0, 98.0f);
+	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 0, 98.0f);
 
-	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 20, 0, 0);
+	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 15, 0, 0);
 
-	//upperPlatforms = objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 10, 5, 0);
-
-	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(9.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 20, 15, 0));
+	upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 5, 0, 125.0f));
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
@@ -227,14 +225,19 @@ void Game::update()
 	time.update(deltaTime);
 
 	coneBoi.setPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
-	//coneBoi.setScale((MathLibCore::catmull(p1, Vector3(1,1,1), Vector3(1, 1, 1), p4, t)));
 	coneBoi.setRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
 
 	coneBoi.update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
 		coins[i].update(deltaTime); 
+		coins[i].setRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f, 60.0f, t)));
 		player.checkCoinCollisions(coins[i]);
+	}
+	for (unsigned int i = 0; i < Acorns.size(); i++)
+	{
+		Acorns[i].update(deltaTime);
+		player.checkCoinCollisions(Acorns[i]);
 	}
 	for (unsigned int i = 0; i < Background.size(); i++)
 	{
@@ -365,6 +368,10 @@ void Game::draw()
 		for (unsigned int i = 0; i < coins.size(); i++)
 		{
 			coins[i].draw(camera, light, spotLight);
+		}
+		for (unsigned int i = 0; i < Acorns.size(); i++)
+		{
+			Acorns[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < Background.size(); i++)
 		{
