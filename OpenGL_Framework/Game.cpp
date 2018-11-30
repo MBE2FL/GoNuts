@@ -127,9 +127,9 @@ void Game::initializeGame()
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
 	coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
 
-	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 0));
+	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f));
 
-	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 37.0f));
+	coins = add(coins, objectSetup("Normal", "Acorn", "Default", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 54.0f));
 
 	coins = add(coins, objectSetup("Normal", "Coin", "Default", false, Vector3(2.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 0, 6.0f));
 
@@ -138,6 +138,8 @@ void Game::initializeGame()
 	Cones = objectSetup("Normal", "Cone", "Cone", false, Vector3(14.0f, 2.6f, -5.0f), Vector3(1, 1, 1), 2, 0, 70.0f);
 
 	sceneObjects = objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f);
+
+	Vents = objectSetup("Normal", "Vent", "Default", false, Vector3(15.0f, 3.0f, -5.0f), Vector3(0.7f), 2, 0, 98.0f);
 
 	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 20, 0, 0);
 
@@ -255,6 +257,19 @@ void Game::update()
 			sliding = false;
 		}
 	}
+
+	for (unsigned int i = 0; i < Vents.size(); i++)
+	{
+		Vents[i].update(deltaTime);
+		if (player.checkSpikeCollisions(Vents[i]))
+		{
+			player.setPosition(Vector3(-3.0f, 4, -5.0f));
+			player.setVelocity(Vector2(0.0f, 0.0f));
+			player.setScale(0.2f);
+			sliding = false;
+		}
+	}
+
 	for (unsigned int i = 0; i < platforms.size(); i++)
 	{
 		platforms[i].update(deltaTime);
@@ -354,6 +369,10 @@ void Game::draw()
 		for (unsigned int i = 0; i < Cones.size(); i++)
 		{
 			Cones[i].draw(camera, light, spotLight);
+		}
+		for (unsigned int i = 0; i < Vents.size(); i++)
+		{
+			Vents[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < platforms.size(); i++)
 		{

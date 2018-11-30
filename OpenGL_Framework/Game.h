@@ -78,6 +78,7 @@ private:
 	vector<GameObject> coins;
 	vector<GameObject> Cones;
 	vector<GameObject> Spikes;
+	vector<GameObject> Vents;
 	vector<GameObject> platforms;
 	vector<GameObject> sceneObjects;
 	vector<GameObject> Background;
