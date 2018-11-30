@@ -120,7 +120,7 @@ void Game::initializeGame()
 
 	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
-	coneBoi.setTexture(ObjectLoader::getTexture("Default"));
+	coneBoi.setTexture(ObjectLoader::getTexture("Coin"));
 	coneBoi.addPhysicsBody(false);
 	coneBoi.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
