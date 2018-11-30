@@ -135,9 +135,9 @@ void Game::initializeGame()
 
 	Spikes = objectSetup("Normal", "Spikes", "Default", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 0, 28.0f);
 
-	sceneObjects = objectSetup("Normal", "Cone", "Cone", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 12.0f);
+	Cones = objectSetup("Normal", "Cone", "Cone", false, Vector3(14.0f, 2.6f, -5.0f), Vector3(1, 1, 1), 2, 0, 70.0f);
 
-	sceneObjects = add(sceneObjects, objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f));
+	sceneObjects = objectSetup("Normal", "Vent", "Default", false, Vector3(3.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 0, 24.0f);
 
 	platforms = objectSetup("Normal", "Building", "Default", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1, 0.5f), 20, 0, 0);
 
@@ -231,6 +231,19 @@ void Game::update()
 		sceneObjects[i].update(deltaTime);
 		sceneObjects[i].setRotationAngleY(TotalGameTime * 1.25f + i);
 	}
+
+	for (unsigned int i = 0; i < Cones.size(); i++)
+	{
+		Cones[i].update(deltaTime);
+		if (player.checkSpikeCollisions(Cones[i]))
+		{
+			player.setPosition(Vector3(-3.0f, 4, -5.0f));
+			player.setVelocity(Vector2(0.0f, 0.0f));
+			player.setScale(0.2f);
+			sliding = false;
+		}
+	}
+
 	for (unsigned int i = 0; i < Spikes.size(); i++)
 	{
 		Spikes[i].update(deltaTime);
@@ -337,6 +350,10 @@ void Game::draw()
 		for (unsigned int i = 0; i < Spikes.size(); i++)
 		{
 			Spikes[i].draw(camera, light, spotLight);
+		}
+		for (unsigned int i = 0; i < Cones.size(); i++)
+		{
+			Cones[i].draw(camera, light, spotLight);
 		}
 		for (unsigned int i = 0; i < platforms.size(); i++)
 		{
