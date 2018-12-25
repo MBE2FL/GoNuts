@@ -258,6 +258,19 @@ void Game::initializeGame()
 	//test.mV[7] = 3; test.mV[8] = 2; test.mV[9] = 0; test.mV[10] = 9; test.mV[11] = 0; test.mV[12] = 0; test.mV[13] = 2;
 	//test.mV[14] = 0; test.mV[15] = 4;
 	//test.GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
+
+
+	_entityManager = EntityManager::getInstance();
+	_transformSystem = new TransformSystem(_entityManager);
+	_meshRendererSystem = new MeshRendererSystem(_entityManager);
+	_physicsSystem = new PhysicsSystem(_entityManager);
+	_entityFactory = new EntityFactory(_entityManager);
+	
+
+	Entity* entity = _entityFactory->createCoin(Vector3(5.0f, 8.0f, -5.0f), _entityFactory->createEmpty());
+	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), entity);
+
+	//_entityFactory->createPlatform(Vector3::Zero, _entityFactory->createEmpty(Vector3(1.0f, 8.0f, -5.0f)));
 }
 
 void Game::update()
@@ -278,6 +291,11 @@ void Game::update()
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 	drawTime += deltaTime;
+
+
+	_transformSystem->update(deltaTime);
+	_physicsSystem->update(deltaTime);
+
 
 
 	dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
@@ -423,6 +441,7 @@ void Game::draw()
 		Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
 		Matrix44 uiCameraInverse = UICamera.getLocalToWorldMatrix().GetInverse(UICamera.getWorldRotation(), UICamera.getWorldPosition());
 
+		_meshRendererSystem->draw(camera, light, spotLight, cameraInverse);
 
 		//platforms[0].draw(UICamera, light, spotLight);
 
@@ -587,6 +606,14 @@ void Game::imguiDraw()
 			ImGui::DragFloat3("p3 Position: ", &p3.x);
 			ImGui::DragFloat3("p4 Position: ", &p4.x);
 		}
+
+		//if (ImGui::CollapsingHeader("Test Entity"))
+		//{
+		//	TransformComponent* transform = dynamic_cast<TransformComponent*>(_entityManager->getComponent(ComponentType::Transform, _testEntity));
+		//	Vector3 position = transform->getLocalPosition();
+		//	ImGui::DragFloat3("Position: ", &position.x);
+		//	transform->setLocalPosition(position);
+		//}
 
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

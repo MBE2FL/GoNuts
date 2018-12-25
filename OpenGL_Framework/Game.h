@@ -19,6 +19,12 @@
 #include "GUIHelper.h"
 
 
+#include "TransformSystem.h"
+#include "MeshRendererSystem.h"
+#include "PhysicsSystem.h"
+#include "EntityFactory.h"
+
+
 #define WINDOW_WIDTH			1900
 #define WINDOW_HEIGHT			1000
 #define FRAMES_PER_SECOND		60
@@ -99,4 +105,14 @@ private:
 	Light* light;
 	Light* spotLight;
 
+
+
+	EntityManager* _entityManager;
+	TransformSystem* _transformSystem;
+	MeshRendererSystem* _meshRendererSystem;
+	PhysicsSystem* _physicsSystem;
+	EntityFactory* _entityFactory;
+
+	Entity* _testEntity;
+	Entity* _testEntity2;
 };

@@ -17,6 +17,30 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{5aff77f5-1f75-42aa-aeee-ceae156f4f40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\EntitySystem">
+      <UniqueIdentifier>{ae0d87ca-3d4f-4acf-af71-dec95721e338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem">
+      <UniqueIdentifier>{09ef2fe0-74b5-4b5b-a9b3-8c78fff95012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EntitySystem\Components">
+      <UniqueIdentifier>{fc0fd6fd-8526-48c1-8ca0-080f6d8897b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Components">
+      <UniqueIdentifier>{2777cb9e-76d0-4ca7-a11e-c621285cff97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EntitySystem\Base">
+      <UniqueIdentifier>{12568993-92f9-44c0-a9e6-040bc5d49c02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Base">
+      <UniqueIdentifier>{a4c909bd-72d9-4088-a403-c31c3aaaaa11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EntitySystem\Systems">
+      <UniqueIdentifier>{26898cf8-84de-4b21-8305-76ef4f36890d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Systems">
+      <UniqueIdentifier>{540b1d47-4df1-4f28-b10c-c7e3034c278c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -44,9 +68,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Bounds.cpp">
@@ -106,7 +127,40 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\EntitySystem\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>Source Files\EntitySystem\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files\EntitySystem\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Source Files\EntitySystem\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformComponent.cpp">
+      <Filter>Source Files\EntitySystem\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsBodyComponent.cpp">
+      <Filter>Source Files\EntitySystem\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererComponent.cpp">
+      <Filter>Source Files\EntitySystem\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererSystem.cpp">
+      <Filter>Source Files\EntitySystem\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformSystem.cpp">
+      <Filter>Source Files\EntitySystem\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsSystem.cpp">
+      <Filter>Source Files\EntitySystem\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -131,9 +185,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bounds.h">
@@ -207,6 +258,39 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\EntitySystem\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Header Files\EntitySystem\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\EntitySystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsBodyComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererSystem.h">
+      <Filter>Header Files\EntitySystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformSystem.h">
+      <Filter>Header Files\EntitySystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityFactory.h">
+      <Filter>Header Files\EntitySystem\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsSystem.h">
+      <Filter>Header Files\EntitySystem\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
