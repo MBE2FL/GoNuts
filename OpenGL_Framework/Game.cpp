@@ -118,11 +118,11 @@ void Game::initializeGame()
 	//time.setLocalRotationAngleY(3.14592f);
 	time.setLocalScale(2.0f);
 
-	coneBoi.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	coneBoi.setMesh(ObjectLoader::getMesh("Coin"));
-	coneBoi.setTexture(ObjectLoader::getTexture("Coin"));
-	coneBoi.addPhysicsBody(false);
-	coneBoi.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
+	coinDemo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	coinDemo.setMesh(ObjectLoader::getMesh("Coin"));
+	coinDemo.setTexture(ObjectLoader::getTexture("Coin"));
+	coinDemo.addPhysicsBody(false);
+	coinDemo.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
 	particleTrail = new ParticleEmitter;
 	particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -294,11 +294,10 @@ void Game::update()
 	time.getParent()->update(deltaTime);
 
 
-	coneBoi.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
-	//coneBoi.setScale((MathLibCore::catmull(p1, Vector3(1,1,1), Vector3(1, 1, 1), p4, t)));
-	coneBoi.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
+	coinDemo.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
+	coinDemo.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
+	coinDemo.getParent()->update(deltaTime);
 
-	coneBoi.getParent()->update(deltaTime);
 	for (unsigned int i = 0; i < coins.size(); i++)
 	{
 		coins[i].getParent()->update(deltaTime);
@@ -427,13 +426,13 @@ void Game::draw()
 		//platforms[0].draw(UICamera, light, spotLight);
 
 
-		coneBoi.draw(camera, light, spotLight, cameraInverse);
+		coinDemo.draw(camera, light, spotLight, cameraInverse);
 		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
 		//{
 		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
 		//}
 		player.draw(camera, light, spotLight, cameraInverse);
-		coneBoi.draw(camera, light, spotLight, cameraInverse);
+		coinDemo.draw(camera, light, spotLight, cameraInverse);
 
 		for (unsigned int i = 0; i < coins.size(); i++)
 		{
