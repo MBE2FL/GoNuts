@@ -196,7 +196,7 @@ int main(int argc, char **argv)
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
 #ifdef _DEBUG
-	InitOpenGLDebugCallback();
+	//InitOpenGLDebugCallback();
 
 	GUIHelper::init(WINDOW_WIDTH, WINDOW_HEIGHT);
 #endif

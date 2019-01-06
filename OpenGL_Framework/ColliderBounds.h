@@ -3,6 +3,7 @@
 
 #include "MeshBounds.h"
 #include "Transform.h"
+#include "TransformComponent.h"
 
 class ColliderBounds : public Bounds
 {
@@ -14,6 +15,9 @@ public:
 
 	void update(Transform* transform);
 	void updatePoint(Transform* transform);
+
+	void update(TransformComponent* transform);
+	void updatePoint(TransformComponent* transform);
 
 private:
 	Vector3 points[8];

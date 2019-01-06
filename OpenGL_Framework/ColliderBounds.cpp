@@ -83,3 +83,47 @@ void ColliderBounds::updatePoint(Transform* transform)
 
 	setSize(getMax() - getMin());
 }
+
+void ColliderBounds::update(TransformComponent * transform)
+{
+	updatePoint(transform);
+}
+
+void ColliderBounds::updatePoint(TransformComponent * transform)
+{
+	setCentre(transform->getWorldPosition());
+	// Create 4x4 transformation matrix
+
+	// Create rotation matrix
+	Matrix44 rx;
+	Matrix44 ry;
+	Matrix44 rz;
+
+	rx.RotateX(0);
+	ry.RotateY(0);
+	rz.RotateZ(0);
+	// Note: pay attention to rotation order, ZYX is not the same as XYZ
+	Matrix44 rotation = rz * ry * rx;
+
+	// Create translation matrix
+	Matrix44 minTran;
+	minTran.Translate(getCentre());
+
+	Matrix44 maxTran;
+	maxTran.Translate(getCentre());
+
+	// Create scale matrix
+	Matrix44 scale;
+	scale.Scale(transform->getLocalScale());
+
+	Matrix44 newMinMatrix = scale * rotation * minTran;
+	Matrix44 newMaxMatrix = scale * rotation * maxTran;
+
+	Vector4 newMin = (newMinMatrix * Vector4(points[0], 1.0f));
+	setMin(Vector3(newMin.x, newMin.y, newMin.z));
+
+	Vector4 newMax = (newMaxMatrix * Vector4(points[7], 1.0f));
+	setMax(Vector3(newMax.x, newMax.y, newMax.z));
+
+	setSize(getMax() - getMin());
+}

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <string>
+#include <vector>
 
-using std::string;
+using std::vector;
 
-enum class CompType
+
+enum class ComponentType
 {
 	Transform,
-	Mesh,
-	ShaderProgram,
+	MeshRenderer,
 	PhysicsBody
 };
 
@@ -17,15 +17,10 @@ class Component
 {
 public:
 	Component();
-	Component(CompType compType);
-	~Component();
-	virtual void update(float deltaTime) = 0;
-	CompType getCompType() const;
-	void setCompType(const CompType& compType);
-	int getID() const;
-	void setID(const int id);
+	virtual ~Component();
 
-private:
-	CompType _compType;
-	unsigned int _id;
+	ComponentType getType() const;
+
+protected:
+	ComponentType _type;
 };
