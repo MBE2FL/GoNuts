@@ -5,20 +5,21 @@
 #include "MeshBounds.h"
 #include "ColliderBounds.h"
 #include <iostream>
+#include "Entity.h"
 
 //#define GRAVITY -16.2f
 #define EGRAVITY -0.2f
 
-struct Collision
-{
-	PhysicsBodyComponent* bodyOne;
-	PhysicsBodyComponent* bodyTwo;
-	bool stillColliding = true;
-	Entity* entityOne;
-	Entity* entityTwo;
-
-	bool operator==(const Collision& otherCol);
-};
+//struct Collision
+//{
+//	PhysicsBodyComponent* bodyOne;
+//	PhysicsBodyComponent* bodyTwo;
+//	bool stillColliding = true;
+//	Entity* entityOne;
+//	Entity* entityTwo;
+//
+//	bool operator==(const Collision& otherCol);
+//};
 
 enum class TTag
 {
@@ -61,7 +62,7 @@ public:
 
 
 	// Testing function pointers
-	typedef void(*onCollision)(Collision* collision);
+	typedef void(*onCollision)(Entity* self, Entity* other);
 	onCollision onCollisionEnter;
 	onCollision onCollisionStay;
 	onCollision onCollisionExit;

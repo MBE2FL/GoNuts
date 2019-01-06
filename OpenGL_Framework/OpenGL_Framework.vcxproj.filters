@@ -160,7 +160,9 @@
     <ClCompile Include="PhysicsSystem.cpp">
       <Filter>Source Files\EntitySystem\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="EntityFactory.cpp" />
+    <ClCompile Include="EntityFactory.cpp">
+      <Filter>Source Files\EntitySystem\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">

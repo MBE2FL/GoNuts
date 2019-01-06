@@ -47,7 +47,7 @@ Entity * EntityFactory::createCoin(const Vector3 & position, Entity * parent)
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
 	physicsBody->setTag(TTag::Coin);
-	physicsBody->onCollisionEnter = [](Collision* collision)
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Coin Collision Entered!" << std::endl; 
 	};
@@ -77,13 +77,34 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, Entity * parent
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
 	physicsBody->setTag(TTag::Platform);
-	physicsBody->onCollisionEnter = [](Collision* collision)
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Platform Collision Entered!" << std::endl;
+
+		EntityManager* entityManger = EntityManager::getInstance();
+		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+
+		otherBody->setUseGravity(false);
+
+		if (otherBody->getVelocity().y <= -0.01f)
+		{
+			float ySpeed = otherBody->getVelocity().y;
+			otherBody->addForce(Vector3(0.0f, -ySpeed, 0.0f));
+
+		}
 	};
-	physicsBody->onCollisionStay = [](Collision* collision)
+	physicsBody->onCollisionStay = [](Entity* self, Entity* other)
 	{
 		std::cout << "Platform Collision Stayed!" << std::endl;
+	};
+	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
+	{
+		std::cout << "Platform Collision Exited!" << std::endl;
+
+		EntityManager* entityManger = EntityManager::getInstance();
+		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+
+		otherBody->setUseGravity(true);
 	};
 
 
@@ -111,7 +132,7 @@ Entity * EntityFactory::createSpike(const Vector3 & position, Entity * parent)
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
 	physicsBody->setTag(TTag::Spike);
-	physicsBody->onCollisionEnter = [](Collision* collision)
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Spike Collision Entered!" << std::endl;
 	};

@@ -4,16 +4,16 @@
 #include "PhysicsBodyComponent.h"
 
 
-//struct Collision
-//{
-//	PhysicsBodyComponent* bodyOne;
-//	PhysicsBodyComponent* bodyTwo;
-//	bool stillColliding = true;
-//	Entity* entityOne;
-//	Entity* entityTwo;
-//
-//	bool operator==(const Collision& otherCol);
-//};
+struct Collision
+{
+	PhysicsBodyComponent* bodyOne;
+	PhysicsBodyComponent* bodyTwo;
+	bool stillColliding = true;
+	Entity* entityOne;
+	Entity* entityTwo;
+
+	bool operator==(const Collision& otherCol);
+};
 
 class PhysicsSystem : public System
 {

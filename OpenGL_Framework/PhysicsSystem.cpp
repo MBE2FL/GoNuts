@@ -75,9 +75,9 @@ void PhysicsSystem::addCollision(Collision * collision)
 			currCol->stillColliding = true;
 			// TO-DO call onCollisionStay()
 			if (collision->bodyOne->onCollisionStay)
-				collision->bodyOne->onCollisionStay(collision->bodyTwo);
+				collision->bodyOne->onCollisionStay(collision->entityOne, collision->entityTwo);
 			if (collision->bodyTwo->onCollisionStay)
-				collision->bodyTwo->onCollisionStay(collision->bodyOne);
+				collision->bodyTwo->onCollisionStay(collision->entityTwo, collision->entityOne);
 			return;
 		}
 	}
@@ -86,9 +86,9 @@ void PhysicsSystem::addCollision(Collision * collision)
 	_collisions.push_back(collision);
 	// TO-DO onCollisionEnter()
 	if (collision->bodyOne->onCollisionEnter)
-		collision->bodyOne->onCollisionEnter(collision->bodyTwo);
+		collision->bodyOne->onCollisionEnter(collision->entityOne, collision->entityTwo);
 	if (collision->bodyTwo->onCollisionEnter)
-		collision->bodyTwo->onCollisionEnter(collision->bodyOne);
+		collision->bodyTwo->onCollisionEnter(collision->entityTwo, collision->entityOne);
 }
 
 bool PhysicsSystem::checkCollision(PhysicsBodyComponent * physicsBodyOne, PhysicsBodyComponent * physicsBodyTwo)
@@ -123,9 +123,9 @@ void PhysicsSystem::verifyCollisions()
 		{
 			// TO-DO call onCollisionExit()
 			if ((*it)->bodyOne->onCollisionExit)
-				(*it)->bodyOne->onCollisionExit((*it)->bodyTwo);
+				(*it)->bodyOne->onCollisionExit((*it)->entityOne, (*it)->entityTwo);
 			if ((*it)->bodyTwo->onCollisionExit)
-				(*it)->bodyTwo->onCollisionExit((*it)->bodyOne);
+				(*it)->bodyTwo->onCollisionExit((*it)->entityTwo, (*it)->entityOne);
 			delete *it;
 			*it = nullptr;
 			it = _collisions.erase(it);
