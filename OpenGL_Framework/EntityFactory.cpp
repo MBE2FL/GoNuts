@@ -204,7 +204,26 @@ Entity * EntityFactory::createCone(const Vector3 & position, Entity * parent)
 
 Entity * EntityFactory::createPlayer(const Vector3 & position, Entity * parent)
 {
-	return nullptr;
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position, parent);
+
+	// Create all the necessary components.
+	// Mesh Renderer
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("FatBoi"));
+
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("TestBoi"),
+		ObjectLoader::getShaderProgram("Player"), textures);
+
+	// Physics Body
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	physicsBody->setTag(TTag::Player);
+
+	// Add all the components to the entity.
+	_entityManager->addComponent(meshRenderer, entity);
+	_entityManager->addComponent(physicsBody, entity);
+
+	return entity;
 }
 
 Entity * EntityFactory::createAcorn(const Vector3 & position, Entity * parent)

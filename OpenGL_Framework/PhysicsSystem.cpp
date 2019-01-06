@@ -20,7 +20,7 @@ void PhysicsSystem::update(float deltaTime)
 
 
 
-	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::PhysicsBody);
+	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::PhysicsBody);//gets entities with physics bodies
 
 	vector<Entity*>::iterator it;
 

@@ -66,7 +66,7 @@ private:
 	Camera UICamera;
 
 	GameObject player;
-	GameObject coneBoi;
+	GameObject coinDemo;
 	float t = 0.0f;
 
 	//UI

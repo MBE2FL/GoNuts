@@ -11,13 +11,6 @@
 #include "Animation.h"
 
 
-enum class Tag
-{
-	Floor,
-	Wall,
-	Player
-};
-
 class GameObject
 {
 public:
