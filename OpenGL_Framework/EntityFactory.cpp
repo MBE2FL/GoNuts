@@ -135,6 +135,19 @@ Entity * EntityFactory::createSpike(const Vector3 & position, Entity * parent)
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Spike Collision Entered!" << std::endl;
+
+		EntityManager* entityManager = EntityManager::getInstance();
+
+		
+		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		if (otherBody->getTag() == TTag::Player)
+		{
+			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+
+			otherTrans->setWorldPosition(Vector3(-3.0f, 4, -5.0f));
+			otherBody->setVelocity(Vector3::Zero);
+			otherTrans->setLocalScale(0.2f);
+		}
 	};
 
 
@@ -148,7 +161,45 @@ Entity * EntityFactory::createSpike(const Vector3 & position, Entity * parent)
 
 Entity * EntityFactory::createCone(const Vector3 & position, Entity * parent)
 {
-	return nullptr;
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position, parent);
+
+	// Create all the necessary components.
+	// Mesh Renderer
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("Cone"));
+
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Cone"),
+		ObjectLoader::getShaderProgram("Normal"), textures);
+
+	// Physics Body
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	physicsBody->setTag(TTag::Spike);
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	{
+		std::cout << "Cone Collision Entered!" << std::endl;
+
+		EntityManager* entityManager = EntityManager::getInstance();
+
+
+		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		if (otherBody->getTag() == TTag::Player)
+		{
+			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+
+			otherTrans->setWorldPosition(Vector3(-3.0f, 4, -5.0f));
+			otherBody->setVelocity(Vector3::Zero);
+			otherTrans->setLocalScale(0.2f);
+		}
+	};
+
+
+	// Add all the components to the entity.
+	_entityManager->addComponent(meshRenderer, entity);
+	_entityManager->addComponent(physicsBody, entity);
+
+
+	return entity;
 }
 
 Entity * EntityFactory::createPlayer(const Vector3 & position, Entity * parent)
@@ -158,10 +209,73 @@ Entity * EntityFactory::createPlayer(const Vector3 & position, Entity * parent)
 
 Entity * EntityFactory::createAcorn(const Vector3 & position, Entity * parent)
 {
-	return nullptr;
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position, parent);
+
+	// Create all the necessary components.
+	// Mesh Renderer
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("Acorn"));
+
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Acorn"),
+		ObjectLoader::getShaderProgram("Normal"), textures);
+
+	// Physics Body
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	physicsBody->setTag(TTag::Coin);
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	{
+		std::cout << "Acorn Collision Entered!" << std::endl;
+	};
+
+
+	// Add all the components to the entity.
+	_entityManager->addComponent(meshRenderer, entity);
+	_entityManager->addComponent(physicsBody, entity);
+
+
+	return entity;
 }
 
 Entity * EntityFactory::createVent(const Vector3 & position, Entity * parent)
 {
-	return nullptr;
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position, parent);
+
+	// Create all the necessary components.
+	// Mesh Renderer
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("Vent"));
+
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Vent"),
+		ObjectLoader::getShaderProgram("Normal"), textures);
+
+	// Physics Body
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	physicsBody->setTag(TTag::Spike);
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	{
+		std::cout << "Vent Collision Entered!" << std::endl;
+
+		EntityManager* entityManager = EntityManager::getInstance();
+
+
+		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		if (otherBody->getTag() == TTag::Player)
+		{
+			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+
+			otherTrans->setWorldPosition(Vector3(-3.0f, 4, -5.0f));
+			otherBody->setVelocity(Vector3::Zero);
+			otherTrans->setLocalScale(0.2f);
+		}
+	};
+
+
+	// Add all the components to the entity.
+	_entityManager->addComponent(meshRenderer, entity);
+	_entityManager->addComponent(physicsBody, entity);
+
+
+	return entity;
 }
