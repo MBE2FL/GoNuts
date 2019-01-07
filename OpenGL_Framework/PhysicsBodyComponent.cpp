@@ -18,10 +18,10 @@ void PhysicsBodyComponent::update(float deltaTime, TransformComponent * transfor
 	if (_useGravity && _velocity.y > -6.0f)
 		_force = _force + gravity;
 
-	if (_velocity.x > 0.0f)
-		addForce(Vector3(1.0f*EGRAVITY, 0.0f, 0.0f));
-	else if (_velocity.x < 0.0f)
-		addForce(Vector3(1.0f*-EGRAVITY, 0.0f, 0.0f));
+	//if (_velocity.x > 0.0f)
+	//	addForce(Vector3(1.0f*EGRAVITY, 0.0f, 0.0f));
+	//else if (_velocity.x < 0.0f)
+	//	addForce(Vector3(1.0f*-EGRAVITY, 0.0f, 0.0f));
 
 
 	_acceleration = _force * 1.0f / _mass;

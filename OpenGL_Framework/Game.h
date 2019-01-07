@@ -65,7 +65,7 @@ private:
 	Camera camera;
 	Camera UICamera;
 
-	GameObject player;
+	//GameObject player;
 	GameObject coinDemo;
 	float t = 0.0f;
 
@@ -93,8 +93,10 @@ private:
 	vector<GameObject> Background;
 	vector<GameObject> upperPlatforms;
 
-	GameObject* particleTrail;
-	GameObject* jumpParticles;
+	//GameObject* particleTrail;
+	//GameObject* jumpParticles;
+
+	TransformComponent* playerTransform;
 
 	bool collided = false;
 	bool sliding = false;
