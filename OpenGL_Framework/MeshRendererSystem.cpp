@@ -13,15 +13,16 @@ void MeshRendererSystem::draw(Camera& camera, Light* light, Light* spotLight, Ma
 {
 	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::MeshRenderer);
 
+
+
+
 	for (Entity* entity : entities)
 	{
 		// Get the transform and mesh renderer components for the current entity. Only draw if both components exist.
-		//Component* component = _entityManager->getComponent(ComponentType::Transform, entity);
 		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
 		if (!transform)
 			return;
 
-		//component = _entityManager->getComponent(ComponentType::MeshRenderer, entity);
 		MeshRendererComponent* meshRenderer = _entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, entity);
 		if (!meshRenderer)
 			return;

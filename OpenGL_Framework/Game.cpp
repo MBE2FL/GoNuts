@@ -435,7 +435,7 @@ void Game::draw()
 		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
 		//}
 		//player.draw(camera, light, spotLight, cameraInverse);
-		coinDemo.draw(camera, light, spotLight, cameraInverse);
+		//coinDemo.draw(camera, light, spotLight, cameraInverse);
 
 		/*for (unsigned int i = 0; i < coins.size(); i++)
 		{

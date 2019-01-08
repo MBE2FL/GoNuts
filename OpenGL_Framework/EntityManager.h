@@ -43,14 +43,43 @@ inline T EntityManager::getComponent(ComponentType compType, const Entity * enti
 {
 	// Return the component belonging to the entity, if it exists.
 	// Use .at instead of [], to prevent the creation of new elements in _components.
-	try
+	//try
+	//{
+	//	Component* component;
+	//	component = _components.at(compType).at(entity->getEid());
+	//	return dynamic_cast<T>(component);
+	//}
+	//catch (const out_of_range)
+	//{
+	//	return nullptr;
+	//}
+
+
+	Component* component;
+	map<ComponentType, map<unsigned int, Component*>>::iterator typeIT = _components.find(compType);
+	if (typeIT != _components.end())
 	{
-		Component* component;
-		component = _components.at(compType).at(entity->getEid());
-		return dynamic_cast<T>(component);
+		map<unsigned int, Component*>::iterator compIT = typeIT->second.find(entity->getEid());
+		if (compIT != typeIT->second.end())
+		{
+			component = compIT->second;
+			return dynamic_cast<T>(component);
+		}
 	}
-	catch (const out_of_range)
-	{
-		return nullptr;
-	}
+
+	return nullptr;
+
+
+
+	//Component* component;
+	//if (_components.count(compType) > 0)
+	//{
+	//	if (_components[compType].count(entity->getEid()) > 0)
+	//	{
+	//		component = _components[compType][entity->getEid()];
+	//		return dynamic_cast<T>(component);
+	//	}
+	//}
+
+	//return nullptr;
 }
