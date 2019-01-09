@@ -271,7 +271,7 @@ void Game::initializeGame()
 	Entity* mainCamera = _entityFactory->createPerspectiveCamera(Vector3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	
-	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 100.0f, -5.0f)));
+	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 10.0f, -5.0f)));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 
 	Entity* entity = _entityFactory->createCoin(Vector3(5.0f, 4.0f, -3.0f), Vector3(1.0f, 1.0f, 1.0f), _entityFactory->createEmpty());
@@ -302,8 +302,8 @@ void Game::update()
 	drawTime += deltaTime;
 
 
-	_transformSystem->update(deltaTime);
-	_physicsSystem->update(deltaTime);
+	_transformSystem->update(FIXED_DELTA_TIME);
+	_physicsSystem->update(FIXED_DELTA_TIME);
 
 
 
