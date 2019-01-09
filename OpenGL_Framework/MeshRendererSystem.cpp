@@ -38,15 +38,172 @@ void MeshRendererSystem::draw(Light* light, Light* spotLight)
 		if (!meshRenderer)
 			return false;
 
-		return meshRenderer->getIsTransparent();
+		return !meshRenderer->getIsTransparent();
 	});
 
+	// Cull both the opaque and transparent objects. Sort the transparent objects afterwards.
+	_opaqueObjects.clear();
+	_transObjects.clear();
+	_opaqueObjects.assign(entities.begin(), transIt);
+	_transObjects.assign(transIt, entities.end());
+	cull(_opaqueCullList, _opaqueObjects);
+	cull(_transCullList, _transObjects);
+	sortMeshes(_transCullList);
 
-	cull(opaqueCullList, )
+
+	// Draw both the culled opaque and transparent objects.
+	glDisable(GL_BLEND);
+	drawHelper(_opaqueCullList, light, spotLight, cameraInverse);
+	glEnable(GL_BLEND);
+	drawHelper(_transCullList, light, spotLight, cameraInverse);
+}
+
+void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& objectList)
+{
+	// Clear cullList from previous frame.
+	cullList.clear();
+
+	// Check if the camera is suppose to cull.
+	if (_cameraComp->getCullingActive())
+	{
+		// The camera is set to perspective.
+		if (_cameraComp->getProjType() == Perspective)
+		{
+			TransformComponent* transform = nullptr;
+
+			for (Entity* entity : objectList)
+			{
+				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+
+				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation();
+				float distance = direction.Length();
+				direction /= distance;
+				Vector3 forward = _cameraTrans->getLocalToWorldMatrix().getForward();
+
+				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.8f))
+					&& (distance < (_cameraComp->getFar() * 1.4f)))
+				{
+					cullList.push_back(entity);
+				}
+			}
+		}
+		// The camera is set to orthographic.
+		else
+		{
+			TransformComponent* transform = nullptr;
+
+			for (Entity* entity : objectList)
+			{
+				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+
+				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation() - Vector3(0.0f, 0.0f, -20.0f);
+				float distance = direction.Length();
+				direction /= distance;
+				Vector3 forward = _cameraTrans->getLocalToWorldMatrix().getForward();
+				forward.z -= 20.0f;
+				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.5f))
+					&& (distance < (_cameraComp->getFar() * 1.4f + 20.0f)))
+				{
+					cullList.push_back(entity);
+				}
+			}
+		}
+	}
+	else
+	{
+		cullList = objectList;
+	}
+}
+
+//bool perspectiveSort(Entity* a, Entity* b)
+//{
+//	EntityManager* entityManager = EntityManager::getInstance();
+//	TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
+//	TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
+//
+//	float distanceA = Vector3::distance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+//	float distanceB = Vector3::distance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+//
+//	return distanceA < distanceB;
+//}
+//
+//bool orthographicSort(Entity* a, Entity* b)
+//{
+//	EntityManager* entityManager = EntityManager::getInstance();
+//	TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
+//	TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
+//
+//	float distanceA = (camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
+//	float distanceB = (camView * bTrans->getLocalToWorldMatrix()).getTranslation().z;
+//	
+//	return distanceA < distanceB;
+//}
+
+void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList)
+{
+	//// Sort opaque objects.
+	//if (!isTrans)
+	//{
+	//	Vector3 camPos = _cameraTrans->getWorldPosition();
+
+	//	// Perspetive sort
+	//	if (_cameraComp->getProjType() == Perspective)
+	//		sort(cullList.begin(), cullList.end(), perspectiveSort);
+	//	// Orthographic sort
+	//	else
+	//		Matrix44 camView = _cameraTrans->getLocalToWorldMatrix();
+
+	//		sort(cullList.begin(), cullList.end(), orthographicSort);
+	//}
+	//// Sort transparent objects.
+	//else
+	//{
+
+	//}
 
 
+	// Sort transparent objects.
+	// Perspetive sort.
+	if (_cameraComp->getProjType() == Perspective)
+	{
+		Vector3 camPos = _cameraTrans->getWorldPosition();
 
-	for (Entity* entity : entities)
+		sort(cullList.begin(), cullList.end(), [camPos](Entity* a, Entity* b) -> bool
+		{
+			EntityManager* entityManager = EntityManager::getInstance();
+			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
+			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
+
+			float sqrDistanceA = Vector3::sqrDistance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+			float sqrDistanceB = Vector3::sqrDistance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+
+			return sqrDistanceA > sqrDistanceB;
+		});
+	}
+	// Orthographic sort.
+	else
+	{
+		Matrix44 camView = _cameraTrans->getLocalToWorldMatrix();
+
+		sort(cullList.begin(), cullList.end(), [camView](Entity* a, Entity* b) -> bool
+		{
+			EntityManager* entityManager = EntityManager::getInstance();
+			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
+			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
+
+			float distanceA = (camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
+			float distanceB = (camView * bTrans->getLocalToWorldMatrix()).getTranslation().z;
+
+			return distanceA > distanceB;
+		});
+	}
+
+
+}
+
+void MeshRendererSystem::drawHelper(const vector<Entity*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse)
+{
+	for (Entity* entity : drawList)
 	{
 		// Get the transform and mesh renderer components for the current entity. Only draw if both components exist.
 		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
@@ -124,146 +281,4 @@ void MeshRendererSystem::draw(Light* light, Light* spotLight)
 		// Unbind the shader program.
 		shaderProgram->unBind();
 	}
-}
-
-void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& objectList)
-{
-	// Clear cullList from previous frame.
-	cullList.clear();
-
-	// Check if the camera is suppose to cull.
-	if (_cameraComp->getCullingActive())
-	{
-		// The camera is set to perspective.
-		if (_cameraComp->getProjType() == Perspective)
-		{
-			TransformComponent* transform = nullptr;
-
-			for (Entity* entity : objectList)
-			{
-				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
-
-				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation();
-				float distance = direction.Length();
-				direction /= distance;
-				Vector3 forward = _cameraTrans->getLocalToWorldMatrix().getForward();
-				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.5f))
-					&& (distance < (_cameraComp->getFar() * 1.4f)))
-				{
-					cullList.push_back(entity);
-				}
-			}
-		}
-		// The camera is set to orthographic.
-		else
-		{
-			TransformComponent* transform = nullptr;
-
-			for (Entity* entity : objectList)
-			{
-				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
-
-				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation() - Vector3(0.0f, 0.0f, -20.0f);
-				float distance = direction.Length();
-				direction /= distance;
-				Vector3 forward = _cameraTrans->getLocalToWorldMatrix().getForward();
-				forward.z -= 20.0f;
-				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.5f))
-					&& (distance < (_cameraComp->getFar() * 1.4f + 20.0f)))
-				{
-					cullList.push_back(entity);
-				}
-			}
-		}
-	}
-	else
-	{
-		cullList = objectList;
-	}
-}
-
-//bool perspectiveSort(Entity* a, Entity* b)
-//{
-//	EntityManager* entityManager = EntityManager::getInstance();
-//	TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
-//	TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
-//
-//	float distanceA = Vector3::distance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
-//	float distanceB = Vector3::distance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
-//
-//	return distanceA < distanceB;
-//}
-//
-//bool orthographicSort(Entity* a, Entity* b)
-//{
-//	EntityManager* entityManager = EntityManager::getInstance();
-//	TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
-//	TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
-//
-//	float distanceA = (camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
-//	float distanceB = (camView * bTrans->getLocalToWorldMatrix()).getTranslation().z;
-//	
-//	return distanceA < distanceB;
-//}
-
-void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList, const bool isTrans)
-{
-	//// Sort opaque objects.
-	//if (!isTrans)
-	//{
-	//	Vector3 camPos = _cameraTrans->getWorldPosition();
-
-	//	// Perspetive sort
-	//	if (_cameraComp->getProjType() == Perspective)
-	//		sort(cullList.begin(), cullList.end(), perspectiveSort);
-	//	// Orthographic sort
-	//	else
-	//		Matrix44 camView = _cameraTrans->getLocalToWorldMatrix();
-
-	//		sort(cullList.begin(), cullList.end(), orthographicSort);
-	//}
-	//// Sort transparent objects.
-	//else
-	//{
-
-	//}
-
-
-	// Sort transparent objects.
-	// Perspetive sort.
-	if (_cameraComp->getProjType() == Perspective)
-	{
-		Vector3 camPos = _cameraTrans->getWorldPosition();
-
-		sort(cullList.begin(), cullList.end(), [camPos](Entity* a, Entity* b) -> bool
-		{
-			EntityManager* entityManager = EntityManager::getInstance();
-			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
-			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
-
-			float distanceA = Vector3::distance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
-			float distanceB = Vector3::distance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
-
-			return distanceA > distanceB;
-		});
-	}
-	// Orthographic sort.
-	else
-	{
-		Matrix44 camView = _cameraTrans->getLocalToWorldMatrix();
-
-		sort(cullList.begin(), cullList.end(), [camView](Entity* a, Entity* b) -> bool
-		{
-			EntityManager* entityManager = EntityManager::getInstance();
-			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
-			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
-
-			float distanceA = (camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
-			float distanceB = (camView * bTrans->getLocalToWorldMatrix()).getTranslation().z;
-
-			return distanceA > distanceB;
-		});
-	}
-
-
 }

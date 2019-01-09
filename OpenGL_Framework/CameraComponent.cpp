@@ -26,7 +26,7 @@ void CameraComponent::perspective(const float fovY, const float aspect, const fl
 	_near = zNear;
 	_far = zFar;
 	_fov.y = fovY;
-	_fov.x = MathLibCore::toDegrees(atan(tan(MathLibCore::toRadians(_fov.y) * 0.5f) * aspect) *2.0f);
+	_fov.x = MathLibCore::toDegrees(atan(tan(MathLibCore::toRadians(_fov.y) * 0.5f) * aspect) * 2.0f);
 }
 
 void CameraComponent::orthographic(const float left, const float right, const float bottom, const float top, const float zNear, const float zFar)

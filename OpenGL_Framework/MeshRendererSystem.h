@@ -18,11 +18,15 @@ public:
 
 	void draw(Light* light, Light* spotLight);
 	void cull(vector<Entity*>& cullList, vector<Entity*>& objectList);
-	void sortMeshes(vector<Entity*>& cullList, const bool isTrans);
+	void sortMeshes(vector<Entity*>& cullList);
 
 private:
 	TransformComponent* _cameraTrans = nullptr;
 	CameraComponent* _cameraComp = nullptr;
-	vector<Entity*> opaqueCullList;
-	vector<Entity*> transCullList;
+	vector<Entity*> _opaqueObjects;
+	vector<Entity*> _opaqueCullList;
+	vector<Entity*> _transObjects;
+	vector<Entity*> _transCullList;
+
+	void drawHelper(const vector<Entity*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse);
 };

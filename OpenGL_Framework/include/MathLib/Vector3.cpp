@@ -26,6 +26,11 @@ float Vector3::Length()
 	return sqrt((x * x) + (y * y) + (z * z));
 }
 
+float Vector3::sqrLength()
+{
+	return ((x * x) + (y * y) + (z * z));
+}
+
 Vector3 Vector3::Normalize()
 {
 	return Vector3((x / Length()), (y / Length()),(z/Length()));
@@ -67,6 +72,11 @@ float Vector3::DistanceBetweenObj(Vector3 v)
 float Vector3::distance(const Vector3 & lhs, const Vector3 & rhs)
 {
 	return (rhs - lhs).Length();
+}
+
+float Vector3::sqrDistance(const Vector3 & lhs, const Vector3 & rhs)
+{
+	return (rhs - lhs).sqrLength();
 }
 
 Vector3 Vector3::CrossProduct(Vector3 v)

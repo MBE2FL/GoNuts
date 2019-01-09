@@ -18,6 +18,7 @@ void Game::initializeGame()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
@@ -89,6 +90,8 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Nut100", "./Assets/Textures/Nut_100.png");
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
+
+	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 
 
 	//player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
@@ -268,14 +271,15 @@ void Game::initializeGame()
 	Entity* mainCamera = _entityFactory->createPerspectiveCamera(Vector3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	
-	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 40.0f, -5.0f)));
+	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 100.0f, -5.0f)));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 
-	Entity* entity = _entityFactory->createCoin(Vector3(5.0f, 8.0f, -5.0f), Vector3(1.0f, 1.0f, 1.0f), _entityFactory->createEmpty());
+	Entity* entity = _entityFactory->createCoin(Vector3(5.0f, 4.0f, -3.0f), Vector3(1.0f, 1.0f, 1.0f), _entityFactory->createEmpty());
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), entity);
 
 	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
 	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3(1.0f, 1.0f, 1.0f), 70.0f);
+	_entityFactory->createBackgrounds(20, Vector3(100.0f, -5.0f, -20.0f), Vector3(25.0f, 25.0f, 1.0f));
 }
 
 void Game::update()
@@ -352,7 +356,7 @@ void Game::draw()
 		// Render imgui
 		ImGui::Render();
 #endif
-		glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
+		//glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
 
 
 		//Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
@@ -370,7 +374,7 @@ void Game::draw()
 		//	Background[i].draw(camera, light, spotLight, cameraInverse);
 		//}
 		
-		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
+		//glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
 
 
 		//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);

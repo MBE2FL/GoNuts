@@ -40,6 +40,7 @@ Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const 
 	// Create camera component.
 	CameraComponent* camera = new CameraComponent();
 	camera->perspective(fovY, aspect, zNear, zFar);
+	camera->setCullingActive(true);
 
 	// Add the camera component to the entity.
 	_entityManager->addComponent(camera, entity);
@@ -56,10 +57,11 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	// Create all the necessary components.
 	// Mesh Renderer
 	vector<Texture*> textures;
-	textures.push_back(ObjectLoader::getTexture("Coin"));
+	textures.push_back(ObjectLoader::getTexture("Water"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Coin"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
+	meshRenderer->setIsTransparent(true);
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
@@ -329,6 +331,27 @@ Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & sca
 	return entity;
 }
 
+Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3 & scale, Entity * parent)
+{
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position, scale, parent);
+
+	// Create all the necessary components.
+	// Mesh Renderer
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("Background"));
+
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Background"),
+		ObjectLoader::getShaderProgram("Normal"), textures);
+
+
+	// Add the component to the entity.
+	_entityManager->addComponent(meshRenderer, entity);
+
+
+	return entity;
+}
+
 void EntityFactory::createPlatforms(const unsigned int amount, const Vector3 & position, const Vector3 & scale)
 {
 	Entity* entity;
@@ -350,5 +373,17 @@ void EntityFactory::createCones(const unsigned int amount, const Vector3 & posit
 		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
 
 		entity = createCone(Vector3::Zero, scale, createEmpty(newPos));
+	}
+}
+
+void EntityFactory::createBackgrounds(const unsigned int amount, const Vector3 & position, const Vector3 & scale)
+{
+	Entity* entity;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		Vector3 newPos = Vector3(i * position.x, position.y, position.z);
+
+		entity = createBackground(Vector3::Zero, scale, createEmpty(newPos));
 	}
 }

@@ -78,6 +78,7 @@ public:
 	}
 	//3D Functions
 	float Length();
+	float sqrLength();
 	Vector3 Normalize();
 	float DotProduct(Vector3 v);
 	static float dot(const Vector3& lhs, const Vector3& rhs);
@@ -86,6 +87,7 @@ public:
 	float ProjAngle(Vector3 v);
 	float DistanceBetweenObj(Vector3 v);
 	static float distance(const Vector3& lhs, const Vector3& rhs);
+	static float sqrDistance(const Vector3& lhs, const Vector3& rhs);
 	Vector3 CrossProduct(Vector3 v);
 	static Vector3 Zero;
 	static Vector3 One;
