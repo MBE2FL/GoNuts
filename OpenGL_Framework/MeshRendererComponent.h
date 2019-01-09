@@ -17,9 +17,12 @@ public:
 	void setShaderProgram(ShaderProgram* shaderProgram);
 	Texture* getTexture(unsigned int index) const;
 	vector<Texture*> getTextures() const;
+	bool getIsTransparent() const;
+	void setIsTransparent(const bool transparent);
 
 private:
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	vector<Texture*> _textures;
+	bool _isTransparent = false;
 };

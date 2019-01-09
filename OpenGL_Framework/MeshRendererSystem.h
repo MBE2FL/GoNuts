@@ -3,8 +3,12 @@
 #include "System.h"
 #include "MeshRendererComponent.h"
 #include "TransformComponent.h"
-#include "Camera.h"
+#include "CameraComponent.h"
 #include "Light.h"
+#include <algorithm>
+
+using std::sort;
+using std::partition;
 
 class MeshRendererSystem : public System
 {
@@ -12,5 +16,13 @@ public:
 	MeshRendererSystem(EntityManager* entityManager);
 	~MeshRendererSystem();
 
-	void draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse);
+	void draw(Light* light, Light* spotLight);
+	void cull(vector<Entity*>& cullList, vector<Entity*>& objectList);
+	void sortMeshes(vector<Entity*>& cullList, const bool isTrans);
+
+private:
+	TransformComponent* _cameraTrans = nullptr;
+	CameraComponent* _cameraComp = nullptr;
+	vector<Entity*> opaqueCullList;
+	vector<Entity*> transCullList;
 };

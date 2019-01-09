@@ -500,3 +500,23 @@ Matrix44 Matrix44::OrthographicProjection(float left, float right, float top, fl
 
 	return result;
 }
+
+Vector3 Matrix44::getTranslation() const
+{
+	return Vector3(mV[12], mV[13], mV[14]);
+}
+
+Vector3 Matrix44::getForward() const
+{
+	return Vector3(mV[8], mV[9], mV[10]);
+}
+
+Vector3 Matrix44::getUp() const
+{
+	return Vector3(mV[4], mV[5], mV[6]);
+}
+
+Vector3 Matrix44::getLeft() const
+{
+	return Vector3(mV[0], mV[1], mV[2]);
+}

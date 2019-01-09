@@ -100,29 +100,29 @@ void Game::initializeGame()
 	//player.setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
 	//player.setLocalScale(0.2f);
 
-	nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
-	nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
-	nutOmeter.addPhysicsBody(false);
-	nutOmeter.setWorldPosition(Vector3(0.0f, -6.0f, 0.0f));
-	nutOmeter.setLocalRotationAngleZ(-3.14592f / 2.0f);
-	//nutOmeter.setLocalRotationAngleY(3.14592f);
-	nutOmeter.setLocalScale(2.0f);
+	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
+	//nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
+	//nutOmeter.addPhysicsBody(false);
+	//nutOmeter.setWorldPosition(Vector3(0.0f, -6.0f, 0.0f));
+	//nutOmeter.setLocalRotationAngleZ(-3.14592f / 2.0f);
+	////nutOmeter.setLocalRotationAngleY(3.14592f);
+	//nutOmeter.setLocalScale(2.0f);
 
-	time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	time.setMesh(ObjectLoader::getMesh("Plane"));
-	time.setTexture(ObjectLoader::getTexture("Time"));
-	time.addPhysicsBody(false);
-	time.setWorldPosition(Vector3(-13.5f, 7.5f, 0.0f));
-	time.setLocalRotationAngleZ(-3.14592f / 2.0f);
-	//time.setLocalRotationAngleY(3.14592f);
-	time.setLocalScale(2.0f);
+	//time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//time.setMesh(ObjectLoader::getMesh("Plane"));
+	//time.setTexture(ObjectLoader::getTexture("Time"));
+	//time.addPhysicsBody(false);
+	//time.setWorldPosition(Vector3(-13.5f, 7.5f, 0.0f));
+	//time.setLocalRotationAngleZ(-3.14592f / 2.0f);
+	////time.setLocalRotationAngleY(3.14592f);
+	//time.setLocalScale(2.0f);
 
-	coinDemo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	coinDemo.setMesh(ObjectLoader::getMesh("Coin"));
-	coinDemo.setTexture(ObjectLoader::getTexture("Coin"));
-	coinDemo.addPhysicsBody(false);
-	coinDemo.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
+	//coinDemo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
+	//coinDemo.setMesh(ObjectLoader::getMesh("Coin"));
+	//coinDemo.setTexture(ObjectLoader::getTexture("Coin"));
+	//coinDemo.addPhysicsBody(false);
+	//coinDemo.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
 	
 	//particleTrail = new ParticleEmitter;
 	//particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -167,7 +167,7 @@ void Game::initializeGame()
 	//dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
 
 
-	Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0);
+	//Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0);
 	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
 	//coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
 
@@ -244,13 +244,13 @@ void Game::initializeGame()
 
 	
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-	camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
-	//camera.orthographic(-10, 10, -10, 10, -100, 100);
-	camera.setWorldPosition(Vector3(0.0f, 4.0f, 5.0f));
-	camera.setLocalRotationAngleX(camera.getLocalRotationAngleX() - 0.2f);
+	//camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
+	////camera.orthographic(-10, 10, -10, 10, -100, 100);
+	//camera.setWorldPosition(Vector3(0.0f, 4.0f, 5.0f));
+	//camera.setLocalRotationAngleX(camera.getLocalRotationAngleX() - 0.2f);
 
-	UICamera.orthographic(-16, 16, 9, -9, -100, 100);
-	UICamera.setWorldPosition(Vector3::Zero);
+	//UICamera.orthographic(-16, 16, 9, -9, -100, 100);
+	//UICamera.setWorldPosition(Vector3::Zero);
 
 	//Matrix44 test;
 	//test.mV[0] = 1; test.mV[1] = 0; test.mV[2] = 10; test.mV[3] = 0; test.mV[4] = 0; test.mV[5] = 6; test.mV[6] = 0;
@@ -264,9 +264,12 @@ void Game::initializeGame()
 	_meshRendererSystem = new MeshRendererSystem(_entityManager);
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = new EntityFactory(_entityManager);
+
+	Entity* mainCamera = _entityFactory->createPerspectiveCamera(Vector3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
+	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	
 	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 40.0f, -5.0f)));
-	playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
+	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 
 	Entity* entity = _entityFactory->createCoin(Vector3(5.0f, 8.0f, -5.0f), Vector3(1.0f, 1.0f, 1.0f), _entityFactory->createEmpty());
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), entity);
@@ -307,99 +310,30 @@ void Game::update()
 	//particleTrail->getParent()->update(deltaTime);
 	//player.getParent()->update(deltaTime);
 	//spotLight->setPosition(Vector3(player.getWorldPosition().x, 5.0f, player.getWorldPosition().z) + offse);
-	nutOmeter.getParent()->update(deltaTime);
-	time.getParent()->update(deltaTime);
+	//nutOmeter.getParent()->update(deltaTime);
+	//time.getParent()->update(deltaTime);
 
 
-	coinDemo.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
-	coinDemo.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
-	coinDemo.getParent()->update(deltaTime);
-
-	//for (unsigned int i = 0; i < coins.size(); i++)
-	//{
-	//	coins[i].getParent()->update(deltaTime);
-	//	coins[i].setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f, 60.0f, t)));
-	//	//player.checkCoinCollisions(coins[i]);
-	//}
-	//for (unsigned int i = 0; i < Acorns.size(); i++)
-	//{
-	//	Acorns[i].getParent()->update(deltaTime);
-	//	//player.checkCoinCollisions(Acorns[i]);
-	//}
-	for (unsigned int i = 0; i < Background.size(); i++)
-	{
-		Background[i].getParent()->update(deltaTime);
-	}
-	//for (unsigned int i = 0; i < sceneObjects.size(); i++)
-	//{
-	//	sceneObjects[i].getParent()->update(deltaTime);
-	//	sceneObjects[i].setLocalRotationAngleY(TotalGameTime * 1.25f + i);
-	//}
-
-	//for (unsigned int i = 0; i < Cones.size(); i++)
-	//{
-	//	Cones[i].getParent()->update(deltaTime);
-	//	/*if (player.checkSpikeCollisions(Cones[i]))
-	//	{
-	//		player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
-	//		player.setVelocity(Vector2(0.0f, 0.0f));
-	//		player.setLocalScale(0.2f);
-	//		sliding = false;
-	//	}*/
-	//}
-
-	//for (unsigned int i = 0; i < Spikes.size(); i++)
-	//{
-	//	Spikes[i].getParent()->update(deltaTime);
-	//	/*if (player.checkSpikeCollisions(Spikes[i]))
-	//	{
-	//		player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
-	//		player.setVelocity(Vector2(0.0f, 0.0f));
-	//		player.setLocalScale(0.2f);
-	//		sliding = false;
-	//	}*/
-	//}
-
-	//for (unsigned int i = 0; i < Vents.size(); i++)
-	//{
-	//	Vents[i].getParent()->update(deltaTime);
-	//	/*if (player.checkSpikeCollisions(Vents[i]))
-	//	{
-	//		player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
-	//		player.setVelocity(Vector2(0.0f, 0.0f));
-	//		player.setLocalScale(0.2f);
-	//		sliding = false;
-	//	}*/
-	//}
-
-
-	//for (unsigned int i = 0; i < upperPlatforms.size(); i++)
-	//{
-	//	upperPlatforms[i].getParent()->update(deltaTime);
-	//	//player.checkCollisions(upperPlatforms[i]);
-	//}
-
+	//coinDemo.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
+	//coinDemo.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
+	//coinDemo.getParent()->update(deltaTime);
 
 	
-	/*if (player.getPhysicsBody()->getVelocity().x < 7.5f)
-		player.addForce(Vector2(20.0f, 0.0f));
-
-	if (player.getWorldPosition().y < -4.0f || player.getPhysicsBody()->getVelocity().x < 0.0f)
-	{
-		player.setWorldPosition(Vector3(-3.0f, 4, -5.0f));
-		player.setVelocity(Vector2(0.0f, 0.0f));
-		player.setLocalScale(0.2f);
-		sliding = false;
-	}*/
+	//for (unsigned int i = 0; i < Background.size(); i++)
+	//{
+	//	Background[i].getParent()->update(deltaTime);
+	//}
+	
 	
 	counter += deltaTime;
 	//player.setLocalRotationAngleY(90.0f);
 
 	Vector3 offset(-6, -1.5f, -8);
-	//camera.setWorldPosition(Vector3(0.0f, 0.0f, -13.0f));
-	camera.setWorldPosition(MathLibCore::lerp(camera.getWorldPosition(), playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
-	camera.update(deltaTime);
-	UICamera.update(deltaTime);
+	_mainCameraTransform->setWorldPosition(MathLibCore::lerp(_mainCameraTransform->getWorldPosition(),
+		_playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
+	//camera.setWorldPosition(MathLibCore::lerp(camera.getWorldPosition(), playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
+	//camera.update(deltaTime);
+	//UICamera.update(deltaTime);
 }
 
 void Game::draw()
@@ -421,65 +355,26 @@ void Game::draw()
 		glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
 
 
-		Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
-		Matrix44 uiCameraInverse = UICamera.getLocalToWorldMatrix().GetInverse(UICamera.getWorldRotation(), UICamera.getWorldPosition());
+		//Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
+		//Matrix44 uiCameraInverse = UICamera.getLocalToWorldMatrix().GetInverse(UICamera.getWorldRotation(), UICamera.getWorldPosition());
 
-		_meshRendererSystem->draw(camera, light, spotLight, cameraInverse);
+		_meshRendererSystem->draw(light, spotLight);
 
 		//platforms[0].draw(UICamera, light, spotLight);
 
 
-		coinDemo.draw(camera, light, spotLight, cameraInverse);
-		//for (unsigned int i = 0; i < dynamic_cast<ParticleEmitter*>(footEmitter)->getNumParticles(); i++)
-		//{
-		//	dynamic_cast<ParticleEmitter*>(footEmitter)->m_pParticles[i]->draw(camera, light);
-		//}
-		//player.draw(camera, light, spotLight, cameraInverse);
 		//coinDemo.draw(camera, light, spotLight, cameraInverse);
-
-		/*for (unsigned int i = 0; i < coins.size(); i++)
-		{
-			coins[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		for (unsigned int i = 0; i < Acorns.size(); i++)
-		{
-			Acorns[i].draw(camera, light, spotLight, cameraInverse);
-		}*/
-		for (unsigned int i = 0; i < Background.size(); i++)
-		{
-			Background[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		/*for (unsigned int i = 0; i < sceneObjects.size(); i++)
-		{
-			sceneObjects[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		for (unsigned int i = 0; i < Spikes.size(); i++)
-		{
-			Spikes[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		for (unsigned int i = 0; i < Cones.size(); i++)
-		{
-			Cones[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		for (unsigned int i = 0; i < Vents.size(); i++)
-		{
-			Vents[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		for (unsigned int i = 0; i < platforms.size(); i++)
-		{
-			platforms[i].draw(camera, light, spotLight, cameraInverse);
-		}
-		for (unsigned int i = 0; i < upperPlatforms.size(); i++)
-		{
-			upperPlatforms[i].draw(camera, light, spotLight, cameraInverse);
-		}*/
+		
+		//for (unsigned int i = 0; i < Background.size(); i++)
+		//{
+		//	Background[i].draw(camera, light, spotLight, cameraInverse);
+		//}
+		
 		glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
 
 
-		nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
-		time.draw(UICamera, light, spotLight, uiCameraInverse);
-		//jumpParticles->draw(camera, light, spotLight, cameraInverse);
-		//particleTrail->draw(camera, light, spotLight);
+		//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
+		//time.draw(UICamera, light, spotLight, uiCameraInverse);
 
 
 
@@ -528,11 +423,11 @@ void Game::imguiDraw()
 	{
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-		Vector3 pos = camera.getWorldPosition();
+		Vector3 pos; //= camera.getWorldPosition();
 		//ImGui::Text("Camera Position: (%f, %f, %f)", pos.x, pos.y, pos.z);
-		ImGui::DragFloat3("Camera Position: ", &pos.x, 0.5f);
-		camera.setWorldPosition(pos);
-		pos = playerTransform->getWorldPosition();
+		//ImGui::DragFloat3("Camera Position: ", &pos.x, 0.5f);
+		//camera.setWorldPosition(pos);
+		pos = _playerTransform->getWorldPosition();
 		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
 		//ImGui::Text("T Value: %f", player.getanimation().getT());
 		//pos = jumpParticles->getWorldPosition();
@@ -617,13 +512,13 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	switch (key)
 	{
 	case 32:
-		if (camera.getProjType() == ProjectionType::Perspective)
+		/*if (camera.getProjType() == ProjectionType::Perspective)
 			camera.orthographic(-10.0f, 10.0f, 10.0f, -10.0f, -100.0f, 100.0f);
 		else
 		{
 			float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 			camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
-		}
+		}*/
 		break;
 	case 27: // the escape key
 	//case 'q': // the 'q' key

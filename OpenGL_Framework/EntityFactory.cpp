@@ -32,6 +32,22 @@ Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& sca
 	return entity;
 }
 
+Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const float fovY, const float aspect, const float zNear, const float zFar)
+{
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position);
+
+	// Create camera component.
+	CameraComponent* camera = new CameraComponent();
+	camera->perspective(fovY, aspect, zNear, zFar);
+
+	// Add the camera component to the entity.
+	_entityManager->addComponent(camera, entity);
+	EntityManager::setMainCamera(entity);
+
+	return entity;
+}
+
 Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.

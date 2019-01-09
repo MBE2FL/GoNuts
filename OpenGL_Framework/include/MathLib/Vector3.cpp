@@ -1,6 +1,7 @@
 #include "Vector3.h"
 
-Vector3 Vector3::Zero = Vector3(0, 0, 0);
+Vector3 Vector3::Zero = Vector3(0.0f);
+Vector3 Vector3::One = Vector3(1.0f);
 
 Vector3::Vector3()
 {
@@ -35,6 +36,11 @@ float Vector3::DotProduct(Vector3 v)
 	return ((x * v.x) + (y * v.y)+(z * v.z));
 }
 
+float Vector3::dot(const Vector3 & lhs, const Vector3 & rhs)
+{
+	return ((lhs.x * rhs.x) + (lhs.y * rhs.y) + (lhs.z * rhs.z));
+}
+
 float Vector3::ProjLength(Vector3 v)
 {
 	return (DotProduct(v) / Length());
@@ -56,6 +62,11 @@ float Vector3::ProjAngle(Vector3 v)
 float Vector3::DistanceBetweenObj(Vector3 v)
 {
 	return (v - *this).Length();
+}
+
+float Vector3::distance(const Vector3 & lhs, const Vector3 & rhs)
+{
+	return (rhs - lhs).Length();
 }
 
 Vector3 Vector3::CrossProduct(Vector3 v)

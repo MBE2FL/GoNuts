@@ -44,15 +44,14 @@ void TransformSystem::update(float deltaTime)
 	EntityManager* entityManager = _entityManager;
 	partition(entities.begin(), entities.end(), [entityManager](Entity* entity) -> bool
 	{
-		// Get the transform components for both entities.
-		//Component* component = entityManager->getComponent(ComponentType::Transform, entity);
-		TransformComponent* firstTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+		// Get the transform component.
+		TransformComponent* transform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
 
 		// Make sure transform component exists.
-		if (!firstTransform)
+		if (!transform)
 			return false;
 
-		return firstTransform->isRoot();
+		return transform->isRoot();
 	});
 
 

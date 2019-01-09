@@ -75,6 +75,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MiniMath.lib;opengl32.lib;glew32.lib;SOIL_ext.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -84,7 +85,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Bounds.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="ColliderBounds.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -99,6 +100,7 @@
     <ClCompile Include="include\imgui\imgui_impl_freeglut.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="include\MathLib\MathLibCore.cpp" />
     <ClCompile Include="include\MathLib\Matrix33.cpp" />
     <ClCompile Include="include\MathLib\Matrix44.cpp" />
     <ClCompile Include="include\MathLib\Vector2.cpp" />
@@ -125,7 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bounds.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ColliderBounds.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Entity.h" />

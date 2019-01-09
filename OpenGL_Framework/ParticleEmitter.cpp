@@ -203,27 +203,27 @@ void ParticleEmitter::update(float dt)
 	}
 }
 
-void ParticleEmitter::draw(Camera &camera, Light *light, Light* spotLight, Matrix44& cameraInverse)
-{
-	// Draw the emitter position
-	// Note: not necessary
-	//TTK::Graphics::DrawTeapot(emitterPosition, 50.0f, Vector4(1.0f));
-
-	
-	for (unsigned int i = 0; i < m_pNumParticles; ++i)
-	{
-		//Particle* p = m_pParticles[i];
-		if (!m_pParticles.empty() && m_pParticles[i]->life) // if particle is alive, draw it
-		{
-			(m_pParticles[i])->draw(camera, light, spotLight, cameraInverse);
-
-			//TTK::Graphics::DrawTeapot(p->position, p->size, p->color); // low fps alert!! use with low particle count
-			//TTK::Graphics::DrawPoint(p->position, p->size, p->color);
-			// You can draw anything!
-			// ...but you should stick to points in this framework since it uses GL 1.0
-		}
-	}
-}
+//void ParticleEmitter::draw(Camera &camera, Light *light, Light* spotLight, Matrix44& cameraInverse)
+//{
+//	// Draw the emitter position
+//	// Note: not necessary
+//	//TTK::Graphics::DrawTeapot(emitterPosition, 50.0f, Vector4(1.0f));
+//
+//	
+//	for (unsigned int i = 0; i < m_pNumParticles; ++i)
+//	{
+//		//Particle* p = m_pParticles[i];
+//		if (!m_pParticles.empty() && m_pParticles[i]->life) // if particle is alive, draw it
+//		{
+//			(m_pParticles[i])->draw(camera, light, spotLight, cameraInverse);
+//
+//			//TTK::Graphics::DrawTeapot(p->position, p->size, p->color); // low fps alert!! use with low particle count
+//			//TTK::Graphics::DrawPoint(p->position, p->size, p->color);
+//			// You can draw anything!
+//			// ...but you should stick to points in this framework since it uses GL 1.0
+//		}
+//	}
+//}
 
 void ParticleEmitter::applyForceToParticle(unsigned int idx, Vector3 force)
 {

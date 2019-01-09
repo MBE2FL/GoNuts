@@ -16,6 +16,9 @@ public:
 
 	template<typename T>
 	static T catmull(const T p0, const T p1, const T p2, const T p3, const float interValue);
+
+	static float toRadians(const float degrees);
+	static float toDegrees(const float radians);
 };
 
 template<typename T>

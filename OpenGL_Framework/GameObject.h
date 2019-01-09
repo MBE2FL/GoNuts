@@ -2,7 +2,7 @@
 
 #include "Mesh.h"
 #include "ShaderProgram.h"
-#include "Camera.h"
+//#include "Camera.h"
 #include "PhysicsBody.h"
 #include "Component.h"
 #include "Texture.h"
@@ -53,7 +53,7 @@ public:
 	Animation getanimation();
 
 	void unLoad();
-	virtual void draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse);
+	//virtual void draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse);
 
 	//MeshBounds getMeshBounds() const;
 	void addPhysicsBody(const bool _useGravity);

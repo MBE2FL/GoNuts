@@ -30,12 +30,16 @@ public:
 	vector<Entity*> getAllEntitiesWithComponent(ComponentType compType);
 	Entity* getEntity(const unsigned int eid);
 
+	static void setMainCamera(Entity* camera);
+	static Entity* getMainCamera();
+
 private:
 	EntityManager();
 	vector<Entity*> _entities;
 	map<ComponentType, map<unsigned int, Component*>> _components;
 
 	static EntityManager* _instance;
+	static Entity* _mainCamera;
 };
 
 template<typename T>

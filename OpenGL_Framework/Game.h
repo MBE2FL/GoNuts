@@ -13,7 +13,7 @@
 
 #include "Timer.h"
 #include "Transform.h"
-#include "Camera.h"
+//#include "Camera.h"
 #include "ParticleEmitter.h"
 
 #include "GUIHelper.h"
@@ -62,16 +62,18 @@ public:
 
 private:
 	// Scene Objects.
-	Camera camera;
-	Camera UICamera;
+	//Camera camera;
+	//Camera UICamera;
+
+	
 
 	//GameObject player;
-	GameObject coinDemo;
+	//GameObject coinDemo;
 	float t = 0.0f;
 
 	//UI
-	GameObject nutOmeter;
-	GameObject time;
+	//GameObject nutOmeter;
+	//GameObject time;
 
 	//Vector3 p1 = Vector3(0.0f, 0.0f, -5.0f);
 	//Vector3 p2 = Vector3(2.0f, 6.0f, -5.0f);
@@ -83,20 +85,21 @@ private:
 	Vector3 p3 = Vector3(2.0f, 5.0f, -5.0f);
 	Vector3 p4 = Vector3(2.0f, 3.0f, -5.0f);
 
-	vector<GameObject> coins;
-	vector<GameObject> Acorns;
-	vector<GameObject> Cones;
-	vector<GameObject> Spikes;
-	vector<GameObject> Vents;
-	vector<GameObject> platforms;
-	vector<GameObject> sceneObjects;
-	vector<GameObject> Background;
-	vector<GameObject> upperPlatforms;
+	//vector<GameObject> coins;
+	//vector<GameObject> Acorns;
+	//vector<GameObject> Cones;
+	//vector<GameObject> Spikes;
+	//vector<GameObject> Vents;
+	//vector<GameObject> platforms;
+	//vector<GameObject> sceneObjects;
+	//vector<GameObject> Background;
+	//vector<GameObject> upperPlatforms;
 
 	//GameObject* particleTrail;
 	//GameObject* jumpParticles;
 
-	TransformComponent* playerTransform;
+
+	
 
 	bool collided = false;
 	bool sliding = false;
@@ -117,4 +120,7 @@ private:
 
 	Entity* _testEntity;
 	Entity* _testEntity2;
+
+	TransformComponent* _playerTransform;
+	TransformComponent* _mainCameraTransform;
 };

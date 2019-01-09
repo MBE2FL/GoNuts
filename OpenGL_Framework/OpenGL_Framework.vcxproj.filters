@@ -43,9 +43,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -163,6 +160,12 @@
     <ClCompile Include="EntityFactory.cpp">
       <Filter>Source Files\EntitySystem\Base</Filter>
     </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>Source Files\EntitySystem\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\MathLibCore.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -172,9 +175,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
@@ -293,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="PhysicsSystem.h">
       <Filter>Header Files\EntitySystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

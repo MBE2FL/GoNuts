@@ -206,62 +206,62 @@ void GameObject::unLoad()
 	_mesh->Unload();
 }
 
-void GameObject::draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse)
-{
-	_shaderProgram->bind();
-	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
-	_shaderProgram->sendUniformMat4("uView", cameraInverse.mV, false);
-	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
-
-	
-	_shaderProgram->sendUniform("uTex", 0);
-
-	
-	_shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
-	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
-	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
-	_shaderProgram->sendUniform("lightSpecular", light->getSpecular());
-	_shaderProgram->sendUniform("lightSpecularExponent", light->getSpecularExp());
-	_shaderProgram->sendUniform("attenuationConstant", light->getAttenuationConstant());
-	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
-	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
-
-	_shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
-	_shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
-	_shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
-	_shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
-	_shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
-	_shaderProgram->sendUniform("spotLightSpecularExponent", spotLight->getSpecularExp());
-	_shaderProgram->sendUniform("spotLightattenuationConstant", spotLight->getAttenuationConstant());
-	_shaderProgram->sendUniform("spotLightattenuationLinear", spotLight->getAttenuationLinear());
-	_shaderProgram->sendUniform("spotLightattenuationQuadratic", spotLight->getAttenuationQuadratic());
-
-
-	vector<Texture*>::iterator it;
-	unsigned int texLoc = 0;
-	for (it = _texture.begin(); it != _texture.end(); it++)
-	{
-		(*it)->bind(texLoc);
-		texLoc++;
-	}
-
-	glBindVertexArray(_mesh->VAO);
-
-	//if (isAnimated)
-	//	animation.animate(_shaderProgram, _physicsBody->getVelocity().x/ 7.5f);
-
-	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
-	glBindVertexArray(GL_NONE);
-
-	vector<Texture*>::reverse_iterator revIt;
-	for (revIt = _texture.rbegin(); revIt != _texture.rend(); revIt++)
-	{
-		texLoc--;
-		(*revIt)->unBind(texLoc);
-	}
-
-	_shaderProgram->unBind();
-}
+//void GameObject::draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse)
+//{
+//	_shaderProgram->bind();
+//	_shaderProgram->sendUniformMat4("uModel", getLocalToWorldMatrix().mV, false);
+//	_shaderProgram->sendUniformMat4("uView", cameraInverse.mV, false);
+//	_shaderProgram->sendUniformMat4("uProj", camera.getProjection().mV, false);
+//
+//	
+//	_shaderProgram->sendUniform("uTex", 0);
+//
+//	
+//	_shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
+//	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
+//	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
+//	_shaderProgram->sendUniform("lightSpecular", light->getSpecular());
+//	_shaderProgram->sendUniform("lightSpecularExponent", light->getSpecularExp());
+//	_shaderProgram->sendUniform("attenuationConstant", light->getAttenuationConstant());
+//	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
+//	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
+//
+//	_shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
+//	_shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
+//	_shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
+//	_shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
+//	_shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
+//	_shaderProgram->sendUniform("spotLightSpecularExponent", spotLight->getSpecularExp());
+//	_shaderProgram->sendUniform("spotLightattenuationConstant", spotLight->getAttenuationConstant());
+//	_shaderProgram->sendUniform("spotLightattenuationLinear", spotLight->getAttenuationLinear());
+//	_shaderProgram->sendUniform("spotLightattenuationQuadratic", spotLight->getAttenuationQuadratic());
+//
+//
+//	vector<Texture*>::iterator it;
+//	unsigned int texLoc = 0;
+//	for (it = _texture.begin(); it != _texture.end(); it++)
+//	{
+//		(*it)->bind(texLoc);
+//		texLoc++;
+//	}
+//
+//	glBindVertexArray(_mesh->VAO);
+//
+//	//if (isAnimated)
+//	//	animation.animate(_shaderProgram, _physicsBody->getVelocity().x/ 7.5f);
+//
+//	glDrawArrays(GL_TRIANGLES, 0, _mesh->getNumVertices());
+//	glBindVertexArray(GL_NONE);
+//
+//	vector<Texture*>::reverse_iterator revIt;
+//	for (revIt = _texture.rbegin(); revIt != _texture.rend(); revIt++)
+//	{
+//		texLoc--;
+//		(*revIt)->unBind(texLoc);
+//	}
+//
+//	_shaderProgram->unBind();
+//}
 
 
 void GameObject::addPhysicsBody(const bool _useGravity)

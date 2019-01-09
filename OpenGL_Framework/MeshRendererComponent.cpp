@@ -39,3 +39,13 @@ vector<Texture*> MeshRendererComponent::getTextures() const
 {
 	return _textures;
 }
+
+bool MeshRendererComponent::getIsTransparent() const
+{
+	return _isTransparent;
+}
+
+void MeshRendererComponent::setIsTransparent(const bool transparent)
+{
+	_isTransparent = transparent;
+}

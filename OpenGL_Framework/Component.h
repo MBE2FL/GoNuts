@@ -9,7 +9,8 @@ enum class ComponentType
 {
 	Transform,
 	MeshRenderer,
-	PhysicsBody
+	PhysicsBody,
+	Camera,
 };
 
 

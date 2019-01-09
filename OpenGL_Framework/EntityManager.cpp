@@ -1,6 +1,7 @@
 #include "EntityManager.h"
 
 EntityManager* EntityManager::_instance = nullptr;
+Entity* EntityManager::_mainCamera = nullptr;
 
 EntityManager::EntityManager()
 {
@@ -146,4 +147,14 @@ Entity * EntityManager::getEntity(const unsigned int eid)
 	}
 
 	return nullptr;
+}
+
+void EntityManager::setMainCamera(Entity * camera)
+{
+	_mainCamera = camera;
+}
+
+Entity * EntityManager::getMainCamera()
+{
+	return _mainCamera;
 }

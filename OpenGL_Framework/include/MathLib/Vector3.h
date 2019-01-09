@@ -70,15 +70,24 @@ public:
 		//output in cmd: (vec1.x,vec1.y,vec1.z)
 		return out << "(" << source.x << "," << source.y << "," << source.z << ")";
 	}
+	void operator/=(float scalar)
+	{
+		x /= scalar;
+		y /= scalar;
+		z /= scalar;
+	}
 	//3D Functions
 	float Length();
 	Vector3 Normalize();
 	float DotProduct(Vector3 v);
+	static float dot(const Vector3& lhs, const Vector3& rhs);
 	float ProjLength(Vector3 v);
 	Vector3 ProjPoint(Vector3 v);
 	float ProjAngle(Vector3 v);
 	float DistanceBetweenObj(Vector3 v);
+	static float distance(const Vector3& lhs, const Vector3& rhs);
 	Vector3 CrossProduct(Vector3 v);
 	static Vector3 Zero;
+	static Vector3 One;
 
 };

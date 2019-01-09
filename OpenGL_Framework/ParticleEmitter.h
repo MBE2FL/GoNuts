@@ -5,7 +5,7 @@
 #include "ShaderProgram.h"
 #include "Transform.h"
 #include "Texture.h"
-#include "Camera.h"
+//#include "Camera.h"
 #include "Component.h"
 #include "Light.h"
 #include "GameObject.h"
@@ -69,7 +69,7 @@ public:
 	void freeMemory();
 
 	virtual void update(float dt);
-	virtual void draw(Camera &camera, Light *light, Light* spotLight, Matrix44& cameraInverse);
+	//virtual void draw(Camera &camera, Light *light, Light* spotLight, Matrix44& cameraInverse);
 
 	void applyForceToParticle(unsigned int idx, Vector3 force);
 

@@ -44,4 +44,9 @@ public:
 
 	static Matrix44 PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar);
 	static Matrix44 OrthographicProjection(float left, float right, float top, float bottom, float near, float far);
+
+	Vector3 getTranslation() const;
+	Vector3 getForward() const;
+	Vector3 getUp() const;
+	Vector3 getLeft() const;
 };
