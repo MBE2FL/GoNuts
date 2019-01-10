@@ -51,7 +51,7 @@ void TransformSystem::update(float deltaTime)
 		if (!transform)
 			return false;
 
-		return transform->isRoot();
+		return !transform->isRoot();
 	});
 
 
@@ -81,5 +81,24 @@ void TransformSystem::update(float deltaTime)
 		// Update the transforms position, using forward kinematics.
 		if (transform->isRoot())
 			transform->update(deltaTime);
+	}
+
+
+	// Update collider bounds, after current world transformations have been calculated.
+	for (Entity* entity : entities)
+	{
+		// Get the transform component for the current entity.
+		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+		if (!transform)
+			return;
+
+		// Also check if the current entity possesses a physics body.
+		PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
+
+		// Update the transforms position using physics, if the entity possesses a physics body.
+		if (physicsBody)
+		{
+			physicsBody->updateBounds(transform);
+		}
 	}
 }

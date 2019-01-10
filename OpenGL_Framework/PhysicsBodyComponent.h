@@ -8,7 +8,7 @@
 #include "Entity.h"
 
 //#define GRAVITY -16.2f
-#define EGRAVITY -0.4f
+#define EGRAVITY -9.81f
 
 //struct Collision
 //{
@@ -40,6 +40,7 @@ public:
 	~PhysicsBodyComponent();
 
 	void update(float deltaTime, TransformComponent* transform);
+	void updateBounds(TransformComponent* transform);
 	void addForce(const Vector3& force);
 	//void onCollisionEnter(PhysicsBodyComponent* other);
 	//void onCollisionExit(PhysicsBodyComponent* other);

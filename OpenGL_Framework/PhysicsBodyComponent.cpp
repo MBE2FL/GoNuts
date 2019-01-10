@@ -29,10 +29,15 @@ void PhysicsBodyComponent::update(float deltaTime, TransformComponent * transfor
 	//_collisionBounds.setCentre(_collisionBounds.getCentre() + Vector3(velocity, 0.0f) * dt);
 	// ####
 	//transform->setWorldPosition(transform->getWorldPosition() + Vector3(velocity, 0.0f) * dt);
-	_collisionBounds.update(transform);
+	//_collisionBounds.update(transform);
 	// ####
 
 	_force = Vector3(0.0f);
+}
+
+void PhysicsBodyComponent::updateBounds(TransformComponent * transform)
+{
+	_collisionBounds.update(transform);
 }
 
 void PhysicsBodyComponent::addForce(const Vector3 & force)

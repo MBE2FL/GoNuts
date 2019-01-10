@@ -268,17 +268,22 @@ void Game::initializeGame()
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = new EntityFactory(_entityManager);
 
+	//Entity* test = _entityFactory->createEmpty();
+	//TransformComponent* trans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, test);
+	//bool blah = trans->isRoot();
+	//blah = !blah;
+
 	Entity* mainCamera = _entityFactory->createPerspectiveCamera(Vector3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	
 	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 10.0f, -5.0f)));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 
-	Entity* entity = _entityFactory->createCoin(Vector3(5.0f, 4.0f, -3.0f), Vector3(1.0f, 1.0f, 1.0f), _entityFactory->createEmpty());
-	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), entity);
+	Entity* entity = _entityFactory->createCoin(Vector3::Zero, Vector3::One, _entityFactory->createEmpty(Vector3(5.0f, 4.0f, -3.0f)));
+	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3::One, entity);
 
 	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
-	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3(1.0f, 1.0f, 1.0f), 70.0f);
+	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3::One, 70.0f);
 	_entityFactory->createBackgrounds(20, Vector3(100.0f, -5.0f, -20.0f), Vector3(25.0f, 25.0f, 1.0f));
 }
 
