@@ -36,6 +36,8 @@ in vec3 position;
 
 out vec4 outColour;
 
+const float levels = 3;
+
 
 void main()
 {
@@ -52,6 +54,20 @@ void main()
 	vec3 lightDir = lightVector / dist;
 
 	float NdotL = dot(tempNormal, lightDir);
+
+	float intensity;
+	vec3 color;
+	intensity = dot(lightDir,tempNormal);
+
+	//if (intensity > 0.95)
+	//	color = lightAmbient * 0.8;
+	//else if (intensity > 0.5)
+	//	color = lightAmbient * 0.5;
+	//else if (intensity > 0.25)
+	//	color = lightAmbient * 0.25;
+	//else
+	//	color = lightAmbient * 0.1;
+	//outColour.rgb *= color.rgb;
 	
 
 
@@ -59,47 +75,68 @@ void main()
 	{
 		// The light contributes to this surface
 
+		float brightness = max(NdotL,0.0);
+		float level = floor(brightness*levels);
+		brightness = level / levels;
+	
 		// Calculate attenuation (falloff)
 		float attenuation = 1.0 / (attenuationConstant + (attenuationLinear * dist) + (attenuationQuadratic * dist * dist));
-
+	
 		// Calculate diffuse contribution
-		outColour.rgb += lightDiffuse * NdotL * attenuation;
-
+		outColour.rgb += lightDiffuse + (brightness * NdotL) * attenuation;
+	
 		// Blinn-Phong half vector
 		// eyePosition - position -> eyePosition is vec3(0, 0, 0)
 		float NdotHV = max(dot(tempNormal, normalize(lightDir + normalize(-position))), 0.0);
-
+	
 		// Calculate specular contribution
 		outColour.rgb += lightSpecular * pow(NdotHV, lightSpecularExponent) * attenuation;
 	}
 
-	vec3 spotLightVector = spotLightPosition.xyz - position;
-	float spotDist = length(spotLightVector);
-	float angleBetweenLightAndVert = (dot(spotLightVector, vec3(0.0,0.0,-1.0)) / (spotDist * spotDist));
-	angleBetweenLightAndVert = acos(angleBetweenLightAndVert);
-	vec3 spotLightDir = spotLightVector / spotDist;
 
-	float NdotSL = dot(tempNormal, spotLightDir);
 
-	if (NdotSL > 0.0 && angleBetweenLightAndVert < 1.552)
-	{
-		// The light contributes to this surface
-	
-		// Calculate attenuation (falloff)
-		float spotLightattenuation = 1.0 / (spotLightattenuationConstant + (spotLightattenuationLinear
-		* spotDist) + (spotLightattenuationQuadratic * spotDist));
-	
-		// Calculate diffuse contribution
-		outColour.rgb += spotLightDiffuse * NdotSL * spotLightattenuation;
-	
-		// Blinn-Phong half vector
-		// eyePosition - position -> eyePosition is vec3(0, 0, 0)
-		float NdotHV = max(dot(tempNormal, normalize(spotLightDir + normalize(-position))), 0.0);
-	
-		// Calculate specular contribution
-		outColour.rgb += spotLightSpecular * pow(NdotHV, spotLightSpecularExponent) * spotLightattenuation;
-	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//vec3 spotLightVector = spotLightPosition.xyz - position;
+	//float spotDist = length(spotLightVector);
+	//float angleBetweenLightAndVert = (dot(spotLightVector, vec3(0.0,0.0,-1.0)) / (spotDist * spotDist));
+	//angleBetweenLightAndVert = acos(angleBetweenLightAndVert);
+	//vec3 spotLightDir = spotLightVector / spotDist;
+
+//	float NdotSL = dot(tempNormal, spotLightDir);
+//
+//	if (NdotSL > 0.0 && angleBetweenLightAndVert < 1.552)
+//	{
+//		// The light contributes to this surface
+//	
+//		// Calculate attenuation (falloff)
+//		float spotLightattenuation = 1.0 / (spotLightattenuationConstant + (spotLightattenuationLinear
+//		* spotDist) + (spotLightattenuationQuadratic * spotDist));
+//	
+//		// Calculate diffuse contribution
+//		outColour.rgb += spotLightDiffuse * NdotSL * spotLightattenuation;
+//	
+//		// Blinn-Phong half vector
+//		// eyePosition - position -> eyePosition is vec3(0, 0, 0)
+//		float NdotHV = max(dot(tempNormal, normalize(spotLightDir + normalize(-position))), 0.0);
+//	
+//		// Calculate specular contribution
+//		outColour.rgb += spotLightSpecular * pow(NdotHV, spotLightSpecularExponent) * spotLightattenuation;
+//	}
+//
 
 
 
