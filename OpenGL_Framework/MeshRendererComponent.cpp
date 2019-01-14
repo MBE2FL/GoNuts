@@ -35,9 +35,43 @@ Texture * MeshRendererComponent::getTexture(unsigned int index) const
 	return _textures[index];
 }
 
+void MeshRendererComponent::setTexture(unsigned int index, Texture * texture)
+{
+	if (index < _textures.size())
+		_textures[index] = texture;
+	else
+		_textures.push_back(texture);
+}
+
+void MeshRendererComponent::addTexture(Texture * texture)
+{
+	_textures.push_back(texture);
+}
+
 vector<Texture*> MeshRendererComponent::getTextures() const
 {
 	return _textures;
+}
+
+void MeshRendererComponent::removeTexture(Texture * texture)
+{
+	vector<Texture*>::iterator it;
+	for (it = _textures.begin(); it != _textures.end();)
+	{
+		if (*it == texture)
+		{
+			it = _textures.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void MeshRendererComponent::removeTexture(unsigned int index)
+{
+	_textures.erase(_textures.begin() + index);
 }
 
 bool MeshRendererComponent::getIsTransparent() const

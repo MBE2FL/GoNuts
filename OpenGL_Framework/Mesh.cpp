@@ -51,6 +51,8 @@ Mesh::~Mesh()
 
 bool Mesh::loadFromFile(const string & file)
 {
+	setFilename(file);
+
 	ifstream input;
 	input.open(file);
 
@@ -225,6 +227,16 @@ GLuint Mesh::getVBO_Verts()
 MeshBounds Mesh::getMeshBounds() const
 {
 	return _meshBounds;
+}
+
+string Mesh::getFilename() const
+{
+	return _filename;
+}
+
+void Mesh::setFilename(const string & filename)
+{
+	_filename = filename;
 }
 
 void Mesh::computeMinMax(const Vector3 & vertex)

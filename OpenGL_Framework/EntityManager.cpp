@@ -59,6 +59,7 @@ Entity * EntityManager::createEntity()
 
 void EntityManager::addComponent(Component * component, Entity * entity)
 {
+	component->setEntity(entity);
 	_components[component->getType()][entity->getEid()] = component;
 }
 

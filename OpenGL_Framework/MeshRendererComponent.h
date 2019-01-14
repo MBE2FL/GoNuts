@@ -16,7 +16,11 @@ public:
 	ShaderProgram* getShaderProgram() const;
 	void setShaderProgram(ShaderProgram* shaderProgram);
 	Texture* getTexture(unsigned int index) const;
+	void setTexture(unsigned int index, Texture* texture);
+	void addTexture(Texture* texture);
 	vector<Texture*> getTextures() const;
+	void removeTexture(Texture* texture);
+	void removeTexture(unsigned int index);
 	bool getIsTransparent() const;
 	void setIsTransparent(const bool transparent);
 

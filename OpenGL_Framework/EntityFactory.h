@@ -13,7 +13,7 @@ public:
 	EntityFactory(EntityManager* entityManager);
 	~EntityFactory();
 
-	Entity* createEmpty(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
+	Entity* createEmpty(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Empty");
 	Entity* createPerspectiveCamera(const Vector3& position = Vector3::Zero, const float fovY = 60.0f, 
 		const float aspect = 1.8f, const float zNear = 1.0f, const float zFar = 1000.0f);
 	Entity* createCoin(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);

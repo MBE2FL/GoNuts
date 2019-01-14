@@ -124,4 +124,15 @@ private:
 
 	TransformComponent* _playerTransform;
 	TransformComponent* _mainCameraTransform;
+
+
+	// ImGui ui stuff ## Will move later on
+	bool showSceneEditor = false;
+	bool showPropertyEditor = false;
+	bool showShaderProgCreator = false;
+	TransformComponent* currentTransform = nullptr;
+
+	void drawHierarchy();
+	void drawHierarchyHelper(TransformComponent* transform);
+	void propertyEditor(TransformComponent* transform, bool* open);
 };

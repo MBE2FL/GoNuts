@@ -18,7 +18,8 @@ void ObjectLoader::loadShaderProgram(const string & shaderProgramName, const str
 	if (_shaderPrograms.count(shaderProgramName) == 0)
 	{
 		// Load mesh
-		ShaderProgram* shaderProgram = new ShaderProgram();;
+		ShaderProgram* shaderProgram = new ShaderProgram();
+		shaderProgram->setProgramName(shaderProgramName);
 		// Load shaders
 		if (!shaderProgram->load(vertFile, fragFile))
 		{
@@ -105,12 +106,77 @@ ShaderProgram * ObjectLoader::getShaderProgram(const string & shaderProgramName)
 	return _shaderPrograms[shaderProgramName];
 }
 
+vector<ShaderProgram*> ObjectLoader::getShaderPrograms()
+{
+	vector<ShaderProgram*> shaders;
+	map<string, ShaderProgram*>::iterator it;
+
+	for (it = _shaderPrograms.begin(); it != _shaderPrograms.end(); it++)
+	{
+		shaders.push_back(it->second);
+	}
+
+	return shaders;
+}
+
+vector<string> ObjectLoader::getShaderProgramNames()
+{
+	vector<string> shaderProgNames;
+	map<string, ShaderProgram*>::iterator it;
+
+	for (it = _shaderPrograms.begin(); it != _shaderPrograms.end(); it++)
+	{
+		shaderProgNames.push_back(it->first);
+	}
+
+	return shaderProgNames;
+}
+
 Mesh * ObjectLoader::getMesh(const string & meshName)
 {
 	return _meshes[meshName];
 }
 
+vector<Mesh*> ObjectLoader::getMeshes()
+{
+	vector<Mesh*> meshes;
+	map<string, Mesh*>::iterator it;
+
+	for (it = _meshes.begin(); it != _meshes.end(); it++)
+	{
+		meshes.push_back(it->second);
+	}
+
+	return meshes;
+}
+
 Texture * ObjectLoader::getTexture(const string & texName)
 {
 	return _textures[texName];
+}
+
+vector<Texture*> ObjectLoader::getTextures()
+{
+	vector<Texture*> textures;
+	map<string, Texture*>::iterator it;
+
+	for (it = _textures.begin(); it != _textures.end(); it++)
+	{
+		textures.push_back(it->second);
+	}
+
+	return textures;
+}
+
+vector<string> ObjectLoader::getTextureNames()
+{
+	vector<string> texNames;
+	map<string, Texture*>::iterator it;
+
+	for (it = _textures.begin(); it != _textures.end(); it++)
+	{
+		texNames.push_back(it->first);
+	}
+
+	return texNames;
 }
