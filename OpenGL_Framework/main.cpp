@@ -6,6 +6,7 @@
 #include <GL/freeglut.h>
 
 Game *theGame;
+GUIHelper* guiHelper;
 
 /* function DisplayCallbackFunction(void)
  * Description:
@@ -198,7 +199,9 @@ int main(int argc, char **argv)
 #ifdef _DEBUG
 	//InitOpenGLDebugCallback();
 
-	GUIHelper::init(WINDOW_WIDTH, WINDOW_HEIGHT);
+	guiHelper = GUIHelper::getInstance();
+	guiHelper->init(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 #endif
 
 	/* init the game */

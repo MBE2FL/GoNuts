@@ -126,13 +126,14 @@ private:
 	TransformComponent* _mainCameraTransform;
 
 
+	GUIHelper* _guiHelper = nullptr;
 	// ImGui ui stuff ## Will move later on
-	bool showSceneEditor = false;
-	bool showPropertyEditor = false;
-	bool showShaderProgCreator = false;
-	TransformComponent* currentTransform = nullptr;
+	//bool showSceneEditor = false;
+	//bool showPropertyEditor = false;
+	//bool showShaderProgCreator = false;
+	//TransformComponent* currentTransform = nullptr;
 
-	void drawHierarchy();
-	void drawHierarchyHelper(TransformComponent* transform);
-	void propertyEditor(TransformComponent* transform, bool* open);
+	//void drawHierarchy();
+	//void drawHierarchyHelper(TransformComponent* transform);
+	//void propertyEditor(TransformComponent* transform, bool* open);
 };

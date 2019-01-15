@@ -2,7 +2,13 @@
 #include <ostream>
 #include <math.h>
 #include "MathLib/Vector2.h"
+#include <string>
+
 #define PI 3.141592635f
+
+using std::string;
+using std::to_string;
+
 class Vector3
 {
 public:
@@ -91,5 +97,5 @@ public:
 	Vector3 CrossProduct(Vector3 v);
 	static Vector3 Zero;
 	static Vector3 One;
-
+	string toString() const;
 };
