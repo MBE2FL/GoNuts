@@ -73,7 +73,7 @@ void main()
 	
 
 
-	if (NdotL > 0.0)
+	if (NdotL > 0.1)
 	{
 		// The light contributes to this surface
 
@@ -93,8 +93,13 @@ void main()
 	
 		// Calculate specular contribution
 		outColour.rgb += lightSpecular * pow(NdotHV, lightSpecularExponent) * attenuation;
+		
 	}
-
+	else
+	{
+		outColour.rgb = vec3(0,0,0);
+	}
+	outColour.rgb *= vec3(0.2,0.2,0.2);
 	//vec3 spotLightVector = spotLightPosition.xyz - position;
 	//float spotDist = length(spotLightVector);
 	//float angleBetweenLightAndVert = (dot(spotLightVector, vec3(0.0,0.0,-1.0)) / (spotDist * spotDist));
@@ -173,7 +178,7 @@ void main()
 	//if (textureColour.r
 //	outColour.rgb *= textureColour.rgb;
 //	outColour.a = textureColour.a;
-	outColour.rgb *= vec3(0.2,0.2,0.2);
+	
 	//outColour.rgb *=color;
 
 
