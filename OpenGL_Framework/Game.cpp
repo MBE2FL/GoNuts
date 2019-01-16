@@ -93,8 +93,11 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
-	ObjectLoader::loadTexture("Toon", "./Assets/Textures/toon.png");
-	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon1.png");
+	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
+	ObjectLoader::loadTexture("Toon", "./Assets/Textures/toon1.png");
+	ObjectLoader::loadTexture("Toon2", "./Assets/Textures/toon2.png");
+	ObjectLoader::loadTexture("Toon3", "./Assets/Textures/toon3.png");
+	ObjectLoader::loadTexture("Smooth", "./Assets/Textures/Smooth Shading.png");
 
 
 	//player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
