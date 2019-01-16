@@ -113,8 +113,8 @@ void GUIHelper::drawHierarchyHelper(TransformComponent * transform)
 {
 	vector<TransformComponent*> children = transform->getChildren();
 
-	if (children.size() > 0)
-	{
+	//if (children.size() > 0)
+	//{
 		if (ImGui::TreeNode(transform->getName().c_str()))
 		{
 			if (ImGui::SmallButton("Edit"))
@@ -128,19 +128,19 @@ void GUIHelper::drawHierarchyHelper(TransformComponent * transform)
 
 			ImGui::TreePop();
 		}
-	}
-	else
-	{
-		ImGui::Text(transform->getName().c_str());
+	//}
+	//else
+	//{
+	//	ImGui::Text(transform->getName().c_str());
 
-		ImGui::SameLine(100.0f, 100.0f);
+	//	ImGui::SameLine(100.0f, 100.0f);
 
-		if (ImGui::SmallButton("Edit"))
-		{
-			_showPropertyEditor = true;
-			_currentTransform = transform;
-		}
-	}
+	//	if (ImGui::SmallButton("Edit"))
+	//	{
+	//		_showPropertyEditor = true;
+	//		_currentTransform = transform;
+	//	}
+	//}
 
 	//if (ImGui::TreeNode(transform->getName().c_str()))
 	//{
