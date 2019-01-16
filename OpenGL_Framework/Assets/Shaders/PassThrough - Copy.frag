@@ -29,7 +29,7 @@ uniform float spotLightattenuationLinear;
 uniform float spotLightattenuationQuadratic;
 
 uniform sampler2D uTex;
-uniform sampler2D uTexLookUp;
+uniform sampler1D uTexLookUp;
 
 in vec2 texCoord;
 in vec3 normal;
@@ -54,18 +54,20 @@ void main()
 	
 	float dist = length(lightPosition.xyz - P);
 
-	float attenuation = 1.0 / (attenuationConstant + (attenuationLinear * dist) + (attenuationQuadratic * dist * dist));
+	//float attenuation = 1.0 / (attenuationConstant + (attenuationLinear * dist) + (attenuationQuadratic * dist * dist));
 
 	
 
 	vec3 L = normalize(lightPosition.xyz - P);
 
 	float diffuseLight = max(dot(N, L), 0);
-	vec4 textureLookUp = texture(uTexLookUp, vec2(-diffuseLight, 0.5));
+	vec4 textureLookUp = texture(uTexLookUp, diffuseLight);
+	//tex1D(uTexLookUp, diffuseLight);
+	
 
 	vec3 ambient = lightAmbient;
 
-	vec3 diffuse = lightDiffuse + (textureLookUp.r * dot(N, L)) * attenuation;
+	vec3 diffuse = (lightDiffuse * textureLookUp.r);
 
 	//compute specular term
 	vec3 V = normalize(-P);
@@ -73,7 +75,7 @@ void main()
 	float specularLight = pow(max(dot(N, H), 0), lightSpecularExponent);
 
 	if (diffuseLight <= 0) specularLight = 0;
-	vec3 specular = lightSpecular * specularLight * attenuation;
+	vec3 specular = lightSpecular * specularLight;
 
 	outColour.rgb = ambient + diffuse + specular;
 	outColour.a = textureColour.a;

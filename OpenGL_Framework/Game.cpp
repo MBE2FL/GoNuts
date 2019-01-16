@@ -21,7 +21,7 @@ void Game::initializeGame()
 	glEnable(GL_CULL_FACE);
 
 	// Load shaders and mesh
-	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
+	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 
@@ -94,6 +94,7 @@ void Game::initializeGame()
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon", "./Assets/Textures/toon.png");
+	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon1.png");
 
 
 	//player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
