@@ -37,9 +37,6 @@ in vec3 position;
 out vec4 outColour;
 
 const float levels = 3;
-const float colorLevels = 6;
-
-
 
 void main()
 {
@@ -57,19 +54,7 @@ void main()
 
 	float NdotL = dot(tempNormal, lightDir);
 
-	float intensity;
 	vec3 color;
-	intensity = dot(lightDir,tempNormal);
-
-	//if (intensity > 0.95)
-	//	color = lightAmbient * 0.8;
-	//else if (intensity > 0.5)
-	//	color = lightAmbient * 0.5;
-	//else if (intensity > 0.25)
-	//	color = lightAmbient * 0.25;
-	//else
-	//	color = lightAmbient * 0.1;
-	//outColour.rgb *= color.rgb;
 	
 
 
@@ -99,7 +84,6 @@ void main()
 	{
 		outColour.rgb = vec3(0,0,0);
 	}
-	outColour.rgb *= vec3(0.2,0.2,0.2);
 	//vec3 spotLightVector = spotLightPosition.xyz - position;
 	//float spotDist = length(spotLightVector);
 	//float angleBetweenLightAndVert = (dot(spotLightVector, vec3(0.0,0.0,-1.0)) / (spotDist * spotDist));
@@ -132,58 +116,11 @@ void main()
 
 	vec4 textureColour = texture(uTex, tex);
 
-	float red = textureColour.r;
-	float green = textureColour.g;
-	float blue = textureColour.b;
-	color = vec3(red,green,blue);
-
-//	if (red > 0.95)
-//		color.r = red * 0.95;
-//	else if (intensity > 0.5)
-//		color.r = red * 0.5;
-//	else if (intensity > 0.25)
-//		color.r = red * 0.25;
-//	else
-//		color.r = red * 0.1;
-//	
-//	if (blue > 0.95)
-//		color.b = blue * 0.95;
-//	else if (intensity > 0.5)
-//		color.b = blue * 0.5;
-//	else if (intensity > 0.25)
-//		color.b = blue * 0.25;
-//	else
-//		color.b = blue * 0.1;
-//	
-//	if (green > 0.95)
-//		color.g = green * 0.95;
-//	else if (intensity > 0.5)
-//		color.g = green * 0.5;
-//	else if (intensity > 0.25)
-//		color.g = green * 0.25;
-//	else
-//		color.g = green * 0.0;
-
-	//float red = textureColour.r;
-	//float green = textureColour.g;
-	//float blue = textureColour.b;
-	//
-	//float redlevel = floor(red*colorLevels);
-	//float greenlevel = floor(green*colorLevels);
-	//float bluelevel = floor(blue*colorLevels);
-	//
-	//red = redlevel / colorLevels;
-	//green = greenlevel / colorLevels;
-	//blue = bluelevel / colorLevels;
-	//if (textureColour.r
+	color = vec3(textureColour.r,textureColour.g,textureColour.b);
+	
 //	outColour.rgb *= textureColour.rgb;
-//	outColour.a = textureColour.a;
+	outColour.a = textureColour.a;
+	outColour.rgb *= vec3(0.2,0.2,0.2);
 	
 	//outColour.rgb *=color;
-
-
-	//if (dot(-position, tempNormal) < mix(2.0, 2.0, max(0.0, NdotL)))
-	//{
-	//	outColour.rgb = vec3(lightDiffuse) * vec3(0, 0, 0); 
-	//}
 }
