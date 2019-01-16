@@ -5,6 +5,7 @@
 #include "TransformComponent.h"
 #include "MeshRendererComponent.h"
 #include "PhysicsBodyComponent.h"
+#include "CameraComponent.h"
 #include "EntityManager.h"
 #include "ObjectLoader.h"
 #include <vector>
@@ -36,4 +37,5 @@ private:
 	void propertyEditor(TransformComponent* transform, bool* open);
 	void drawMeshRenderer(MeshRendererComponent* meshRenderer);
 	void drawPhysicsBody(PhysicsBodyComponent* physicsBody);
+	void drawCamera(CameraComponent* camera);
 };

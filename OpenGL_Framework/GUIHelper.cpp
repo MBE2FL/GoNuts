@@ -111,21 +111,52 @@ void GUIHelper::drawHierarchy()
 
 void GUIHelper::drawHierarchyHelper(TransformComponent * transform)
 {
-	if (ImGui::TreeNode(transform->getName().c_str()))
+	vector<TransformComponent*> children = transform->getChildren();
+
+	if (children.size() > 0)
 	{
+		if (ImGui::TreeNode(transform->getName().c_str()))
+		{
+			if (ImGui::SmallButton("Edit"))
+			{
+				_showPropertyEditor = true;
+				_currentTransform = transform;
+			}
+
+			for (TransformComponent* child : children)
+				drawHierarchyHelper(child);
+
+			ImGui::TreePop();
+		}
+	}
+	else
+	{
+		ImGui::Text(transform->getName().c_str());
+
+		ImGui::SameLine(100.0f, 100.0f);
+
 		if (ImGui::SmallButton("Edit"))
 		{
 			_showPropertyEditor = true;
-			//propertyEditor(transform, &showPropertyEditor);
 			_currentTransform = transform;
 		}
-
-		vector<TransformComponent*> children = transform->getChildren();
-		for (TransformComponent* child : children)
-			drawHierarchyHelper(child);
-
-		ImGui::TreePop();
 	}
+
+	//if (ImGui::TreeNode(transform->getName().c_str()))
+	//{
+	//	if (ImGui::SmallButton("Edit"))
+	//	{
+	//		_showPropertyEditor = true;
+	//		//propertyEditor(transform, &showPropertyEditor);
+	//		_currentTransform = transform;
+	//	}
+
+	//	vector<TransformComponent*> children = transform->getChildren();
+	//	for (TransformComponent* child : children)
+	//		drawHierarchyHelper(child);
+
+	//	ImGui::TreePop();
+	//}
 }
 
 void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
@@ -174,6 +205,10 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	if (physicsBody && ImGui::CollapsingHeader("Physics Body"))
 		drawPhysicsBody(physicsBody);
 
+	// Display camera properties
+	CameraComponent* camera = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, entity);
+	if (camera && ImGui::CollapsingHeader("Camera"))
+		drawCamera(camera);
 
 	ImGui::End();
 }
@@ -485,4 +520,105 @@ void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 
 		ImGui::EndCombo();
 	}
+}
+
+char* projToChar(ProjectionType type)
+{
+	switch (type)
+	{
+	case Perspective:
+		return "Perspective";
+		break;
+	case Orthographic:
+		return "Orthographic";
+		break;
+	default:
+		return "";
+		break;
+	}
+}
+
+ProjectionType charToProj(char* type)
+{
+	if (strcmp(type, "Perspective") == 0)
+		return ProjectionType::Perspective;
+	else if (strcmp(type, "Orthographic") == 0)
+		return ProjectionType::Orthographic;
+	else
+		return ProjectionType::Perspective;
+}
+
+void GUIHelper::drawCamera(CameraComponent * camera)
+{
+	bool cullingActive = camera->getCullingActive();
+	ImGui::Checkbox("Cull", &cullingActive);
+	camera->setCullingActive(cullingActive);
+
+	float perspAspect = 1900.0f / 1000.0f;
+
+	float aspect = camera->getAspectRatio();
+	ProjectionType projType = camera->getProjType();
+	char* currProjChar = projToChar(projType);
+	if (ImGui::BeginCombo("Projection Type", currProjChar))
+	{
+		static const ProjectionType allTypes[2] = { ProjectionType::Perspective, ProjectionType::Orthographic };
+		for (ProjectionType currType : allTypes)
+		{
+			char* projChar = projToChar(currType);
+
+			bool isSelected = (currProjChar == projChar);
+
+			if (ImGui::Selectable(projChar, isSelected))
+			{
+				currProjChar = projChar;
+				if (charToProj(currProjChar) == ProjectionType::Perspective)
+				{
+					camera->perspective(60.0f, perspAspect, 1.0f, 1000.0f);
+					projType = ProjectionType::Perspective;
+				}
+				else
+				{
+					camera->orthographic(-10.0f, 10.0f, 10.0f, -10.0f, 750.0f, -1000.0f);
+					projType = ProjectionType::Orthographic;
+				}
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+
+	float zNear = camera->getNear();
+	ImGui::DragFloat("zNear", &zNear, 1.0f, 0.0f, 0.0f, "%.1f");
+
+	float zFar = camera->getFar();
+	ImGui::DragFloat("zFar", &zFar, 1.0f, 0.0f, 0.0f, "%.1f");
+	
+	if (projType == ProjectionType::Perspective)
+	{
+		Vector2 fov = camera->getFov();
+		float fovY = MathLibCore::toRadians(fov.y);
+		ImGui::SliderAngle("FOV Y", &fovY);
+		fov.y = MathLibCore::toDegrees(fovY);
+		
+		string fovText = "FOV X " + to_string(fov.x);
+		ImGui::Text(fovText.c_str());
+
+		camera->perspective(fov.y, perspAspect, zNear, zFar);
+	}
+	else
+	{
+		Vector4 orthoSize = camera->getOrthoSize();
+		ImGui::DragFloat("Left", &orthoSize.x, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Right", &orthoSize.y, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Top", &orthoSize.z, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Bottom", &orthoSize.q, 1.0f, 0.0f, 0.0f, "%.1f");
+
+		camera->orthographic(orthoSize.x, orthoSize.y, orthoSize.q, orthoSize.z, zNear, zFar);
+	}
+
+	string aspectText = "Aspect " + to_string(aspect);
+	ImGui::Text(aspectText.c_str());
 }
