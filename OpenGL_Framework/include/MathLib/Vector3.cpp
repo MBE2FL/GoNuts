@@ -83,3 +83,9 @@ Vector3 Vector3::CrossProduct(Vector3 v)
 {
 	return Vector3(((y * z) - (z*v.y)), ((x*v.z) - (z*v.x)), ((x*v.y) - (y*v.x)));
 }
+
+string Vector3::toString() const
+{
+	string output = "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";
+	return output;
+}

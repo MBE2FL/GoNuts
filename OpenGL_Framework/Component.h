@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Entity.h"
 
 using std::vector;
 
@@ -21,7 +22,10 @@ public:
 	virtual ~Component();
 
 	ComponentType getType() const;
+	void setEntity(Entity* entity);
+	Entity* getEntity() const;
 
 protected:
 	ComponentType _type;
+	Entity* _entity;
 };

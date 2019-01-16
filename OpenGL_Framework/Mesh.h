@@ -40,6 +40,9 @@ public:
 
 	MeshBounds getMeshBounds() const;
 
+	string getFilename() const;
+	void setFilename(const string& filename);
+
 	// OpenGL buffers and objects
 	GLuint VBO_Vertices = GL_NONE;
 	GLuint VBO_UVs = GL_NONE;
@@ -49,6 +52,8 @@ public:
 private:
 	unsigned int _numFaces = 0;
 	unsigned int _numVertices = 0;
+
+	string _filename;
 
 	MeshBounds _meshBounds;
 	Vector3 minPoint;

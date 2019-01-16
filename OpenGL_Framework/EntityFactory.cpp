@@ -9,7 +9,7 @@ EntityFactory::~EntityFactory()
 {
 }
 
-Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& scale, Entity * parent)
+Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& scale, Entity * parent, const string& name)
 {
 	// Create a new entity.
 	Entity* entity = _entityManager->createEntity();
@@ -18,12 +18,14 @@ Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& sca
 	TransformComponent* transform = new TransformComponent();
 	transform->setLocalPosition(Vector3(position));
 	transform->setLocalScale(scale);
+	transform->setName(name + " " + std::to_string(entity->getEid()));
 
 	// If this entity is given a parent, then add this entity as a child of the parent.
 	if (parent)
 	{
 		TransformComponent* parentTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, parent);
 		parentTransform->addChild(transform);
+		parentTransform->setName("P " + name + " " + std::to_string(entity->getEid()));
 	}
 
 	// Add the transform component to the entity.
@@ -52,7 +54,7 @@ Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const 
 Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Coin");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -84,7 +86,7 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Platform");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -119,14 +121,14 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 	{
 		//std::cout << "Platform Collision Stayed!" << std::endl;
 
-		EntityManager* entityManger = EntityManager::getInstance();
-		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		//EntityManager* entityManger = EntityManager::getInstance();
+		//PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
-		if (otherBody->getTag() == TTag::Player)
-		{
-			//std::cout << "Platform Collision Stayed!" << std::endl;
-			otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
-		}
+		//if (otherBody->getTag() == TTag::Player)
+		//{
+		//	//std::cout << "Platform Collision Stayed!" << std::endl;
+		//	otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
+		//}
 	};
 	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
 	{
@@ -150,7 +152,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Spike");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -194,7 +196,7 @@ Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & sc
 Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Cone");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -239,7 +241,7 @@ Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & sca
 Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Player");
 
 
 	// Create all the necessary components.
@@ -266,7 +268,7 @@ Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & s
 Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Acorn");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -297,7 +299,7 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Vent");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -341,7 +343,7 @@ Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & sca
 Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3 & scale, Entity * parent)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent);
+	Entity* entity = createEmpty(position, scale, parent, "Background");
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -368,7 +370,7 @@ void EntityFactory::createPlatforms(const unsigned int amount, const Vector3 & p
 	{
 		Vector3 newPos = Vector3(i * position.x, position.y, position.z);
 
-		entity = createPlatform(Vector3::Zero, scale, createEmpty(newPos));
+		entity = createPlatform(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
@@ -380,7 +382,7 @@ void EntityFactory::createCones(const unsigned int amount, const Vector3 & posit
 	{
 		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
 
-		entity = createCone(Vector3::Zero, scale, createEmpty(newPos));
+		entity = createCone(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
@@ -392,6 +394,6 @@ void EntityFactory::createBackgrounds(const unsigned int amount, const Vector3 &
 	{
 		Vector3 newPos = Vector3(i * position.x, position.y, position.z);
 
-		entity = createBackground(Vector3::Zero, scale, createEmpty(newPos));
+		entity = createBackground(newPos, scale);//, createEmpty(newPos));
 	}
 }

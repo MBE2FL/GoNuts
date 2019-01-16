@@ -14,6 +14,9 @@ ShaderProgram::~ShaderProgram()
 
 bool ShaderProgram::load(const string & vertFile, const string & fragFile)
 {
+	setVertFilename(vertFile);
+	setFragFilename(fragFile);
+
 	//Create shader and program objects
 	_vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	_fragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -184,6 +187,36 @@ void ShaderProgram::sendUniformMat4(const string & name, float * matrix, bool tr
 {
 	GLint location = getUniformLocation(name);
 	glUniformMatrix4fv(location, 1, transpose, matrix);
+}
+
+string ShaderProgram::getVertFilename() const
+{
+	return _vertFilename;
+}
+
+void ShaderProgram::setVertFilename(const string & vertFilename)
+{
+	_vertFilename = vertFilename;
+}
+
+string ShaderProgram::getFragFilename() const
+{
+	return _fragFilename;
+}
+
+void ShaderProgram::setFragFilename(const string & fragFilename)
+{
+	_fragFilename = fragFilename;
+}
+
+string ShaderProgram::getProgramName() const
+{
+	return _programName;
+}
+
+void ShaderProgram::setProgramName(const string & programName)
+{
+	_programName = programName;
 }
 
 string ShaderProgram::readFile(const string & fileName) const

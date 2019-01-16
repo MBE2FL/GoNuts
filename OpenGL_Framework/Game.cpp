@@ -23,6 +23,7 @@ void Game::initializeGame()
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
+	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -41,7 +42,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Garbage", "./Assets/Models/garbagecan_final_unwrap.obj");
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
-	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");	
+	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Lamp", "./Assets/Models/Street Lamp_final_unwrap.obj");
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
@@ -53,7 +54,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
-	
+
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/background.png");
 	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
@@ -127,7 +128,7 @@ void Game::initializeGame()
 	//coinDemo.setTexture(ObjectLoader::getTexture("Coin"));
 	//coinDemo.addPhysicsBody(false);
 	//coinDemo.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
-	
+
 	//particleTrail = new ParticleEmitter;
 	//particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//particleTrail->setMesh(ObjectLoader::getMesh("Plane"));
@@ -246,7 +247,7 @@ void Game::initializeGame()
 	//test.mV[14] = 15; test.mV[15] = 16;
 	//test.GetInverse();
 
-	
+
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	//camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
 	////camera.orthographic(-10, 10, -10, 10, -100, 100);
@@ -269,6 +270,10 @@ void Game::initializeGame()
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = new EntityFactory(_entityManager);
 
+#ifdef _DEBUG
+	_guiHelper = GUIHelper::getInstance();
+#endif
+
 	//Entity* test = _entityFactory->createEmpty();
 	//TransformComponent* trans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, test);
 	//bool blah = trans->isRoot();
@@ -276,11 +281,11 @@ void Game::initializeGame()
 
 	Entity* mainCamera = _entityFactory->createPerspectiveCamera(Vector3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
-	
-	Entity* player = _entityFactory->createPlayer(Vector3::Zero, Vector3(0.2f), _entityFactory->createEmpty(Vector3(-3.0f, 10.0f, -5.0f)));
+
+	Entity* player = _entityFactory->createPlayer(Vector3(-3.0f, 10.0f, -5.0f), Vector3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 
-	Entity* entity = _entityFactory->createCoin(Vector3::Zero, Vector3::One, _entityFactory->createEmpty(Vector3(5.0f, 4.0f, -3.0f)));
+	Entity* entity = _entityFactory->createCoin(Vector3(2.0f, 3.0f, -3.0f), Vector3::One);
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3::One, entity);
 
 	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
@@ -328,13 +333,13 @@ void Game::update()
 	//coinDemo.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
 	//coinDemo.getParent()->update(deltaTime);
 
-	
+
 	//for (unsigned int i = 0; i < Background.size(); i++)
 	//{
 	//	Background[i].getParent()->update(deltaTime);
 	//}
-	
-	
+
+
 	counter += deltaTime;
 	//player.setLocalRotationAngleY(90.0f);
 
@@ -348,56 +353,56 @@ void Game::update()
 
 void Game::draw()
 {
-		// Completely clear the Back-Buffer before doing any work.
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Completely clear the Back-Buffer before doing any work.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef _DEBUG
-		// New imgui frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplFreeGLUT_NewFrame();
+	// New imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplFreeGLUT_NewFrame();
 
-		// Update imgui widgets
-		imguiDraw();
+	// Update imgui widgets
+	imguiDraw();
 
-		// Render imgui
-		ImGui::Render();
+	// Render imgui
+	ImGui::Render();
 #endif
-		//glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
+	//glDisable(GL_BLEND);//MAKE SURE TO PUT ALL OPAQUE OBJECTS AFTER THIS, NO TRANSPARENT/TRANSLUCENT!!!!!!!
 
 
-		//Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
-		//Matrix44 uiCameraInverse = UICamera.getLocalToWorldMatrix().GetInverse(UICamera.getWorldRotation(), UICamera.getWorldPosition());
+	//Matrix44 cameraInverse = camera.getLocalToWorldMatrix().GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
+	//Matrix44 uiCameraInverse = UICamera.getLocalToWorldMatrix().GetInverse(UICamera.getWorldRotation(), UICamera.getWorldPosition());
 
-		_meshRendererSystem->draw(light, spotLight);
+	_meshRendererSystem->draw(light, spotLight);
 
-		//platforms[0].draw(UICamera, light, spotLight);
-
-
-		//coinDemo.draw(camera, light, spotLight, cameraInverse);
-		
-		//for (unsigned int i = 0; i < Background.size(); i++)
-		//{
-		//	Background[i].draw(camera, light, spotLight, cameraInverse);
-		//}
-		
-		//glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
+	//platforms[0].draw(UICamera, light, spotLight);
 
 
-		//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
-		//time.draw(UICamera, light, spotLight, uiCameraInverse);
+	//coinDemo.draw(camera, light, spotLight, cameraInverse);
+
+	//for (unsigned int i = 0; i < Background.size(); i++)
+	//{
+	//	Background[i].draw(camera, light, spotLight, cameraInverse);
+	//}
+
+	//glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
+
+
+	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
+	//time.draw(UICamera, light, spotLight, uiCameraInverse);
 
 
 
-		// Update imgui draw data
-		glUseProgram(GL_NONE);
+	// Update imgui draw data
+	glUseProgram(GL_NONE);
 #ifdef _DEBUG
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
 
-		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
-		glutSwapBuffers();
-		drawTime = 0.0f;
+	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
+	glutSwapBuffers();
+	drawTime = 0.0f;
 }
 
 vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> objectVec2)
@@ -408,8 +413,8 @@ vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> o
 	return objectVec1;
 }
 
-vector<GameObject> Game::objectSetup( const string shader, const string mesh,const string texture, const bool physics,
-const Vector3 position, const Vector3 scale, const int amount, float offset)
+vector<GameObject> Game::objectSetup(const string shader, const string mesh, const string texture, const bool physics,
+	const Vector3 position, const Vector3 scale, const int amount, float offset)
 {
 	GameObject* object;
 	vector<GameObject> objectVec;
@@ -439,13 +444,7 @@ void Game::imguiDraw()
 		//camera.setWorldPosition(pos);
 		pos = _playerTransform->getWorldPosition();
 		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
-		//ImGui::Text("T Value: %f", player.getanimation().getT());
-		//pos = jumpParticles->getWorldPosition();
-		//ImGui::Text("jumpPart Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
-		//pos = dynamic_cast<ParticleEmitter*>(jumpParticles)->getParticlePosition(0);
-		//ImGui::Text("TestPart Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
 
-		//ImGui::DragFloat3("Particles Local: ", &(dynamic_cast<ParticleEmitter*>(jumpParticles)->partLocalPos.x), 0.5f);
 
 		// Light settings
 		if (ImGui::CollapsingHeader("Light Settings:"))
@@ -482,8 +481,8 @@ void Game::imguiDraw()
 			float attenuationQuadratic = light->getAttenuationQuadratic();
 			ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
 			light->setAttenuationQuadratic(attenuationQuadratic);
-			
-			
+
+
 			//Vector3 spotPositiion = spotLight->getPosition();
 			ImGui::SliderFloat3("Spot Position: ", &offse.x, -60.f, 60.f);
 			//spotLight->setPosition(spotPositiion);
@@ -497,13 +496,8 @@ void Game::imguiDraw()
 			ImGui::DragFloat3("p4 Position: ", &p4.x);
 		}
 
-		//if (ImGui::CollapsingHeader("Test Entity"))
-		//{
-		//	TransformComponent* transform = dynamic_cast<TransformComponent*>(_entityManager->getComponent(ComponentType::Transform, _testEntity));
-		//	Vector3 position = transform->getLocalPosition();
-		//	ImGui::DragFloat3("Position: ", &position.x);
-		//	transform->setLocalPosition(position);
-		//}
+
+		_guiHelper->draw();
 
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -517,6 +511,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = true;
+
+	if (io.WantCaptureKeyboard)
+	{
+		io.AddInputCharacter(key);
+		return;
+	}
 #endif
 
 	switch (key)
@@ -581,9 +581,12 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = false;
+
+	if (io.WantCaptureKeyboard)
+		return;
 #endif
 
-	switch(key)
+	switch (key)
 	{
 	case 32: // the space bar
 		break;
@@ -612,9 +615,9 @@ void Game::mouseClicked(int button, int state, int x, int y)
 	io.MousePos = ImVec2((float)x, (float)y);
 	//io.MouseDown[button] = state;
 
-	if(state == GLUT_DOWN) 
+	if (state == GLUT_DOWN)
 	{
-		switch(button)
+		switch (button)
 		{
 		case GLUT_LEFT_BUTTON:
 			io.MouseDown[0] = true;
@@ -649,7 +652,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
  * mouseMoved(x,y)
  * - this occurs only when the mouse is pressed down
  *   and the mouse has moved.  you are given the x,y locations
- *   in window coordinates (from the top left corner) and thus 
+ *   in window coordinates (from the top left corner) and thus
  *   must be converted to screen coordinates using the screen to window pixels ratio
  *   and the y must be flipped to make the bottom left corner the origin.
  */

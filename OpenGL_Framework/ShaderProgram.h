@@ -50,6 +50,13 @@ public:
 	void sendUniformMat3(const string& name, float* matrix, bool transpose);
 	void sendUniformMat4(const string& name, float* matrix, bool transpose);
 
+	string getVertFilename() const;
+	void setVertFilename(const string& vertFilename);
+	string getFragFilename() const;
+	void setFragFilename(const string& fragFilename);
+	string getProgramName() const;
+	void setProgramName(const string& programName);
+
 private:
 	bool _isInit = false;
 	GLuint _vertexShader = GL_NONE;
@@ -60,4 +67,8 @@ private:
 	bool compileShader(GLuint shader) const;
 	void outputShaderLog(GLuint shader) const;
 	void outputProgramLog() const;
+
+	string _vertFilename;
+	string _fragFilename;
+	string _programName;
 };
