@@ -58,6 +58,7 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Water"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Coin"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -89,6 +90,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Building"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Building"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -154,6 +156,7 @@ Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & sc
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Spikes"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Spikes"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -197,6 +200,7 @@ Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & sca
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Cone"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Cone"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -242,6 +246,7 @@ Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & s
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("FatBoi"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("TestBoi1"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -267,6 +272,7 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Acorn"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Acorn"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -297,6 +303,7 @@ Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & sca
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Vent"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Vent"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
@@ -340,6 +347,7 @@ Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3
 	// Mesh Renderer
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Background"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Background"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
