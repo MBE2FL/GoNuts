@@ -224,12 +224,11 @@ void Game::initializeGame()
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
-	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
+	light->setAmbient(Vector3(0.60f, .60f, 0.60f));
 	//light->setAmbient(Vector3(0));
-	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
+	light->setDiffuse(Vector3(0.7f, 0.7f, 0.7f));
 	//light->setDiffuse(Vector3(0));
-	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
-	light->setSpecular(Vector3(0.f, 0.f, 0.f));
+	light->setSpecular(Vector3(0.70f, 0.7f, 0.7f));
 	light->setSpecularExp(100.0f);
 	light->setAttenuationConstant(1.0f);
 	light->setAttenuationLinear(0.1f);
