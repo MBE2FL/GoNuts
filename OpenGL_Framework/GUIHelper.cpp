@@ -43,28 +43,33 @@ void GUIHelper::draw()
 
 	ImGui::Checkbox("Scene Editor", &_showSceneEditor);
 
+	// Open scene editor window
 	if (_showSceneEditor)
 	{
 		ImGui::Begin("Scene Editor", &_showSceneEditor);
+
+		// Open spawn menu window
+		if (ImGui::Button("Spawn Entity"))
+		{
+			_showSpawnEntity = true;
+		}
+
+		if (_showSpawnEntity)
+			SpawnEntity();
+
+		// Close scene editor window
+		if (ImGui::Button("Close"))
+			_showSceneEditor = false;
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
 
 		// Draw scene hierarchy
 		if (ImGui::CollapsingHeader("Hierarchy:"))
 		{
 			drawHierarchy();
 		}
-
-		ImGui::Separator();
-
-		if (ImGui::Button("Spawn Entity"))
-		{
-			_showSpawnEntity = true;
-		}
-
-		if (_showSceneEditor)
-			SpawnEntity();
-
-		if (ImGui::Button("Close"))
-			_showSceneEditor = false;
 
 		ImGui::End();
 	}
@@ -107,6 +112,7 @@ void GUIHelper::drawHierarchy()
 		drawHierarchyHelper(transform);
 	}
 
+	// Open property editor for the entity with the current transform component.
 	if (_showPropertyEditor)
 		propertyEditor(_currentTransform, &_showPropertyEditor);
 
@@ -214,6 +220,15 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	if (camera && ImGui::CollapsingHeader("Camera"))
 		drawCamera(camera);
 
+
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+	// Add a component
+
+
 	ImGui::End();
 }
 
@@ -235,7 +250,6 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 	ImGui::Spacing();
 
 	// Textures
-	//vector<string> textures = ObjectLoader::getTextureNames();
 	vector<Texture*> textures = ObjectLoader::getTextures();
 	static string currentTexName = "";
 	static Texture* texture = nullptr;
@@ -261,6 +275,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 		ImGui::EndCombo();
 	}
 
+	// Add a texture
 	if (ImGui::Button("Add Texture") && texture)
 	{
 		meshRenderer->addTexture(texture);
@@ -269,6 +284,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 		texture = nullptr;
 	}
 
+	// Select a texture
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_HorizontalScrollbar;
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 	ImGui::BeginChild("Textures", ImVec2(0.0f, 90.0f), true, windowFlags);
@@ -291,7 +307,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 	ImGui::EndChild();
 	ImGui::PopStyleVar();
 
-	// remove
+	// Remove a texture
 	if (ImGui::Button("Remove Texture") && texSelected)
 	{
 		meshRenderer->removeTexture(texIndex);
@@ -303,6 +319,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 	ImGui::Spacing();
 
 	// Meshes
+	// Select a mesh
 	vector<Mesh*> meshes = ObjectLoader::getMeshes();
 	string currentMesh = meshRenderer->getMesh()->getFilename();
 	if (ImGui::BeginCombo("Meshes", currentMesh.c_str()))
@@ -353,6 +370,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 
 		ImGui::EndCombo();
 	}
+	// Create a new shader program.
 	if (ImGui::Button("Create Shader Program"))
 		_showShaderProgCreator = true;
 
@@ -364,6 +382,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 		}
 		else
 		{
+			// Select a vertex shader.
 			static string currentVertShader = "";
 			if (ImGui::BeginCombo("Vertex Shaders", currentVertShader.c_str()))
 			{
@@ -388,6 +407,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 				ImGui::EndCombo();
 			}
 
+			// Select a fragment shader.
 			static string currentFragShader = "";
 			if (ImGui::BeginCombo("Fragment Shaders", currentFragShader.c_str()))
 			{
@@ -411,6 +431,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 				ImGui::EndCombo();
 			}
 
+			// Name the new shader program.
 			if (ImGui::Button("Create Program"))
 				ImGui::OpenPopup("Name?");
 			if (ImGui::BeginPopupModal("Name?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
@@ -482,26 +503,32 @@ TTag charToTag(char* tag)
 
 void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 {
+	// Add a force to the physics body.
 	Vector3 tempVec3 = physicsBody->getForce();
 	ImGui::InputFloat3("Force", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
 	physicsBody->setForce(tempVec3);
 
+	// Set the acceleration.
 	tempVec3 = physicsBody->getAcceleration();
 	ImGui::InputFloat3("Acceleration", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
 	physicsBody->setAcceleration(tempVec3);
 
+	// Set the velocity.
 	tempVec3 = physicsBody->getVelocity();
 	ImGui::DragFloat3("Velocity", &tempVec3.x);
 	physicsBody->setVelocity(tempVec3);
 
+	// Set the mass.
 	float mass = physicsBody->getMass();
 	ImGui::DragFloat("Mass", &mass);
 	physicsBody->setMass(mass);
 
+	// Set if the physics body should use gravity or not.
 	bool useGravity = physicsBody->getUseGravity();
 	ImGui::Checkbox("Use Gravity", &useGravity);
 	physicsBody->setUseGravity(useGravity);
 
+	// Set the tag.
 	TTag tag = physicsBody->getTag();
 	char* currTagChar = tagToChar(tag);
 	if (ImGui::BeginCombo("Tag", currTagChar))
@@ -633,8 +660,35 @@ void GUIHelper::SpawnEntity()
 
 	if (ImGui::BeginPopupModal("Spawn Entity", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
+		// Create an input field for position.
+		static Vector3 position = Vector3(0.0f, 0.0f, -5.0f);
+		ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
+
+		// Create an input field for scale.
+		static Vector3 scale = Vector3::One;
+		ImGui::InputFloat3("Scale", &scale.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
+
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+		ImGui::Spacing();
+
 		if (ImGui::Button("Spawn Empty"))
-			_entityFactory->createEmpty(Vector3(2.0f, 4.0f, -5.0f));
+			_entityFactory->createEmpty(position, scale, nullptr);
+		else if (ImGui::Button("Spawn Acorn"))
+			_entityFactory->createAcorn(position, scale, nullptr);
+		else if (ImGui::Button("Spawn Coin"))
+			_entityFactory->createCoin(position, scale, nullptr);
+		else if (ImGui::Button("Spawn Platform"))
+			_entityFactory->createPlatform(position, scale, nullptr);
+		else if (ImGui::Button("Spawn Spike"))
+			_entityFactory->createSpike(position, scale, nullptr);
+		else if (ImGui::Button("Spawn Cone"))
+			_entityFactory->createCone(position, scale, nullptr);
+		else if (ImGui::Button("Spawn Vent"))
+			_entityFactory->createVent(position, scale, nullptr);
 			
 		ImGui::Spacing();
 
@@ -643,18 +697,6 @@ void GUIHelper::SpawnEntity()
 			ImGui::CloseCurrentPopup();
 			_showSpawnEntity = false;
 		}
-
-
-
-
-		/*static char buffer[64] = "";
-		ImGui::InputText("Enter Name Here", buffer, 64);
-
-		if (ImGui::Button("Create"))
-		{
-			ObjectLoader::loadShaderProgram(buffer, currentVertShader, currentFragShader);
-			ImGui::CloseCurrentPopup();
-		}*/
 
 		ImGui::EndPopup();
 	}

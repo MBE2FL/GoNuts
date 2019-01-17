@@ -16,16 +16,16 @@ public:
 
 	Entity* createEmpty(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Empty");
 	Entity* createPerspectiveCamera(const Vector3& position = Vector3::Zero, const float fovY = 60.0f, 
-		const float aspect = 1.8f, const float zNear = 1.0f, const float zFar = 1000.0f);
-	Entity* createCoin(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createPlatform(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createTopPlatform(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createSpike(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createCone(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createPlayer(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createAcorn(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createVent(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
-	Entity* createBackground(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr);
+		const float aspect = 1.8f, const float zNear = 1.0f, const float zFar = 1000.0f, const string& name = "Camera");
+	Entity* createCoin(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Coin");
+	Entity* createPlatform(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Platform");
+	Entity* createTopPlatform(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Top Platform");
+	Entity* createSpike(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Spike");
+	Entity* createCone(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Cone");
+	Entity* createPlayer(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Player");
+	Entity* createAcorn(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Acorn");
+	Entity* createVent(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Vent");
+	Entity* createBackground(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Background");
 
 	void createPlatforms(const unsigned int amount, const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3(1.0f, 1.0f, 0.5f));
 	void createTopPlatforms(const unsigned int amount, const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, const float offset = 70.0f);
@@ -39,11 +39,15 @@ public:
 	int getCoinCount() { return coinCount; }
 	void plusCoin() { coinCount++; }
 
+	int getAcornCount() { return acornCount; }
+	void plusAcorn() { acornCount++; }
+
 private:
 	EntityManager* _entityManager;
 	static EntityFactory* _instance;
 
-	int coinCount;
+	int coinCount = 0;
+	int acornCount = 0;
 
 	EntityFactory();
 };
