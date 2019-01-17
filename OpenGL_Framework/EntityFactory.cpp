@@ -74,7 +74,7 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Coin"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
-	meshRenderer->setIsTransparent(true);
+	meshRenderer->setIsTransparent(false);
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
@@ -82,8 +82,13 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Coin Collision Entered!" << std::endl; 
+		EntityManager* entityManger = EntityManager::getInstance();
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		entityFactory->plusCoin();
+
+		PhysicsBodyComponent* selfBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, self);
+
+		selfBody->setUseGravity(true);
 	};
 
 
@@ -120,27 +125,29 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
 		otherBody->setUseGravity(false);
-		otherBody->setVelocity(Vector3::Zero);
+		//otherBody->setVelocity(Vector3::Zero);
 
-		//if (otherBody->getVelocity().y <= -0.01f)
-		//{
-		//	float ySpeed = otherBody->getVelocity().y;
-		//	otherBody->addForce(Vector3(0.0f, -ySpeed, 0.0f));
+		if (otherBody->getVelocity().y < 0.0f)
+		{
+			float ySpeed = otherBody->getVelocity().y;
+			otherBody->addImpluseForce(Vector3(0.0f, -ySpeed, 0.0f));
 
-		//}
+		}
+
+		otherBody->setCanJump(true);
 	};
 	physicsBody->onCollisionStay = [](Entity* self, Entity* other)
 	{
 		//std::cout << "Platform Collision Stayed!" << std::endl;
 
-		//EntityManager* entityManger = EntityManager::getInstance();
-		//PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		EntityManager* entityManger = EntityManager::getInstance();
+		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
-		//if (otherBody->getTag() == TTag::Player)
-		//{
-		//	//std::cout << "Platform Collision Stayed!" << std::endl;
-		//	otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
-		//}
+		if (otherBody->getTag() == TTag::Player)
+		{
+			//std::cout << "Platform Collision Stayed!" << std::endl;
+			otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
+		}
 	};
 	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
 	{
@@ -150,6 +157,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
 		otherBody->setUseGravity(true);
+		otherBody->setCanJump(false);
 	};
 
 
@@ -188,7 +196,6 @@ Entity * EntityFactory::createTopPlatform(const Vector3 & position, const Vector
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
 			otherTrans->setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
-			otherTrans->setLocalPosition(Vector3::Zero);
 			otherBody->setVelocity(Vector3::Zero);
 			otherTrans->setLocalScale(0.2f);
 		}
@@ -275,7 +282,6 @@ Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & sca
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
 			otherTrans->setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
-			otherTrans->setLocalPosition(Vector3::Zero);
 			otherBody->setVelocity(Vector3::Zero);
 			otherTrans->setLocalScale(0.2f);
 		}
@@ -336,7 +342,14 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 	physicsBody->setTag(TTag::Coin);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
-		std::cout << "Acorn Collision Entered!" << std::endl;
+		std::cout << "Coin Collision Entered!" << std::endl;
+		EntityManager* entityManger = EntityManager::getInstance();
+		EntityFactory* entityFactory = EntityFactory::getInstance();
+		entityFactory->plusAcorn();
+
+		PhysicsBodyComponent* selfBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, self);
+
+		selfBody->setUseGravity(true);
 	};
 
 

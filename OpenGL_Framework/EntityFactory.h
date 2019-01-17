@@ -39,11 +39,15 @@ public:
 	int getCoinCount() { return coinCount; }
 	void plusCoin() { coinCount++; }
 
+	int getAcornCount() { return acornCount; }
+	void plusAcorn() { acornCount++; }
+
 private:
 	EntityManager* _entityManager;
 	static EntityFactory* _instance;
 
-	int coinCount;
+	int coinCount = 0;
+	int acornCount = 0;
 
 	EntityFactory();
 };
