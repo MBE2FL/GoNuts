@@ -44,10 +44,11 @@ Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& sca
 	return entity;
 }
 
-Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const float fovY, const float aspect, const float zNear, const float zFar)
+Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const float fovY, const float aspect, 
+	const float zNear, const float zFar, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position);
+	Entity* entity = createEmpty(position, Vector3::One, nullptr, name);
 
 	// Create camera component.
 	CameraComponent* camera = new CameraComponent();
@@ -61,10 +62,10 @@ Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const 
 	return entity;
 }
 
-Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Coin");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -93,10 +94,10 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	return entity;
 }
 
-Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Platform");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -159,10 +160,10 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 	return entity;
 }
 
-Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Spike");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -203,10 +204,10 @@ Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & sc
 	return entity;
 }
 
-Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Cone");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -248,10 +249,10 @@ Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & sca
 	return entity;
 }
 
-Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Player");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 
 	// Create all the necessary components.
@@ -275,10 +276,10 @@ Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & s
 	return entity;
 }
 
-Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Acorn");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -306,10 +307,10 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 	return entity;
 }
 
-Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Vent");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
@@ -350,10 +351,10 @@ Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & sca
 	return entity;
 }
 
-Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3 & scale, Entity * parent)
+Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, scale, parent, "Background");
+	Entity* entity = createEmpty(position, scale, parent, name);
 
 	// Create all the necessary components.
 	// Mesh Renderer
