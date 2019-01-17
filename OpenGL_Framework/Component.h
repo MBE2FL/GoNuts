@@ -12,6 +12,7 @@ enum class ComponentType
 	MeshRenderer,
 	PhysicsBody,
 	Camera,
+	Light
 };
 
 

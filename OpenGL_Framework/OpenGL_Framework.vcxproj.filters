@@ -166,6 +166,9 @@
     <ClCompile Include="include\MathLib\MathLibCore.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>Source Files\EntitySystem\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -295,6 +298,9 @@
       <Filter>Header Files\EntitySystem\Systems</Filter>
     </ClInclude>
     <ClInclude Include="CameraComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponent.h">
       <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
   </ItemGroup>

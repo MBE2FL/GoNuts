@@ -5,6 +5,7 @@
 #include "TransformComponent.h"
 #include "CameraComponent.h"
 #include "Light.h"
+#include "LightComponent.h"
 #include <algorithm>
 
 using std::sort;

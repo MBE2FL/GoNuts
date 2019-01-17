@@ -107,6 +107,7 @@
     <ClCompile Include="include\MathLib\Vector3.cpp" />
     <ClCompile Include="include\MathLib\Vector4.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRendererSystem.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="include\MathLib\Vector3.h" />
     <ClInclude Include="include\MathLib\Vector4.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightComponent.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshBounds.h" />
     <ClInclude Include="Animation.h" />

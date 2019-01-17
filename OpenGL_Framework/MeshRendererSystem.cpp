@@ -203,6 +203,8 @@ void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList)
 
 void MeshRendererSystem::drawHelper(const vector<Entity*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse)
 {
+	//vector<Entity*> lightEntities = _entityManager->getAllEntitiesWithComponent(ComponentType::Light);
+
 	for (Entity* entity : drawList)
 	{
 		// Get the transform and mesh renderer components for the current entity. Only draw if both components exist.
@@ -231,6 +233,37 @@ void MeshRendererSystem::drawHelper(const vector<Entity*>& drawList, Light* ligh
 		shaderProgram->sendUniformMat4("uProj", _cameraComp->getProjection().mV, false);
 
 		shaderProgram->sendUniform("uTex", 0);
+
+		/*for (Entity* lightEntity : lightEntities)
+		{
+			LightComponent* light = _entityManager->getComponent<LightComponent*>(ComponentType::Light, lightEntity);
+			if (!light)
+				break;
+
+			if (light->getLightType() == LightType::Directional)
+			{
+				shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
+				shaderProgram->sendUniform("lightAmbient", light->getAmbient());
+				shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
+				shaderProgram->sendUniform("lightSpecular", light->getSpecular());
+				shaderProgram->sendUniform("lightSpecularExponent", light->getSpecularExp());
+				shaderProgram->sendUniform("attenuationConstant", light->getAttenuationConstant());
+				shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
+				shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
+			}
+			else
+			{
+				shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
+				shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
+				shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
+				shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
+				shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
+				shaderProgram->sendUniform("spotLightSpecularExponent", spotLight->getSpecularExp());
+				shaderProgram->sendUniform("spotLightattenuationConstant", spotLight->getAttenuationConstant());
+				shaderProgram->sendUniform("spotLightattenuationLinear", spotLight->getAttenuationLinear());
+				shaderProgram->sendUniform("spotLightattenuationQuadratic", spotLight->getAttenuationQuadratic());
+			}
+		}*/
 
 		shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
 		shaderProgram->sendUniform("lightAmbient", light->getAmbient());
