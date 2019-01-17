@@ -99,16 +99,6 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Toon3", "./Assets/Textures/toon3.png");
 	ObjectLoader::loadTexture("Smooth", "./Assets/Textures/Smooth Shading.png");
 
-
-	//player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
-	//player.Animated(true);
-	//player.setMesh(ObjectLoader::getMesh("TestBoi1"));
-	//player.addMesh("TestBoi", 19);
-	//player.setTexture(ObjectLoader::getTexture("FatBoi"));
-	//player.addPhysicsBody(true);
-	//player.setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
-	//player.setLocalScale(0.2f);
-
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
 	//nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
@@ -126,12 +116,6 @@ void Game::initializeGame()
 	//time.setLocalRotationAngleZ(-3.14592f / 2.0f);
 	////time.setLocalRotationAngleY(3.14592f);
 	//time.setLocalScale(2.0f);
-
-	//coinDemo.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//coinDemo.setMesh(ObjectLoader::getMesh("Coin"));
-	//coinDemo.setTexture(ObjectLoader::getTexture("Coin"));
-	//coinDemo.addPhysicsBody(false);
-	//coinDemo.setWorldPosition(Vector3(4.0f, 6.0f, -5.0f));
 
 	//particleTrail = new ParticleEmitter;
 	//particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
@@ -175,53 +159,6 @@ void Game::initializeGame()
 
 	//dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
 
-
-	//Background = objectSetup("Normal", "Background", "Background", false, Vector3(100.0f, -5.0f, -20.0f), Vector3(25, 25, 1), 20, 0);
-	//					shader,    mesh, texture,  physics, position,                    scale,         #Objects, startNum(i), offset
-	//coins = objectSetup("Normal", "Coin", "Default", false, Vector3(35.0f, 4.0f, -5.0f), Vector3(1,1,1), 1,       0,           0);
-
-	//Acorns = objectSetup("Normal", "Acorn", "Acorn", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 12.0f);
-
-	//Acorns = add(Acorns, objectSetup("Normal", "Acorn", "Acorn", false, Vector3(2.0f, 4.0f, -5.0f), Vector3(1, 1, 1), 3, 54.0f));
-
-	//coins = objectSetup("Normal", "Coin", "Coin", false, Vector3(42.0f, 4.5f, -5.0f), Vector3(1, 1, 1), 3, 35.0f);
-
-	//Spikes = objectSetup("Normal", "Spikes", "Spikes", false, Vector3(14.0f, 2.8f, -5.0f), Vector3(1, 1, 1), 2, 28.0f);
-
-	//Cones = objectSetup("Normal", "Cone", "Cone", false, Vector3(14.0f, 2.6f, -5.0f), Vector3(1, 1, 1), 2, 70.0f);
-
-	//sceneObjects = objectSetup("Normal", "Billboard", "Billboard", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(0.7f), 1, 4.0f);
-
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Button", "Button", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 8.0f));
-
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Garbage", "Garbage", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 12.0f));
-
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Chimney", "Chimney", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(4.0f), 1, 16.0f));
-
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Raccoon", "Raccoon", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.5f), 1, 20.0f));
-
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Squirrel", "Squirrel", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 24.0f));
-
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Table", "Table", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 28.0f));
-	//
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Lamp", "Lamp", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 32.0f));
-	//
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Flag", "Flag", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 36.0f));
-	//
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Checkpoint Squirrel", "Checkpoint Squirrel", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 40.0f));
-	//
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Lever", "Lever", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 44.0f));
-	//
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Chair", "Chair", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(2.0f), 1, 48.0f));
-	//
-	//sceneObjects = add(sceneObjects, objectSetup("Normal", "Clothesline", "Clothesline", false, Vector3(3.0f, 4.0f, -8.0f), Vector3(1.0f), 1, 52.0f));
-
-	//Vents = objectSetup("Normal", "Vent", "Vent", false, Vector3(15.0f, 2.95f, -5.0f), Vector3(0.6f), 2, 98.0f);
-
-	//platforms = objectSetup("Normal", "Building", "Building", false, Vector3(14.0f, -2.0f, -5.0f), Vector3(1.0f, 1.0f, 0.5f), 15, 0);
-
-	//upperPlatforms = add(upperPlatforms, objectSetup("Normal", "Platform", "Default", false, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 5, 125.0f));
-
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
 	light->setAmbient(Vector3(0.60f, .60f, 0.60f));
@@ -244,12 +181,6 @@ void Game::initializeGame()
 	spotLight->setAttenuationLinear(0.01f);
 	spotLight->setAttenuationQuadratic(0.01f);
 
-	//Matrix44 test;
-	//test.mV[0] = 1; test.mV[1] = 3; test.mV[2] = 4; test.mV[3] = 4; test.mV[4] = 5; test.mV[5] = 8; test.mV[6] = 7;
-	//test.mV[7] = 8; test.mV[8] = 9; test.mV[9] = 10; test.mV[10] = 11; test.mV[11] = 12; test.mV[12] = 13; test.mV[13] = 14;
-	//test.mV[14] = 15; test.mV[15] = 16;
-	//test.GetInverse();
-
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 	//camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
@@ -259,12 +190,6 @@ void Game::initializeGame()
 
 	//UICamera.orthographic(-16, 16, 9, -9, -100, 100);
 	//UICamera.setWorldPosition(Vector3::Zero);
-
-	//Matrix44 test;
-	//test.mV[0] = 1; test.mV[1] = 0; test.mV[2] = 10; test.mV[3] = 0; test.mV[4] = 0; test.mV[5] = 6; test.mV[6] = 0;
-	//test.mV[7] = 3; test.mV[8] = 2; test.mV[9] = 0; test.mV[10] = 9; test.mV[11] = 0; test.mV[12] = 0; test.mV[13] = 2;
-	//test.mV[14] = 0; test.mV[15] = 4;
-	//test.GetInverse(camera.getWorldRotation(), camera.getWorldPosition());
 
 
 	_entityManager = EntityManager::getInstance();
@@ -287,13 +212,24 @@ void Game::initializeGame()
 
 	Entity* player = _entityFactory->createPlayer(Vector3(-3.0f, 10.0f, -5.0f), Vector3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
+	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
 
-	Entity* entity = _entityFactory->createCoin(Vector3(2.0f, 3.0f, -3.0f), Vector3::One);
+	Entity* entity = _entityFactory->createCoin(Vector3(2.0f, 4.0f, -5.0f), Vector3::One);
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3::One, entity);
 
-	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
-	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3::One, 70.0f);
 	_entityFactory->createBackgrounds(20, Vector3(100.0f, -5.0f, -20.0f), Vector3(25.0f, 25.0f, 1.0f));
+
+	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
+
+	_entityFactory->createCoins(1, Vector3(35.0f, 4.0f, -5.0f), Vector3::One, 0);
+	_entityFactory->createCoins(2, Vector3(42.0f, 4.5f, -5.0f), Vector3::One, 35.0f);
+	_entityFactory->createAcorns(3, Vector3(2.0f, 4.0f, -5.0f), Vector3::One, 12.0f);
+	_entityFactory->createAcorns(3, Vector3(2.0f, 4.0f, -5.0f), Vector3::One, 54.0f);
+
+	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3::One, 70.0f);
+	_entityFactory->createSpikes(2, Vector3(14.0f, 2.8f, -5.0f), Vector3::One, 28.0f);
+	_entityFactory->createVents(2, Vector3(15.0f, 2.95f, -5.0f), Vector3::One, 98.0f);
+	_entityFactory->createTopPlatforms(5, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 125.0f);
 }
 
 void Game::update()
@@ -315,6 +251,12 @@ void Game::update()
 	TotalGameTime += deltaTime;
 	drawTime += deltaTime;
 
+	if (_playerTransform->getLocalPosition().y < -6.0f)
+	{
+		_playerTransform->setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
+		_playerPhysicsBody->setVelocity(Vector3::Zero);
+		_playerTransform->setLocalScale(0.2f);
+	}
 
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
@@ -331,20 +273,7 @@ void Game::update()
 	//nutOmeter.getParent()->update(deltaTime);
 	//time.getParent()->update(deltaTime);
 
-
-	//coinDemo.setWorldPosition((MathLibCore::catmull(p1, p2,p3, p4, t)));
-	//coinDemo.setLocalRotationAngleY((MathLibCore::catmull(0.0f, -15.0f, 0.0f,  60.0f, t)));
-	//coinDemo.getParent()->update(deltaTime);
-
-
-	//for (unsigned int i = 0; i < Background.size(); i++)
-	//{
-	//	Background[i].getParent()->update(deltaTime);
-	//}
-
-
 	counter += deltaTime;
-	//player.setLocalRotationAngleY(90.0f);
 
 	Vector3 offset(-6, -1.5f, -8);
 	_mainCameraTransform->setWorldPosition(MathLibCore::lerp(_mainCameraTransform->getWorldPosition(),
@@ -378,16 +307,6 @@ void Game::draw()
 
 	_meshRendererSystem->draw(light, spotLight);
 
-	//platforms[0].draw(UICamera, light, spotLight);
-
-
-	//coinDemo.draw(camera, light, spotLight, cameraInverse);
-
-	//for (unsigned int i = 0; i < Background.size(); i++)
-	//{
-	//	Background[i].draw(camera, light, spotLight, cameraInverse);
-	//}
-
 	//glEnable(GL_BLEND);//MAKE SURE TO PUT ALL TRANSPARENT/TRANSLUCENT OBJECTS AFTER THIS NO OPAQUE!!!!
 
 
@@ -406,34 +325,6 @@ void Game::draw()
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
 	drawTime = 0.0f;
-}
-
-vector<GameObject> Game::add(vector<GameObject> objectVec1, vector<GameObject> objectVec2)
-{
-	for (unsigned int i = 0; i < objectVec2.size(); i++)
-		objectVec1.push_back(objectVec2[i]);
-
-	return objectVec1;
-}
-
-vector<GameObject> Game::objectSetup(const string shader, const string mesh, const string texture, const bool physics,
-	const Vector3 position, const Vector3 scale, const int amount, float offset)
-{
-	GameObject* object;
-	vector<GameObject> objectVec;
-
-	for (int i = 0; i < amount; i++)
-	{
-		object = new GameObject;
-		object->setShaderProgram(ObjectLoader::getShaderProgram(shader));
-		object->setMesh(ObjectLoader::getMesh(mesh));
-		object->setTexture(ObjectLoader::getTexture(texture));
-		object->addPhysicsBody(physics);
-		object->setWorldPosition(Vector3(i * position.x + offset, position.y, position.z));
-		object->setLocalScale(scale);
-		objectVec.push_back(*object);
-	}
-	return objectVec;
 }
 
 void Game::imguiDraw()
@@ -491,15 +382,6 @@ void Game::imguiDraw()
 			//spotLight->setPosition(spotPositiion);
 		}
 
-		if (ImGui::CollapsingHeader("ConeBoi Catmull Settings:"))
-		{
-			ImGui::DragFloat3("p1 Position: ", &p1.x);
-			ImGui::DragFloat3("p2 Position: ", &p2.x);
-			ImGui::DragFloat3("p3 Position: ", &p3.x);
-			ImGui::DragFloat3("p4 Position: ", &p4.x);
-		}
-
-
 		_guiHelper->draw();
 
 
@@ -538,16 +420,17 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
-	/*if (key == 'w' && collided && !sliding)
+	if (key == 'w'  && !sliding && _playerPhysicsBody->getCanJump())
 	{
-		player.addForce(Vector2(0.0f, 350.0f));
+		_playerPhysicsBody->addForce(Vector3(0, 350.0f, 0.0f));
 	}
-	if (key == 's' && !sliding)
+	if (key == 's' && _playerPhysicsBody->getCanJump())
 	{
-		player.setLocalScale(0.1f);
-		player.setWorldPosition(Vector3(player.getWorldPosition().x, player.getWorldPosition().y - 0.38f, player.getWorldPosition().z));
 		sliding = true;
-	}*/
+		_playerTransform->setLocalScale(0.1f);
+		_playerTransform->setWorldPosition(Vector3(_playerTransform->getLocalPosition().x,
+			_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+	}
 	if (key == 'i')//up
 	{
 		Vector3 LP = spotLight->getPosition();
@@ -603,10 +486,13 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 #endif
 	if (key == 's')
 	{
-		//if(collided)
-		//player.setWorldPosition(Vector3(player.getWorldPosition().x, player.getWorldPosition().y + 0.45f, player.getWorldPosition().z));
-		//sliding = false;
-		//player.setLocalScale(0.2f);
+		if (sliding)
+		{
+			_playerTransform->setWorldPosition(Vector3(_playerTransform->getWorldPosition().x,
+				_playerTransform->getWorldPosition().y + 0.45f, _playerTransform->getWorldPosition().z));
+			sliding = false;
+			_playerTransform->setLocalScale(0.2f);
+		}
 	}
 }
 

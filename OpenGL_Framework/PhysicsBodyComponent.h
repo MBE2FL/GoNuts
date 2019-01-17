@@ -28,7 +28,8 @@ enum class TTag
 	Enemy,
 	Coin,
 	Acorn,
-	Spike
+	Spike,
+	TopPlatform
 };
 
 class PhysicsBodyComponent : public Component
@@ -42,11 +43,13 @@ public:
 	void update(float deltaTime, TransformComponent* transform);
 	void updateBounds(TransformComponent* transform);
 	void addForce(const Vector3& force);
+	void addImpluseForce(const Vector3& force);
 	//void onCollisionEnter(PhysicsBodyComponent* other);
 	//void onCollisionExit(PhysicsBodyComponent* other);
 
 	Vector3 getForce()const;
 	Vector3 getVelocity()const;
+	Vector3 getMaxVelocity()const;
 	Vector3 getAcceleration()const;
 	Vector3 getPosition()const;
 	float getMass()const;
@@ -56,10 +59,14 @@ public:
 
 	void setForce(const Vector3& force);
 	void setVelocity(const Vector3& velocity);
+	void setMaxVelocity(const Vector3& velocity);
 	void setAcceleration(const Vector3& acceleration);
 	void setMass(const float mass);
 	void setUseGravity(const bool useGravity);
 	void setTag(const TTag tag);
+
+	bool getCanJump();
+	void setCanJump(bool jump);
 
 
 	// Testing function pointers
@@ -69,7 +76,7 @@ public:
 	onCollision onCollisionExit;
 
 private:
-	Vector3 _force, _velocity, _acceleration;
+	Vector3 _force, _velocity, _maxVelocity = Vector3(5.0f, 8.0f, 0), _acceleration, _impluseForce, _impluseAcceleration;
 	float _mass;
 	bool _useGravity = false;
 	bool _canJump = false;
