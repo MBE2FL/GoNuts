@@ -34,6 +34,7 @@ void GUIHelper::init(float width, float height)
 GUIHelper::GUIHelper()
 {
 	_entityManager = EntityManager::getInstance();
+	_entityFactory = EntityFactory::getInstance();
 }
 
 void GUIHelper::draw()
@@ -56,8 +57,11 @@ void GUIHelper::draw()
 
 		if (ImGui::Button("Spawn Entity"))
 		{
-			// TO-DO
+			_showSpawnEntity = true;
 		}
+
+		if (_showSceneEditor)
+			SpawnEntity();
 
 		if (ImGui::Button("Close"))
 			_showSceneEditor = false;
@@ -621,4 +625,37 @@ void GUIHelper::drawCamera(CameraComponent * camera)
 
 	string aspectText = "Aspect " + to_string(aspect);
 	ImGui::Text(aspectText.c_str());
+}
+
+void GUIHelper::SpawnEntity()
+{
+	ImGui::OpenPopup("Spawn Entity");
+
+	if (ImGui::BeginPopupModal("Spawn Entity", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		if (ImGui::Button("Spawn Empty"))
+			_entityFactory->createEmpty(Vector3(2.0f, 4.0f, -5.0f));
+			
+		ImGui::Spacing();
+
+		if (ImGui::Button("Close"))
+		{
+			ImGui::CloseCurrentPopup();
+			_showSpawnEntity = false;
+		}
+
+
+
+
+		/*static char buffer[64] = "";
+		ImGui::InputText("Enter Name Here", buffer, 64);
+
+		if (ImGui::Button("Create"))
+		{
+			ObjectLoader::loadShaderProgram(buffer, currentVertShader, currentFragShader);
+			ImGui::CloseCurrentPopup();
+		}*/
+
+		ImGui::EndPopup();
+	}
 }

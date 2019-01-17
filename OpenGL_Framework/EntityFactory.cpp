@@ -1,8 +1,18 @@
 #include "EntityFactory.h"
 
-EntityFactory::EntityFactory(EntityManager * entityManager)
-	: _entityManager(entityManager)
+//EntityFactory::EntityFactory(EntityManager * entityManager)
+//	: _entityManager(entityManager)
+//{
+//}
+
+EntityFactory* EntityFactory::_instance = nullptr;
+
+EntityFactory * EntityFactory::getInstance()
 {
+	if (!_instance)
+		_instance = new EntityFactory();
+
+	return _instance;
 }
 
 EntityFactory::~EntityFactory()
@@ -396,4 +406,9 @@ void EntityFactory::createBackgrounds(const unsigned int amount, const Vector3 &
 
 		entity = createBackground(newPos, scale);//, createEmpty(newPos));
 	}
+}
+
+EntityFactory::EntityFactory()
+{
+	_entityManager = EntityManager::getInstance();
 }

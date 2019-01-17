@@ -10,7 +10,8 @@
 class EntityFactory
 {
 public:
-	EntityFactory(EntityManager* entityManager);
+	//EntityFactory(EntityManager* entityManager);
+	static EntityFactory* getInstance();
 	~EntityFactory();
 
 	Entity* createEmpty(const Vector3& position = Vector3::Zero, const Vector3& scale = Vector3::One, Entity* parent = nullptr, const string& name = "Empty");
@@ -31,4 +32,7 @@ public:
 
 private:
 	EntityManager* _entityManager;
+	static EntityFactory* _instance;
+
+	EntityFactory();
 };

@@ -271,7 +271,7 @@ void Game::initializeGame()
 	_transformSystem = new TransformSystem(_entityManager);
 	_meshRendererSystem = new MeshRendererSystem(_entityManager);
 	_physicsSystem = new PhysicsSystem(_entityManager);
-	_entityFactory = new EntityFactory(_entityManager);
+	_entityFactory = EntityFactory::getInstance();
 
 #ifdef _DEBUG
 	_guiHelper = GUIHelper::getInstance();

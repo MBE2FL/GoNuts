@@ -7,6 +7,7 @@
 #include "PhysicsBodyComponent.h"
 #include "CameraComponent.h"
 #include "EntityManager.h"
+#include "EntityFactory.h"
 #include "ObjectLoader.h"
 #include <vector>
 #include <algorithm>
@@ -28,8 +29,10 @@ private:
 	bool _showSceneEditor = false;
 	bool _showPropertyEditor = false;
 	bool _showShaderProgCreator = false;
+	bool _showSpawnEntity = false;
 	TransformComponent* _currentTransform = nullptr;
 	EntityManager* _entityManager = nullptr;
+	EntityFactory* _entityFactory = nullptr;
 
 	GUIHelper();
 	void drawHierarchy();
@@ -38,4 +41,5 @@ private:
 	void drawMeshRenderer(MeshRendererComponent* meshRenderer);
 	void drawPhysicsBody(PhysicsBodyComponent* physicsBody);
 	void drawCamera(CameraComponent* camera);
+	void SpawnEntity();
 };
