@@ -69,7 +69,7 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	// Create all the necessary components.
 	// Mesh Renderer
 	vector<Texture*> textures;
-	textures.push_back(ObjectLoader::getTexture("Water"));
+	textures.push_back(ObjectLoader::getTexture("Coin"));
 	textures.push_back(ObjectLoader::getTexture("Toon"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Coin"),
@@ -82,6 +82,8 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Coin Collision Entered!" << std::endl; 
+		EntityFactory* entityFactory = EntityFactory::getInstance();
+		entityFactory->plusCoin();
 	};
 
 
@@ -155,6 +157,46 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
 
+
+	return entity;
+}
+
+Entity * EntityFactory::createTopPlatform(const Vector3 & position, const Vector3 & scale, Entity * parent)
+{
+	// Create a new entity.
+	Entity* entity = createEmpty(position, scale, parent, "TopPlatform");
+
+	// Mesh Renderer
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("Default"));
+	textures.push_back(ObjectLoader::getTexture("Toon"));
+
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Cube"),
+		ObjectLoader::getShaderProgram("Normal"), textures);
+
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	physicsBody->setTag(TTag::TopPlatform);
+	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	{
+		std::cout << "topPlatform Collision Entered!" << std::endl;
+
+		EntityManager* entityManager = EntityManager::getInstance();
+
+		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		if (otherBody->getTag() == TTag::Player)
+		{
+			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+
+			otherTrans->setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
+			otherTrans->setLocalPosition(Vector3::Zero);
+			otherBody->setVelocity(Vector3::Zero);
+			otherTrans->setLocalScale(0.2f);
+		}
+	};
+
+	// Add the transform component to the entity.
+	_entityManager->addComponent(meshRenderer, entity);
+	_entityManager->addComponent(physicsBody, entity);
 
 	return entity;
 }
@@ -384,6 +426,18 @@ void EntityFactory::createPlatforms(const unsigned int amount, const Vector3 & p
 	}
 }
 
+void EntityFactory::createTopPlatforms(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+{
+	Entity* entity;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+
+		entity = createTopPlatform(newPos, scale);//, createEmpty(newPos));
+	}
+}
+
 void EntityFactory::createCones(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
 {
 	Entity* entity;
@@ -393,6 +447,54 @@ void EntityFactory::createCones(const unsigned int amount, const Vector3 & posit
 		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
 
 		entity = createCone(newPos, scale);//, createEmpty(newPos));
+	}
+}
+
+void EntityFactory::createVents(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+{
+	Entity* entity;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+
+		entity = createVent(newPos, scale);//, createEmpty(newPos));
+	}
+}
+
+void EntityFactory::createSpikes(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+{
+	Entity* entity;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+
+		entity = createSpike(newPos, scale);//, createEmpty(newPos));
+	}
+}
+
+void EntityFactory::createCoins(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+{
+	Entity* entity;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+
+		entity = createCoin(newPos, scale);//, createEmpty(newPos));
+	}
+}
+
+void EntityFactory::createAcorns(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+{
+	Entity* entity;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+
+		entity = createAcorn(newPos, scale);//, createEmpty(newPos));
 	}
 }
 

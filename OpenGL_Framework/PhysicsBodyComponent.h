@@ -28,7 +28,8 @@ enum class TTag
 	Enemy,
 	Coin,
 	Acorn,
-	Spike
+	Spike,
+	TopPlatform
 };
 
 class PhysicsBodyComponent : public Component

@@ -291,9 +291,19 @@ void Game::initializeGame()
 	Entity* entity = _entityFactory->createCoin(Vector3(2.0f, 3.0f, -3.0f), Vector3::One);
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3::One, entity);
 
-	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
-	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3::One, 70.0f);
 	_entityFactory->createBackgrounds(20, Vector3(100.0f, -5.0f, -20.0f), Vector3(25.0f, 25.0f, 1.0f));
+
+	_entityFactory->createPlatforms(15, Vector3(14.0f, -2.0f, -5.0f));
+
+	_entityFactory->createCoins(1, Vector3(35.0f, 4.0f, -5.0f), Vector3::One, 0);
+	_entityFactory->createCoins(1, (42.0f, 4.5f, -5.0f), Vector3::One, 35.0f);
+	_entityFactory->createAcorns(3, Vector3(2.0f, 4.0f, -5.0f), Vector3::One, 12.0f);
+	_entityFactory->createAcorns(3, Vector3(2.0f, 4.0f, -5.0f), Vector3::One, 54.0f);
+
+	_entityFactory->createCones(2, Vector3(14.0f, 2.6f, -5.0f), Vector3::One, 70.0f);
+	_entityFactory->createSpikes(2, Vector3(14.0f, 2.8f, -5.0f), Vector3::One, 28.0f);
+	_entityFactory->createVents(2, Vector3(15.0f, 2.95f, -5.0f), Vector3::One, 98.0f);
+	_entityFactory->createTopPlatforms(5, Vector3(14.0f, 4.2f, -5.0f), Vector3(0.4f, 1, 1), 125.0f);
 }
 
 void Game::update()
