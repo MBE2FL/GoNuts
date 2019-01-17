@@ -21,7 +21,7 @@ void Game::initializeGame()
 	glEnable(GL_CULL_FACE);
 
 	// Load shaders and mesh
-	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag");
+	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 
@@ -93,7 +93,11 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
-	ObjectLoader::loadTexture("Toon", "./Assets/Textures/toon.png");
+	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
+	ObjectLoader::loadTexture("Toon", "./Assets/Textures/toon1.png");
+	ObjectLoader::loadTexture("Toon2", "./Assets/Textures/toon2.png");
+	ObjectLoader::loadTexture("Toon3", "./Assets/Textures/toon3.png");
+	ObjectLoader::loadTexture("Smooth", "./Assets/Textures/Smooth Shading.png");
 
 
 	//player.setShaderProgram(ObjectLoader::getShaderProgram("Player"));
@@ -220,12 +224,11 @@ void Game::initializeGame()
 
 	light = new Light();
 	light->setPosition(Vector3(4.0f, 0.0f, 0.0f));
-	light->setAmbient(Vector3(1.0f, 1.0f, 1.0f));
+	light->setAmbient(Vector3(0.60f, .60f, 0.60f));
 	//light->setAmbient(Vector3(0));
-	light->setDiffuse(Vector3(0.7f, 0.1f, 0.2f));
+	light->setDiffuse(Vector3(0.7f, 0.7f, 0.7f));
 	//light->setDiffuse(Vector3(0));
-	light->setSpecular(Vector3(1.0f, 0.1f, 0.1f));
-	light->setSpecular(Vector3(0.f, 0.f, 0.f));
+	light->setSpecular(Vector3(0.70f, 0.7f, 0.7f));
 	light->setSpecularExp(100.0f);
 	light->setAttenuationConstant(1.0f);
 	light->setAttenuationLinear(0.1f);

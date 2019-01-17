@@ -13,23 +13,8 @@ uniform float attenuationConstant;
 uniform float attenuationLinear;
 uniform float attenuationQuadratic;
 
-
-uniform vec4 spotLightPosition;
-uniform vec3 spotLightDirection;
-
-// Colour
-uniform vec3 spotLightAmbient;
-uniform vec3 spotLightDiffuse;
-uniform vec3 spotLightSpecular;
-
-// Scalars
-uniform float spotLightSpecularExponent;
-uniform float spotLightattenuationConstant;
-uniform float spotLightattenuationLinear;
-uniform float spotLightattenuationQuadratic;
-
-uniform sampler2D uTex;
-uniform sampler2D uTexLookUp;
+layout(binding = 0)uniform sampler2D uTex;
+layout(binding = 1)uniform sampler2D uTexLookUp;
 
 in vec2 texCoord;
 in vec3 normal;
@@ -41,41 +26,33 @@ const float levels = 3;
 
 void main()
 {
-	//outColour = vec4(normal, 1.0f);
 	vec2 textureCoord = vec2(texCoord.x, -texCoord.y);
 
 	vec4 textureColour = texture(uTex, textureCoord);
-	
-
-
 
 	vec3 P = position;
 	vec3 N = normalize(normal);
-	
-	float dist = length(lightPosition.xyz - P);
-
-	float attenuation = 1.0 / (attenuationConstant + (attenuationLinear * dist) + (attenuationQuadratic * dist * dist));
-
-	
-
 	vec3 L = normalize(lightPosition.xyz - P);
 
-	float diffuseLight = max(dot(N, L), 0);
-	vec4 textureLookUp = texture(uTexLookUp, vec2(-diffuseLight, 0.5));
+	float diffuseLight = max(dot(N, L), 0.05);
+	diffuseLight = clamp(diffuseLight, 0.05, 0.95);
+	vec4 textureLookUp = texture(uTexLookUp, vec2(diffuseLight, 0));	
 
 	vec3 ambient = lightAmbient;
 
-	vec3 diffuse = lightDiffuse + (textureLookUp.r * dot(N, L)) * attenuation;
+	vec3 diffuse = lightDiffuse * textureLookUp.r;
 
 	//compute specular term
 	vec3 V = normalize(-P);
 	vec3 H = normalize(L + V);
-	float specularLight = pow(max(dot(N, H), 0), lightSpecularExponent);
 
-	if (diffuseLight <= 0) specularLight = 0;
-	vec3 specular = lightSpecular * specularLight * attenuation;
+	float specularLight = pow(max(dot(N, H), 0), lightSpecularExponent);
+	specularLight = clamp(specularLight, 0.05, 0.95);
+	textureLookUp = texture(uTexLookUp, vec2(specularLight, 0));
+
+	vec3 specular = lightSpecular * textureLookUp.r;
 
 	outColour.rgb = ambient + diffuse + specular;
 	outColour.a = textureColour.a;
-	outColour.rgb *= vec3(0.5,0.5,0.5);
+	outColour.rgb *= textureColour.rgb;
 }
