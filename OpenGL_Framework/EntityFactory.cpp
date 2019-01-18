@@ -147,7 +147,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		if (otherBody->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
+			//otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
 		}
 	};
 	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
@@ -334,6 +334,7 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 	vector<Texture*> textures;
 	textures.push_back(ObjectLoader::getTexture("Acorn"));
 	textures.push_back(ObjectLoader::getTexture("Toon"));
+	textures.push_back(ObjectLoader::getTexture("Normal"));
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Acorn"),
 		ObjectLoader::getShaderProgram("Normal"), textures);

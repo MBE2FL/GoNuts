@@ -15,6 +15,7 @@ uniform float attenuationQuadratic;
 
 layout(binding = 0)uniform sampler2D uTex;
 layout(binding = 1)uniform sampler2D uTexLookUp;
+layout(binding = 2)uniform sampler2D uTexNormal;
 
 in vec2 texCoord;
 in vec3 normal;
@@ -29,9 +30,11 @@ void main()
 	vec2 textureCoord = vec2(texCoord.x, -texCoord.y);
 
 	vec4 textureColour = texture(uTex, textureCoord);
+	vec3 N = normalize(normal);
+	vec4 NormalTex = texture(uTexNormal, textureCoord);
+	if (NormalTex.rgb != vec3(0,0,0)) N = NormalTex.rgb; 
 
 	vec3 P = position;
-	vec3 N = normalize(normal);
 	vec3 L = normalize(lightPosition.xyz - P);
 
 	float diffuseLight = max(dot(N, L), 0.05);
@@ -56,8 +59,5 @@ void main()
 	outColour.a = textureColour.a;
 	outColour.rgb *= textureColour.rgb;
 
-	if (dot(N,V) < 0.1)
-	{
-		outColour.rgb = vec3(0,0,0);
-	}
+	if (dot(N,V) < 0.1) outColour.rgb = vec3(0,0,0);
 }
