@@ -100,6 +100,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Toon2", "./Assets/Textures/toon2.png");
 	ObjectLoader::loadTexture("Toon3", "./Assets/Textures/toon3.png");
 	ObjectLoader::loadTexture("Smooth", "./Assets/Textures/Smooth Shading.png");
+	ObjectLoader::loadTexture("Normal", "./Assets/Textures/Acorn_Texture_n.png");
 
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
