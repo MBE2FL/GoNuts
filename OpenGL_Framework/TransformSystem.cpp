@@ -9,44 +9,16 @@ TransformSystem::~TransformSystem()
 {
 }
 
-//bool rootSort(Entity* first, Entity* second)
-//{
-//	// Get the transform components for both entities.
-//	Component* component = _entityManager->getComponent(ComponentType::Transform, first);
-//	TransformComponent* firstTransform = dynamic_cast<TransformComponent*>(component);
-//
-//	//component = _entityManager->getComponent(ComponentType::Transform, second);
-//	//TransformComponent* secondTransform = dynamic_cast<TransformComponent*>(component);
-//
-//	//// Make sure both components exist. Return false otherwise.
-//	//if (!firstTransform || !secondTransform)
-//	//	return false;
-//
-//	// Make sure transform component exists.
-//	if (!firstTransform)
-//		return false;
-//
-//	// Only change order if one of the transforms is not a root.
-//	//if (firstTransform->isRoot() && !secondTransform->isRoot())
-//	//	return true;
-//	//else
-//	//	return false;
-//	return firstTransform->isRoot();
-//}
-
 void TransformSystem::update(float deltaTime)
 {
-	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::Transform);
+	vector<TransformComponent*> transforms = _entityManager->getAllTransforms();
 
 	// Sort the vector, so all the root transforms are at the back of the vector.
 	// When we update the root transforms, forward kinematics will take into account their children's local transformations.
 	//sort(entities.begin(), entities.end(), rootSort);
 	EntityManager* entityManager = _entityManager;
-	partition(entities.begin(), entities.end(), [entityManager](Entity* entity) -> bool
+	partition(transforms.begin(), transforms.end(), [entityManager](TransformComponent* transform) -> bool
 	{
-		// Get the transform component.
-		TransformComponent* transform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
-
 		// Make sure transform component exists.
 		if (!transform)
 			return false;
@@ -55,18 +27,14 @@ void TransformSystem::update(float deltaTime)
 	});
 
 
-	for (Entity* entity : entities)
+	for (TransformComponent* transform : transforms)
 	{
-		// Get the transform component for the current entity.
-		//Component* component = _entityManager->getComponent(ComponentType::Transform, entity);
-		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
 		if (!transform)
 			return;
 
 		// Also check if the current entity possesses a physics body.
-		//component = _entityManager->getComponent(ComponentType::PhysicsBody, entity);
-		PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
-		
+		PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, transform->getEntity());
+
 
 		// Update the transforms position using physics, if the entity possesses a physics body.
 		if (physicsBody)
@@ -84,21 +52,28 @@ void TransformSystem::update(float deltaTime)
 	}
 
 
+	vector<PhysicsBodyComponent*> physicsBodies = _entityManager->getAllPhysicsBodyComponents();
+	TransformComponent* playerTransform = EntityManager::getPlayerTransform();
+	if (!playerTransform)
+		return;
 	// Update collider bounds, after current world transformations have been calculated.
-	for (Entity* entity : entities)
+	for (PhysicsBodyComponent* physicsBody : physicsBodies)
 	{
 		// Get the transform component for the current entity.
-		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, physicsBody->getEntity());
 		if (!transform)
 			return;
 
 		// Also check if the current entity possesses a physics body.
-		PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
+		//PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
 
 		// Update the transforms position using physics, if the entity possesses a physics body.
 		if (physicsBody)
 		{
 			physicsBody->updateBounds(transform);
+
+			bool active = (Vector3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
+			physicsBody->setActive(active);
 		}
 	}
 }

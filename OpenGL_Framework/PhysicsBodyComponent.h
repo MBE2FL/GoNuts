@@ -54,7 +54,7 @@ public:
 	Vector3 getPosition()const;
 	float getMass()const;
 	bool getUseGravity()const;
-	ColliderBounds getCollisionBounds() const;
+	ColliderBounds* getCollisionBounds() const;
 	TTag getTag() const;
 
 	void setForce(const Vector3& force);
@@ -67,6 +67,8 @@ public:
 
 	bool getCanJump();
 	void setCanJump(bool jump);
+	bool getActive() const;
+	void setActive(const bool active);
 
 
 	// Testing function pointers
@@ -81,8 +83,6 @@ private:
 	bool _useGravity = false;
 	bool _canJump = false;
 	TTag _tag;
-	ColliderBounds _collisionBounds;
-	//vector<PhysicsBodyComponent*> _colliding;
-
-	//void onCollisionHelper(Tags tag, bool enter);
+	ColliderBounds* _collisionBounds;
+	bool _active = false;
 };

@@ -213,6 +213,7 @@ void Game::initializeGame()
 	Entity* player = _entityFactory->createPlayer(Vector3(-3.0f, 10.0f, -5.0f), Vector3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
+	EntityManager::setPlayerTransform(_playerTransform);
 
 	Entity* entity = _entityFactory->createCoin(Vector3(2.0f, 4.0f, -5.0f), Vector3::One);
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3::One, entity);

@@ -19,30 +19,31 @@ void PhysicsSystem::update(float deltaTime)
 	}
 
 
+	vector<PhysicsBodyComponent*> physicsBodies = _entityManager->getAllPhysicsBodyComponents();
 
-	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::PhysicsBody);//gets entities with physics bodies
+	vector<PhysicsBodyComponent*>::iterator it;
 
-	vector<Entity*>::iterator it;
-
-	for (it = entities.begin(); it != entities.end(); it++)
+	for (it = physicsBodies.begin(); it != physicsBodies.end(); it++)
 	{
 		// Get the physics body component for the current entity.
-		//Component* component = _entityManager->getComponent(ComponentType::PhysicsBody, *it);
-		PhysicsBodyComponent* physicsBodyOne = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, *it);
-		if (!physicsBodyOne)
-			return;
+		PhysicsBodyComponent* physicsBodyOne = *it;
+		if (!physicsBodyOne || !physicsBodyOne->getActive())
+			continue;
 
 		// Check if there is another physics body.
 		// Check current entity's physics body with every other entity's physics body, behind it in the vector.
-		vector<Entity*>::iterator nextIt = it;
+		vector<PhysicsBodyComponent*>::iterator nextIt = it;
 		nextIt++;
-		while (nextIt != entities.end())
+		while (nextIt != physicsBodies.end())
 		{
 			// Get the physics body component for the other entity.
 			//component = _entityManager->getComponent(ComponentType::PhysicsBody, *nextIt);
-			PhysicsBodyComponent* physicsBodyTwo = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, *nextIt);
-			if (!physicsBodyTwo)
-				return;
+			PhysicsBodyComponent* physicsBodyTwo = *nextIt;
+			if (!physicsBodyTwo || !physicsBodyTwo->getActive())
+			{
+				nextIt++;
+				continue;
+			}
 
 			// Check for collisions between physics bodies.
 			if (checkCollision(physicsBodyOne, physicsBodyTwo))
@@ -51,8 +52,8 @@ void PhysicsSystem::update(float deltaTime)
 				Collision* collision = new Collision();
 				collision->bodyOne = physicsBodyOne;
 				collision->bodyTwo = physicsBodyTwo;
-				collision->entityOne = *it;
-				collision->entityTwo = *nextIt;
+				collision->entityOne = physicsBodyOne->getEntity();
+				collision->entityTwo = physicsBodyTwo->getEntity();
 				addCollision(collision);
 			}
 
@@ -94,17 +95,25 @@ void PhysicsSystem::addCollision(Collision * collision)
 bool PhysicsSystem::checkCollision(PhysicsBodyComponent * physicsBodyOne, PhysicsBodyComponent * physicsBodyTwo)
 {
 	// Get the bounds of both physics bodies collider bounds.
-	ColliderBounds bounds;
+	ColliderBounds* bounds = nullptr;
 
 	bounds = physicsBodyOne->getCollisionBounds();
-	Vector3 positionOne = bounds.getCentre();
-	Vector3 minOne = positionOne - bounds.getExtends();
-	Vector3 maxOne = positionOne + bounds.getExtends();
+	static Vector3 positionOne;
+	static Vector3 minOne;
+	static Vector3 maxOne;
+
+	positionOne = bounds->getCentre();
+	minOne = positionOne - bounds->getExtends();
+	maxOne = positionOne + bounds->getExtends();
 
 	bounds = physicsBodyTwo->getCollisionBounds();
-	Vector3 positionTwo = bounds.getCentre();
-	Vector3 minTwo = positionTwo - bounds.getExtends();
-	Vector3 maxTwo = positionTwo + bounds.getExtends();
+	static Vector3 positionTwo;
+	static Vector3 minTwo;
+	static Vector3 maxTwo;
+
+	positionTwo = bounds->getCentre();
+	minTwo = positionTwo - bounds->getExtends();
+	maxTwo = positionTwo + bounds->getExtends();
 
 
 	// Check if the collider bounds of two physics bodies are colliding.
