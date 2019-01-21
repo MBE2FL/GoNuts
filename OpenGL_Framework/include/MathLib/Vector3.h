@@ -37,7 +37,7 @@ public:
 		///vec1 * 5
 		return Vector3((x*scalar), (y*scalar), (z*scalar));
 	}
-	Vector3 operator*(const Vector3 scalar) const
+	Vector3 operator*(const Vector3& scalar) const
 	{
 		///vec1 * 5
 		return Vector3((x*scalar.x), (y*scalar.y), (z*scalar.z));
@@ -47,12 +47,12 @@ public:
 		///vec1 / 5
 		return Vector3((x/divisor), (y/divisor), (z/divisor));
 	}
-	Vector3 operator+(const Vector3 rhs) const
+	Vector3 operator+(const Vector3& rhs) const
 	{
 		//vec1 + vec2
 		return Vector3((x + rhs.x), (y + rhs.y), (z + rhs.z));
 	}
-	Vector3 operator-(const Vector3 rhs) const
+	Vector3 operator-(const Vector3& rhs) const
 	{
 		//vec1 - vec2
 		return Vector3((x - rhs.x), (y - rhs.y), (z - rhs.z));
@@ -62,7 +62,7 @@ public:
 		//-vec
 		return Vector3((-x), (-y), (-z));
 	}
-	bool operator==(Vector3 vector) const
+	bool operator==(Vector3& vector) const
 	{
 		//-vec
 		if (x == vector.x && y == vector.y && z == vector.z)

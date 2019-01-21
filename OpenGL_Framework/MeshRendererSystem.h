@@ -18,16 +18,16 @@ public:
 	~MeshRendererSystem();
 
 	void draw(Light* light, Light* spotLight);
-	void cull(vector<Entity*>& cullList, vector<Entity*>& objectList);
-	void sortMeshes(vector<Entity*>& cullList);
+	void cull(vector<MeshRendererComponent*>& cullList, vector<MeshRendererComponent*>& objectList);
+	void sortMeshes(vector<MeshRendererComponent*>& cullList);
 
 private:
 	TransformComponent* _cameraTrans = nullptr;
 	CameraComponent* _cameraComp = nullptr;
-	vector<Entity*> _opaqueObjects;
-	vector<Entity*> _opaqueCullList;
-	vector<Entity*> _transObjects;
-	vector<Entity*> _transCullList;
+	vector<MeshRendererComponent*> _opaqueObjects;
+	vector<MeshRendererComponent*> _opaqueCullList;
+	vector<MeshRendererComponent*> _transObjects;
+	vector<MeshRendererComponent*> _transCullList;
 
-	void drawHelper(const vector<Entity*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse);
+	void drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse);
 };

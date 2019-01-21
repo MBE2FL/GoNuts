@@ -9,10 +9,10 @@ MeshRendererSystem::~MeshRendererSystem()
 {
 }
 
-void MeshRendererSystem::draw(Light* light, Light* spotLight)
+void MeshRendererSystem::draw(Light * light, Light * spotLight)
 {
 	// Retrieve all entities, possessing a mesh renderer.
-	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::MeshRenderer);
+	vector<MeshRendererComponent*> meshRenderers = _entityManager->getAllMeshRenderers();
 
 	// Retrieve the main camera.
 	Entity* mainCamera = EntityManager::getMainCamera();
@@ -28,12 +28,8 @@ void MeshRendererSystem::draw(Light* light, Light* spotLight)
 
 
 	// Sort the vector, so all the transparent meshes are at the back of the vector.
-	vector<Entity*>::iterator transIt = partition(entities.begin(), entities.end(), [](Entity* entity) -> bool
+	vector<MeshRendererComponent*>::iterator transIt = partition(meshRenderers.begin(), meshRenderers.end(), [](MeshRendererComponent* meshRenderer) -> bool
 	{
-		// Get the mesh renderer component.
-		EntityManager* entityManager = EntityManager::getInstance();
-		MeshRendererComponent* meshRenderer = entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, entity);
-
 		// Make sure mesh renderer component exists.
 		if (!meshRenderer)
 			return false;
@@ -44,8 +40,8 @@ void MeshRendererSystem::draw(Light* light, Light* spotLight)
 	// Cull both the opaque and transparent objects. Sort the transparent objects afterwards.
 	_opaqueObjects.clear();
 	_transObjects.clear();
-	_opaqueObjects.assign(entities.begin(), transIt);
-	_transObjects.assign(transIt, entities.end());
+	_opaqueObjects.assign(meshRenderers.begin(), transIt);
+	_transObjects.assign(transIt, meshRenderers.end());
 	cull(_opaqueCullList, _opaqueObjects);
 	cull(_transCullList, _transObjects);
 	sortMeshes(_transCullList);
@@ -58,7 +54,7 @@ void MeshRendererSystem::draw(Light* light, Light* spotLight)
 	drawHelper(_transCullList, light, spotLight, cameraInverse);
 }
 
-void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& objectList)
+void MeshRendererSystem::cull(vector<MeshRendererComponent*>& cullList, vector<MeshRendererComponent*>& objectList)
 {
 	// Clear cullList from previous frame.
 	cullList.clear();
@@ -71,9 +67,9 @@ void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& object
 		{
 			TransformComponent* transform = nullptr;
 
-			for (Entity* entity : objectList)
+			for (MeshRendererComponent* meshRenderer : objectList)
 			{
-				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
 
 				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation();
 				float distance = direction.Length();
@@ -83,7 +79,7 @@ void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& object
 				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.8f))
 					&& (distance < (_cameraComp->getFar() * 1.4f)))
 				{
-					cullList.push_back(entity);
+					cullList.push_back(meshRenderer);
 				}
 			}
 		}
@@ -92,9 +88,9 @@ void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& object
 		{
 			TransformComponent* transform = nullptr;
 
-			for (Entity* entity : objectList)
+			for (MeshRendererComponent* meshRenderer : objectList)
 			{
-				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
 
 				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation() - Vector3(0.0f, 0.0f, -20.0f);
 				float distance = direction.Length();
@@ -104,7 +100,7 @@ void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& object
 				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.5f))
 					&& (distance < (_cameraComp->getFar() * 1.4f + 20.0f)))
 				{
-					cullList.push_back(entity);
+					cullList.push_back(meshRenderer);
 				}
 			}
 		}
@@ -139,7 +135,7 @@ void MeshRendererSystem::cull(vector<Entity*>& cullList, vector<Entity*>& object
 //	return distanceA < distanceB;
 //}
 
-void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList)
+void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 {
 	//// Sort opaque objects.
 	//if (!isTrans)
@@ -168,11 +164,11 @@ void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList)
 	{
 		Vector3 camPos = _cameraTrans->getWorldPosition();
 
-		sort(cullList.begin(), cullList.end(), [camPos](Entity* a, Entity* b) -> bool
+		sort(cullList.begin(), cullList.end(), [camPos](MeshRendererComponent* a, MeshRendererComponent* b) -> bool
 		{
 			EntityManager* entityManager = EntityManager::getInstance();
-			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
-			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
+			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a->getEntity());
+			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b->getEntity());
 
 			float sqrDistanceA = Vector3::sqrDistance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
 			float sqrDistanceB = Vector3::sqrDistance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
@@ -185,11 +181,11 @@ void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList)
 	{
 		Matrix44 camView = _cameraTrans->getLocalToWorldMatrix();
 
-		sort(cullList.begin(), cullList.end(), [camView](Entity* a, Entity* b) -> bool
+		sort(cullList.begin(), cullList.end(), [camView](MeshRendererComponent* a, MeshRendererComponent* b) -> bool
 		{
 			EntityManager* entityManager = EntityManager::getInstance();
-			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
-			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
+			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a->getEntity());
+			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b->getEntity());
 
 			float distanceA = (camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
 			float distanceB = (camView * bTrans->getLocalToWorldMatrix()).getTranslation().z;
@@ -201,18 +197,18 @@ void MeshRendererSystem::sortMeshes(vector<Entity*>& cullList)
 
 }
 
-void MeshRendererSystem::drawHelper(const vector<Entity*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse)
+void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse)
 {
 	//vector<Entity*> lightEntities = _entityManager->getAllEntitiesWithComponent(ComponentType::Light);
 
-	for (Entity* entity : drawList)
+	for (MeshRendererComponent* meshRenderer : drawList)
 	{
 		// Get the transform and mesh renderer components for the current entity. Only draw if both components exist.
-		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
+		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
 		if (!transform)
 			return;
 
-		MeshRendererComponent* meshRenderer = _entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, entity);
+
 		if (!meshRenderer)
 			return;
 

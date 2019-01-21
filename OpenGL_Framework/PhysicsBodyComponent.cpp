@@ -3,7 +3,7 @@
 PhysicsBodyComponent::PhysicsBodyComponent(MeshBounds meshBounds, Vector3 force, Vector3 velocity, Vector3 acceleration, float mass)
 	: _force(force), _velocity(velocity), _acceleration(acceleration), _mass(mass)
 {
-	_collisionBounds = ColliderBounds(meshBounds);
+	_collisionBounds = new ColliderBounds(meshBounds);
 	_type = ComponentType::PhysicsBody;
 }
 
@@ -42,7 +42,7 @@ void PhysicsBodyComponent::update(float deltaTime, TransformComponent * transfor
 
 void PhysicsBodyComponent::updateBounds(TransformComponent * transform)
 {
-	_collisionBounds.update(transform);
+	_collisionBounds->update(transform);
 }
 
 void PhysicsBodyComponent::addForce(const Vector3 & force)
@@ -77,7 +77,7 @@ Vector3 PhysicsBodyComponent::getAcceleration() const
 
 Vector3 PhysicsBodyComponent::getPosition() const
 {
-	return _collisionBounds.getCentre();
+	return _collisionBounds->getCentre();
 }
 
 float PhysicsBodyComponent::getMass() const
@@ -90,7 +90,7 @@ bool PhysicsBodyComponent::getUseGravity() const
 	return _useGravity;
 }
 
-ColliderBounds PhysicsBodyComponent::getCollisionBounds() const
+ColliderBounds* PhysicsBodyComponent::getCollisionBounds() const
 {
 	return _collisionBounds;
 }
@@ -148,6 +148,16 @@ bool PhysicsBodyComponent::getCanJump()
 void PhysicsBodyComponent::setCanJump(bool jump)
 {
 	_canJump = jump;
+}
+
+bool PhysicsBodyComponent::getActive() const
+{
+	return _active;
+}
+
+void PhysicsBodyComponent::setActive(const bool active)
+{
+	_active = active;
 }
 
 //void PhysicsBodyComponent::onCollisionHelper(Tags tag, bool enter)

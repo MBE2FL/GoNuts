@@ -2,6 +2,7 @@
 
 EntityManager* EntityManager::_instance = nullptr;
 Entity* EntityManager::_mainCamera = nullptr;
+TransformComponent* EntityManager::_playerTransform = nullptr;
 
 EntityManager::EntityManager()
 {
@@ -16,19 +17,19 @@ EntityManager::~EntityManager()
 		entity = nullptr;
 	}
 
-	// Clean up all components.
-	map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt;
+	//// Clean up all components.
+	//map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt;
 
-	for (compTypeIt = _components.begin(); compTypeIt != _components.end(); compTypeIt++)
-	{
-		map<unsigned int, Component*>::iterator compIt;
+	//for (compTypeIt = _components.begin(); compTypeIt != _components.end(); compTypeIt++)
+	//{
+	//	map<unsigned int, Component*>::iterator compIt;
 
-		for (compIt = compTypeIt->second.begin(); compIt != compTypeIt->second.end(); compIt++)
-		{
-			delete compIt->second;
-			compIt->second = nullptr;
-		}
-	}
+	//	for (compIt = compTypeIt->second.begin(); compIt != compTypeIt->second.end(); compIt++)
+	//	{
+	//		delete compIt->second;
+	//		compIt->second = nullptr;
+	//	}
+	//}
 
 
 	// Since all entities have been deleted, we can reset entity ids back to 0.
@@ -60,7 +61,46 @@ Entity * EntityManager::createEntity()
 void EntityManager::addComponent(Component * component, Entity * entity)
 {
 	component->setEntity(entity);
-	_components[component->getType()][entity->getEid()] = component;
+	//_components[component->getType()][entity->getEid()] = component;
+
+	ComponentType type = component->getType();
+	switch (type)
+	{
+	case ComponentType::Transform:
+	{
+		TransformComponent* transform = dynamic_cast<TransformComponent*>(component);
+		_transformComps[entity] = transform;
+		_allTransforms.push_back(transform);
+		break;
+	}
+	case ComponentType::MeshRenderer:
+	{
+		MeshRendererComponent* meshRenderer = dynamic_cast<MeshRendererComponent*>(component);
+		_meshRendComps[entity] = meshRenderer;
+		_allMeshRenderers.push_back(meshRenderer);
+		break;
+	}
+	case ComponentType::PhysicsBody:
+	{
+		PhysicsBodyComponent* physicsBody = dynamic_cast<PhysicsBodyComponent*>(component);
+		_physicsBodyComps[entity] = physicsBody;
+		_allPhysicsBodies.push_back(physicsBody);
+		break;
+	}
+	case ComponentType::Camera:
+	{
+		CameraComponent* camera = dynamic_cast<CameraComponent*>(component);
+		_cameraComps[entity] = camera;
+		_allCameras.push_back(camera);
+		break;
+	}
+	case ComponentType::Light:
+		break;
+	default:
+		break;
+	}
+
+	_entitiesWithComps[type].push_back(entity);
 }
 
 //Component * EntityManager::getComponent(ComponentType compType, const Entity * entity)
@@ -81,57 +121,75 @@ void EntityManager::addComponent(Component * component, Entity * entity)
 
 void EntityManager::removeEntity(Entity * entity)
 {
-	// Remove the entity.
-	for (unsigned int i = 0; i < _entities.size(); i++)
-	{
-		if (_entities[i] == entity)
-		{
-			delete _entities[i];
-			_entities[i] = nullptr;
-			_entities.erase(_entities.begin() + i);
-			break;
-		}
-	}
+	//// Remove the entity.
+	//for (unsigned int i = 0; i < _entities.size(); i++)
+	//{
+	//	if (_entities[i] == entity)
+	//	{
+	//		delete _entities[i];
+	//		_entities[i] = nullptr;
+	//		_entities.erase(_entities.begin() + i);
+	//		break;
+	//	}
+	//}
 
 
-	// Remove all of the entity's components.
-	map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt;
+	//// Remove all of the entity's components.
+	//map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt;
 
-	for (compTypeIt = _components.begin(); compTypeIt != _components.end(); compTypeIt++)
-	{
-		map<unsigned int, Component*>::iterator compIt = compTypeIt->second.find(entity->getEid());
+	//for (compTypeIt = _components.begin(); compTypeIt != _components.end(); compTypeIt++)
+	//{
+	//	map<unsigned int, Component*>::iterator compIt = compTypeIt->second.find(entity->getEid());
 
-		// Delete and clean up all of this entity's components. Then remove this entity's component map.
-		if (compIt != compTypeIt->second.end())
-		{
-			delete compIt->second;
-			compIt->second = nullptr;
-			//compTypeIt->second.erase(compIt);
-			_components.erase(compTypeIt);
-		}
-	}
+	//	// Delete and clean up all of this entity's components. Then remove this entity's component map.
+	//	if (compIt != compTypeIt->second.end())
+	//	{
+	//		delete compIt->second;
+	//		compIt->second = nullptr;
+	//		//compTypeIt->second.erase(compIt);
+	//		_components.erase(compTypeIt);
+	//	}
+	//}
 }
 
 vector<Entity*> EntityManager::getAllEntitiesWithComponent(ComponentType compType)
 {
-	vector<Entity*> entities;
-	
-	// Find all components of the specified type.
-	map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt = _components.find(compType);
+	//vector<Entity*> entities;
+	//
+	//// Find all components of the specified type.
+	//map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt = _components.find(compType);
 
-	// Find all entities, which possess the specified component type.
-	if (compTypeIt != _components.end())
-	{
-		map<unsigned int, Component*>::iterator compIt;
+	//// Find all entities, which possess the specified component type.
+	//if (compTypeIt != _components.end())
+	//{
+	//	map<unsigned int, Component*>::iterator compIt;
 
-		for (compIt = compTypeIt->second.begin(); compIt != compTypeIt->second.end(); compIt++)
-		{
-			entities.push_back(getEntity(compIt->first));
-		}
-	}
+	//	for (compIt = compTypeIt->second.begin(); compIt != compTypeIt->second.end(); compIt++)
+	//	{
+	//		entities.push_back(getEntity(compIt->first));
+	//	}
+	//}
+
+	//return entities;
 
 
-	return entities;
+	//##### TESTING #####
+	return _entitiesWithComps[compType];
+}
+
+vector<PhysicsBodyComponent*> EntityManager::getAllPhysicsBodyComponents() const
+{
+	return _allPhysicsBodies;
+}
+
+vector<TransformComponent*> EntityManager::getAllTransforms() const
+{
+	return _allTransforms;
+}
+
+vector<MeshRendererComponent*> EntityManager::getAllMeshRenderers() const
+{
+	return _allMeshRenderers;
 }
 
 Entity * EntityManager::getEntity(const unsigned int eid)
@@ -158,4 +216,14 @@ void EntityManager::setMainCamera(Entity * camera)
 Entity * EntityManager::getMainCamera()
 {
 	return _mainCamera;
+}
+
+TransformComponent * EntityManager::getPlayerTransform()
+{
+	return _playerTransform;
+}
+
+void EntityManager::setPlayerTransform(TransformComponent * transform)
+{
+	_playerTransform = transform;
 }

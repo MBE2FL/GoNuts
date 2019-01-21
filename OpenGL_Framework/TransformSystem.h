@@ -8,6 +8,8 @@
 using std::sort;
 using std::partition;
 
+#define CULL_DISTANCE 1400.0f
+
 class TransformSystem : public System
 {
 public:
@@ -17,5 +19,4 @@ public:
 	void update(float deltaTime);
 
 private:
-	//bool rootSort(Entity* first, Entity* second);
 };
