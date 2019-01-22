@@ -38,6 +38,7 @@ void main()
 	vec3 L = normalize(lightPosition.xyz - P);
 
 	float diffuseLight = max(dot(N, L), 0.05);
+	diffuseLight * 0.5 + 0.5;
 	diffuseLight = clamp(diffuseLight, 0.05, 0.95);
 	vec4 textureLookUp = texture(uTexLookUp, vec2(diffuseLight, 0));	
 
