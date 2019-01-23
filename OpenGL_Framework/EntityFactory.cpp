@@ -314,6 +314,11 @@ Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & s
 
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("TestBoi1"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
+	Animation* anim = new Animation;
+	meshRenderer->setAnimation(anim);
+	meshRenderer->setIsAnimated(true);
+	meshRenderer->setMesh(ObjectLoader::getMesh("TestBoi1"));
+	meshRenderer->addMesh("TestBoi", 20);
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());

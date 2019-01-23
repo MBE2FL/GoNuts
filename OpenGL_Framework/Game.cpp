@@ -218,6 +218,7 @@ void Game::initializeGame()
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
 	EntityManager::setPlayerTransform(_playerTransform);
+	_playerTransform->setLocalRotationAngleY(-90.0f);
 
 	Entity* entity = _entityFactory->createCoin(Vector3(2.0f, 4.0f, -5.0f), Vector3::One);
 	_entityFactory->createCoin(Vector3(2.0f, 0.0f, 0.0f), Vector3::One, entity);
