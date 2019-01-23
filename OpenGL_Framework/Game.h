@@ -71,6 +71,7 @@ private:
 
 	bool collided = false;
 	bool sliding = false;
+	bool slideCheck = false;
 	bool reverse = false;
 
 	float counter = 0.0f;

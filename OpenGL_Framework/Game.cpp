@@ -431,10 +431,14 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 	if (key == 's' && _playerPhysicsBody->getCanJump())
 	{
-		sliding = true;
-		_playerTransform->setLocalScale(0.1f);
-		_playerTransform->setWorldPosition(Vector3(_playerTransform->getLocalPosition().x,
-			_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+		if (!slideCheck)
+		{
+			slideCheck = true;
+			sliding = true;
+			_playerTransform->setLocalScale(0.1f);
+			_playerTransform->setWorldPosition(Vector3(_playerTransform->getLocalPosition().x,
+				_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+		}
 	}
 	if (key == 'i')//up
 	{
@@ -493,6 +497,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	{
 		if (sliding)
 		{
+			slideCheck = false;
 			_playerTransform->setWorldPosition(Vector3(_playerTransform->getWorldPosition().x,
 				_playerTransform->getWorldPosition().y + 0.45f, _playerTransform->getWorldPosition().z));
 			sliding = false;

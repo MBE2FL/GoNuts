@@ -147,7 +147,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		if (otherBody->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			//otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
+			otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
 		}
 	};
 	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
