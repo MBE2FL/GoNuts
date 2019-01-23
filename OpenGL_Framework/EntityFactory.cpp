@@ -157,8 +157,11 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		EntityManager* entityManger = EntityManager::getInstance();
 		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
-		otherBody->setUseGravity(true);
-		otherBody->setCanJump(false);
+		if (otherBody->getTag() == TTag::Player)
+		{
+			otherBody->setUseGravity(true);
+			otherBody->setCanJump(false);
+		}
 	};
 
 

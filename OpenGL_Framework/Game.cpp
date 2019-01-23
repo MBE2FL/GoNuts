@@ -266,11 +266,7 @@ void Game::update()
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
-
-
 	//dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
-
-
 
 	//particleTrail->getParent()->update(deltaTime);
 	//player.getParent()->update(deltaTime);
