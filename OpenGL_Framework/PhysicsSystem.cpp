@@ -23,7 +23,7 @@ void PhysicsSystem::update(float deltaTime)
 
 	vector<PhysicsBodyComponent*>::iterator it;
 
-	for (it = physicsBodies.begin(); it != physicsBodies.end(); it++)
+	for (it = physicsBodies.begin(); it != physicsBodies.end(); ++it)
 	{
 		// Get the physics body component for the current entity.
 		PhysicsBodyComponent* physicsBodyOne = *it;
@@ -33,7 +33,7 @@ void PhysicsSystem::update(float deltaTime)
 		// Check if there is another physics body.
 		// Check current entity's physics body with every other entity's physics body, behind it in the vector.
 		vector<PhysicsBodyComponent*>::iterator nextIt = it;
-		nextIt++;
+		++nextIt;
 		while (nextIt != physicsBodies.end())
 		{
 			// Get the physics body component for the other entity.
@@ -41,7 +41,7 @@ void PhysicsSystem::update(float deltaTime)
 			PhysicsBodyComponent* physicsBodyTwo = *nextIt;
 			if (!physicsBodyTwo || !physicsBodyTwo->getActive())
 			{
-				nextIt++;
+				++nextIt;
 				continue;
 			}
 
@@ -57,7 +57,7 @@ void PhysicsSystem::update(float deltaTime)
 				addCollision(collision);
 			}
 
-			nextIt++;
+			++nextIt;
 		}
 	}
 

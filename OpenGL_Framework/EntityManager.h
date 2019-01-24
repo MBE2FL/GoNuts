@@ -27,15 +27,18 @@ using std::unordered_map;
 class EntityManager
 {
 public:
+	EntityManager();
 	~EntityManager();
 	static EntityManager* getInstance();
+	static void setInstance(EntityManager* entityManager);
 
 	Entity* createEntity();
 	void addComponent(Component* component, Entity* entity);
 	//Component* getComponent(ComponentType compType, const Entity* entity);
 	template<typename T>
 	T getComponent(ComponentType compType, Entity* entity);
-	void removeEntity(Entity* entity);
+	void deleteEntity(Entity* entity);
+	void deleteEntities(const vector<Entity*>& entities);
 	vector<Entity*> getAllEntitiesWithComponent(ComponentType compType);
 	//template<typename T>
 	//vector<T> getAllComponentsOfType(ComponentType type);
@@ -43,6 +46,7 @@ public:
 	vector<TransformComponent*> getAllTransforms() const;
 	vector<MeshRendererComponent*> getAllMeshRenderers() const;
 	Entity* getEntity(const unsigned int eid);
+	vector<Entity*> getEntities() const;
 
 	static void setMainCamera(Entity* camera);
 	static Entity* getMainCamera();
@@ -50,7 +54,6 @@ public:
 	static void setPlayerTransform(TransformComponent* transform);
 
 private:
-	EntityManager();
 	vector<Entity*> _entities;
 	//map<ComponentType, map<unsigned int, Component*>> _components;
 

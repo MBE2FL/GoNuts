@@ -38,12 +38,19 @@ EntityManager::~EntityManager()
 
 EntityManager * EntityManager::getInstance()
 {
-	if (!_instance)
-	{
-		_instance = new EntityManager();
-	}
+	//if (!_instance)
+	//{
+	//	_instance = new EntityManager();
+	//}
+
+	//return _instance;
 
 	return _instance;
+}
+
+void EntityManager::setInstance(EntityManager * entityManager)
+{
+	_instance = entityManager;
 }
 
 Entity * EntityManager::createEntity()
@@ -119,7 +126,7 @@ void EntityManager::addComponent(Component * component, Entity * entity)
 //	}
 //}
 
-void EntityManager::removeEntity(Entity * entity)
+void EntityManager::deleteEntity(Entity * entity)
 {
 	//// Remove the entity.
 	//for (unsigned int i = 0; i < _entities.size(); i++)
@@ -150,6 +157,10 @@ void EntityManager::removeEntity(Entity * entity)
 	//		_components.erase(compTypeIt);
 	//	}
 	//}
+}
+
+void EntityManager::deleteEntities(const vector<Entity*>& entities)
+{
 }
 
 vector<Entity*> EntityManager::getAllEntitiesWithComponent(ComponentType compType)
@@ -206,6 +217,11 @@ Entity * EntityManager::getEntity(const unsigned int eid)
 	}
 
 	return nullptr;
+}
+
+vector<Entity*> EntityManager::getEntities() const
+{
+	return _entities;
 }
 
 void EntityManager::setMainCamera(Entity * camera)

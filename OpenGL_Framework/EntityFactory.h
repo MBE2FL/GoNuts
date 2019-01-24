@@ -42,6 +42,8 @@ public:
 	int getAcornCount() { return acornCount; }
 	void plusAcorn() { acornCount++; }
 
+	void setEntityManager();
+
 private:
 	EntityManager* _entityManager;
 	static EntityFactory* _instance;

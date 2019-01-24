@@ -239,6 +239,16 @@ void Mesh::setFilename(const string & filename)
 	_filename = filename;
 }
 
+string Mesh::getName() const
+{
+	return _name;
+}
+
+void Mesh::setName(const string & name)
+{
+	_name = name;
+}
+
 void Mesh::computeMinMax(const Vector3 & vertex)
 {
 	// Found new max x

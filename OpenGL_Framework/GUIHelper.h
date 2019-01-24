@@ -24,6 +24,8 @@ public:
 	void init(float width, float height);
 	void draw();
 
+	void update();
+
 private:
 	static GUIHelper* _instance;
 	bool _showSceneEditor = false;
