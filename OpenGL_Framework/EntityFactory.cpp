@@ -35,7 +35,7 @@ Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& sca
 	{
 		TransformComponent* parentTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, parent);
 		parentTransform->addChild(transform);
-		parentTransform->setName("P " + name + " " + std::to_string(entity->getEid()));
+		//parentTransform->setName("P " + name + " " + std::to_string(entity->getEid()));
 	}
 
 	// Add the transform component to the entity.
@@ -523,6 +523,11 @@ void EntityFactory::createBackgrounds(const unsigned int amount, const Vector3 &
 
 		entity = createBackground(newPos, scale);//, createEmpty(newPos));
 	}
+}
+
+void EntityFactory::setEntityManager()
+{
+	_entityManager = EntityManager::getInstance();
 }
 
 EntityFactory::EntityFactory()

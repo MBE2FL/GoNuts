@@ -5,32 +5,22 @@
 #include "GameObject.h"
 #include "ObjectLoader.h"
 
-#include <windows.h>
-#include "GL/glew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+//#include <windows.h>
+//#include "GL/glew.h"
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+//#include <GL/glut.h>
 
 #include "Timer.h"
 #include "Transform.h"
 //#include "Camera.h"
 #include "ParticleEmitter.h"
 
-#include "GUIHelper.h"
+//#include "GUIHelper.h"
 
 
-#include "TransformSystem.h"
-#include "MeshRendererSystem.h"
-#include "PhysicsSystem.h"
-#include "EntityFactory.h"
+#include "SceneManager.h"
 
-
-#define WINDOW_WIDTH			1900
-#define WINDOW_HEIGHT			1000
-#define FRAMES_PER_SECOND		60
-#define FIXED_DELTA_TIME		0.01667f
-
-const int FRAME_DELAY_SPRITE = 1000 / FRAMES_PER_SECOND;
 
 class Game
 {
@@ -42,7 +32,7 @@ public:
 	void update();
 	void draw();
 
-	void imguiDraw();
+	/*void imguiDraw();*/
 
 	/* input callback functions */
 	void keyboardDown(unsigned char key, int mouseX, int mouseY);
@@ -75,31 +65,9 @@ private:
 
 	float counter = 0.0f;
 
-	Light* light;
-	Light* spotLight;
 
-	EntityManager* _entityManager;
-	TransformSystem* _transformSystem;
-	MeshRendererSystem* _meshRendererSystem;
-	PhysicsSystem* _physicsSystem;
-	EntityFactory* _entityFactory;
+	Scene* _currentScene;
 
 	Entity* _testEntity;
 	Entity* _testEntity2;
-
-	TransformComponent* _playerTransform;
-	PhysicsBodyComponent* _playerPhysicsBody;
-	TransformComponent* _mainCameraTransform;
-
-
-	GUIHelper* _guiHelper = nullptr;
-	// ImGui ui stuff ## Will move later on
-	//bool showSceneEditor = false;
-	//bool showPropertyEditor = false;
-	//bool showShaderProgCreator = false;
-	//TransformComponent* currentTransform = nullptr;
-
-	//void drawHierarchy();
-	//void drawHierarchyHelper(TransformComponent* transform);
-	//void propertyEditor(TransformComponent* transform, bool* open);
 };
