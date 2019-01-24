@@ -750,14 +750,16 @@ int Scene::storeEntityCallback(void * data, int numCols, char ** rowFields, char
 }
 int Scene::storeTransformCallback(void * data, int numRows, char ** rowFields, char ** colNames)
 {
-	TransformComponent* transform = static_cast<TransformComponent*>(data);
+	//TransformComponent* transform = static_cast<TransformComponent*>(data);
+	TransformComponent* transform = new TransformComponent();
 	char* name = rowFields[1];
 	Vector3 pos = Vector3(stof(rowFields[2]), stof(rowFields[3]), stof(rowFields[4]));
 	Vector3 rot = Vector3(stof(rowFields[5]), stof(rowFields[6]), stof(rowFields[7]));
 	Vector3 orbRot = Vector3(stof(rowFields[8]), stof(rowFields[9]), stof(rowFields[10]));
 	Vector3 scale = Vector3(stof(rowFields[11]), stof(rowFields[12]), stof(rowFields[13]));
 	//string parent = rowFields[14];
-	//string children = rowFields[15];
+	string children = rowFields[15];
+	vector<string> childrenNames;
 
 
 	transform->setName(name);
@@ -766,12 +768,22 @@ int Scene::storeTransformCallback(void * data, int numRows, char ** rowFields, c
 	transform->setOrbitRotation(orbRot);
 	transform->setLocalScale(scale);
 
+	TransformLoad transformLoad;
+	transformLoad.transform = transform;
+	transformLoad.parentName = rowFields[14];
+
+	
+	transformLoad.childrenNames;
+
+	static_cast<vector<TransformLoad>*>(data)->push_back(transformLoad);
+
 	return 0;
 }
 void Scene::loadEntities(sqlite3 * db, char * errMsg)
 {
 	string sql = "SELECT * FROM Entities;";
 	int exit = 0;
+	vector<TransformLoad> transformLoads;
 
 
 	exit = sqlite3_exec(db, sql.c_str(), storeEntityCallback, &_entityLoads, &errMsg);
@@ -791,7 +803,11 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 
 		TransformComponent* transform = new TransformComponent();
 
-		exit = sqlite3_exec(db, sql.c_str(), storeTransformCallback, transform, &errMsg);
-		transform->getLocalPosition();
+		exit = sqlite3_exec(db, sql.c_str(), storeTransformCallback, &transformLoads, &errMsg);
+
+		TransformLoad transformLoad;
+		transformLoad.transform = transform;
+		
+		if (transform->getParent())
 	}
 }
