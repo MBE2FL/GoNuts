@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
+#include "Animation.h"
 
 class MeshRendererComponent : public Component
 {
@@ -23,10 +24,18 @@ public:
 	void removeTexture(unsigned int index);
 	bool getIsTransparent() const;
 	void setIsTransparent(const bool transparent);
+	bool getIsAnimated() const;
+	void setIsAnimated(const bool animated);
+	Animation* getAnimation() const;
+	void setAnimation(Animation* animation);
+	void addMesh(const string & meshName, const int totalMeshes);
+
 
 private:
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	vector<Texture*> _textures;
+	Animation* _animation = nullptr;
 	bool _isTransparent = false;
+	bool _isAnimated = false;
 };
