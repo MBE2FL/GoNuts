@@ -30,6 +30,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
 	ObjectLoader::loadMesh("Building", "./Assets/Models/Building Model.obj");
+	ObjectLoader::loadMesh("Building 2", "./Assets/Models/Building 2.obj");
 	ObjectLoader::loadMesh("Button", "./Assets/Models/button_final_unwrap.obj");
 	ObjectLoader::loadMesh("Chair", "./Assets/Models/chair_final_unwrap.obj");
 	ObjectLoader::loadMesh("Checkpoint Squirrel", "./Assets/Models/checkpointsquirrel_unwrap.obj");
@@ -59,6 +60,10 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/new_background.png");
 	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
+	ObjectLoader::loadTexture("Building 2", "./Assets/Textures/texture Building 2.png");
+	ObjectLoader::loadTexture("Building 3", "./Assets/Textures/texture 2 Building 2.png");
+	ObjectLoader::loadTexture("Building 4", "./Assets/Textures/texture 3 Building 2.png");
+	ObjectLoader::loadTexture("Building 5", "./Assets/Textures/texture 2 Building 2 with brick.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture.png");
 	ObjectLoader::loadTexture("Billboard1", "./Assets/Textures/Billboard_Texture1.png");
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
