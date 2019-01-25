@@ -77,6 +77,12 @@ void GUIHelper::draw()
 	ImGui::End();
 }
 
+void GUIHelper::update()
+{
+	_entityManager = EntityManager::getInstance();
+	_entityFactory = EntityFactory::getInstance();
+}
+
 void GUIHelper::drawHierarchy()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3.0f);

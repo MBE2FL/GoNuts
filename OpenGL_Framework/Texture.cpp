@@ -136,3 +136,13 @@ void Texture::unBind(int textureSlot) const
 	glActiveTexture(GL_TEXTURE0 + textureSlot);
 	this->unBind();
 }
+
+string Texture::getName() const
+{
+	return _name;
+}
+
+void Texture::setName(const string & name)
+{
+	_name = name;
+}

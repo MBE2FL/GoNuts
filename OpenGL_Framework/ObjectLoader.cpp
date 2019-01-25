@@ -46,6 +46,7 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file)
 	{
 		// Load mesh
 		Mesh* mesh = new Mesh();
+		mesh->setName(meshName);
 		if (!mesh->loadFromFile(file))
 		{
 			cout << "Model failed to load." << endl;
@@ -81,7 +82,8 @@ void ObjectLoader::loadTexture(const string & texName, const string & file)
 	if (_textures.count(texName) == 0)
 	{
 		// Load mesh
-		Texture* texture = new Texture();;
+		Texture* texture = new Texture();
+		texture->setName(texName);
 		// Load shaders
 		if (!texture->load(file))
 		{

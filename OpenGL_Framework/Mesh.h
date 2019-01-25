@@ -42,6 +42,8 @@ public:
 
 	string getFilename() const;
 	void setFilename(const string& filename);
+	string getName() const;
+	void setName(const string& name);
 
 	// OpenGL buffers and objects
 	GLuint VBO_Vertices = GL_NONE;
@@ -54,6 +56,7 @@ private:
 	unsigned int _numVertices = 0;
 
 	string _filename;
+	string _name;
 
 	MeshBounds _meshBounds;
 	Vector3 minPoint;

@@ -30,6 +30,8 @@
 #include "GL/glew.h"
 #include <string>
 
+using std::string;
+
 class Texture
 {
 public:
@@ -51,6 +53,9 @@ public:
 	// Unbinds a specific texture slot
 	void unBind(int textureSlot) const;
 
+	string getName() const;
+	void setName(const string& name);
+
 	std::string filename;
 private:
 	GLuint _TexHandle;
@@ -66,4 +71,6 @@ private:
 	int sizeX;
 	int sizeY;
 	int channels;
+
+	string _name;
 };
