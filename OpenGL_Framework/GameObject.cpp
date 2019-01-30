@@ -5,7 +5,6 @@ GameObject::GameObject(const bool createParent)
 	_transform = new Transform();
 	_mesh = nullptr;
 	_shaderProgram = nullptr;
-	_physicsBody = nullptr;
 
 	if (createParent)
 	{
@@ -20,32 +19,32 @@ GameObject::~GameObject()
 {
 }
 
-Vector3 GameObject::getLocalPosition() const
+vec3 GameObject::getLocalPosition() const
 {
 	return _transform->getLocalPosition();
 }
 
-void GameObject::setLocalPosition(const Vector3 & newPosition)
+void GameObject::setLocalPosition(const vec3 & newPosition)
 {
 	_transform->setLocalPosition(newPosition);
 }
 
-Vector3 GameObject::getWorldPosition() const
+vec3 GameObject::getWorldPosition() const
 {
 	return _transform->getWorldPosition();
 }
 
-void GameObject::setWorldPosition(const Vector3 & newPosition)
+void GameObject::setWorldPosition(const vec3 & newPosition)
 {
 	_transform->setWorldPosition(newPosition);
 }
 
-Matrix44 GameObject::getWorldRotation() const
+mat4 GameObject::getWorldRotation() const
 {
 	return _transform->getWorldRotation();
 }
 
-void GameObject::setWorldRotation(const Matrix44 & newRotation)
+void GameObject::setWorldRotation(const mat4 & newRotation)
 {
 	_transform->setWorldRotation(newRotation);
 }
@@ -80,17 +79,17 @@ void GameObject::setLocalRotationAngleZ(const float newAngle)
 	_transform->setLocalRotationAngleZ(newAngle);
 }
 
-Vector3 GameObject::getLocalScale() const
+vec3 GameObject::getLocalScale() const
 {
 	return _transform->getLocalScale();
 }
 
-void GameObject::setLocalScale(Vector3 newScale)
+void GameObject::setLocalScale(vec3 newScale)
 {
 	_transform->setLocalScale(newScale);
 }
 
-Matrix44 GameObject::getLocalToWorldMatrix() const
+mat4 GameObject::getLocalToWorldMatrix() const
 {
 	//if (_parent)
 	//	return (_parent->getLocalToWorldMatrix() * _transform->getLocalToWorldMatrix());
@@ -119,12 +118,12 @@ void GameObject::update(float deltaTime)
 	//	_transform->getParent()->update(deltaTime);
 
 
-	if (_physicsBody)
-	{
-		_physicsBody->updatePhysicsBody(_transform, deltaTime);
-		if (_transform->getParent())
-			_transform->getParent()->update(deltaTime);
-	}
+	//if (_physicsBody)
+	//{
+	//	_physicsBody->updatePhysicsBody(_transform, deltaTime);
+	//	if (_transform->getParent())
+	//		_transform->getParent()->update(deltaTime);
+	//}
 		
 
 	_transform->update(deltaTime);
@@ -217,7 +216,7 @@ void GameObject::unLoad()
 //	_shaderProgram->sendUniform("uTex", 0);
 //
 //	
-//	_shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
+//	_shaderProgram->sendUniform("lightPosition", cameraInverse * vec4(light->getPosition(), 1.0f));
 //	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
 //	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
 //	_shaderProgram->sendUniform("lightSpecular", light->getSpecular());
@@ -226,8 +225,8 @@ void GameObject::unLoad()
 //	_shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
 //	_shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
 //
-//	_shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
-//	_shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
+//	_shaderProgram->sendUniform("spotLightPosition", cameraInverse * vec4(spotLight->getPosition(), 1.0f));
+//	_shaderProgram->sendUniform("spotLightDirection", vec3(1, 0, 0));
 //	_shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
 //	_shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
 //	_shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
@@ -263,59 +262,6 @@ void GameObject::unLoad()
 //	_shaderProgram->unBind();
 //}
 
-
-void GameObject::addPhysicsBody(const bool _useGravity)
-{
-	_physicsBody = new PhysicsBody(_mesh->getMeshBounds());
-	_physicsBody->setUseGravity(_useGravity);
-}
-
-PhysicsBody* GameObject::getPhysicsBody() const
-{
-	return _physicsBody;
-}
-
-bool GameObject::checkCollisions(GameObject& other)
-{
-	if (_physicsBody)
-		return _physicsBody->collision(other.getPhysicsBody());
-
-	return false;
-}
-
-bool GameObject::checkSpikeCollisions(GameObject & other)
-{
-	if (_physicsBody)
-		return _physicsBody->spikeCollision(other.getPhysicsBody());
-
-	return false;
-}
-
-bool GameObject::checkCoinCollisions(GameObject & other)
-{
-	if (_physicsBody)
-		return _physicsBody->coinCollision(other.getPhysicsBody());
-
-	return false;
-}
-
-void GameObject::addForce(const Vector2 & force)
-{
-	if (_physicsBody)
-		_physicsBody->addForce(force);
-}
-
-void GameObject::useGravity(const bool _useGravity)
-{
-	if (_physicsBody)
-		_physicsBody->setUseGravity(_useGravity);
-}
-
-void GameObject::setVelocity(const Vector2 & velocity)
-{
-	if (_physicsBody)
-		_physicsBody->setVelocity(velocity);
-}
 
 void GameObject::addChild(GameObject * child)
 {

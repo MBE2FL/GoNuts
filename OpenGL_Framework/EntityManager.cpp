@@ -90,8 +90,27 @@ void EntityManager::addComponent(Component * component, Entity * entity)
 	case ComponentType::PhysicsBody:
 	{
 		PhysicsBodyComponent* physicsBody = dynamic_cast<PhysicsBodyComponent*>(component);
+
+		// If this entity has a collider, provide it with the newly added physics body.
+		Collider* collider = _colliderComps[entity];
+		if (collider)
+			collider->setPhysicsBody(physicsBody);
+
 		_physicsBodyComps[entity] = physicsBody;
 		_allPhysicsBodies.push_back(physicsBody);
+		break;
+	}
+	case ComponentType::Collider:
+	{
+		Collider* collider = dynamic_cast<Collider*>(component);
+
+		// If this entity has a physics body, provide it to the newly added collider.
+		PhysicsBodyComponent* physicsBody = _physicsBodyComps[entity];
+		if (physicsBody)
+			collider->setPhysicsBody(physicsBody);
+
+		_colliderComps[entity] = collider;
+		_allColliders.push_back(collider);
 		break;
 	}
 	case ComponentType::Camera:
@@ -201,6 +220,11 @@ vector<TransformComponent*> EntityManager::getAllTransforms() const
 vector<MeshRendererComponent*> EntityManager::getAllMeshRenderers() const
 {
 	return _allMeshRenderers;
+}
+
+vector<Collider*> EntityManager::getAllColliders() const
+{
+	return _allColliders;
 }
 
 Entity * EntityManager::getEntity(const unsigned int eid)

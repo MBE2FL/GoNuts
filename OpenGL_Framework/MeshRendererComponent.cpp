@@ -1,5 +1,10 @@
 #include "MeshRendererComponent.h"
 
+MeshRendererComponent::MeshRendererComponent()
+{
+	_type = ComponentType::MeshRenderer;
+}
+
 MeshRendererComponent::MeshRendererComponent(Mesh * mesh, ShaderProgram * shaderProgram, vector<Texture*>& textures)
 	: _mesh(mesh), _shaderProgram(shaderProgram), _textures(textures)
 {

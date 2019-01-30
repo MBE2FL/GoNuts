@@ -11,9 +11,6 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{9967f2e5-91ec-4a03-8195-4fab88564a02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\MathLib">
-      <UniqueIdentifier>{2832b72e-a993-403e-a597-00dcb81af9a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{5aff77f5-1f75-42aa-aeee-ceae156f4f40}</UniqueIdentifier>
     </Filter>
@@ -41,6 +38,15 @@
     <Filter Include="Source Files\EntitySystem\Systems">
       <UniqueIdentifier>{540b1d47-4df1-4f28-b10c-c7e3034c278c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\EntitySystem\Components\Colliders">
+      <UniqueIdentifier>{e62d6862-f3f5-4d5e-99f5-1bf7fab2e170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Components\Colliders">
+      <UniqueIdentifier>{4fe41a23-7765-4d35-9361-43be71ee6b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MathLib">
+      <UniqueIdentifier>{34d1392d-d40c-45d7-ac6c-6170f848b7a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -67,30 +73,6 @@
     <ClCompile Include="ObjectLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bounds.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ColliderBounds.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathLib\Matrix33.cpp">
-      <Filter>Header Files\MathLib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathLib\Matrix44.cpp">
-      <Filter>Header Files\MathLib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathLib\Vector2.cpp">
-      <Filter>Header Files\MathLib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathLib\Vector3.cpp">
-      <Filter>Header Files\MathLib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathLib\Vector4.cpp">
-      <Filter>Header Files\MathLib</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -116,9 +98,6 @@
       <Filter>Header Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ParticleEmitter.cpp">
@@ -163,9 +142,6 @@
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Source Files\EntitySystem\Components</Filter>
     </ClCompile>
-    <ClCompile Include="include\MathLib\MathLibCore.cpp">
-      <Filter>Header Files\MathLib</Filter>
-    </ClCompile>
     <ClCompile Include="LightComponent.cpp">
       <Filter>Source Files\EntitySystem\Components</Filter>
     </ClCompile>
@@ -174,6 +150,30 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Source Files\EntitySystem\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\EntitySystem\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\MathLibCore.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\vec2.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\vec3.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\vec4.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\mat4.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\mat3.cpp">
+      <Filter>Header Files\MathLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,36 +197,6 @@
     </ClInclude>
     <ClInclude Include="ObjectLoader.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bounds.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshBounds.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ColliderBounds.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathLib\Matrix33.h">
-      <Filter>Header Files\MathLib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathLib\Matrix44.h">
-      <Filter>Header Files\MathLib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathLib\Vector2.h">
-      <Filter>Header Files\MathLib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathLib\Vector3.h">
-      <Filter>Header Files\MathLib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathLib\Vector4.h">
-      <Filter>Header Files\MathLib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MathLib\MathLibCore.h">
-      <Filter>Header Files\MathLib</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
@@ -259,9 +229,6 @@
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
@@ -314,6 +281,30 @@
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\EntitySystem\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\EntitySystem\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\MathLibCore.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\vec2.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\vec3.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\vec4.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\mat4.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\mat3.h">
+      <Filter>Header Files\MathLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

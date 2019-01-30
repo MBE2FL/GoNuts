@@ -8,42 +8,42 @@ Light::~Light()
 {
 }
 
-Vector3 Light::getPosition() const
+vec3 Light::getPosition() const
 {
 	return _position;
 }
 
-void Light::setPosition(const Vector3 & position)
+void Light::setPosition(const vec3 & position)
 {
 	_position = position;
 }
 
-Vector3 Light::getAmbient() const
+vec3 Light::getAmbient() const
 {
 	return _ambient;
 }
 
-void Light::setAmbient(const Vector3 & ambient)
+void Light::setAmbient(const vec3 & ambient)
 {
 	_ambient = ambient;
 }
 
-Vector3 Light::getDiffuse() const
+vec3 Light::getDiffuse() const
 {
 	return _diffuse;
 }
 
-void Light::setDiffuse(const Vector3 & diffuse)
+void Light::setDiffuse(const vec3 & diffuse)
 {
 	_diffuse = diffuse;
 }
 
-Vector3 Light::getSpecular() const
+vec3 Light::getSpecular() const
 {
 	return _specular;
 }
 
-void Light::setSpecular(const Vector3 & specular)
+void Light::setSpecular(const vec3 & specular)
 {
 	_specular = specular;
 }

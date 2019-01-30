@@ -1,52 +1,53 @@
 #include "CameraComponent.h"
 
+
 CameraComponent::CameraComponent()
 {
 	_type = ComponentType::Camera;
-	perspective(60.0f, 1.0f, 0.1f, 100.0f);
+	setPerspective(60.0f, 1.0f, 0.1f, 100.0f);
 }
 
 CameraComponent::CameraComponent(ProjectionType projType)
 {
 	if (projType == ProjectionType::Perspective)
-		perspective(60.0f, 1.0f, 0.1f, 100.0f);
+		setPerspective(60.0f, 1.0f, 0.1f, 100.0f);
 	else
-		orthographic(-10.0f, 10.0f, 10.0f, 10.0f, -100.0f, 100.0f);
+		setOrthographic(-10.0f, 10.0f, 10.0f, 10.0f, -100.0f, 100.0f);
 }
 
 CameraComponent::~CameraComponent()
 {
 }
 
-void CameraComponent::perspective(const float fovY, const float aspect, const float zNear, const float zFar)
+void CameraComponent::setPerspective(const float fovY, const float aspect, const float zNear, const float zFar)
 {
 	_projType = ProjectionType::Perspective;
-	_projection = Matrix44::PerspectiveProjection(fovY, aspect, zNear, zFar);
+	_projection = mat4::PerspectiveProjection(fovY, aspect, zNear, zFar);
 
 	_near = zNear;
 	_far = zFar;
 	_fov.y = fovY;
-	_fov.x = MathLibCore::toDegrees(atan(tan(MathLibCore::toRadians(_fov.y) * 0.5f) * aspect) * 2.0f);
+	_fov.x = toDegrees(atan(tan(toRadians(_fov.y) * 0.5f) * aspect) * 2.0f);
 	_aspectRatio = aspect;
 }
 
-void CameraComponent::orthographic(const float left, const float right, const float bottom, const float top, const float zNear, const float zFar)
+void CameraComponent::setOrthographic(const float left, const float right, const float bottom, const float top, const float zNear, const float zFar)
 {
 	_projType = ProjectionType::Orthographic;
-	_projection = Matrix44::OrthographicProjection(left, right, bottom, top, zNear, zFar);
+	_projection = mat4::OrthographicProjection(left, right, bottom, top, zNear, zFar);
 
-	_orthoSize = Vector4(left, right, top, bottom);
+	_orthoSize = vec4(left, right, top, bottom);
 	_aspectRatio = (right - left) / (top - bottom);
 	_near = zNear;
 	_far = zFar;
 }
 
-Matrix44 CameraComponent::getView() const
+mat4 CameraComponent::getView() const
 {
-	return Matrix44();
+	return mat4();
 }
 
-Matrix44 CameraComponent::getProjection() const
+mat4 CameraComponent::getProjection() const
 {
 	return _projection;
 }
@@ -66,12 +67,12 @@ void CameraComponent::setCullingActive(const bool cull)
 	_cullingActive = cull;
 }
 
-Vector4 CameraComponent::getOrthoSize() const
+vec4 CameraComponent::getOrthoSize() const
 {
 	return _orthoSize;
 }
 
-Vector2 CameraComponent::getFov() const
+vec2 CameraComponent::getFov() const
 {
 	return _fov;
 }

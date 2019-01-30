@@ -19,14 +19,14 @@ EntityFactory::~EntityFactory()
 {
 }
 
-Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& scale, Entity * parent, const string& name)
+Entity * EntityFactory::createEmpty(const vec3 & position, const vec3& scale, Entity * parent, const string& name)
 {
 	// Create a new entity.
 	Entity* entity = _entityManager->createEntity();
 
 	// Create transform component.
 	TransformComponent* transform = new TransformComponent();
-	transform->setLocalPosition(Vector3(position));
+	transform->setLocalPosition(vec3(position));
 	transform->setLocalScale(scale);
 	transform->setName(name + " " + std::to_string(entity->getEid()));
 
@@ -44,15 +44,15 @@ Entity * EntityFactory::createEmpty(const Vector3 & position, const Vector3& sca
 	return entity;
 }
 
-Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const float fovY, const float aspect, 
+Entity * EntityFactory::createPerspectiveCamera(const vec3 & position, const float fovY, const float aspect, 
 	const float zNear, const float zFar, const string& name)
 {
 	// Create a new empty entity.
-	Entity* entity = createEmpty(position, Vector3::One, nullptr, name);
+	Entity* entity = createEmpty(position, vec3(1.0f), nullptr, name);
 
 	// Create camera component.
 	CameraComponent* camera = new CameraComponent();
-	camera->perspective(fovY, aspect, zNear, zFar);
+	camera->setPerspective(fovY, aspect, zNear, zFar);
 	camera->setCullingActive(true);
 
 	// Add the camera component to the entity.
@@ -62,7 +62,7 @@ Entity * EntityFactory::createPerspectiveCamera(const Vector3 & position, const 
 	return entity;
 }
 
-Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createCoin(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -78,7 +78,7 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 	meshRenderer->setIsTransparent(false);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Coin);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -92,16 +92,19 @@ Entity * EntityFactory::createCoin(const Vector3 & position, const Vector3 & sca
 		selfBody->setUseGravity(true);
 	};
 
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
-
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createPlatform(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -116,7 +119,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Platform);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -126,12 +129,12 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
 		otherBody->setUseGravity(false);
-		//otherBody->setVelocity(Vector3::Zero);
+		//otherBody->setVelocity(vec3(0.0f));
 
 		if (otherBody->getVelocity().y < 0.0f)
 		{
 			float ySpeed = otherBody->getVelocity().y;
-			otherBody->addImpluseForce(Vector3(0.0f, -ySpeed, 0.0f));
+			otherBody->addImpluseForce(vec3(0.0f, -ySpeed, 0.0f));
 
 		}
 
@@ -147,7 +150,7 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		if (otherBody->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			//otherBody->addForce(Vector3(1.2f, 0.0f, 0.0f));
+			//otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
 		}
 	};
 	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
@@ -164,16 +167,18 @@ Entity * EntityFactory::createPlatform(const Vector3 & position, const Vector3 &
 		}
 	};
 
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
-
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createTopPlatform(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createTopPlatform(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -186,7 +191,7 @@ Entity * EntityFactory::createTopPlatform(const Vector3 & position, const Vector
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(ObjectLoader::getMesh("Cube"),
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::TopPlatform);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -199,20 +204,24 @@ Entity * EntityFactory::createTopPlatform(const Vector3 & position, const Vector
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
-			otherBody->setVelocity(Vector3::Zero);
-			otherTrans->setLocalScale(0.2f);
+			otherTrans->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
+			otherBody->setVelocity(vec3(0.0f));
+			otherTrans->setLocalScale(vec3(0.2f));
 		}
 	};
+
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 	// Add the transform component to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createSpike(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -227,7 +236,7 @@ Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & sc
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Spike);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -241,22 +250,25 @@ Entity * EntityFactory::createSpike(const Vector3 & position, const Vector3 & sc
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(Vector3(-3.0f, 4, -5.0f));
-			otherBody->setVelocity(Vector3::Zero);
-			otherTrans->setLocalScale(0.2f);
+			otherTrans->setWorldPosition(vec3(-3.0f, 4, -5.0f));
+			otherBody->setVelocity(vec3(0.0f));
+			otherTrans->setLocalScale(vec3(0.2f));
 		}
 	};
+
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
-
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createCone(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -271,7 +283,7 @@ Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & sca
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Spike);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -285,22 +297,25 @@ Entity * EntityFactory::createCone(const Vector3 & position, const Vector3 & sca
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(Vector3(-3.0f, 8.0f, -5.0f));
-			otherBody->setVelocity(Vector3::Zero);
-			otherTrans->setLocalScale(0.2f);
+			otherTrans->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
+			otherBody->setVelocity(vec3(0.0f));
+			otherTrans->setLocalScale(vec3(0.2f));
 		}
 	};
+
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
-
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createPlayer(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -321,18 +336,22 @@ Entity * EntityFactory::createPlayer(const Vector3 & position, const Vector3 & s
 	meshRenderer->addMesh("TestBoi", 20);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Player);
 	physicsBody->setUseGravity(true);
+
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createAcorn(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -348,7 +367,7 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Coin);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -362,16 +381,18 @@ Entity * EntityFactory::createAcorn(const Vector3 & position, const Vector3 & sc
 		selfBody->setUseGravity(true);
 	};
 
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
-
+	_entityManager->addComponent(collider, entity);
 
 	return entity;
 }
 
-Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createVent(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -386,7 +407,7 @@ Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & sca
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
 	// Physics Body
-	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent(meshRenderer->getMesh()->getMeshBounds());
+	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
 	physicsBody->setTag(TTag::Spike);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
@@ -400,22 +421,25 @@ Entity * EntityFactory::createVent(const Vector3 & position, const Vector3 & sca
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(Vector3(-3.0f, 4, -5.0f));
-			otherBody->setVelocity(Vector3::Zero);
-			otherTrans->setLocalScale(0.2f);
+			otherTrans->setWorldPosition(vec3(-3.0f, 4, -5.0f));
+			otherBody->setVelocity(vec3(0.0f));
+			otherTrans->setLocalScale(vec3(0.2f));
 		}
 	};
 
+	// Collider
+	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
 	_entityManager->addComponent(physicsBody, entity);
+	_entityManager->addComponent(collider, entity);
 
 
 	return entity;
 }
 
-Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3 & scale, Entity * parent, const string& name)
+Entity * EntityFactory::createBackground(const vec3 & position, const vec3 & scale, Entity * parent, const string& name)
 {
 	// Create a new empty entity.
 	Entity* entity = createEmpty(position, scale, parent, name);
@@ -437,97 +461,97 @@ Entity * EntityFactory::createBackground(const Vector3 & position, const Vector3
 	return entity;
 }
 
-void EntityFactory::createPlatforms(const unsigned int amount, const Vector3 & position, const Vector3 & scale)
+void EntityFactory::createPlatforms(const unsigned int amount, const vec3 & position, const vec3 & scale)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x, position.y, position.z);
+		vec3 newPos = vec3(i * position.x, position.y, position.z);
 
 		entity = createPlatform(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createTopPlatforms(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+void EntityFactory::createTopPlatforms(const unsigned int amount, const vec3 & position, const vec3 & scale, const float offset)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+		vec3 newPos = vec3(i * position.x + offset, position.y, position.z);
 
 		entity = createTopPlatform(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createCones(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+void EntityFactory::createCones(const unsigned int amount, const vec3 & position, const vec3 & scale, const float offset)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+		vec3 newPos = vec3(i * position.x + offset, position.y, position.z);
 
 		entity = createCone(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createVents(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+void EntityFactory::createVents(const unsigned int amount, const vec3 & position, const vec3 & scale, const float offset)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+		vec3 newPos = vec3(i * position.x + offset, position.y, position.z);
 
 		entity = createVent(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createSpikes(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+void EntityFactory::createSpikes(const unsigned int amount, const vec3 & position, const vec3 & scale, const float offset)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+		vec3 newPos = vec3(i * position.x + offset, position.y, position.z);
 
 		entity = createSpike(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createCoins(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+void EntityFactory::createCoins(const unsigned int amount, const vec3 & position, const vec3 & scale, const float offset)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+		vec3 newPos = vec3(i * position.x + offset, position.y, position.z);
 
 		entity = createCoin(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createAcorns(const unsigned int amount, const Vector3 & position, const Vector3 & scale, const float offset)
+void EntityFactory::createAcorns(const unsigned int amount, const vec3 & position, const vec3 & scale, const float offset)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x + offset, position.y, position.z);
+		vec3 newPos = vec3(i * position.x + offset, position.y, position.z);
 
 		entity = createAcorn(newPos, scale);//, createEmpty(newPos));
 	}
 }
 
-void EntityFactory::createBackgrounds(const unsigned int amount, const Vector3 & position, const Vector3 & scale)
+void EntityFactory::createBackgrounds(const unsigned int amount, const vec3 & position, const vec3 & scale)
 {
 	Entity* entity;
 
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		Vector3 newPos = Vector3(i * position.x, position.y, position.z);
+		vec3 newPos = vec3(i * position.x, position.y, position.z);
 
 		entity = createBackground(newPos, scale);//, createEmpty(newPos));
 	}

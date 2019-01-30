@@ -2,7 +2,7 @@
 #include "ShaderProgram.h"
 #include "Mesh.h"
 #include <vector>
-#include "MathLib/Vector3.h"
+#include "MathLib/vec3.h"
 #include "ObjectLoader.h"
 
 using std::vector;

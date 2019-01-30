@@ -16,14 +16,14 @@ public:
 	LightComponent();
 	~LightComponent();
 
-	Vector3 getPosition() const;
-	void setPosition(const Vector3& position);
-	Vector3 getAmbient() const;
-	void setAmbient(const Vector3& ambient);
-	Vector3 getDiffuse() const;
-	void setDiffuse(const Vector3& diffuse);
-	Vector3 getSpecular() const;
-	void setSpecular(const Vector3& specular);
+	vec3 getPosition() const;
+	void setPosition(const vec3& position);
+	vec3 getAmbient() const;
+	void setAmbient(const vec3& ambient);
+	vec3 getDiffuse() const;
+	void setDiffuse(const vec3& diffuse);
+	vec3 getSpecular() const;
+	void setSpecular(const vec3& specular);
 	float getSpecularExp() const;
 	void setSpecularExp(const float specularExp);
 	float getAttenuationConstant() const;
@@ -32,20 +32,20 @@ public:
 	void setAttenuationLinear(const float attenuationLinear);
 	float getAttenuationQuadratic() const;
 	void setAttenuationQuadratic(const float attenuationQuadratic);
-	Vector3 getDirection() const;
-	void setDirection(const Vector3& direction);
+	vec3 getDirection() const;
+	void setDirection(const vec3& direction);
 	LightType getLightType() const;
 	void setLightType(LightType type);
 
 private:
-	Vector3 _position;
-	Vector3 _ambient;
-	Vector3 _diffuse;
-	Vector3 _specular;
+	vec3 _position;
+	vec3 _ambient;
+	vec3 _diffuse;
+	vec3 _specular;
 	float _specularExp;
 	float _attenuationConstant;
 	float _attenuationLinear;
 	float _attenuationQuadratic;
-	Vector3 _direction;
+	vec3 _direction;
 	LightType _lightType;
 };

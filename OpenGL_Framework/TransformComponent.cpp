@@ -9,12 +9,12 @@ TransformComponent::~TransformComponent()
 {
 }
 
-void TransformComponent::setLocalPosition(const Vector3 & newPosition)
+void TransformComponent::setLocalPosition(const vec3 & newPosition)
 {
 	_localPosition = newPosition;
 }
 
-void TransformComponent::setLocalRotation(const Vector3 & rotation)
+void TransformComponent::setLocalRotation(const vec3 & rotation)
 {
 	_localRotation = rotation;
 }
@@ -34,7 +34,7 @@ void TransformComponent::setLocalRotationAngleZ(const float newAngle)
 	_localRotation.z = newAngle;
 }
 
-void TransformComponent::setOrbitRotation(const Vector3 & rotation)
+void TransformComponent::setOrbitRotation(const vec3 & rotation)
 {
 	_orbitRotation = rotation;
 }
@@ -54,7 +54,7 @@ void TransformComponent::setOrbitRotationAngleZ(const float newAngle)
 	_orbitRotation.z = newAngle;
 }
 
-void TransformComponent::setLocalScale(const Vector3 newScale)
+void TransformComponent::setLocalScale(const vec3 & newScale)
 {
 	_scale = newScale;
 }
@@ -74,12 +74,12 @@ void TransformComponent::setLocalScaleZ(const float z)
 	_scale.z = z;
 }
 
-Vector3 TransformComponent::getLocalPosition() const
+vec3 TransformComponent::getLocalPosition() const
 {
 	return _localPosition;
 }
 
-Vector3 TransformComponent::getLocalRotation() const
+vec3 TransformComponent::getLocalRotation() const
 {
 	return _localRotation;
 }
@@ -99,7 +99,7 @@ float TransformComponent::getLocalRotationAngleZ() const
 	return _localRotation.z;
 }
 
-Vector3 TransformComponent::getOrbitRotation() const
+vec3 TransformComponent::getOrbitRotation() const
 {
 	return _orbitRotation;
 }
@@ -119,7 +119,7 @@ float TransformComponent::getOrbitRotationAngleZ() const
 	return _orbitRotation.z;
 }
 
-Vector3 TransformComponent::getLocalScale() const
+vec3 TransformComponent::getLocalScale() const
 {
 	return _scale;
 }
@@ -139,23 +139,38 @@ float TransformComponent::getLocalScaleZ() const
 	return _scale.z;
 }
 
-Matrix44 TransformComponent::getLocalToWorldMatrix() const
+mat4 TransformComponent::getLocalTransformMatrix() const
+{
+	return _localTransformMatrix;
+}
+
+mat4 TransformComponent::getLocalRotationMatrix() const
+{
+	return _localRotationMatrix;
+}
+
+mat4 TransformComponent::getOrbitRotationMatrix() const
+{
+	return _orbitRotationMatrix;
+}
+
+mat4 TransformComponent::getLocalToWorldMatrix() const
 {
 	return _localToWorldMatrix;
 }
 
-Vector3 TransformComponent::getWorldPosition()
+vec3 TransformComponent::getWorldPosition() const
 {
 	if (_parent)
 	{
-		Vector4 temp = _parent->getLocalToWorldMatrix() * Vector4(_localPosition, 1.0f);
-		return Vector3(temp.x, temp.y, temp.z);
+		vec4 temp = _parent->getLocalToWorldMatrix() * vec4(_localPosition, 1.0f);
+		return vec3(temp);
 	}
 	else
 		return _localPosition;
 }
 
-void TransformComponent::setWorldPosition(const Vector3 & newPosition)
+void TransformComponent::setWorldPosition(const vec3 & newPosition)
 {
 	if (_parent)
 		_parent->setWorldPosition(newPosition);
@@ -163,7 +178,7 @@ void TransformComponent::setWorldPosition(const Vector3 & newPosition)
 		_localPosition = newPosition;
 }
 
-Matrix44 TransformComponent::getWorldRotation()
+mat4 TransformComponent::getWorldRotation() const
 {
 	if (_parent)
 		return _parent->getWorldRotation() * _localRotationMatrix;
@@ -171,12 +186,20 @@ Matrix44 TransformComponent::getWorldRotation()
 		return _localRotationMatrix;
 }
 
-void TransformComponent::setWorldRotation(const Matrix44 & newRotation)
+void TransformComponent::setWorldRotation(const mat4 & newRotation)
 {
 	if (_parent)
 		_parent->setWorldRotation(newRotation);
 	else
 		_localRotationMatrix = newRotation;
+}
+
+mat4 TransformComponent::getWorldOrbitRotation() const
+{
+	if (_parent)
+		return _parent->getWorldOrbitRotation() * _orbitRotationMatrix;
+	else
+		return _orbitRotationMatrix;
 }
 
 void TransformComponent::setWorldRotationAngleX(const float newAngle)
@@ -208,29 +231,29 @@ void TransformComponent::update(float deltaTime)
 	// Create 4x4 transformation matrix
 
 	// Create rotation matrix
-	Matrix44 rx;
-	Matrix44 ry;
-	Matrix44 rz;
+	mat4 rx;
+	mat4 ry;
+	mat4 rz;
 
-	rx.RotateX(MathLibCore::toRadians(_localRotation.x));
-	ry.RotateY(MathLibCore::toRadians(_localRotation.y));
-	rz.RotateZ(MathLibCore::toRadians(_localRotation.z));
+	rx.rotateX(toRadians(_localRotation.x));
+	ry.rotateY(toRadians(_localRotation.y));
+	rz.rotateZ(toRadians(_localRotation.z));
 	// Note: pay attention to rotation order, ZYX is not the same as XYZ
 	_localRotationMatrix = rz * ry * rx;
 
 	// Create translation matrix
-	Matrix44 tran;
-	tran.Translate(_localPosition);
+	mat4 tran;
+	tran.translate(_localPosition);
 	//std::cout << "Position: X: " << m_pLocalPosition.x << " Y: " << m_pLocalPosition.y << " Z: " << m_pLocalPosition.z << std::endl;
 
 	// Create scale matrix
-	Matrix44 scale;
-	scale.Scale(_scale);
+	mat4 scale;
+	scale.scale(_scale);
 
 
-	rx.RotateX(MathLibCore::toRadians(_orbitRotation.x));
-	ry.RotateY(MathLibCore::toRadians(_orbitRotation.y));
-	rz.RotateZ(MathLibCore::toRadians(_orbitRotation.z));
+	rx.rotateX(toRadians(_orbitRotation.x));
+	ry.rotateY(toRadians(_orbitRotation.y));
+	rz.rotateZ(toRadians(_orbitRotation.z));
 	_orbitRotationMatrix = rz * ry* rx;
 
 	// Combine all above transforms into a single matrix
@@ -264,7 +287,8 @@ void TransformComponent::addChild(TransformComponent * child)
 
 void TransformComponent::setParent(TransformComponent * parent)
 {
-	_parent = parent;
+	//_parent = parent;
+	parent->addChild(this);
 }
 
 TransformComponent * TransformComponent::getParent() const
@@ -290,4 +314,24 @@ string TransformComponent::getName() const
 void TransformComponent::setName(const string & name)
 {
 	_name = name;
+}
+
+vec3 TransformComponent::getTranslation() const
+{
+	return _localToWorldMatrix.getTranslation();
+}
+
+vec3 TransformComponent::getForward() const
+{
+	return _localToWorldMatrix.getForward();
+}
+
+vec3 TransformComponent::getUp() const
+{
+	return _localToWorldMatrix.getUp();
+}
+
+vec3 TransformComponent::getLeft() const
+{
+	return _localToWorldMatrix.getLeft();
 }

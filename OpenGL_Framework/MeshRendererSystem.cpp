@@ -24,7 +24,7 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 	// Retrieve the necessary camera details.
 	_cameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, mainCamera);
 	_cameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
-	Matrix44 cameraInverse = _cameraTrans->getLocalToWorldMatrix().GetInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
+	mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
 
 
 	// Sort the vector, so all the transparent meshes are at the back of the vector.
@@ -71,12 +71,12 @@ void MeshRendererSystem::cull(vector<MeshRendererComponent*>& cullList, vector<M
 			{
 				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
 
-				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation();
-				float distance = direction.Length();
+				vec3 direction = _cameraTrans->getTranslation() - transform->getTranslation();
+				float distance = static_cast<float>(direction.length());
 				direction /= distance;
-				Vector3 forward = _cameraTrans->getLocalToWorldMatrix().getForward();
+				vec3 forward = _cameraTrans->getForward();
 
-				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.8f))
+				if (vec3::dot(direction, forward) > cos(toRadians(_cameraComp->getFov().x * 0.8f))
 					&& (distance < (_cameraComp->getFar() * 1.4f)))
 				{
 					cullList.push_back(meshRenderer);
@@ -92,12 +92,12 @@ void MeshRendererSystem::cull(vector<MeshRendererComponent*>& cullList, vector<M
 			{
 				transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
 
-				Vector3 direction = _cameraTrans->getLocalToWorldMatrix().getTranslation() - transform->getLocalToWorldMatrix().getTranslation() - Vector3(0.0f, 0.0f, -20.0f);
-				float distance = direction.Length();
+				vec3 direction = _cameraTrans->getTranslation() - transform->getTranslation() - vec3(0.0f, 0.0f, -20.0f);
+				float distance = static_cast<float>(direction.length());
 				direction /= distance;
-				Vector3 forward = _cameraTrans->getLocalToWorldMatrix().getForward();
+				vec3 forward = _cameraTrans->getForward();
 				forward.z -= 20.0f;
-				if (Vector3::dot(direction, forward) > cos(MathLibCore::toRadians(_cameraComp->getFov().x * 0.5f))
+				if (vec3::dot(direction, forward) > cos(toRadians(_cameraComp->getFov().x * 0.5f))
 					&& (distance < (_cameraComp->getFar() * 1.4f + 20.0f)))
 				{
 					cullList.push_back(meshRenderer);
@@ -117,8 +117,8 @@ void MeshRendererSystem::cull(vector<MeshRendererComponent*>& cullList, vector<M
 //	TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a);
 //	TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b);
 //
-//	float distanceA = Vector3::distance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
-//	float distanceB = Vector3::distance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+//	float distanceA = vec3::distance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+//	float distanceB = vec3::distance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
 //
 //	return distanceA < distanceB;
 //}
@@ -140,7 +140,7 @@ void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 	//// Sort opaque objects.
 	//if (!isTrans)
 	//{
-	//	Vector3 camPos = _cameraTrans->getWorldPosition();
+	//	vec3 camPos = _cameraTrans->getWorldPosition();
 
 	//	// Perspetive sort
 	//	if (_cameraComp->getProjType() == Perspective)
@@ -162,7 +162,7 @@ void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 	// Perspetive sort.
 	if (_cameraComp->getProjType() == Perspective)
 	{
-		Vector3 camPos = _cameraTrans->getWorldPosition();
+		vec3 camPos = _cameraTrans->getWorldPosition();
 
 		sort(cullList.begin(), cullList.end(), [camPos](MeshRendererComponent* a, MeshRendererComponent* b) -> bool
 		{
@@ -170,8 +170,8 @@ void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a->getEntity());
 			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b->getEntity());
 
-			float sqrDistanceA = Vector3::sqrDistance(aTrans->getLocalToWorldMatrix().getTranslation(), camPos);
-			float sqrDistanceB = Vector3::sqrDistance(bTrans->getLocalToWorldMatrix().getTranslation(), camPos);
+			float sqrDistanceA = vec3::sqrDistance(aTrans->getTranslation(), camPos);
+			float sqrDistanceB = vec3::sqrDistance(bTrans->getTranslation(), camPos);
 
 			return sqrDistanceA > sqrDistanceB;
 		});
@@ -179,7 +179,7 @@ void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 	// Orthographic sort.
 	else
 	{
-		Matrix44 camView = _cameraTrans->getLocalToWorldMatrix();
+		mat4 camView = _cameraTrans->getLocalToWorldMatrix();
 
 		sort(cullList.begin(), cullList.end(), [camView](MeshRendererComponent* a, MeshRendererComponent* b) -> bool
 		{
@@ -187,7 +187,7 @@ void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 			TransformComponent* aTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, a->getEntity());
 			TransformComponent* bTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, b->getEntity());
 
-			float distanceA = (camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
+			float distanceA =(camView * aTrans->getLocalToWorldMatrix()).getTranslation().z;
 			float distanceB = (camView * bTrans->getLocalToWorldMatrix()).getTranslation().z;
 
 			return distanceA > distanceB;
@@ -197,7 +197,7 @@ void MeshRendererSystem::sortMeshes(vector<MeshRendererComponent*>& cullList)
 
 }
 
-void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse)
+void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, mat4& cameraInverse)
 {
 	//vector<Entity*> lightEntities = _entityManager->getAllEntitiesWithComponent(ComponentType::Light);
 
@@ -224,9 +224,9 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 		// Both components exist, so draw the mesh.
 		// Bind and send all the uniforms to the shader program.
 		shaderProgram->bind();
-		shaderProgram->sendUniformMat4("uModel", transform->getLocalToWorldMatrix().mV, false);
-		shaderProgram->sendUniformMat4("uView", cameraInverse.mV, false);
-		shaderProgram->sendUniformMat4("uProj", _cameraComp->getProjection().mV, false);
+		shaderProgram->sendUniformMat4("uModel", transform->getLocalToWorldMatrix().data, false);
+		shaderProgram->sendUniformMat4("uView", cameraInverse.data, false);
+		shaderProgram->sendUniformMat4("uProj", _cameraComp->getProjection().data, false);
 
 		shaderProgram->sendUniform("uTex", 0);
 
@@ -238,7 +238,7 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 
 			if (light->getLightType() == LightType::Directional)
 			{
-				shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
+				shaderProgram->sendUniform("lightPosition", cameraInverse * vec4(light->getPosition(), 1.0f));
 				shaderProgram->sendUniform("lightAmbient", light->getAmbient());
 				shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
 				shaderProgram->sendUniform("lightSpecular", light->getSpecular());
@@ -249,8 +249,8 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 			}
 			else
 			{
-				shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
-				shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
+				shaderProgram->sendUniform("spotLightPosition", cameraInverse * vec4(spotLight->getPosition(), 1.0f));
+				shaderProgram->sendUniform("spotLightDirection", vec3(1, 0, 0));
 				shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
 				shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
 				shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
@@ -261,7 +261,7 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 			}
 		}*/
 
-		shaderProgram->sendUniform("lightPosition", cameraInverse * Vector4(light->getPosition(), 1.0f));
+		shaderProgram->sendUniform("lightPosition", cameraInverse * vec4(light->getPosition(), 1.0f));
 		shaderProgram->sendUniform("lightAmbient", light->getAmbient());
 		shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
 		shaderProgram->sendUniform("lightSpecular", light->getSpecular());
@@ -270,8 +270,8 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 		shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
 		shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
 
-		shaderProgram->sendUniform("spotLightPosition", cameraInverse * Vector4(spotLight->getPosition(), 1.0f));
-		shaderProgram->sendUniform("spotLightDirection", Vector3(1, 0, 0));
+		shaderProgram->sendUniform("spotLightPosition", cameraInverse * vec4(spotLight->getPosition(), 1.0f));
+		shaderProgram->sendUniform("spotLightDirection", vec3(1, 0, 0));
 		shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
 		shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
 		shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());

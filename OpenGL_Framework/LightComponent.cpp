@@ -9,42 +9,42 @@ LightComponent::~LightComponent()
 {
 }
 
-Vector3 LightComponent::getPosition() const
+vec3 LightComponent::getPosition() const
 {
 	return _position;
 }
 
-void LightComponent::setPosition(const Vector3 & position)
+void LightComponent::setPosition(const vec3 & position)
 {
 	_position = position;
 }
 
-Vector3 LightComponent::getAmbient() const
+vec3 LightComponent::getAmbient() const
 {
 	return _ambient;
 }
 
-void LightComponent::setAmbient(const Vector3 & ambient)
+void LightComponent::setAmbient(const vec3 & ambient)
 {
 	_ambient = ambient;
 }
 
-Vector3 LightComponent::getDiffuse() const
+vec3 LightComponent::getDiffuse() const
 {
 	return _diffuse;
 }
 
-void LightComponent::setDiffuse(const Vector3 & diffuse)
+void LightComponent::setDiffuse(const vec3 & diffuse)
 {
 	_diffuse = diffuse;
 }
 
-Vector3 LightComponent::getSpecular() const
+vec3 LightComponent::getSpecular() const
 {
 	return _specular;
 }
 
-void LightComponent::setSpecular(const Vector3 & specular)
+void LightComponent::setSpecular(const vec3 & specular)
 {
 	_specular = specular;
 }
@@ -89,12 +89,12 @@ void LightComponent::setAttenuationQuadratic(const float attenuationQuadratic)
 	_attenuationQuadratic = attenuationQuadratic;
 }
 
-Vector3 LightComponent::getDirection() const
+vec3 LightComponent::getDirection() const
 {
 	return _direction;
 }
 
-void LightComponent::setDirection(const Vector3 & direction)
+void LightComponent::setDirection(const vec3 & direction)
 {
 	_direction = direction;
 }

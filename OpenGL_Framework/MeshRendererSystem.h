@@ -29,5 +29,5 @@ private:
 	vector<MeshRendererComponent*> _transObjects;
 	vector<MeshRendererComponent*> _transCullList;
 
-	void drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, Matrix44& cameraInverse);
+	void drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, mat4& cameraInverse);
 };

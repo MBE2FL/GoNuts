@@ -13,6 +13,7 @@
 #include "MeshRendererSystem.h"
 #include "PhysicsSystem.h"
 #include "GUIHelper.h"
+#include <sstream>
 
 
 #define WINDOW_WIDTH			1900
@@ -23,6 +24,10 @@ const int FRAME_DELAY_SPRITE = 1000 / FRAMES_PER_SECOND;
 #define FIXED_DELTA_TIME		0.01667f
 
 using std::stof;
+using std::stoi;
+using std::istringstream;
+using std::getline;
+using MathUtils::lerp;
 
 
 struct EntityLoad
@@ -37,7 +42,6 @@ struct TransformLoad
 {
 	TransformComponent* transform = nullptr;
 	string parentName = "";
-	vector<string> childrenNames;
 };
 
 
@@ -85,15 +89,16 @@ private:
 
 	bool sliding = false;
 
-	void errorCheck(sqlite3* db, char* errMsg);
+	void errorCheck(char* success, char* failure, char* errMsg);
 	void saveTransforms(sqlite3* db, char* errMsg);
 	void saveMeshRenderers(sqlite3* db, char* errMsg);
 	void savePhysicsBodies(sqlite3* db, char* errMsg);
 	void saveEntities(sqlite3* db, char* errMsg);
 
-	static int storeEntityCallback(void* data, int numRows, char** rowFields, char** colNames);
-	static int storeTransformCallback(void* data, int numRows, char** rowFields, char** colNames);
-	//static int loadTransformCallback
+	static int loadEntityCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadTransformCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadMeshRendererCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadPhysicsBodyCallback(void* data, int numRows, char** rowFields, char** colNames);
 	void loadEntities(sqlite3* db, char* errMsg);
 
 	vector<EntityLoad> _entityLoads;

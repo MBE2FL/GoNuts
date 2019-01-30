@@ -1,7 +1,7 @@
 #pragma once
 
 #include "System.h"
-#include "PhysicsBodyComponent.h"
+#include "BoxCollider.h"
 
 
 struct Collision
@@ -27,6 +27,10 @@ private:
 	vector<Collision*> _collisions;
 
 	void addCollision(Collision* collision);
-	bool checkCollision(PhysicsBodyComponent* physicsBodyOne, PhysicsBodyComponent* physicsBodyTwo);
+	bool checkAABBCollision(Collider* colliderOne, Collider* colliderTwo);
+	bool checkSATCollision(Collider* colliderOne, Collider* colliderTwo);
 	void verifyCollisions();
+
+	void calculateFaceNormals(vec3* faceNormals, const vec3* vertices);
+	void calculateEdgeNormals(vec3* edgeNormals, vec3* faceNormalsOne, vec3* faceNormalsTwo);
 };

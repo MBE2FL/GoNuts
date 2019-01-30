@@ -65,9 +65,9 @@ bool Mesh::loadFromFile(const string & file)
 	char inputString[CHAR_BUFFER_SIZE];
 
 	// Unique data
-	vector<Vector3> vertexData;
-	vector<Vector2> textureData;
-	vector<Vector3> normalData;
+	vector<vec3> vertexData;
+	vector<vec2> textureData;
+	vector<vec3> normalData;
 
 	// Index/face data
 	vector<MeshFace> faceData;
@@ -89,7 +89,7 @@ bool Mesh::loadFromFile(const string & file)
 		// Found a normal
 		else if (strstr(inputString, "vn") != nullptr)
 		{
-			Vector3 temp;
+			vec3 temp;
 
 			sscanf(inputString, "vn %f %f %f", &temp.x, &temp.y, &temp.z);
 			normalData.push_back(temp);
@@ -97,7 +97,7 @@ bool Mesh::loadFromFile(const string & file)
 		// Found a texture UV
 		else if (strstr(inputString, "vt") != nullptr)
 		{
-			Vector2 temp;
+			vec2 temp;
 
 			sscanf(inputString, "vt %f %f", &temp.x, &temp.y);
 			textureData.push_back(temp);
@@ -105,7 +105,7 @@ bool Mesh::loadFromFile(const string & file)
 		// Found a vertex
 		else if (strstr(inputString, "v") != nullptr)
 		{
-			Vector3 temp;
+			vec3 temp;
 
 			sscanf(inputString, "v %f %f %f", &temp.x, &temp.y, &temp.z);
 			vertexData.push_back(temp);
@@ -130,7 +130,9 @@ bool Mesh::loadFromFile(const string & file)
 	input.close();
 
 	// Create the mesh bounding box for this mesh
-	_meshBounds = MeshBounds(minPoint.x, maxPoint.x, minPoint.y, maxPoint.y, minPoint.z, maxPoint.z);
+	vec3 size = maxPoint - minPoint;
+	vec3 centre = size * 0.5f;
+	_meshBounds = Bounds(centre, size);
 
 	// Unpack the data
 	for (unsigned i = 0; i < faceData.size(); i++)
@@ -224,7 +226,7 @@ GLuint Mesh::getVBO_Verts()
 	return VBO_Vertices;
 }
 
-MeshBounds Mesh::getMeshBounds() const
+Bounds Mesh::getMeshBounds() const
 {
 	return _meshBounds;
 }
@@ -249,7 +251,7 @@ void Mesh::setName(const string & name)
 	_name = name;
 }
 
-void Mesh::computeMinMax(const Vector3 & vertex)
+void Mesh::computeMinMax(const vec3 & vertex)
 {
 	// Found new max x
 	if (vertex.x > maxPoint.x)

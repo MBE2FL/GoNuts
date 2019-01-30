@@ -2,10 +2,11 @@
 
 #include "Entity.h"
 #include "Component.h"
+#include "CameraComponent.h"
 #include "TransformComponent.h"
 #include "MeshRendererComponent.h"
 #include "PhysicsBodyComponent.h"
-#include "CameraComponent.h"
+#include "Collider.h"
 
 #include <map>
 #include <unordered_set>
@@ -39,19 +40,27 @@ public:
 	T getComponent(ComponentType compType, Entity* entity);
 	void deleteEntity(Entity* entity);
 	void deleteEntities(const vector<Entity*>& entities);
+
+	// #### Get all component functions ####
 	vector<Entity*> getAllEntitiesWithComponent(ComponentType compType);
 	//template<typename T>
 	//vector<T> getAllComponentsOfType(ComponentType type);
 	vector<PhysicsBodyComponent*> getAllPhysicsBodyComponents() const;
 	vector<TransformComponent*> getAllTransforms() const;
 	vector<MeshRendererComponent*> getAllMeshRenderers() const;
+	vector<Collider*> getAllColliders() const;
+	// #### Get all component functions ####
+
 	Entity* getEntity(const unsigned int eid);
 	vector<Entity*> getEntities() const;
 
+
+	// #### Useful specific funtions ####
 	static void setMainCamera(Entity* camera);
 	static Entity* getMainCamera();
 	static TransformComponent* getPlayerTransform();
 	static void setPlayerTransform(TransformComponent* transform);
+	// #### Useful specific funtions ####
 
 private:
 	vector<Entity*> _entities;
@@ -63,12 +72,14 @@ private:
 	unordered_map<Entity*, TransformComponent*> _transformComps;
 	unordered_map<Entity*, MeshRendererComponent*> _meshRendComps;
 	unordered_map<Entity*, PhysicsBodyComponent*> _physicsBodyComps;
+	unordered_map<Entity*, Collider*> _colliderComps;
 	unordered_map<Entity*, CameraComponent*> _cameraComps;
 
 	vector<TransformComponent*> _allTransforms;
 	vector<MeshRendererComponent*> _allMeshRenderers;
 	vector<PhysicsBodyComponent*> _allPhysicsBodies;
 	vector<CameraComponent*> _allCameras;
+	vector<Collider*> _allColliders;
 
 	static EntityManager* _instance;
 	static Entity* _mainCamera;
@@ -167,6 +178,9 @@ inline T EntityManager::getComponent(ComponentType compType, Entity * entity)
 		break;
 	case ComponentType::Light:
 		return nullptr;
+		break;
+	case ComponentType::Collider:
+		return dynamic_cast<T>(_colliderComps[entity]);;
 		break;
 	default:
 		return nullptr;

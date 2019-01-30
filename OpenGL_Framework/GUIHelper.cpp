@@ -1,5 +1,6 @@
 #include "GUIHelper.h"
 
+
 GUIHelper* GUIHelper::_instance = nullptr;
 
 GUIHelper * GUIHelper::getInstance()
@@ -57,6 +58,11 @@ void GUIHelper::draw()
 		if (_showSpawnEntity)
 			SpawnEntity();
 
+		ImGui::Checkbox("Enable Physics Debug", &_enablePhysicsDebug);
+
+		if (_enablePhysicsDebug)
+
+
 		// Close scene editor window
 		if (ImGui::Button("Close"))
 			_showSceneEditor = false;
@@ -81,6 +87,11 @@ void GUIHelper::update()
 {
 	_entityManager = EntityManager::getInstance();
 	_entityFactory = EntityFactory::getInstance();
+}
+
+bool GUIHelper::getPhysicsDebugEnabled() const
+{
+	return _enablePhysicsDebug;
 }
 
 void GUIHelper::drawHierarchy()
@@ -190,7 +201,7 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	{
 		ImGui::Text("Transform:");
 		// Position property
-		Vector3 temp = transform->getLocalPosition();
+		vec3 temp = transform->getLocalPosition();
 		ImGui::DragFloat3("Position: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 		transform->setLocalPosition(temp);
 
@@ -211,10 +222,15 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	}
 
 
+	// Display collider properties
+	Collider* collider = _entityManager->getComponent<Collider*>(ComponentType::Collider, entity);
+	if (collider && ImGui::CollapsingHeader("Collider"))
+		drawCollider(collider);
+
 	// Display mesh renderer properties
 	MeshRendererComponent* meshRenderer = _entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, entity);
 	if (meshRenderer && ImGui::CollapsingHeader("Mesh Renderer"))
-		drawMeshRenderer(meshRenderer);
+		drawMeshRenderer(meshRenderer, collider);
 
 	// Display physics body properties
 	PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
@@ -238,7 +254,7 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	ImGui::End();
 }
 
-void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
+void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer, Collider * collider)
 {
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -342,6 +358,9 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 			{
 				currentMesh = mesh;
 				meshRenderer->setMesh(*it);
+
+				if (collider)
+					collider->setBounds((*it)->getMeshBounds());
 			}
 			if (isSelected)
 				ImGui::SetItemDefaultFocus();
@@ -510,7 +529,7 @@ TTag charToTag(char* tag)
 void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 {
 	// Add a force to the physics body.
-	Vector3 tempVec3 = physicsBody->getForce();
+	vec3 tempVec3 = physicsBody->getForce();
 	ImGui::InputFloat3("Force", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
 	physicsBody->setForce(tempVec3);
 
@@ -610,12 +629,12 @@ void GUIHelper::drawCamera(CameraComponent * camera)
 				currProjChar = projChar;
 				if (charToProj(currProjChar) == ProjectionType::Perspective)
 				{
-					camera->perspective(60.0f, perspAspect, 1.0f, 1000.0f);
+					camera->setPerspective(60.0f, perspAspect, 1.0f, 1000.0f);
 					projType = ProjectionType::Perspective;
 				}
 				else
 				{
-					camera->orthographic(-10.0f, 10.0f, 10.0f, -10.0f, 750.0f, -1000.0f);
+					camera->setOrthographic(-10.0f, 10.0f, 10.0f, -10.0f, 750.0f, -1000.0f);
 					projType = ProjectionType::Orthographic;
 				}
 			}
@@ -635,29 +654,33 @@ void GUIHelper::drawCamera(CameraComponent * camera)
 	
 	if (projType == ProjectionType::Perspective)
 	{
-		Vector2 fov = camera->getFov();
-		float fovY = MathLibCore::toRadians(fov.y);
+		vec2 fov = camera->getFov();
+		float fovY = toRadians(fov.y);
 		ImGui::SliderAngle("FOV Y", &fovY);
-		fov.y = MathLibCore::toDegrees(fovY);
+		fov.y = toDegrees(fovY);
 		
 		string fovText = "FOV X " + to_string(fov.x);
 		ImGui::Text(fovText.c_str());
 
-		camera->perspective(fov.y, perspAspect, zNear, zFar);
+		camera->setPerspective(fov.y, perspAspect, zNear, zFar);
 	}
 	else
 	{
-		Vector4 orthoSize = camera->getOrthoSize();
+		vec4 orthoSize = camera->getOrthoSize();
 		ImGui::DragFloat("Left", &orthoSize.x, 1.0f, 0.0f, 0.0f, "%.1f");
 		ImGui::DragFloat("Right", &orthoSize.y, 1.0f, 0.0f, 0.0f, "%.1f");
 		ImGui::DragFloat("Top", &orthoSize.z, 1.0f, 0.0f, 0.0f, "%.1f");
-		ImGui::DragFloat("Bottom", &orthoSize.q, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Bottom", &orthoSize.w, 1.0f, 0.0f, 0.0f, "%.1f");
 
-		camera->orthographic(orthoSize.x, orthoSize.y, orthoSize.q, orthoSize.z, zNear, zFar);
+		camera->setOrthographic(orthoSize.x, orthoSize.y, orthoSize.w, orthoSize.z, zNear, zFar);
 	}
 
 	string aspectText = "Aspect " + to_string(aspect);
 	ImGui::Text(aspectText.c_str());
+}
+
+void GUIHelper::drawCollider(Collider * collider)
+{
 }
 
 void GUIHelper::SpawnEntity()
@@ -667,11 +690,11 @@ void GUIHelper::SpawnEntity()
 	if (ImGui::BeginPopupModal("Spawn Entity", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		// Create an input field for position.
-		static Vector3 position = Vector3(0.0f, 0.0f, -5.0f);
+		static vec3 position = vec3(0.0f, 0.0f, -5.0f);
 		ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
 
 		// Create an input field for scale.
-		static Vector3 scale = Vector3::One;
+		static vec3 scale = vec3(1.0f);
 		ImGui::InputFloat3("Scale", &scale.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
 
 
