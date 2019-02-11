@@ -53,6 +53,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+	ObjectLoader::loadMesh("Beast Mode.obj", "./Assets/Models/Beast_Mode.obj");
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
@@ -103,6 +104,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Toon3", "./Assets/Textures/toon3.png");
 	ObjectLoader::loadTexture("Smooth", "./Assets/Textures/Smooth Shading.png");
 	ObjectLoader::loadTexture("Normal", "./Assets/Textures/Acorn_Texture_n.png");
+	ObjectLoader::loadTexture("Beast Mode", "./Assets/Textures/Beast_Mode_-_UV.png");
 
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));

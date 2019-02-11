@@ -33,6 +33,13 @@ struct EntityLoad
 	int physicsBodyID = -1;
 };
 
+struct TransformLoad
+{
+	TransformComponent* transform = nullptr;
+	string parentName = "";
+	vector<string> childrenNames;
+};
+
 
 class Scene
 {
