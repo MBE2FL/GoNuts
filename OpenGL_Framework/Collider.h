@@ -3,6 +3,17 @@
 #include "Component.h"
 #include "PhysicsBodyComponent.h"
 
+enum class TTag
+{
+	Player,
+	Platform,
+	Enemy,
+	Coin,
+	Acorn,
+	Spike,
+	TopPlatform
+};
+
 struct Bounds
 {
 	Bounds(const vec3& _centre = vec3(0.0f), const vec3& _size = vec3(0.0f))
@@ -36,9 +47,9 @@ public:
 	Collider();
 	virtual ~Collider();
 
-	void onCollisionEnter();
-	void onCollisionStay();
-	void onCollisionExit();
+	void onCollisionEnter(Entity* self, Entity* other);
+	void onCollisionStay(Entity* self, Entity* other);
+	void onCollisionExit(Entity* self, Entity* other);
 
 	virtual void update(TransformComponent* transform) = 0;
 	virtual void draw() = 0;
@@ -47,6 +58,19 @@ public:
 	void setBounds(const Bounds& newBounds);
 	PhysicsBodyComponent* getPhysicsBody() const;
 	void setPhysicsBody(PhysicsBodyComponent* physicsBody);
+	vec3 getOffset() const;
+	void setOffset(const vec3& offset);
+	bool getEnabled() const;
+	void setEnabled(const bool enabled);
+
+	TTag getTag() const;
+	void setTag(const TTag tag);
+
+	// Testing function pointers
+	//typedef void(*onCollision)(Entity* self, Entity* other);
+	//onCollision onCollisionEnter;
+	//onCollision onCollisionStay;
+	//onCollision onCollisionExit;
 
 	vec3 _max;
 	vec3 _min;
@@ -54,5 +78,6 @@ protected:
 	Bounds* _bounds;
 	vec3 _contactOffset;
 	bool _enabled;
-	PhysicsBodyComponent* _physicsBody;
+	PhysicsBodyComponent* _physicsBody = nullptr;
+	TTag _tag;
 };

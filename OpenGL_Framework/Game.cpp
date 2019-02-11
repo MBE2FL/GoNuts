@@ -191,17 +191,24 @@ void Game::initializeGame()
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 
 	sceneManager->addScene(testScene);
-	sceneManager->loadScene(testScene->getName());
+	sceneManager->loadOldFaithful(testScene->getName());
 	_currentScene = sceneManager->getCurrentScene();
 
 
 	//SceneManager* sceneManager = SceneManager::getInstance();
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
+
+	_currentScene->saveScene();
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
+
+	int dummy = 0;
+	dummy++;
 }
 
 void Game::update()
 {
+	_currentScene = SceneManager::getInstance()->getCurrentScene();
 	collided = false;
 	if (!reverse)
 		t += 0.01f;

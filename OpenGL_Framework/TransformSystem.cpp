@@ -94,13 +94,18 @@ void TransformSystem::update(float deltaTime)
 		collider->update(transform);
 
 
+		bool active = (vec3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
+
+		collider->setEnabled(active);
+
+
 		// Also check if the current entity possesses a physics body.
 		PhysicsBodyComponent* physicsBody = collider->getPhysicsBody();
 
 		// Update the transforms position using physics, if the entity possesses a physics body.
 		if (physicsBody)
 		{
-			bool active = (vec3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
+			//bool active = (vec3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
 			physicsBody->setActive(active);
 		}
 	}

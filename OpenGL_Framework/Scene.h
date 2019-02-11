@@ -12,7 +12,7 @@
 #include "TransformSystem.h"
 #include "MeshRendererSystem.h"
 #include "PhysicsSystem.h"
-#include "GUIHelper.h"
+//#include "GUIHelper.h"
 #include <sstream>
 
 
@@ -30,12 +30,18 @@ using std::getline;
 using MathUtils::lerp;
 
 
+// Forward declaration
+class GUIHelper;
+
+
 struct EntityLoad
 {
 	string name = "";
 	int transformID = -1;
+	int cameraID = -1;
 	int meshRendererID = -1;
 	int physicsBodyID = -1;
+	int ColliderID = -1;
 };
 
 struct TransformLoad
@@ -60,6 +66,8 @@ public:
 	void setFilename(const string& filename);
 	vector<Entity*> getEntities() const;
 	void saveScene();
+	void saveSceneAs(const string& name);
+	void loadOldFaithful();
 	void loadScene();
 	void loadSceneFromFile(const string& path);
 	EntityManager* getEntityManager() const;
@@ -81,6 +89,7 @@ private:
 	TransformComponent* _playerTransform;
 	PhysicsBodyComponent* _playerPhysicsBody;
 	TransformComponent* _mainCameraTransform;
+	Entity* _mainCamera;
 
 	Light* light;
 	Light* spotLight;
@@ -91,14 +100,18 @@ private:
 
 	void errorCheck(char* success, char* failure, char* errMsg);
 	void saveTransforms(sqlite3* db, char* errMsg);
+	void saveCameras(sqlite3* db, char* errMsg);
 	void saveMeshRenderers(sqlite3* db, char* errMsg);
 	void savePhysicsBodies(sqlite3* db, char* errMsg);
+	void saveColliders(sqlite3* db, char* errMsg);
 	void saveEntities(sqlite3* db, char* errMsg);
 
 	static int loadEntityCallback(void* data, int numRows, char** rowFields, char** colNames);
 	static int loadTransformCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadCameraCallback(void* data, int numRows, char** rowFields, char** colNames);
 	static int loadMeshRendererCallback(void* data, int numRows, char** rowFields, char** colNames);
 	static int loadPhysicsBodyCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadCollidersCallback(void* data, int numRows, char** rowFields, char** colNames);
 	void loadEntities(sqlite3* db, char* errMsg);
 
 	vector<EntityLoad> _entityLoads;

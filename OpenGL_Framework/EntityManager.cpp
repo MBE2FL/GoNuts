@@ -227,6 +227,11 @@ vector<Collider*> EntityManager::getAllColliders() const
 	return _allColliders;
 }
 
+vector<CameraComponent*> EntityManager::getAllCameras() const
+{
+	return _allCameras;
+}
+
 Entity * EntityManager::getEntity(const unsigned int eid)
 {
 	vector<Entity*>::iterator it;

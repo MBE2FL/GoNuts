@@ -1,5 +1,6 @@
 #include "BoxCollider.h"
 
+
 BoxCollider::BoxCollider(const vec3 & centre, const vec3 & size)
 	: Collider()
 {

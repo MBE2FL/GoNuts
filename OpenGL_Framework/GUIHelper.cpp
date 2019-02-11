@@ -36,10 +36,56 @@ GUIHelper::GUIHelper()
 {
 	_entityManager = EntityManager::getInstance();
 	_entityFactory = EntityFactory::getInstance();
+	_sceneManager = SceneManager::getInstance();
 }
 
 void GUIHelper::draw()
 {
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Scenes"))
+		{
+			if (ImGui::MenuItem("Load Scene"))
+			{
+				_showSceneSelector = !_showSceneSelector;
+				//drawScenes();
+			}
+
+			if (ImGui::MenuItem("Save Scene As"))
+			{
+				_showSceneSaveModal = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	if (_showSceneSelector)
+		drawScenes();
+
+	// Name the new scene.
+	if (_showSceneSaveModal)
+	{
+		ImGui::OpenPopup("Scene Name?");
+		_showSceneSaveModal = false;
+	}
+	if (ImGui::BeginPopupModal("Scene Name?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Give the new scene a name.\n");
+		ImGui::Separator();
+		static char buffer[64] = "";
+		ImGui::InputText("Enter Name Here", buffer, 64);
+
+		if (ImGui::Button("Save"))
+		{
+			_sceneManager->saveSceneAs(buffer);
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+
 	ImGui::Begin("Scene Editor", &_showSceneEditor);
 
 	ImGui::Checkbox("Scene Editor", &_showSceneEditor);
@@ -480,52 +526,6 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer, Collider 
 	}
 }
 
-char* tagToChar(TTag tag)
-{
-	switch (tag)
-	{
-	case TTag::Player:
-		return "Player";
-		break;
-	case TTag::Platform:
-		return "Platform";
-		break;
-	case TTag::Enemy:
-		return "Enemy";
-		break;
-	case TTag::Coin:
-		return "Coin";
-		break;
-	case TTag::Acorn:
-		return "Acorn";
-		break;
-	case TTag::Spike:
-		return "Spike";
-		break;
-	default:
-		return "";
-		break;
-	}
-}
-
-TTag charToTag(char* tag)
-{
-	if (strcmp(tag, "Player") == 0)
-		return TTag::Player;
-	else if (strcmp(tag, "Platform") == 0)
-		return TTag::Platform;
-	else if (strcmp(tag, "Enemy") == 0)
-		return TTag::Enemy;
-	else if (strcmp(tag, "Coin") == 0)
-		return TTag::Coin;
-	else if (strcmp(tag, "Acorn") == 0)
-		return TTag::Acorn;
-	else if (strcmp(tag, "Spike") == 0)
-		return TTag::Spike;
-	else
-		return TTag::Acorn;
-}
-
 void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 {
 	// Add a force to the physics body.
@@ -552,33 +552,9 @@ void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 	bool useGravity = physicsBody->getUseGravity();
 	ImGui::Checkbox("Use Gravity", &useGravity);
 	physicsBody->setUseGravity(useGravity);
-
-	// Set the tag.
-	TTag tag = physicsBody->getTag();
-	char* currTagChar = tagToChar(tag);
-	if (ImGui::BeginCombo("Tag", currTagChar))
-	{
-		static const TTag allTags[6] = { TTag::Player, TTag::Platform, TTag::Enemy, TTag::Coin, TTag::Acorn, TTag::Spike };
-		for (TTag currTag : allTags)
-		{
-			char* tagChar = tagToChar(currTag);
-
-			bool isSelected = (currTagChar == tagChar);
-
-			if (ImGui::Selectable(tagChar, isSelected))
-			{
-				currTagChar = tagChar;
-				physicsBody->setTag(charToTag(currTagChar));
-			}
-			if (isSelected)
-				ImGui::SetItemDefaultFocus();
-		}
-
-		ImGui::EndCombo();
-	}
 }
 
-char* projToChar(ProjectionType type)
+char* GUIHelper::projToChar(ProjectionType type)
 {
 	switch (type)
 	{
@@ -594,7 +570,7 @@ char* projToChar(ProjectionType type)
 	}
 }
 
-ProjectionType charToProj(char* type)
+ProjectionType GUIHelper::charToProj(char* type)
 {
 	if (strcmp(type, "Perspective") == 0)
 		return ProjectionType::Perspective;
@@ -679,8 +655,77 @@ void GUIHelper::drawCamera(CameraComponent * camera)
 	ImGui::Text(aspectText.c_str());
 }
 
+char* tagToChar(TTag tag)
+{
+	switch (tag)
+	{
+	case TTag::Player:
+		return "Player";
+		break;
+	case TTag::Platform:
+		return "Platform";
+		break;
+	case TTag::Enemy:
+		return "Enemy";
+		break;
+	case TTag::Coin:
+		return "Coin";
+		break;
+	case TTag::Acorn:
+		return "Acorn";
+		break;
+	case TTag::Spike:
+		return "Spike";
+		break;
+	default:
+		return "";
+		break;
+	}
+}
+
+TTag charToTag(char* tag)
+{
+	if (strcmp(tag, "Player") == 0)
+		return TTag::Player;
+	else if (strcmp(tag, "Platform") == 0)
+		return TTag::Platform;
+	else if (strcmp(tag, "Enemy") == 0)
+		return TTag::Enemy;
+	else if (strcmp(tag, "Coin") == 0)
+		return TTag::Coin;
+	else if (strcmp(tag, "Acorn") == 0)
+		return TTag::Acorn;
+	else if (strcmp(tag, "Spike") == 0)
+		return TTag::Spike;
+	else
+		return TTag::Acorn;
+}
+
 void GUIHelper::drawCollider(Collider * collider)
 {
+	// Set the tag.
+	TTag tag = collider->getTag();
+	char* currTagChar = tagToChar(tag);
+	if (ImGui::BeginCombo("Tag", currTagChar))
+	{
+		static const TTag allTags[6] = { TTag::Player, TTag::Platform, TTag::Enemy, TTag::Coin, TTag::Acorn, TTag::Spike };
+		for (TTag currTag : allTags)
+		{
+			char* tagChar = tagToChar(currTag);
+
+			bool isSelected = (currTagChar == tagChar);
+
+			if (ImGui::Selectable(tagChar, isSelected))
+			{
+				currTagChar = tagChar;
+				collider->setTag(charToTag(currTagChar));
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
 }
 
 void GUIHelper::SpawnEntity()
@@ -729,4 +774,43 @@ void GUIHelper::SpawnEntity()
 
 		ImGui::EndPopup();
 	}
+}
+
+void GUIHelper::drawScenes()
+{
+	ImGui::Begin("Scene Selector", &_showSceneSelector);
+
+		vector<Scene*> scenes = _sceneManager->getScenes();
+
+		// Select a scene from the scene manager.
+		static Scene* _currentScene = _sceneManager->getCurrentScene();
+		static string _currSceneName = _currentScene->getName();
+		if (ImGui::BeginCombo("Scene Names", _currSceneName.c_str()))
+		{
+			for (Scene* scene : scenes)
+			{
+				string sceneName = scene->getName();
+
+				bool isSelected = (_currSceneName == sceneName);
+
+				if (ImGui::Selectable(sceneName.c_str(), isSelected))
+				{
+					_currSceneName = sceneName;
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		// Load selected scene.
+		if (ImGui::Button("Load Scene"))
+		{
+			_sceneManager->loadScene(_currSceneName);
+		}
+
+	ImGui::End();
+
 }

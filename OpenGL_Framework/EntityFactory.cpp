@@ -57,7 +57,7 @@ Entity * EntityFactory::createPerspectiveCamera(const vec3 & position, const flo
 
 	// Add the camera component to the entity.
 	_entityManager->addComponent(camera, entity);
-	EntityManager::setMainCamera(entity);
+	//EntityManager::setMainCamera(entity);
 
 	return entity;
 }
@@ -79,21 +79,22 @@ Entity * EntityFactory::createCoin(const vec3 & position, const vec3 & scale, En
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Coin);
-	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
-	{
-		std::cout << "Coin Collision Entered!" << std::endl; 
-		EntityManager* entityManger = EntityManager::getInstance();
-		EntityFactory* entityFactory = EntityFactory::getInstance();
-		entityFactory->plusCoin();
+	//physicsBody->setTag(TTag::Coin);
+	//physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	//{
+	//	std::cout << "Coin Collision Entered!" << std::endl; 
+	//	EntityManager* entityManger = EntityManager::getInstance();
+	//	EntityFactory* entityFactory = EntityFactory::getInstance();
+	//	entityFactory->plusCoin();
 
-		PhysicsBodyComponent* selfBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, self);
+	//	PhysicsBodyComponent* selfBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, self);
 
-		selfBody->setUseGravity(true);
-	};
+	//	selfBody->setUseGravity(true);
+	//};
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Coin);
 
 
 	// Add all the components to the entity.
@@ -120,55 +121,56 @@ Entity * EntityFactory::createPlatform(const vec3 & position, const vec3 & scale
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Platform);
-	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
-	{
-		std::cout << "Platform Collision Entered!" << std::endl;
+	//physicsBody->setTag(TTag::Platform);
+	//physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	//{
+	//	std::cout << "Platform Collision Entered!" << std::endl;
 
-		EntityManager* entityManger = EntityManager::getInstance();
-		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+	//	EntityManager* entityManger = EntityManager::getInstance();
+	//	PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
-		otherBody->setUseGravity(false);
-		//otherBody->setVelocity(vec3(0.0f));
+	//	otherBody->setUseGravity(false);
+	//	//otherBody->setVelocity(vec3(0.0f));
 
-		if (otherBody->getVelocity().y < 0.0f)
-		{
-			float ySpeed = otherBody->getVelocity().y;
-			otherBody->addImpluseForce(vec3(0.0f, -ySpeed, 0.0f));
+	//	if (otherBody->getVelocity().y < 0.0f)
+	//	{
+	//		float ySpeed = otherBody->getVelocity().y;
+	//		otherBody->addImpluseForce(vec3(0.0f, -ySpeed, 0.0f));
 
-		}
+	//	}
 
-		otherBody->setCanJump(true);
-	};
-	physicsBody->onCollisionStay = [](Entity* self, Entity* other)
-	{
-		//std::cout << "Platform Collision Stayed!" << std::endl;
+	//	otherBody->setCanJump(true);
+	//};
+	//physicsBody->onCollisionStay = [](Entity* self, Entity* other)
+	//{
+	//	//std::cout << "Platform Collision Stayed!" << std::endl;
 
-		EntityManager* entityManger = EntityManager::getInstance();
-		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+	//	EntityManager* entityManger = EntityManager::getInstance();
+	//	PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
-		if (otherBody->getTag() == TTag::Player)
-		{
-			//std::cout << "Platform Collision Stayed!" << std::endl;
-			//otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
-		}
-	};
-	physicsBody->onCollisionExit = [](Entity* self, Entity* other)
-	{
-		std::cout << "Platform Collision Exited!" << std::endl;
+	//	if (otherBody->getTag() == TTag::Player)
+	//	{
+	//		//std::cout << "Platform Collision Stayed!" << std::endl;
+	//		//otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
+	//	}
+	//};
+	//physicsBody->onCollisionExit = [](Entity* self, Entity* other)
+	//{
+	//	std::cout << "Platform Collision Exited!" << std::endl;
 
-		EntityManager* entityManger = EntityManager::getInstance();
-		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+	//	EntityManager* entityManger = EntityManager::getInstance();
+	//	PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 
-		if (otherBody->getTag() == TTag::Player)
-		{
-			otherBody->setUseGravity(true);
-			otherBody->setCanJump(false);
-		}
-	};
+	//	if (otherBody->getTag() == TTag::Player)
+	//	{
+	//		otherBody->setUseGravity(true);
+	//		otherBody->setCanJump(false);
+	//	}
+	//};
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Platform);
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
@@ -192,8 +194,8 @@ Entity * EntityFactory::createTopPlatform(const vec3 & position, const vec3 & sc
 		ObjectLoader::getShaderProgram("Normal"), textures);
 
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::TopPlatform);
-	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	//physicsBody->setTag(TTag::TopPlatform);
+	/*physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "topPlatform Collision Entered!" << std::endl;
 
@@ -208,10 +210,11 @@ Entity * EntityFactory::createTopPlatform(const vec3 & position, const vec3 & sc
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
-	};
+	};*/
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::TopPlatform);
 
 	// Add the transform component to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
@@ -237,7 +240,7 @@ Entity * EntityFactory::createSpike(const vec3 & position, const vec3 & scale, E
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Spike);
+	/*physicsBody->setTag(TTag::Spike);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Spike Collision Entered!" << std::endl;
@@ -254,10 +257,11 @@ Entity * EntityFactory::createSpike(const vec3 & position, const vec3 & scale, E
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
-	};
+	};*/
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Spike);
 
 
 	// Add all the components to the entity.
@@ -284,7 +288,7 @@ Entity * EntityFactory::createCone(const vec3 & position, const vec3 & scale, En
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Spike);
+	/*physicsBody->setTag(TTag::Spike);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Cone Collision Entered!" << std::endl;
@@ -301,10 +305,11 @@ Entity * EntityFactory::createCone(const vec3 & position, const vec3 & scale, En
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
-	};
+	};*/
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Spike);
 
 
 	// Add all the components to the entity.
@@ -337,11 +342,12 @@ Entity * EntityFactory::createPlayer(const vec3 & position, const vec3 & scale, 
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Player);
+	//physicsBody->setTag(TTag::Player);
 	physicsBody->setUseGravity(true);
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Player);
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
@@ -368,8 +374,8 @@ Entity * EntityFactory::createAcorn(const vec3 & position, const vec3 & scale, E
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Coin);
-	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
+	//physicsBody->setTag(TTag::Coin);
+	/*physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Coin Collision Entered!" << std::endl;
 		EntityManager* entityManger = EntityManager::getInstance();
@@ -379,10 +385,11 @@ Entity * EntityFactory::createAcorn(const vec3 & position, const vec3 & scale, E
 		PhysicsBodyComponent* selfBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, self);
 
 		selfBody->setUseGravity(true);
-	};
+	};*/
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Coin);
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
@@ -408,7 +415,7 @@ Entity * EntityFactory::createVent(const vec3 & position, const vec3 & scale, En
 
 	// Physics Body
 	PhysicsBodyComponent* physicsBody = new PhysicsBodyComponent();
-	physicsBody->setTag(TTag::Spike);
+	/*physicsBody->setTag(TTag::Spike);
 	physicsBody->onCollisionEnter = [](Entity* self, Entity* other)
 	{
 		std::cout << "Vent Collision Entered!" << std::endl;
@@ -425,10 +432,11 @@ Entity * EntityFactory::createVent(const vec3 & position, const vec3 & scale, En
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
-	};
+	};*/
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
+	collider->setTag(TTag::Spike);
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
