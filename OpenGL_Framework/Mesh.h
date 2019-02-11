@@ -1,6 +1,7 @@
 #pragma once
 
 #define _CRT_SECURE_NO_WARNINGS
+
 #include <string>
 #include <vector>
 #include <GL/glew.h>
@@ -9,7 +10,8 @@
 //#include <MiniMath/Core.h>	// Have to replace with own math library
 #include "MathLib/MathLibCore.h"
 
-#include "MeshBounds.h"
+#include "Collider.h"
+
 
 #define CHAR_BUFFER_SIZE 128
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
@@ -21,6 +23,7 @@ using std::cout;
 using std::endl;
 using std::strstr;
 using std::sscanf;
+
 
 class Mesh
 {
@@ -38,7 +41,7 @@ public:
 
 	GLuint getVBO_Verts();
 
-	MeshBounds getMeshBounds() const;
+	Bounds getMeshBounds() const;
 
 	string getFilename() const;
 	void setFilename(const string& filename);
@@ -58,9 +61,9 @@ private:
 	string _filename;
 	string _name;
 
-	MeshBounds _meshBounds;
-	Vector3 minPoint;
-	Vector3 maxPoint;
+	Bounds _meshBounds;
+	vec3 minPoint = vec3(0.0f);
+	vec3 maxPoint = vec3(0.0f);
 
-	void computeMinMax(const Vector3& vertex);
+	void computeMinMax(const vec3& vertex);
 };

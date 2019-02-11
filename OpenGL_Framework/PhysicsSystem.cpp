@@ -19,41 +19,42 @@ void PhysicsSystem::update(float deltaTime)
 	}
 
 
-	vector<PhysicsBodyComponent*> physicsBodies = _entityManager->getAllPhysicsBodyComponents();
+	vector<Collider*> colliders = _entityManager->getAllColliders();
 
-	vector<PhysicsBodyComponent*>::iterator it;
+	vector<Collider*>::iterator it;
 
-	for (it = physicsBodies.begin(); it != physicsBodies.end(); ++it)
+	for (it = colliders.begin(); it != colliders.end(); ++it)
 	{
-		// Get the physics body component for the current entity.
-		PhysicsBodyComponent* physicsBodyOne = *it;
-		if (!physicsBodyOne || !physicsBodyOne->getActive())
+		// Get the collider component for the current entity.
+		Collider* colliderOne = *it;
+		if (!colliderOne || !colliderOne->getEnabled())
 			continue;
 
-		// Check if there is another physics body.
-		// Check current entity's physics body with every other entity's physics body, behind it in the vector.
-		vector<PhysicsBodyComponent*>::iterator nextIt = it;
+		// Check if there is another collider.
+		// Check current entity's collider with every other entity's collider, behind it in the vector.
+		vector<Collider*>::iterator nextIt = it;
 		++nextIt;
-		while (nextIt != physicsBodies.end())
+		while (nextIt != colliders.end())
 		{
-			// Get the physics body component for the other entity.
-			//component = _entityManager->getComponent(ComponentType::PhysicsBody, *nextIt);
-			PhysicsBodyComponent* physicsBodyTwo = *nextIt;
-			if (!physicsBodyTwo || !physicsBodyTwo->getActive())
+			// Get the collider component for the other entity.
+			Collider* colliderTwo = *nextIt;
+			if (!colliderTwo || !colliderTwo->getEnabled())
 			{
 				++nextIt;
 				continue;
 			}
 
 			// Check for collisions between physics bodies.
-			if (checkCollision(physicsBodyOne, physicsBodyTwo))
+			if (checkSATCollision(colliderOne, colliderTwo))
 			{
 				// Register the collision with the physics system.
 				Collision* collision = new Collision();
-				collision->bodyOne = physicsBodyOne;
-				collision->bodyTwo = physicsBodyTwo;
-				collision->entityOne = physicsBodyOne->getEntity();
-				collision->entityTwo = physicsBodyTwo->getEntity();
+				collision->bodyOne = colliderOne->getPhysicsBody();
+				collision->bodyTwo = colliderTwo->getPhysicsBody();
+				collision->entityOne = colliderOne->getEntity();
+				collision->entityTwo = colliderTwo->getEntity();
+				collision->colOne = colliderOne;
+				collision->colTwo = colliderTwo;
 				addCollision(collision);
 			}
 
@@ -75,10 +76,8 @@ void PhysicsSystem::addCollision(Collision * collision)
 		{
 			currCol->stillColliding = true;
 			// TO-DO call onCollisionStay()
-			if (collision->bodyOne->onCollisionStay)
-				collision->bodyOne->onCollisionStay(collision->entityOne, collision->entityTwo);
-			if (collision->bodyTwo->onCollisionStay)
-				collision->bodyTwo->onCollisionStay(collision->entityTwo, collision->entityOne);
+			collision->colOne->onCollisionStay(collision->entityOne, collision->entityTwo);
+			collision->colTwo->onCollisionStay(collision->entityTwo, collision->entityOne);
 			return;
 		}
 	}
@@ -86,39 +85,88 @@ void PhysicsSystem::addCollision(Collision * collision)
 	// Register new collision with the system
 	_collisions.push_back(collision);
 	// TO-DO onCollisionEnter()
-	if (collision->bodyOne->onCollisionEnter)
-		collision->bodyOne->onCollisionEnter(collision->entityOne, collision->entityTwo);
-	if (collision->bodyTwo->onCollisionEnter)
-		collision->bodyTwo->onCollisionEnter(collision->entityTwo, collision->entityOne);
+	collision->colOne->onCollisionEnter(collision->entityOne, collision->entityTwo);
+	collision->colTwo->onCollisionEnter(collision->entityTwo, collision->entityOne);
 }
 
-bool PhysicsSystem::checkCollision(PhysicsBodyComponent * physicsBodyOne, PhysicsBodyComponent * physicsBodyTwo)
+bool PhysicsSystem::checkAABBCollision(Collider* colliderOne, Collider* colliderTwo)
 {
 	// Get the bounds of both physics bodies collider bounds.
-	ColliderBounds* bounds = nullptr;
+	static vec3 minOne;
+	static vec3 maxOne;
 
-	bounds = physicsBodyOne->getCollisionBounds();
-	static Vector3 positionOne;
-	static Vector3 minOne;
-	static Vector3 maxOne;
+	minOne = colliderOne->_min;
+	maxOne = colliderOne->_max;
 
-	positionOne = bounds->getCentre();
-	minOne = positionOne - bounds->getExtends();
-	maxOne = positionOne + bounds->getExtends();
 
-	bounds = physicsBodyTwo->getCollisionBounds();
-	static Vector3 positionTwo;
-	static Vector3 minTwo;
-	static Vector3 maxTwo;
+	static vec3 minTwo;
+	static vec3 maxTwo;
 
-	positionTwo = bounds->getCentre();
-	minTwo = positionTwo - bounds->getExtends();
-	maxTwo = positionTwo + bounds->getExtends();
+	minTwo = colliderTwo->_min;
+	maxTwo = colliderTwo->_max;
 
 
 	// Check if the collider bounds of two physics bodies are colliding.
 	return ((minOne.x < maxTwo.x) && (maxOne.x > minTwo.x) &&
 		(minOne.y < maxTwo.y) && (maxOne.y > minTwo.y));
+}
+
+bool PhysicsSystem::checkSATCollision(Collider * colliderOne, Collider * colliderTwo)
+{
+	vec3 faceNormalsOne[3];
+	const vec3* verticesOne = static_cast<BoxCollider*>(colliderOne)->getVertices();
+
+	vec3 faceNormalsTwo[3];
+	const vec3* verticesTwo = static_cast<BoxCollider*>(colliderTwo)->getVertices();
+
+	vec3 allNormals[15];
+
+	// Calculate face, and edge normals.
+	calculateFaceNormals(faceNormalsOne, verticesOne);
+	calculateFaceNormals(faceNormalsTwo, verticesTwo);
+	calculateEdgeNormals(allNormals, faceNormalsOne, faceNormalsTwo);
+
+
+	float minOne;
+	float maxOne;
+	float minTwo;
+	float maxTwo;
+
+	// Project each vertex onto each normal.
+	for (unsigned int i = 0; i < 15; ++i)
+	{
+		if (allNormals[i] == vec3::Zero)
+			continue;
+
+		minOne = vec3::dot(allNormals[i], verticesOne[0]);
+		minTwo = vec3::dot(allNormals[i], verticesTwo[0]);
+
+		maxOne = minOne;
+		maxTwo = minTwo;
+
+		for (unsigned int j = 1; j < 8; ++j)
+		{
+			// Don't have to actually use scalar projection of each vertex onto each normal.
+			// Since unit vector is not important. ONLY if checking for overlay, not for length of penetration.
+			float distOne = vec3::dot(allNormals[i], verticesOne[j]);
+			float distTwo = vec3::dot(allNormals[i], verticesTwo[j]);
+
+			// Only care about the max and min of each projection.
+			minOne = (distOne < minOne) ? distOne : minOne;
+			minTwo = (distTwo < minTwo) ? distTwo : minTwo;
+
+			maxOne = (distOne > maxOne) ? distOne : maxOne;
+			maxTwo = (distTwo > maxTwo) ? distTwo : maxTwo;
+		}
+
+		//cout << "Max One: " << maxOne << ", Min One: " << minOne << endl;
+		//cout << "Max Two: " << maxTwo << ", Min Two: " << minTwo << endl;
+		// Check if a pair of projections do NOT overlap. Then no collision occured. No need to check other projections.
+		if (!(maxOne >= minTwo && minOne <= maxTwo))
+			return false;
+	}
+
+	return true;
 }
 
 void PhysicsSystem::verifyCollisions()
@@ -131,10 +179,8 @@ void PhysicsSystem::verifyCollisions()
 		if (!(*it)->stillColliding)
 		{
 			// TO-DO call onCollisionExit()
-			if ((*it)->bodyOne->onCollisionExit)
-				(*it)->bodyOne->onCollisionExit((*it)->entityOne, (*it)->entityTwo);
-			if ((*it)->bodyTwo->onCollisionExit)
-				(*it)->bodyTwo->onCollisionExit((*it)->entityTwo, (*it)->entityOne);
+			(*it)->colOne->onCollisionExit((*it)->entityOne, (*it)->entityTwo);
+			(*it)->colTwo->onCollisionExit((*it)->entityTwo, (*it)->entityOne);
 			delete *it;
 			*it = nullptr;
 			it = _collisions.erase(it);
@@ -144,8 +190,52 @@ void PhysicsSystem::verifyCollisions()
 	}
 }
 
+void PhysicsSystem::calculateFaceNormals(vec3 * faceNormals, const vec3 * vertices)
+{
+	static vec3 normal;
+
+	// Calculate face normals.
+
+	// front face
+	normal = vec3::cross(vertices[0] - vertices[2], vertices[1] - vertices[3]);
+	faceNormals[0] = normal;
+
+	// right face
+	normal = vec3::cross(vertices[1] - vertices[6], vertices[5] - vertices[2]);
+	faceNormals[1] = normal;
+
+	// top face
+	normal = vec3::cross(vertices[3] - vertices[6], vertices[2] - vertices[7]);
+	faceNormals[2] = normal;
+}
+
+void PhysicsSystem::calculateEdgeNormals(vec3 * allNormals, vec3 * faceNormalsOne, vec3 * faceNormalsTwo)
+{
+	unsigned int index = 6;
+
+	allNormals[0] = faceNormalsOne[0];
+	allNormals[1] = faceNormalsOne[1];
+	allNormals[2] = faceNormalsOne[2];
+	allNormals[3] = faceNormalsTwo[0];
+	allNormals[4] = faceNormalsTwo[1];
+	allNormals[5] = faceNormalsTwo[2];
+
+	for (unsigned int i = 0; i < 3; ++i)
+	{
+		for (unsigned int j = 0; j < 3; ++j)
+		{
+			static vec3 edgeNormal;
+
+			edgeNormal = vec3::cross(faceNormalsOne[i], faceNormalsTwo[j]);
+
+			allNormals[index] = edgeNormal;
+			++index;
+		}
+	}
+}
+
 bool Collision::operator==(const Collision & otherCol)
 {
-	return (((bodyOne == otherCol.bodyOne) || (bodyOne == otherCol.bodyTwo)) &&
-		((bodyTwo == otherCol.bodyOne) || (bodyTwo == otherCol.bodyTwo)));
+	return (((entityOne == otherCol.entityOne) || (entityOne == otherCol.entityTwo)) &&
+		((entityTwo == otherCol.entityOne) || (entityTwo == otherCol.entityTwo)));
 }

@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <iostream>
 #include "Game.h"
+#include "GUIHelper.h"
 #include <GL/freeglut.h>
 
 Game *theGame;

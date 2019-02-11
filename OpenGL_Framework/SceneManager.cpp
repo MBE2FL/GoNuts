@@ -24,9 +24,10 @@ void SceneManager::addScene(Scene * scene)
 void SceneManager::loadSceneFromFile(const string & path, const string & name)
 {
 	Scene* scene = new Scene(name);
-	EntityManager::setInstance(scene->getEntityManager());
-	EntityFactory::getInstance()->setEntityManager();
+	//EntityManager::setInstance(scene->getEntityManager());
+	//EntityFactory::getInstance()->setEntityManager();
 	scene->loadSceneFromFile(path);
+	_scenes.push_back(scene);
 }
 
 void SceneManager::loadScene(const string & name)
@@ -36,9 +37,20 @@ void SceneManager::loadScene(const string & name)
 		if (scene->getName() == name)
 		{
 			_currentScene = scene;
-			EntityManager::setInstance(scene->getEntityManager());
-			EntityFactory::getInstance()->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 			scene->loadScene();
+			return;
+		}
+	}
+}
+
+void SceneManager::loadOldFaithful(const string & name)
+{
+	for (Scene* scene : _scenes)
+	{
+		if (scene->getName() == name)
+		{
+			_currentScene = scene;
+			scene->loadOldFaithful();
 			return;
 		}
 	}
@@ -46,11 +58,22 @@ void SceneManager::loadScene(const string & name)
 
 void SceneManager::saveScene()
 {
+	_currentScene->saveScene();
+}
+
+void SceneManager::saveSceneAs(const string & name)
+{
+	_currentScene->saveSceneAs(name);
 }
 
 Scene * SceneManager::getCurrentScene() const
 {
 	return _currentScene;
+}
+
+vector<Scene*> SceneManager::getScenes() const
+{
+	return _scenes;
 }
 
 SceneManager::SceneManager()

@@ -9,6 +9,7 @@
 class MeshRendererComponent : public Component
 {
 public:
+	MeshRendererComponent();
 	MeshRendererComponent(Mesh* mesh, ShaderProgram* shaderProgram, vector<Texture*>& textures);
 	~MeshRendererComponent();
 

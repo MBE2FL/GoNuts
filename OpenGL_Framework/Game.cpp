@@ -25,6 +25,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
+	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -110,7 +111,7 @@ void Game::initializeGame()
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
 	//nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
 	//nutOmeter.addPhysicsBody(false);
-	//nutOmeter.setWorldPosition(Vector3(0.0f, -6.0f, 0.0f));
+	//nutOmeter.setWorldPosition(vec3(0.0f, -6.0f, 0.0f));
 	//nutOmeter.setLocalRotationAngleZ(-3.14592f / 2.0f);
 	////nutOmeter.setLocalRotationAngleY(3.14592f);
 	//nutOmeter.setLocalScale(2.0f);
@@ -119,7 +120,7 @@ void Game::initializeGame()
 	//time.setMesh(ObjectLoader::getMesh("Plane"));
 	//time.setTexture(ObjectLoader::getTexture("Time"));
 	//time.addPhysicsBody(false);
-	//time.setWorldPosition(Vector3(-13.5f, 7.5f, 0.0f));
+	//time.setWorldPosition(vec3(-13.5f, 7.5f, 0.0f));
 	//time.setLocalRotationAngleZ(-3.14592f / 2.0f);
 	////time.setLocalRotationAngleY(3.14592f);
 	//time.setLocalScale(2.0f);
@@ -129,16 +130,16 @@ void Game::initializeGame()
 	//particleTrail->setMesh(ObjectLoader::getMesh("Plane"));
 	//particleTrail->setTexture(ObjectLoader::getTexture("Default"));
 	//particleTrail->addPhysicsBody(false);
-	//particleTrail->setWorldPosition(Vector3(9.0f, 2.0f, -5.0f));
-	//particleTrail->setLocalScale(Vector3(1, 1, 1));
+	//particleTrail->setWorldPosition(vec3(9.0f, 2.0f, -5.0f));
+	//particleTrail->setLocalScale(vec3(1, 1, 1));
 	//dynamic_cast<ParticleEmitter*>(particleTrail)->texName = "Dust";
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->velocity0 = Vector3(-0.1f, -0.01f, -0.01f);
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->velocity1 = Vector3(-0.1f, -0.01f, 0.01f);
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->massRange = Vector2(1.0f, 2.0f);
+	//dynamic_cast<ParticleEmitter*>(particleTrail)->velocity0 = vec3(-0.1f, -0.01f, -0.01f);
+	//dynamic_cast<ParticleEmitter*>(particleTrail)->velocity1 = vec3(-0.1f, -0.01f, 0.01f);
+	//dynamic_cast<ParticleEmitter*>(particleTrail)->massRange = vec2(1.0f, 2.0f);
 	//dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
 
 	//// Visual Properties
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->lifeRange = Vector2(0.8f, 1.0f);
+	//dynamic_cast<ParticleEmitter*>(particleTrail)->lifeRange = vec2(0.8f, 1.0f);
 	//
 
 	//dynamic_cast<ParticleEmitter*>(particleTrail)->initialize(50);
@@ -150,19 +151,19 @@ void Game::initializeGame()
 	//jumpParticles->setTexture(ObjectLoader::getTexture("Dust"));
 	//jumpParticles->addPhysicsBody(false);
 	//jumpParticles->setParent(&player);
-	//jumpParticles->setLocalPosition(Vector3::Zero);
-	//jumpParticles->setLocalScale(Vector3(0.5f));
+	//jumpParticles->setLocalPosition(vec3::Zero);
+	//jumpParticles->setLocalScale(vec3(0.5f));
 	//jumpParticles->setLocalRotationAngleY(90.0f);
 
 	// Physics properties
 	//dynamic_cast<ParticleEmitter*>(jumpParticles)->texName = "Dust";
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = Vector3(-0.1f, 0.01f, -0.01f);
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = Vector3(0.1f, 0.02f, 0.01f);
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = Vector2(1.0f, 2.0f);
+	//dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = vec3(-0.1f, 0.01f, -0.01f);
+	//dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = vec3(0.1f, 0.02f, 0.01f);
+	//dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = vec2(1.0f, 2.0f);
 	//dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getWorldPosition();
 
 	// Visual Properties
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = Vector2(0.08f, 0.1f);
+	//dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = vec2(0.08f, 0.1f);
 
 	//dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
 
@@ -170,31 +171,40 @@ void Game::initializeGame()
 	/*float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);*/
 	//camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
 	////camera.orthographic(-10, 10, -10, 10, -100, 100);
-	//camera.setWorldPosition(Vector3(0.0f, 4.0f, 5.0f));
+	//camera.setWorldPosition(vec3(0.0f, 4.0f, 5.0f));
 	//camera.setLocalRotationAngleX(camera.getLocalRotationAngleX() - 0.2f);
 
 	//UICamera.orthographic(-16, 16, 9, -9, -100, 100);
-	//UICamera.setWorldPosition(Vector3::Zero);
+	//UICamera.setWorldPosition(vec3::Zero);
 
 	Scene* testScene = new Scene("TEST SCENE");
 	//testScene->saveScene();
 
 	SceneManager* sceneManager = SceneManager::getInstance();
-	sceneManager->addScene(testScene);
-	sceneManager->loadScene(testScene->getName());
-	_currentScene = sceneManager->getCurrentScene();
+
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
-	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scene2.db", "Scene2");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
+
+	sceneManager->addScene(testScene);
+	sceneManager->loadOldFaithful(testScene->getName());
+	_currentScene = sceneManager->getCurrentScene();
 
 
 	//SceneManager* sceneManager = SceneManager::getInstance();
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
+
+	_currentScene->saveScene();
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
+
+	int dummy = 0;
+	dummy++;
 }
 
 void Game::update()
 {
+	_currentScene = SceneManager::getInstance()->getCurrentScene();
 	collided = false;
 	if (!reverse)
 		t += 0.01f;
@@ -219,7 +229,7 @@ void Game::update()
 
 	//particleTrail->getParent()->update(deltaTime);
 	//player.getParent()->update(deltaTime);
-	//spotLight->setPosition(Vector3(player.getWorldPosition().x, 5.0f, player.getWorldPosition().z) + offse);
+	//spotLight->setPosition(vec3(player.getWorldPosition().x, 5.0f, player.getWorldPosition().z) + offse);
 	//nutOmeter.getParent()->update(deltaTime);
 	//time.getParent()->update(deltaTime);
 

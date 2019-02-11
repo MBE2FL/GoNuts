@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "MathLib/MathLibCore.h"
 #include "Mesh.h"
 #include "ShaderProgram.h"
@@ -11,13 +12,18 @@
 #include "GameObject.h"
 #include "ObjectLoader.h"
 
+
+using MathUtils::lerp;
+using MathUtils::invLerp;
+
+
 // Params for each particle
 class Particle : public GameObject
 {
 public:
 	
 	//void draw(Camera& camera, Light* light);
-	Matrix44 getLocalToWorldMatrix() const;
+	mat4 getLocalToWorldMatrix() const;
 
 	// Physics properties
 	// Position is where the particle currently is
@@ -26,10 +32,10 @@ public:
 	// p' = p + v*dt
 		//	current position is the previous position plus the change in position multiplied by the amount of time passed since we last calculated position
 	// v' = v + a*dt
-	//Vector3 position;
-	Vector3 velocity;
-	Vector3 acceleration;
-	Vector3 force;
+	//vec3 position;
+	vec3 velocity;
+	vec3 acceleration;
+	vec3 force;
 	// You can add an option to limit the parameters above
 	float mass;
 
@@ -38,9 +44,9 @@ public:
 	float size;
 	float sizeBegin;
 	float sizeEnd;
-	Vector4 color;
-	Vector4 colorBegin;
-	Vector4 colorEnd;
+	vec4 color;
+	vec4 colorBegin;
+	vec4 colorEnd;
 	// ... sprite sheet ...
 
 
@@ -71,11 +77,11 @@ public:
 	virtual void update(float dt);
 	//virtual void draw(Camera &camera, Light *light, Light* spotLight, Matrix44& cameraInverse);
 
-	void applyForceToParticle(unsigned int idx, Vector3 force);
+	void applyForceToParticle(unsigned int idx, vec3 force);
 
 	unsigned int getNumParticles() { return m_pNumParticles; }
 
-	Vector3 getParticlePosition(unsigned int idx);
+	vec3 getParticlePosition(unsigned int idx);
 	float getParticleMass(unsigned int idx);
 
 	// Creation properties
@@ -91,31 +97,31 @@ public:
 
 	///// Initial properties for newly spawned particles
 
-	Vector3 emitterPosition;
+	vec3 emitterPosition;
 	float spawnDelay = 0.0f;
 
 	// Storing ranges for each property so each particle has some randomness
-	Vector3 velocity0;
-	Vector3 velocity1;
+	vec3 velocity0;
+	vec3 velocity1;
 
-	Vector3 spawnRadius1;
-	Vector3 spawnRadius2;
+	vec3 spawnRadius1;
+	vec3 spawnRadius2;
 	float range = 0.0f;
 
 	// these properties are single floats, so we can pack the min and max into a vec2, just data!
-	Vector2 lifeRange;
-	Vector2 sizeRange;
-	Vector2 sizeEnd;
-	Vector2 sizeBegin;
-	Vector2 massRange;
+	vec2 lifeRange;
+	vec2 sizeRange;
+	vec2 sizeEnd;
+	vec2 sizeBegin;
+	vec2 massRange;
 
-	Vector4 colorBegin0;
-	Vector4 colorBegin1;
-	Vector4 colorEnd0;
-	Vector4 colorEnd1;
+	vec4 colorBegin0;
+	vec4 colorBegin1;
+	vec4 colorEnd0;
+	vec4 colorEnd1;
 
 
-	Vector3 partLocalPos = Vector3(5.0f, -7.5f, 0.0f);
+	vec3 partLocalPos = vec3(5.0f, -7.5f, 0.0f);
 
 	// ... other properties
 	// ... what would be a better way of doing this?

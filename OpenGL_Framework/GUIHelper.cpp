@@ -1,5 +1,6 @@
 #include "GUIHelper.h"
 
+
 GUIHelper* GUIHelper::_instance = nullptr;
 
 GUIHelper * GUIHelper::getInstance()
@@ -35,10 +36,56 @@ GUIHelper::GUIHelper()
 {
 	_entityManager = EntityManager::getInstance();
 	_entityFactory = EntityFactory::getInstance();
+	_sceneManager = SceneManager::getInstance();
 }
 
 void GUIHelper::draw()
 {
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Scenes"))
+		{
+			if (ImGui::MenuItem("Load Scene"))
+			{
+				_showSceneSelector = !_showSceneSelector;
+				//drawScenes();
+			}
+
+			if (ImGui::MenuItem("Save Scene As"))
+			{
+				_showSceneSaveModal = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	if (_showSceneSelector)
+		drawScenes();
+
+	// Name the new scene.
+	if (_showSceneSaveModal)
+	{
+		ImGui::OpenPopup("Scene Name?");
+		_showSceneSaveModal = false;
+	}
+	if (ImGui::BeginPopupModal("Scene Name?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Give the new scene a name.\n");
+		ImGui::Separator();
+		static char buffer[64] = "";
+		ImGui::InputText("Enter Name Here", buffer, 64);
+
+		if (ImGui::Button("Save"))
+		{
+			_sceneManager->saveSceneAs(buffer);
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+
 	ImGui::Begin("Scene Editor", &_showSceneEditor);
 
 	ImGui::Checkbox("Scene Editor", &_showSceneEditor);
@@ -56,6 +103,11 @@ void GUIHelper::draw()
 
 		if (_showSpawnEntity)
 			SpawnEntity();
+
+		ImGui::Checkbox("Enable Physics Debug", &_enablePhysicsDebug);
+
+		if (_enablePhysicsDebug)
+
 
 		// Close scene editor window
 		if (ImGui::Button("Close"))
@@ -81,6 +133,11 @@ void GUIHelper::update()
 {
 	_entityManager = EntityManager::getInstance();
 	_entityFactory = EntityFactory::getInstance();
+}
+
+bool GUIHelper::getPhysicsDebugEnabled() const
+{
+	return _enablePhysicsDebug;
 }
 
 void GUIHelper::drawHierarchy()
@@ -190,7 +247,7 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	{
 		ImGui::Text("Transform:");
 		// Position property
-		Vector3 temp = transform->getLocalPosition();
+		vec3 temp = transform->getLocalPosition();
 		ImGui::DragFloat3("Position: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 		transform->setLocalPosition(temp);
 
@@ -211,10 +268,15 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	}
 
 
+	// Display collider properties
+	Collider* collider = _entityManager->getComponent<Collider*>(ComponentType::Collider, entity);
+	if (collider && ImGui::CollapsingHeader("Collider"))
+		drawCollider(collider);
+
 	// Display mesh renderer properties
 	MeshRendererComponent* meshRenderer = _entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, entity);
 	if (meshRenderer && ImGui::CollapsingHeader("Mesh Renderer"))
-		drawMeshRenderer(meshRenderer);
+		drawMeshRenderer(meshRenderer, collider);
 
 	// Display physics body properties
 	PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
@@ -238,7 +300,7 @@ void GUIHelper::propertyEditor(TransformComponent * transform, bool * open)
 	ImGui::End();
 }
 
-void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
+void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer, Collider * collider)
 {
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -342,6 +404,9 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 			{
 				currentMesh = mesh;
 				meshRenderer->setMesh(*it);
+
+				if (collider)
+					collider->setBounds((*it)->getMeshBounds());
 			}
 			if (isSelected)
 				ImGui::SetItemDefaultFocus();
@@ -461,6 +526,135 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer)
 	}
 }
 
+void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
+{
+	// Add a force to the physics body.
+	vec3 tempVec3 = physicsBody->getForce();
+	ImGui::InputFloat3("Force", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
+	physicsBody->setForce(tempVec3);
+
+	// Set the acceleration.
+	tempVec3 = physicsBody->getAcceleration();
+	ImGui::InputFloat3("Acceleration", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
+	physicsBody->setAcceleration(tempVec3);
+
+	// Set the velocity.
+	tempVec3 = physicsBody->getVelocity();
+	ImGui::DragFloat3("Velocity", &tempVec3.x);
+	physicsBody->setVelocity(tempVec3);
+
+	// Set the mass.
+	float mass = physicsBody->getMass();
+	ImGui::DragFloat("Mass", &mass);
+	physicsBody->setMass(mass);
+
+	// Set if the physics body should use gravity or not.
+	bool useGravity = physicsBody->getUseGravity();
+	ImGui::Checkbox("Use Gravity", &useGravity);
+	physicsBody->setUseGravity(useGravity);
+}
+
+char* GUIHelper::projToChar(ProjectionType type)
+{
+	switch (type)
+	{
+	case Perspective:
+		return "Perspective";
+		break;
+	case Orthographic:
+		return "Orthographic";
+		break;
+	default:
+		return "";
+		break;
+	}
+}
+
+ProjectionType GUIHelper::charToProj(char* type)
+{
+	if (strcmp(type, "Perspective") == 0)
+		return ProjectionType::Perspective;
+	else if (strcmp(type, "Orthographic") == 0)
+		return ProjectionType::Orthographic;
+	else
+		return ProjectionType::Perspective;
+}
+
+void GUIHelper::drawCamera(CameraComponent * camera)
+{
+	bool cullingActive = camera->getCullingActive();
+	ImGui::Checkbox("Cull", &cullingActive);
+	camera->setCullingActive(cullingActive);
+
+	float perspAspect = 1900.0f / 1000.0f;
+
+	float aspect = camera->getAspectRatio();
+	ProjectionType projType = camera->getProjType();
+	char* currProjChar = projToChar(projType);
+	if (ImGui::BeginCombo("Projection Type", currProjChar))
+	{
+		static const ProjectionType allTypes[2] = { ProjectionType::Perspective, ProjectionType::Orthographic };
+		for (ProjectionType currType : allTypes)
+		{
+			char* projChar = projToChar(currType);
+
+			bool isSelected = (currProjChar == projChar);
+
+			if (ImGui::Selectable(projChar, isSelected))
+			{
+				currProjChar = projChar;
+				if (charToProj(currProjChar) == ProjectionType::Perspective)
+				{
+					camera->setPerspective(60.0f, perspAspect, 1.0f, 1000.0f);
+					projType = ProjectionType::Perspective;
+				}
+				else
+				{
+					camera->setOrthographic(-10.0f, 10.0f, 10.0f, -10.0f, 750.0f, -1000.0f);
+					projType = ProjectionType::Orthographic;
+				}
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+
+	float zNear = camera->getNear();
+	ImGui::DragFloat("zNear", &zNear, 1.0f, 0.0f, 0.0f, "%.1f");
+
+	float zFar = camera->getFar();
+	ImGui::DragFloat("zFar", &zFar, 1.0f, 0.0f, 0.0f, "%.1f");
+	
+	if (projType == ProjectionType::Perspective)
+	{
+		vec2 fov = camera->getFov();
+		float fovY = toRadians(fov.y);
+		ImGui::SliderAngle("FOV Y", &fovY);
+		fov.y = toDegrees(fovY);
+		
+		string fovText = "FOV X " + to_string(fov.x);
+		ImGui::Text(fovText.c_str());
+
+		camera->setPerspective(fov.y, perspAspect, zNear, zFar);
+	}
+	else
+	{
+		vec4 orthoSize = camera->getOrthoSize();
+		ImGui::DragFloat("Left", &orthoSize.x, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Right", &orthoSize.y, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Top", &orthoSize.z, 1.0f, 0.0f, 0.0f, "%.1f");
+		ImGui::DragFloat("Bottom", &orthoSize.w, 1.0f, 0.0f, 0.0f, "%.1f");
+
+		camera->setOrthographic(orthoSize.x, orthoSize.y, orthoSize.w, orthoSize.z, zNear, zFar);
+	}
+
+	string aspectText = "Aspect " + to_string(aspect);
+	ImGui::Text(aspectText.c_str());
+}
+
 char* tagToChar(TTag tag)
 {
 	switch (tag)
@@ -507,35 +701,10 @@ TTag charToTag(char* tag)
 		return TTag::Acorn;
 }
 
-void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
+void GUIHelper::drawCollider(Collider * collider)
 {
-	// Add a force to the physics body.
-	Vector3 tempVec3 = physicsBody->getForce();
-	ImGui::InputFloat3("Force", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
-	physicsBody->setForce(tempVec3);
-
-	// Set the acceleration.
-	tempVec3 = physicsBody->getAcceleration();
-	ImGui::InputFloat3("Acceleration", &tempVec3.x, 3, ImGuiInputTextFlags_EnterReturnsTrue);
-	physicsBody->setAcceleration(tempVec3);
-
-	// Set the velocity.
-	tempVec3 = physicsBody->getVelocity();
-	ImGui::DragFloat3("Velocity", &tempVec3.x);
-	physicsBody->setVelocity(tempVec3);
-
-	// Set the mass.
-	float mass = physicsBody->getMass();
-	ImGui::DragFloat("Mass", &mass);
-	physicsBody->setMass(mass);
-
-	// Set if the physics body should use gravity or not.
-	bool useGravity = physicsBody->getUseGravity();
-	ImGui::Checkbox("Use Gravity", &useGravity);
-	physicsBody->setUseGravity(useGravity);
-
 	// Set the tag.
-	TTag tag = physicsBody->getTag();
+	TTag tag = collider->getTag();
 	char* currTagChar = tagToChar(tag);
 	if (ImGui::BeginCombo("Tag", currTagChar))
 	{
@@ -549,7 +718,7 @@ void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 			if (ImGui::Selectable(tagChar, isSelected))
 			{
 				currTagChar = tagChar;
-				physicsBody->setTag(charToTag(currTagChar));
+				collider->setTag(charToTag(currTagChar));
 			}
 			if (isSelected)
 				ImGui::SetItemDefaultFocus();
@@ -557,107 +726,6 @@ void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 
 		ImGui::EndCombo();
 	}
-}
-
-char* projToChar(ProjectionType type)
-{
-	switch (type)
-	{
-	case Perspective:
-		return "Perspective";
-		break;
-	case Orthographic:
-		return "Orthographic";
-		break;
-	default:
-		return "";
-		break;
-	}
-}
-
-ProjectionType charToProj(char* type)
-{
-	if (strcmp(type, "Perspective") == 0)
-		return ProjectionType::Perspective;
-	else if (strcmp(type, "Orthographic") == 0)
-		return ProjectionType::Orthographic;
-	else
-		return ProjectionType::Perspective;
-}
-
-void GUIHelper::drawCamera(CameraComponent * camera)
-{
-	bool cullingActive = camera->getCullingActive();
-	ImGui::Checkbox("Cull", &cullingActive);
-	camera->setCullingActive(cullingActive);
-
-	float perspAspect = 1900.0f / 1000.0f;
-
-	float aspect = camera->getAspectRatio();
-	ProjectionType projType = camera->getProjType();
-	char* currProjChar = projToChar(projType);
-	if (ImGui::BeginCombo("Projection Type", currProjChar))
-	{
-		static const ProjectionType allTypes[2] = { ProjectionType::Perspective, ProjectionType::Orthographic };
-		for (ProjectionType currType : allTypes)
-		{
-			char* projChar = projToChar(currType);
-
-			bool isSelected = (currProjChar == projChar);
-
-			if (ImGui::Selectable(projChar, isSelected))
-			{
-				currProjChar = projChar;
-				if (charToProj(currProjChar) == ProjectionType::Perspective)
-				{
-					camera->perspective(60.0f, perspAspect, 1.0f, 1000.0f);
-					projType = ProjectionType::Perspective;
-				}
-				else
-				{
-					camera->orthographic(-10.0f, 10.0f, 10.0f, -10.0f, 750.0f, -1000.0f);
-					projType = ProjectionType::Orthographic;
-				}
-			}
-			if (isSelected)
-				ImGui::SetItemDefaultFocus();
-		}
-
-		ImGui::EndCombo();
-	}
-
-
-	float zNear = camera->getNear();
-	ImGui::DragFloat("zNear", &zNear, 1.0f, 0.0f, 0.0f, "%.1f");
-
-	float zFar = camera->getFar();
-	ImGui::DragFloat("zFar", &zFar, 1.0f, 0.0f, 0.0f, "%.1f");
-	
-	if (projType == ProjectionType::Perspective)
-	{
-		Vector2 fov = camera->getFov();
-		float fovY = MathLibCore::toRadians(fov.y);
-		ImGui::SliderAngle("FOV Y", &fovY);
-		fov.y = MathLibCore::toDegrees(fovY);
-		
-		string fovText = "FOV X " + to_string(fov.x);
-		ImGui::Text(fovText.c_str());
-
-		camera->perspective(fov.y, perspAspect, zNear, zFar);
-	}
-	else
-	{
-		Vector4 orthoSize = camera->getOrthoSize();
-		ImGui::DragFloat("Left", &orthoSize.x, 1.0f, 0.0f, 0.0f, "%.1f");
-		ImGui::DragFloat("Right", &orthoSize.y, 1.0f, 0.0f, 0.0f, "%.1f");
-		ImGui::DragFloat("Top", &orthoSize.z, 1.0f, 0.0f, 0.0f, "%.1f");
-		ImGui::DragFloat("Bottom", &orthoSize.q, 1.0f, 0.0f, 0.0f, "%.1f");
-
-		camera->orthographic(orthoSize.x, orthoSize.y, orthoSize.q, orthoSize.z, zNear, zFar);
-	}
-
-	string aspectText = "Aspect " + to_string(aspect);
-	ImGui::Text(aspectText.c_str());
 }
 
 void GUIHelper::SpawnEntity()
@@ -667,11 +735,11 @@ void GUIHelper::SpawnEntity()
 	if (ImGui::BeginPopupModal("Spawn Entity", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		// Create an input field for position.
-		static Vector3 position = Vector3(0.0f, 0.0f, -5.0f);
+		static vec3 position = vec3(0.0f, 0.0f, -5.0f);
 		ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
 
 		// Create an input field for scale.
-		static Vector3 scale = Vector3::One;
+		static vec3 scale = vec3(1.0f);
 		ImGui::InputFloat3("Scale", &scale.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
 
 
@@ -706,4 +774,43 @@ void GUIHelper::SpawnEntity()
 
 		ImGui::EndPopup();
 	}
+}
+
+void GUIHelper::drawScenes()
+{
+	ImGui::Begin("Scene Selector", &_showSceneSelector);
+
+		vector<Scene*> scenes = _sceneManager->getScenes();
+
+		// Select a scene from the scene manager.
+		static Scene* _currentScene = _sceneManager->getCurrentScene();
+		static string _currSceneName = _currentScene->getName();
+		if (ImGui::BeginCombo("Scene Names", _currSceneName.c_str()))
+		{
+			for (Scene* scene : scenes)
+			{
+				string sceneName = scene->getName();
+
+				bool isSelected = (_currSceneName == sceneName);
+
+				if (ImGui::Selectable(sceneName.c_str(), isSelected))
+				{
+					_currSceneName = sceneName;
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		// Load selected scene.
+		if (ImGui::Button("Load Scene"))
+		{
+			_sceneManager->loadScene(_currSceneName);
+		}
+
+	ImGui::End();
+
 }

@@ -2,11 +2,11 @@
 #include <iostream>
 
 Transform::Transform()
-	: color(Vector4(1.0f))
+	: color(vec4(1.0f))
 {
 }
 
-void Transform::setLocalPosition(const Vector3& newPosition)
+void Transform::setLocalPosition(const vec3& newPosition)
 {
 	m_pLocalPosition = newPosition;
 }
@@ -26,7 +26,7 @@ void Transform::setLocalRotationAngleZ(const float newAngle)
 	m_pRotZ = newAngle;
 }
 
-void Transform::setLocalScale(const Vector3 newScale)
+void Transform::setLocalScale(const vec3 newScale)
 {
 	m_pScale = newScale;
 }
@@ -46,7 +46,7 @@ void Transform::setLocalScaleZ(const float _z)
 	m_pScale.z = _z;
 }
 
-Vector3 Transform::getLocalPosition() const
+vec3 Transform::getLocalPosition() const
 {
 	return m_pLocalPosition;
 }
@@ -66,7 +66,7 @@ float Transform::getLocalRotationAngleZ() const
 	return m_pRotZ;
 }
 
-Vector3 Transform::getLocalScale() const
+vec3 Transform::getLocalScale() const
 {
 	return m_pScale;
 }
@@ -86,23 +86,23 @@ float Transform::getLocalScaleZ() const
 	return m_pScale.z;
 }
 
-Matrix44 Transform::getLocalToWorldMatrix() const
+mat4 Transform::getLocalToWorldMatrix() const
 {
 	return m_pLocalToWorldMatrix;
 }
 
-Vector3 Transform::getWorldPosition()
+vec3 Transform::getWorldPosition()
 {
 	if (_parent)
 	{
-		Vector4 temp = _parent->getLocalToWorldMatrix() * Vector4(m_pLocalPosition, 1.0f);
-		return Vector3(temp.x, temp.y, temp.z);
+		vec4 temp = _parent->getLocalToWorldMatrix() * vec4(m_pLocalPosition, 1.0f);
+		return vec3(temp.x, temp.y, temp.z);
 	}
 	else
 		return m_pLocalPosition;
 }
 
-void Transform::setWorldPosition(const Vector3 & newPosition)
+void Transform::setWorldPosition(const vec3 & newPosition)
 {
 	if (_parent)
 		_parent->setWorldPosition(newPosition);
@@ -110,7 +110,7 @@ void Transform::setWorldPosition(const Vector3 & newPosition)
 		m_pLocalPosition = newPosition;
 }
 
-Matrix44 Transform::getWorldRotation()
+mat4 Transform::getWorldRotation()
 {
 	if (_parent)
 		return _parent->getWorldRotation() * m_pLocalRotation;
@@ -118,7 +118,7 @@ Matrix44 Transform::getWorldRotation()
 		return m_pLocalRotation;
 }
 
-void Transform::setWorldRotation(const Matrix44 & newRotation)
+void Transform::setWorldRotation(const mat4 & newRotation)
 {
 	if (_parent)
 		_parent->setWorldRotation(newRotation);
@@ -155,25 +155,24 @@ void Transform::update(float dt)
 	// Create 4x4 transformation matrix
 
 	// Create rotation matrix
+	mat4 rx;
+	mat4 ry;
+	mat4 rz;
 
-	Matrix44 rx; 
-	Matrix44 ry; 
-	Matrix44 rz; 
-
-	rx.RotateX(m_pRotX);
-	ry.RotateY(m_pRotY);
-	rz.RotateZ(m_pRotZ);
+	rx.rotateX(toRadians(m_pRotX));
+	ry.rotateY(toRadians(m_pRotY));
+	rz.rotateZ(toRadians(m_pRotZ));
 	// Note: pay attention to rotation order, ZYX is not the same as XYZ
 	m_pLocalRotation = rz * ry * rx;
 
 	// Create translation matrix
-	Matrix44 tran;
-	tran.Translate(m_pLocalPosition);
+	mat4 tran;
+	tran.translate(m_pLocalPosition);
 	//std::cout << "Position: X: " << m_pLocalPosition.x << " Y: " << m_pLocalPosition.y << " Z: " << m_pLocalPosition.z << std::endl;
 
-	// Create scale matrix
-	Matrix44 scale; 
-	scale.Scale(m_pScale);
+	// Create scale matrix 
+	mat4 scale;
+	scale.scale(m_pScale);
 
 	// Combine all above transforms into a single matrix
 	// This is the local transformation matrix, ie. where is this game object relative to it's parent

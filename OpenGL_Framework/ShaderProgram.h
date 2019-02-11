@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "GL/glew.h"
 //#include <MiniMath/Core.h>
 #include "MathLib/MathLibCore.h"
@@ -8,12 +9,14 @@
 #include <iostream>
 #include <vector>
 
+
 using std::string;
 using std::cout;
 using std::endl;
 using std::ifstream;
 using std::istreambuf_iterator;
 using std::vector;
+
 
 class ShaderProgram
 {
@@ -44,9 +47,9 @@ public:
 	void sendUniform(const string& name, int integer);
 	void sendUniform(const string& name, unsigned int unsigned_integer);
 	void sendUniform(const string& name, float scalar);
-	void sendUniform(const string& name, const Vector2& vector);
-	void sendUniform(const string& name, const Vector3& vector);
-	void sendUniform(const string& name, const Vector4& vector);
+	void sendUniform(const string& name, const vec2& vector);
+	void sendUniform(const string& name, const vec3& vector);
+	void sendUniform(const string& name, const vec4& vector);
 	void sendUniformMat3(const string& name, float* matrix, bool transpose);
 	void sendUniformMat4(const string& name, float* matrix, bool transpose);
 

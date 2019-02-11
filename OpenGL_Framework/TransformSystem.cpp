@@ -39,7 +39,7 @@ void TransformSystem::update(float deltaTime)
 		// Update the transforms position using physics, if the entity possesses a physics body.
 		if (physicsBody)
 		{
-			Vector3 position = transform->getLocalPosition();
+			vec3 position = transform->getLocalPosition();
 			physicsBody->update(deltaTime, transform);
 			position = position + physicsBody->getVelocity() * deltaTime;
 			transform->setLocalPosition(position);
@@ -52,27 +52,60 @@ void TransformSystem::update(float deltaTime)
 	}
 
 
-	vector<PhysicsBodyComponent*> physicsBodies = _entityManager->getAllPhysicsBodyComponents();
+	//vector<PhysicsBodyComponent*> physicsBodies = _entityManager->getAllPhysicsBodyComponents();
+	//TransformComponent* playerTransform = EntityManager::getPlayerTransform();
+	//if (!playerTransform)
+	//	return;
+	//// Update collider bounds, after current world transformations have been calculated.
+	//for (PhysicsBodyComponent* physicsBody : physicsBodies)
+	//{
+	//	// Get the transform component for the current entity.
+	//	TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, physicsBody->getEntity());
+	//	if (!transform)
+	//		return;
+
+	//	// Also check if the current entity possesses a physics body.
+	//	//PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
+
+	//	// Update the transforms position using physics, if the entity possesses a physics body.
+	//	if (physicsBody)
+	//	{
+	//		physicsBody->updateBounds(transform);
+
+	//		bool active = (vec3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
+	//		physicsBody->setActive(active);
+	//	}
+	//}
+
+
+	vector<Collider*> colliders = _entityManager->getAllColliders();
 	TransformComponent* playerTransform = EntityManager::getPlayerTransform();
 	if (!playerTransform)
 		return;
-	// Update collider bounds, after current world transformations have been calculated.
-	for (PhysicsBodyComponent* physicsBody : physicsBodies)
+	// Update colliders, after current world transformations have been calculated.
+	for (Collider* collider : colliders)
 	{
 		// Get the transform component for the current entity.
-		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, physicsBody->getEntity());
+		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, collider->getEntity());
 		if (!transform)
 			return;
 
+		// Update collider.
+		collider->update(transform);
+
+
+		bool active = (vec3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
+
+		collider->setEnabled(active);
+
+
 		// Also check if the current entity possesses a physics body.
-		//PhysicsBodyComponent* physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, entity);
+		PhysicsBodyComponent* physicsBody = collider->getPhysicsBody();
 
 		// Update the transforms position using physics, if the entity possesses a physics body.
 		if (physicsBody)
 		{
-			physicsBody->updateBounds(transform);
-
-			bool active = (Vector3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
+			//bool active = (vec3::sqrDistance(playerTransform->getWorldPosition(), transform->getWorldPosition()) <= CULL_DISTANCE);
 			physicsBody->setActive(active);
 		}
 	}

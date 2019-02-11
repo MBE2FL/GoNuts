@@ -3,8 +3,8 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 //#include "Camera.h"
-#include "PhysicsBody.h"
 #include "Component.h"
+#include "Transform.h"
 #include "Texture.h"
 #include "Light.h"
 #include "ObjectLoader.h"
@@ -17,22 +17,22 @@ public:
 	GameObject(const bool createParent = true);
 	~GameObject();
 
-	Vector3 getLocalPosition() const;
-	void setLocalPosition(const Vector3& newPosition);
-	Vector3 getWorldPosition() const;
-	void setWorldPosition(const Vector3& newPosition);
-	Matrix44 getWorldRotation() const;
-	void setWorldRotation(const Matrix44& newRotation);
+	vec3 getLocalPosition() const;
+	void setLocalPosition(const vec3& newPosition);
+	vec3 getWorldPosition() const;
+	void setWorldPosition(const vec3& newPosition);
+	mat4 getWorldRotation() const;
+	void setWorldRotation(const mat4& newRotation);
 	float getLocalRotationAngleX() const;
 	void setLocalRotationAngleX(const float newAngle);
 	float getLocalRotationAngleY() const;
 	void setLocalRotationAngleY(const float newAngle);
 	float getLocalRotationAngleZ() const;
 	void setLocalRotationAngleZ(const float newAngle);
-	Vector3 getLocalScale() const;
-	void setLocalScale(const Vector3 newScale);
+	vec3 getLocalScale() const;
+	void setLocalScale(const vec3 newScale);
 
-	Matrix44 getLocalToWorldMatrix() const;
+	mat4 getLocalToWorldMatrix() const;
 
 	void setWorldRotationAngleX(const float newAngle);
 	void setWorldRotationAngleY(const float newAngle);
@@ -56,14 +56,6 @@ public:
 	//virtual void draw(Camera& camera, Light* light, Light* spotLight, Matrix44& cameraInverse);
 
 	//MeshBounds getMeshBounds() const;
-	void addPhysicsBody(const bool _useGravity);
-	PhysicsBody* getPhysicsBody() const;
-	bool checkCollisions(GameObject& other);
-	bool checkSpikeCollisions(GameObject& other);
-	bool checkCoinCollisions(GameObject& other);
-	void addForce(const Vector2& force);
-	void useGravity(const bool _useGravity);
-	void setVelocity(const Vector2& velocity);
 
 
 	void addChild(GameObject* child);
@@ -73,7 +65,6 @@ public:
 	Transform* _transform;
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
-	PhysicsBody* _physicsBody;
 	vector<Texture*> _texture;
 
 private:

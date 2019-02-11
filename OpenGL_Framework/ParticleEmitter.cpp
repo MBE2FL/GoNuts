@@ -18,7 +18,7 @@
 //	_shaderProgram->sendUniform("uTex", 0);
 //
 //
-//	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * Vector4(light->getPosition(), 1.0f));
+//	_shaderProgram->sendUniform("lightPosition", camera.getLocalToWorldMatrix().GetInverse() * vec4(light->getPosition(), 1.0f));
 //	_shaderProgram->sendUniform("lightAmbient", light->getAmbient());
 //	_shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
 //	_shaderProgram->sendUniform("lightSpecular", light->getSpecular());
@@ -38,7 +38,7 @@
 //	_shaderProgram->unBind();
 //}
 
-Matrix44 Particle::getLocalToWorldMatrix() const
+mat4 Particle::getLocalToWorldMatrix() const
 {
 	return _transform->getLocalToWorldMatrix();
 }
@@ -77,14 +77,14 @@ void ParticleEmitter::initialize(unsigned int numParticles)
 			Particles->_transform = new Transform();
 			Particles->_mesh = nullptr;
 			Particles->_shaderProgram = nullptr;
-			Particles->_physicsBody = nullptr;
+			//Particles->_physicsBody = nullptr;
 			Particles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 			Particles->setMesh(ObjectLoader::getMesh("Plane"));
 			Particles->setTexture(ObjectLoader::getTexture(texName));
-			Particles->addPhysicsBody(false);
+			//Particles->addPhysicsBody(false);
 			Particles->setParent(this);
 			//Particles->setWorldPosition(getWorldPosition());
-			Particles->setLocalPosition(Vector3::Zero);
+			Particles->setLocalPosition(vec3(0.0f));
 			Particles->setLocalScale(getLocalScale());
 			m_pParticles.push_back(Particles);
 		}
@@ -121,20 +121,20 @@ void ParticleEmitter::update(float dt)
 			{
 				// Respawn particle
 				// Note: we are not freeing memory, we are "Recycling" the particles
-				particle->acceleration = Vector3(0.0f);
+				particle->acceleration = vec3(0.0f);
 
 				//This will generate a number from 0.0 to 1.0, inclusive.
 				float randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
-				particle->colorBegin = MathLibCore::lerp(colorBegin0, colorBegin1, randomTval);
+				particle->colorBegin = lerp(colorBegin0, colorBegin1, randomTval);
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				particle->colorEnd = MathLibCore::lerp(colorEnd0, colorEnd1, randomTval);
+				particle->colorEnd = lerp(colorEnd0, colorEnd1, randomTval);
 				particle->color = particle->colorBegin;
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				particle->life = MathLibCore::lerp(lifeRange.x, lifeRange.y, randomTval);
+				particle->life = lerp(lifeRange.x, lifeRange.y, randomTval);
 				particle->lifetime = particle->life;
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				particle->mass = MathLibCore::lerp(massRange.x, massRange.y, randomTval);
+				particle->mass = lerp(massRange.x, massRange.y, randomTval);
 
 				spawnRadius1.x = getLocalPosition().x + range;
 				spawnRadius1.y = getLocalPosition().y + range;
@@ -144,30 +144,30 @@ void ParticleEmitter::update(float dt)
 				{
 					float randomTval1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					float randomTval2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					particle->setLocalPosition(Vector3(MathLibCore::lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
-						MathLibCore::lerp(spawnRadius1.y, spawnRadius2.y, randomTval2), getLocalPosition().z));
+					particle->setLocalPosition(vec3(lerp(spawnRadius1.x, spawnRadius2.x, randomTval1),
+						lerp(spawnRadius1.y, spawnRadius2.y, randomTval2), getLocalPosition().z));
 					particle->setLocalPosition(partLocalPos);
 				}
 
-				particle->sizeBegin = MathLibCore::lerp(sizeBegin.x, sizeBegin.y, randomTval);
+				particle->sizeBegin = lerp(sizeBegin.x, sizeBegin.y, randomTval);
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				particle->sizeEnd = MathLibCore::lerp(sizeEnd.x, sizeEnd.y, randomTval);
+				particle->sizeEnd = lerp(sizeEnd.x, sizeEnd.y, randomTval);
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				particle->size = MathLibCore::lerp(sizeRange.x, sizeRange.y, randomTval);
+				particle->size = lerp(sizeRange.x, sizeRange.y, randomTval);
 				randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
 
 				if (velocityRandomValues)
 				{
-					particle->velocity.x = MathLibCore::lerp(velocity0.x, velocity1.x, randomTval);
+					particle->velocity.x = lerp(velocity0.x, velocity1.x, randomTval);
 					randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					particle->velocity.y = MathLibCore::lerp(velocity0.y, velocity1.y, randomTval);
+					particle->velocity.y = lerp(velocity0.y, velocity1.y, randomTval);
 					randomTval = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					particle->velocity.z = MathLibCore::lerp(velocity0.z, velocity1.z, randomTval);
+					particle->velocity.z = lerp(velocity0.z, velocity1.z, randomTval);
 				}
 				else
 				{
-					particle->velocity = MathLibCore::lerp(velocity0, velocity1, randomTval);
+					particle->velocity = lerp(velocity0, velocity1, randomTval);
 				}
 			}
 
@@ -177,27 +177,27 @@ void ParticleEmitter::update(float dt)
 			particle->acceleration = particle->force / particle->mass;
 			particle->velocity = particle->velocity + (particle->acceleration * dt);
 			particle->setLocalPosition(particle->getLocalPosition() + particle->velocity * dt * 60.0f);
-			//particle->setLocalPosition(Vector3::Zero);
+			//particle->setLocalPosition(vec3::Zero);
 			//particle->setLocalPosition(partLocalPos);
 			particle->_transform->update(dt);
 
 			// We've applied the force, let's remove it so it does not get applied next frame
-			particle->force = Vector3(0.0f);
+			particle->force = vec3(0.0f);
 
 			// Decrease particle life
 			particle->life -= dt;
 
 			{
-				float tVal = MathLibCore::invLerp(particle->life, particle->lifetime, 0.0f);
-				particle->size = MathLibCore::lerp(particle->sizeBegin, particle->sizeEnd, tVal);
+				float tVal = invLerp(particle->life, particle->lifetime, 0.0f);
+				particle->size = lerp(particle->sizeBegin, particle->sizeEnd, tVal);
 			}
 
 			// Update visual properties
 			if (interpolateColor)
 			{
 				// calculate t value
-				float tVal = MathLibCore::invLerp(particle->life, particle->lifetime, 0.0f);
-				particle->color = MathLibCore::lerp(particle->colorBegin, particle->colorEnd, tVal);
+				float tVal = invLerp(particle->life, particle->lifetime, 0.0f);
+				particle->color = lerp(particle->colorBegin, particle->colorEnd, tVal);
 			}
 		}
 	}
@@ -207,7 +207,7 @@ void ParticleEmitter::update(float dt)
 //{
 //	// Draw the emitter position
 //	// Note: not necessary
-//	//TTK::Graphics::DrawTeapot(emitterPosition, 50.0f, Vector4(1.0f));
+//	//TTK::Graphics::DrawTeapot(emitterPosition, 50.0f, vec4(1.0f));
 //
 //	
 //	for (unsigned int i = 0; i < m_pNumParticles; ++i)
@@ -225,7 +225,7 @@ void ParticleEmitter::update(float dt)
 //	}
 //}
 
-void ParticleEmitter::applyForceToParticle(unsigned int idx, Vector3 force)
+void ParticleEmitter::applyForceToParticle(unsigned int idx, vec3 force)
 {
 	if (idx >= m_pNumParticles)
 	{
@@ -236,12 +236,12 @@ void ParticleEmitter::applyForceToParticle(unsigned int idx, Vector3 force)
 	m_pParticles[idx]->force = force;
 }
 
-Vector3 ParticleEmitter::getParticlePosition(unsigned int idx)
+vec3 ParticleEmitter::getParticlePosition(unsigned int idx)
 {
 	if (idx >= m_pNumParticles)
 	{
 		std::cout << "ParticleEmitter::getParticlePosition ERROR: idx " << idx << "out of range!" << std::endl;
-		return Vector3();
+		return vec3();
 	}
 
 	return m_pParticles[idx]->_transform->getWorldPosition();
