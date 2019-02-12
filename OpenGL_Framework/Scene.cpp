@@ -33,9 +33,11 @@ void Scene::update(float deltaTime)
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
 
-	vec3 offset(-6, -1.5f, -8);
-	_mainCameraTransform->setWorldPosition(lerp(_mainCameraTransform->getWorldPosition(),
-		_playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
+	//vec3 offset(-6, -1.5f, -8);
+	//_mainCameraTransform->setWorldPosition(lerp(_mainCameraTransform->getWorldPosition(),
+	//	_playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
+	_mainCameraTransform->setTarget(_playerTransform, vec3(-6, -1.5f, -8));
+	_mainCameraTransform->followTarget(deltaTime * 3.0f);
 }
 
 void Scene::draw()
@@ -92,68 +94,7 @@ void Scene::draw()
 
 void Scene::imguiDraw()
 {
-	{
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		vec3 pos; //= camera.getWorldPosition();
-		//ImGui::Text("Camera Position: (%f, %f, %f)", pos.x, pos.y, pos.z);
-		//ImGui::DragFloat3("Camera Position: ", &pos.x, 0.5f);
-		//camera.setWorldPosition(pos);
-		pos = _playerTransform->getWorldPosition();
-		ImGui::Text("Player Pos: (%f, %f, %f)", pos.x, pos.y, pos.z);
-
-
-		// Light settings
-		if (ImGui::CollapsingHeader("Light Settings:"))
-		{
-			// Position settings
-			vec3 position = light->getPosition();
-			ImGui::DragFloat3("Light Position: ", &position.x, 0.5f);
-			light->setPosition(position);
-			// Ambient settings
-			vec3 ambient = light->getAmbient();
-			ImGui::ColorEdit3("Ambient Colour: ", &ambient.x);
-			light->setAmbient(ambient);
-			// Diffuse settings
-			vec3 diffuse = light->getDiffuse();
-			ImGui::ColorEdit3("Diffuse Colour: ", &diffuse.x);
-			light->setDiffuse(diffuse);
-			// Specular settings
-			vec3 specular = light->getSpecular();
-			ImGui::ColorEdit3("Specular Colour: ", &specular.x);
-			light->setSpecular(specular);
-			// Specular exponent settings
-			float specularExp = light->getSpecularExp();
-			ImGui::SliderFloat("Specular Exp: ", &specularExp, 0.0f, 250.0f);
-			light->setSpecularExp(specularExp);
-			// Attenuation constant settings
-			float attenuationConstant = light->getAttenuationConstant();
-			ImGui::SliderFloat("Attenuation Constant: ", &attenuationConstant, 0.0f, 20.0f);
-			light->setAttenuationConstant(attenuationConstant);
-			// Attenuation linear settings
-			float attenuationLinear = light->getAttenuationLinear();
-			ImGui::SliderFloat("Attenuation Linear: ", &attenuationLinear, 0.0f, 5.0f);
-			light->setAttenuationLinear(attenuationLinear);
-			// Attenuation quadratic settings
-			float attenuationQuadratic = light->getAttenuationQuadratic();
-			ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
-			light->setAttenuationQuadratic(attenuationQuadratic);
-
-
-			//vec3 spotPositiion = spotLight->getPosition();
-			//ImGui::SliderFloat3("Spot Position: ", &offse.x, -60.f, 60.f);
-			//spotLight->setPosition(spotPositiion);
-		}
-
-		_guiHelper->draw();
-
-		if (ImGui::Button("Save Scene"))
-			saveScene();
-
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
+	_guiHelper->draw();
 }
 
 string Scene::getName() const
@@ -188,7 +129,8 @@ void Scene::saveScene()
 	int exit = 0;
 
 	// Open the database
-	exit = sqlite3_open("./Assets/Scenes/Scenes2.db", &db);
+	string path = "./Assets/Scenes/" + _name + ".db";
+	exit = sqlite3_open(path.c_str(), &db);
 
 	if (exit != SQLITE_OK)
 	{
@@ -214,11 +156,12 @@ void Scene::saveScene()
 	sqlite3_close(db);
 }
 
-void Scene::saveSceneAs(const string & name)
+Scene* Scene::saveSceneAs(const string & name)
 {
 	sqlite3* db;
 	char* errMsg = 0;
 	int exit = 0;
+	Scene* newScene = new Scene(name);
 
 	// Open the database.
 	string path = "./Assets/Scenes/" + name + ".db";
@@ -227,7 +170,7 @@ void Scene::saveSceneAs(const string & name)
 	if (exit != SQLITE_OK)
 	{
 		cout << "Could not open scenes database!" << endl;
-		return;
+		return nullptr;
 	}
 
 	cout << "Opened scenes database successfully." << endl;
@@ -248,7 +191,14 @@ void Scene::saveSceneAs(const string & name)
 	// Save all entities.
 	saveEntities(db, errMsg);
 
+	// Load save into new scene.
+	//newScene->loadSceneFromFile(path);
+	newScene->loadEntities(db, errMsg);
+
 	sqlite3_close(db);
+
+
+	return newScene;
 }
 
 void Scene::loadOldFaithful()
@@ -700,7 +650,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 								" DEFAULT(0.0),"\
 		"[Centre.Z]  REAL    NOT NULL"\
 								" DEFAULT(0.0),"\
-		"[Size.X]            NOT NULL"\
+		"[Size.X]    REAL    NOT NULL"\
 								" DEFAULT(0.0),"\
 		"[Size.Y]    REAL    NOT NULL"\
 								" DEFAULT(0.0),"\
@@ -715,7 +665,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		"Enabled     BOOLEAN NOT NULL"\
 								" DEFAULT(TRUE),"\
 		"PhysicsBody INT     REFERENCES[Physics Bodies](ID) ON DELETE SET NULL"\
-								" DEFAULT NULL"\
+								" DEFAULT NULL,"\
 		"Tag         TEXT    NOT NULL"\
 								" DEFAULT 'Platform'"\
 		");";

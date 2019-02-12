@@ -163,7 +163,8 @@ vec3 TransformComponent::getWorldPosition() const
 {
 	if (_parent)
 	{
-		vec4 temp = _parent->getLocalToWorldMatrix() * vec4(_localPosition, 1.0f);
+		//vec4 temp = _parent->getLocalToWorldMatrix() * vec4(_localPosition, 1.0f);
+		vec4 temp = _parent->getLocalToWorldMatrix() * vec4(getTranslation(), 1.0f);
 		return vec3(temp);
 	}
 	else
@@ -334,4 +335,16 @@ vec3 TransformComponent::getUp() const
 vec3 TransformComponent::getLeft() const
 {
 	return _localToWorldMatrix.getLeft();
+}
+
+void TransformComponent::setTarget(TransformComponent * target, const vec3 & offset)
+{
+	_target = target;
+	_targetOffset = offset;
+}
+
+void TransformComponent::followTarget(const float speed)
+{
+	if (_target)
+		setWorldPosition(lerp(getWorldPosition(), _target->getWorldPosition() - _targetOffset, speed));
 }

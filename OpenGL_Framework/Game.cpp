@@ -205,7 +205,6 @@ void Game::initializeGame()
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
 
-	_currentScene->saveScene();
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 
