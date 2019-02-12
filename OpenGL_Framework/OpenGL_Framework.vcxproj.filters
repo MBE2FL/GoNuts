@@ -175,6 +175,10 @@
     <ClCompile Include="include\MathLib\mat3.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
+    <ClCompile Include="VertexBufferObject.cpp" />
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -305,6 +309,10 @@
     </ClInclude>
     <ClInclude Include="include\MathLib\mat3.h">
       <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferObject.h" />
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
