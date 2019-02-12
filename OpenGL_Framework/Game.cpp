@@ -34,6 +34,10 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building 1", "./Assets/Models/Building1.obj");
 	ObjectLoader::loadMesh("Building 2", "./Assets/Models/Building2.obj");
 	ObjectLoader::loadMesh("Building 3", "./Assets/Models/Building3.obj");
+	ObjectLoader::loadMesh("Building Top 1", "./Assets/Models/Building_Top1.obj");
+	ObjectLoader::loadMesh("Building Top 2", "./Assets/Models/Building_Top2.obj");
+	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
+	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 	ObjectLoader::loadMesh("Button", "./Assets/Models/button_final_unwrap.obj");
 	//Change
 	ObjectLoader::loadMesh("Checkpoint Squirrel", "./Assets/Models/checkpointsquirrel_unwrap.obj");
@@ -73,10 +77,6 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Building 2 Texture 3", "./Assets/Textures/Building 2 Texture 3.png");
 	ObjectLoader::loadTexture("Building 3 Texture 1", "./Assets/Textures/Building 3 Texture 1.png");
 	ObjectLoader::loadTexture("Building 3 Texture 3", "./Assets/Textures/Building 3 Texture 3.png");
-	ObjectLoader::loadTexture("Building Top 1", "./Assets/Textures/Building_Top1.png");
-	ObjectLoader::loadTexture("Building Top 2", "./Assets/Textures/Building_Top2.png");
-	ObjectLoader::loadTexture("Building Top 3", "./Assets/Textures/Building_Top3.png");
-	ObjectLoader::loadTexture("Building Top 4", "./Assets/Textures/Building_Top4.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture1.png");
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
