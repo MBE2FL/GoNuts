@@ -372,10 +372,13 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'c'://left control for sliding
 		if (_playerPhysicsBody->getCanJump())
 		{
-			sliding = true;
 			_playerTransform->setLocalScale(vec3(0.1f));
-			_playerTransform->setWorldPosition(vec3(_playerTransform->getLocalPosition().x,
-				_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+			if (!sliding)
+			{
+				_playerTransform->setWorldPosition(vec3(_playerTransform->getLocalPosition().x,
+					_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+			}
+			sliding = true;
 		}
 		break;
 	case 27: // the escape key
