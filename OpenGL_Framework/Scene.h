@@ -81,6 +81,8 @@ public:
 	Light* light;
 	Light* spotLight;
 
+	bool _followPlayer = true;
+
 private:
 	string _name;
 	string _filename;

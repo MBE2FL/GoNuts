@@ -846,6 +846,12 @@ void GUIHelper::drawSceneEditor()
 	ImGui::Separator();
 	ImGui::Spacing();
 
+	ImGui::Checkbox("Follow Player", &_sceneManager->getCurrentScene()->_followPlayer);
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
 	// Draw scene hierarchy
 	if (ImGui::CollapsingHeader("Hierarchy:"))
 	{
@@ -853,6 +859,16 @@ void GUIHelper::drawSceneEditor()
 	}
 
 	ImGui::End();
+}
+
+void GUIHelper::drawTransforms()
+{
+	//vector<TransformComponent*> transforms = _entityManager->getAllTransforms();
+
+	//for (TransformComponent* transform : transforms)
+	//{
+
+	//}
 }
 
 void GUIHelper::drawLights()

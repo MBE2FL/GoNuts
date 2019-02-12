@@ -36,8 +36,11 @@ void Scene::update(float deltaTime)
 	//vec3 offset(-6, -1.5f, -8);
 	//_mainCameraTransform->setWorldPosition(lerp(_mainCameraTransform->getWorldPosition(),
 	//	_playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
-	_mainCameraTransform->setTarget(_playerTransform, vec3(-6, -1.5f, -8));
-	_mainCameraTransform->followTarget(deltaTime * 3.0f);
+	if (_followPlayer)
+	{
+		_mainCameraTransform->setTarget(_playerTransform, vec3(-6, -1.5f, -8));
+		_mainCameraTransform->followTarget(deltaTime * 3.0f);
+	}
 }
 
 void Scene::draw()

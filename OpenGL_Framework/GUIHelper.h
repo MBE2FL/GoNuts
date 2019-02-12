@@ -61,5 +61,6 @@ private:
 	void SpawnEntity();
 	void drawScenes();
 	void drawSceneEditor();
+	void drawTransforms();
 	void drawLights();
 };
