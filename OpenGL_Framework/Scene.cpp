@@ -220,7 +220,7 @@ void Scene::saveSceneAs(const string & name)
 	char* errMsg = 0;
 	int exit = 0;
 
-	// Open the database
+	// Open the database.
 	string path = "./Assets/Scenes/" + name + ".db";
 	exit = sqlite3_open(path.c_str(), &db);
 
@@ -231,6 +231,9 @@ void Scene::saveSceneAs(const string & name)
 	}
 
 	cout << "Opened scenes database successfully." << endl;
+
+	// Create tables to store the entities, and their components.
+	createTables(db, errMsg);
 
 	// Save all transforms.
 	saveTransforms(db, errMsg);
@@ -528,6 +531,202 @@ void Scene::mouseMoved(int x, int y)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
+}
+
+void Scene::createTables(sqlite3 * db, char * errMsg)
+{
+	unsigned int exit;
+	string sql;
+
+	sql = "CREATE TABLE Entities ("\
+		"ID              INT  PRIMARY KEY"\
+								" NOT NULL,"\
+		"Name            TEXT NOT NULL"\
+								" DEFAULT ''"\
+								" UNIQUE,"\
+		"Transform       INT  REFERENCES Transforms(ID) ON DELETE SET NULL"\
+								" NOT NULL ON CONFLICT ABORT,"\
+		"[Mesh Renderer] INT  REFERENCES[Mesh Renderers](ID) ON DELETE SET NULL"\
+								" DEFAULT NULL,"\
+		"[Physics Body]  INT  REFERENCES[Physics Bodies](ID) ON DELETE SET NULL"\
+								" DEFAULT NULL,"\
+		"Camera          INT  REFERENCES Cameras(ID) ON DELETE SET NULL"\
+								" DEFAULT NULL,"\
+		"Collider        INT  REFERENCES Colliders(ID) ON DELETE SET NULL"\
+								" DEFAULT NULL"\
+		"); """;
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+		cout << "Could not create Entity table!. " << errMsg << endl;
+	else
+		cout << "Successfully created Entity table." << endl;
+
+
+
+	sql = "CREATE TABLE Transforms("\
+		"ID         INT  PRIMARY KEY"\
+						" NOT NULL,"\
+		"Name       TEXT NOT NULL"\
+						" DEFAULT ''"\
+						" UNIQUE,"\
+		"[Pos.X]    REAL DEFAULT(0.0)"\
+						" NOT NULL,"\
+		"[Pos.Y]    REAL DEFAULT(0.0)"\
+						" NOT NULL,"\
+		"[Pos.Z]    REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[Rot.X]    REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[Rot.Y]    REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[Rot.Z]    REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[OrbRot.X] REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[OrbRot.Y] REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[OrbRot.Z] REAL NOT NULL"\
+						" DEFAULT(0.0),"\
+		"[Scale.X]  REAL NOT NULL"\
+						" DEFAULT(1.0),"\
+		"[Scale.Y]  REAL NOT NULL"\
+						" DEFAULT(1.0),"\
+		"[Scale.Z]  REAL NOT NULL"\
+						" DEFAULT(1.0),"\
+		"Parent     TEXT DEFAULT ''"\
+						" NOT NULL,"\
+		"Children   TEXT DEFAULT ''"\
+						" NOT NULL"\
+		");";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+		cout << "Could not create Transforms table!. " << errMsg << endl;
+	else
+		cout << "Successfully created Transforms table." << endl;
+
+
+	sql = "CREATE TABLE Cameras("\
+		"ID             INT     PRIMARY KEY"\
+								" NOT NULL,"\
+		"[Proj Type]    TEXT    NOT NULL"\
+								" DEFAULT Perspective,"\
+		"Cull           BOOLEAN NOT NULL"\
+								" DEFAULT(FALSE),"\
+		"[Ortho Size.L] REAL    NOT NULL,"\
+		"[Ortho Size.R] REAL    NOT NULL,"\
+		"[Ortho Size.T] REAL    NOT NULL,"\
+		"[Ortho Size.B] REAL    NOT NULL,"\
+		"[FOV.X]        REAL    NOT NULL,"\
+		"[FOV.Y]        REAL    NOT NULL,"\
+		"[Aspect Ratio] REAL    NOT NULL,"\
+		"Near           REAL    NOT NULL,"\
+		"Far            REAL    NOT NULL"\
+		");";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+		cout << "Could not create Cameras table!. " << errMsg << endl;
+	else
+		cout << "Successfully created Cameras table." << endl;
+
+
+
+	sql = "CREATE TABLE[Mesh Renderers]("\
+		"ID               INT     PRIMARY KEY"\
+									" NOT NULL,"\
+		"Mesh             TEXT    NOT NULL,"\
+		"[Shader Program] TEXT    NOT NULL,"\
+		"Transparent      BOOLEAN NOT NULL"\
+									" DEFAULT(FALSE),"\
+		"Textures         TEXT    NOT NULL"\
+		");";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+		cout << "Could not create Mesh Renderers table!. " << errMsg << endl;
+	else
+		cout << "Successfully created Mesh Renderers table." << endl;
+
+
+
+	sql = "CREATE TABLE[Physics Bodies]("\
+		"ID               INT     PRIMARY KEY"\
+									" NOT NULL,"\
+		"Mass             REAL    NOT NULL"\
+									" DEFAULT(1.0),"\
+		"[Use Gravity]    BOOLEAN NOT NULL"\
+									" DEFAULT(FALSE),"\
+		"[Can Jump]       BOOLEAN NOT NULL"\
+									" DEFAULT(FALSE),"\
+		"[Velocity.X]     REAL    NOT NULL"\
+									" DEFAULT(0.0),"\
+		"[Velocity.Y]     REAL    NOT NULL"\
+									" DEFAULT(0.0),"\
+		"[Velocity.Z]     REAL    NOT NULL"\
+									" DEFAULT(0.0),"\
+		"[Max Velocity.X] REAL    NOT NULL"\
+									" DEFAULT(5.0),"\
+		"[Max Velocity.Y] REAL    NOT NULL"\
+									" DEFAULT(8.0),"\
+		"[Max Velocity.Z] REAL    NOT NULL"\
+									" DEFAULT(0.0)"\
+		");";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+		cout << "Could not create Physics Bodies table!. " << errMsg << endl;
+	else
+		cout << "Successfully created Physics Bodies table." << endl;
+
+
+
+	sql = "CREATE TABLE Colliders("\
+		"ID          INT     PRIMARY KEY"\
+								" NOT NULL,"\
+		"[Centre.X]  REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Centre.Y]  REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Centre.Z]  REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Size.X]            NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Size.Y]    REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Size.Z]    REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Offset.X]  REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Offset.Y]  REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"[Offset.Z]  REAL    NOT NULL"\
+								" DEFAULT(0.0),"\
+		"Enabled     BOOLEAN NOT NULL"\
+								" DEFAULT(TRUE),"\
+		"PhysicsBody INT     REFERENCES[Physics Bodies](ID) ON DELETE SET NULL"\
+								" DEFAULT NULL"\
+		"Tag         TEXT    NOT NULL"\
+								" DEFAULT 'Platform'"\
+		");";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+		cout << "Could not create Colliders table!. " << errMsg << endl;
+	else
+		cout << "Successfully created Colliders table." << endl;
 }
 
 void Scene::errorCheck(char* success, char* failure, char * errMsg)
@@ -835,17 +1034,19 @@ void Scene::saveColliders(sqlite3 * db, char * errMsg)
 		vec3 offset = collider->getOffset();
 		bool enabled = collider->getEnabled();
 		unsigned int eid = collider->getEntity()->getEid();
+		string tag = GUIHelper::tagToChar(collider->getTag());
 
 
 		sql = "INSERT INTO Colliders (ID, [Centre.X], [Centre.Y], [Centre.Z], [Size.X], [Size.Y], "
-			"[Size.Z], [Offset.X], [Offset.Y], [Offset.Z], Enabled, PhysicsBody) VALUES (";
+			"[Size.Z], [Offset.X], [Offset.Y], [Offset.Z], Enabled, PhysicsBody, Tag) VALUES (";
 
 		sql += to_string(collider->getEntity()->getEid()) + ", ";
 		sql += to_string(centre.x) + ", " + to_string(centre.y) + ", " + to_string(centre.z) + ", ";
 		sql += to_string(size.x) + ", " + to_string(size.y) + ", " + to_string(size.z) + ", ";
 		sql += to_string(offset.x) + ", " + to_string(offset.y) + ", " + to_string(offset.z) + ", ";
 		sql += to_string(enabled) + ", ";
-		sql += to_string(eid) + ");";
+		sql += to_string(eid) + ", ";
+		sql += "'" + tag + "'" + ");";
 
 
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
@@ -1107,18 +1308,21 @@ int Scene::loadCollidersCallback(void * data, int numRows, char ** rowFields, ch
 	static vec3 offset;
 	static bool enabled;
 	static Bounds bounds;
+	static TTag tag;
 
 
 	centre = vec3(stof(rowFields[1]), stof(rowFields[2]), stof(rowFields[3]));
 	size = vec3(stof(rowFields[4]), stof(rowFields[5]), stof(rowFields[6]));
 	offset = vec3(stof(rowFields[7]), stof(rowFields[8]), stof(rowFields[9]));
 	enabled = stoi(rowFields[10]);
+	tag = GUIHelper::charToTag(rowFields[11]);
 
 	//collider = new BoxCollider(centre, size);
 	bounds = Bounds(centre, size);
 	collider->setBounds(bounds);
 	collider->setOffset(offset);
 	collider->setEnabled(enabled);
+	collider->setTag(tag);
 
 
 	return 0;
