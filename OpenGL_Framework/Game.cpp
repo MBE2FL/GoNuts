@@ -73,6 +73,10 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Building 2 Texture 3", "./Assets/Textures/Building 2 Texture 3.png");
 	ObjectLoader::loadTexture("Building 3 Texture 1", "./Assets/Textures/Building 3 Texture 1.png");
 	ObjectLoader::loadTexture("Building 3 Texture 3", "./Assets/Textures/Building 3 Texture 3.png");
+	ObjectLoader::loadTexture("Building Top 1", "./Assets/Textures/Building_Top1.png");
+	ObjectLoader::loadTexture("Building Top 2", "./Assets/Textures/Building_Top2.png");
+	ObjectLoader::loadTexture("Building Top 3", "./Assets/Textures/Building_Top3.png");
+	ObjectLoader::loadTexture("Building Top 4", "./Assets/Textures/Building_Top4.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture1.png");
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
