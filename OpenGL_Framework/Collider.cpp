@@ -131,13 +131,13 @@ void Collider::onCollisionStay(Entity * self, Entity * other)
 		//std::cout << "Platform Collision Stayed!" << std::endl;
 
 		EntityManager* entityManger = EntityManager::getInstance();
-		//PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 		Collider* otherCol = entityManger->getComponent<Collider*>(ComponentType::Collider, other);
 
 		if (otherCol->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			//otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
+			otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
 		}
 
 		break;

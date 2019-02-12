@@ -24,6 +24,7 @@ void Scene::update(float deltaTime)
 {
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
+		front = true;
 		_playerTransform->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
 		_playerPhysicsBody->setVelocity(vec3(0.0f));
 		_playerTransform->setLocalScale(vec3(0.2f));
@@ -32,6 +33,18 @@ void Scene::update(float deltaTime)
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
+	if (front /*&& !_playerPhysicsBody->getCanJump()*/)
+	{
+		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
+			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -5.0f),//where we want to go with lerp
+			FIXED_DELTA_TIME * 3.0f));// lerp time
+	}
+	else if (!front /*&& !_playerPhysicsBody->getCanJump()*/)
+	{
+		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
+			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -10.0f),//where we want to go with lerp
+			FIXED_DELTA_TIME * 3.0f));// lerp time
+	}
 
 	vec3 offset(-6, -1.5f, -8);
 	_mainCameraTransform->setWorldPosition(lerp(_mainCameraTransform->getWorldPosition(),
@@ -396,30 +409,36 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 	switch (key)
 	{
-	case 32:
-		/*if (camera.getProjType() == ProjectionType::Perspective)
-			camera.orthographic(-10.0f, 10.0f, 10.0f, -10.0f, -100.0f, 100.0f);
-		else
+	case 32://space bar to jump
+
+		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
-			float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-			camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
-		}*/
+			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+		}
+		break;
+	case 'c'://left control for sliding
+		if (_playerPhysicsBody->getCanJump())
+		{
+			sliding = true;
+			_playerTransform->setLocalScale(vec3(0.1f));
+			_playerTransform->setWorldPosition(vec3(_playerTransform->getLocalPosition().x,
+				_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+		}
 		break;
 	case 27: // the escape key
 	//case 'q': // the 'q' key
 		exit(1);
 		break;
 	}
-	if (key == 'w' && !sliding && _playerPhysicsBody->getCanJump())
+
+	if (key == 'w' && !_playerPhysicsBody->getCanJump())
 	{
-		_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+		front = false;
 	}
-	if (key == 's' && _playerPhysicsBody->getCanJump())
+
+	if (key == 's' && !_playerPhysicsBody->getCanJump())
 	{
-		sliding = true;
-		_playerTransform->setLocalScale(vec3(0.1f));
-		_playerTransform->setWorldPosition(vec3(_playerTransform->getLocalPosition().x,
-			_playerTransform->getLocalPosition().y - 0.38f, _playerTransform->getWorldPosition().z));
+		front = true;
 	}
 	if (key == 'i')//up
 	{
@@ -465,6 +484,7 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	switch (key)
 	{
 	case 32: // the space bar
+
 		break;
 	case 27: // the escape key
 	//case 'q': // the 'q' key
@@ -474,7 +494,7 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 #ifdef _DEBUG
 
 #endif
-	if (key == 's')
+	if (key == 'c')
 	{
 		if (sliding)
 		{
