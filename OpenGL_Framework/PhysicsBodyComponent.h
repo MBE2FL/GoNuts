@@ -1,7 +1,6 @@
 #pragma once
 
 #include "TransformComponent.h"
-////#include "MathLib/MathLibCore.h"
 #include <iostream>
 #include "Entity.h"
 
@@ -19,17 +18,6 @@
 //	bool operator==(const Collision& otherCol);
 //};
 
-enum class TTag
-{
-	Player,
-	Platform,
-	Enemy,
-	Coin,
-	Acorn,
-	Spike,
-	TopPlatform
-};
-
 class PhysicsBodyComponent : public Component
 {
 public:
@@ -40,8 +28,6 @@ public:
 	void update(float deltaTime, TransformComponent* transform);
 	void addForce(const vec3& force);
 	void addImpluseForce(const vec3& force);
-	//void onCollisionEnter(PhysicsBodyComponent* other);
-	//void onCollisionExit(PhysicsBodyComponent* other);
 
 	vec3 getForce()const;
 	vec3 getVelocity()const;
@@ -49,7 +35,7 @@ public:
 	vec3 getAcceleration()const;
 	float getMass()const;
 	bool getUseGravity()const;
-	TTag getTag() const;
+	
 
 	void setForce(const vec3& force);
 	void setVelocity(const vec3& velocity);
@@ -57,25 +43,17 @@ public:
 	void setAcceleration(const vec3& acceleration);
 	void setMass(const float mass);
 	void setUseGravity(const bool useGravity);
-	void setTag(const TTag tag);
+	
 
 	bool getCanJump();
 	void setCanJump(bool jump);
 	bool getActive() const;
 	void setActive(const bool active);
 
-
-	// Testing function pointers
-	typedef void(*onCollision)(Entity* self, Entity* other);
-	onCollision onCollisionEnter;
-	onCollision onCollisionStay;
-	onCollision onCollisionExit;
-
 private:
 	vec3 _force, _velocity, _maxVelocity = vec3(5.0f, 8.0f, 0), _acceleration, _impluseForce, _impluseAcceleration;
 	float _mass;
 	bool _useGravity = false;
 	bool _canJump = false;
-	TTag _tag;
 	bool _active = false;
 };

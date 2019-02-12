@@ -27,7 +27,7 @@ void PhysicsSystem::update(float deltaTime)
 	{
 		// Get the collider component for the current entity.
 		Collider* colliderOne = *it;
-		if (!colliderOne || !colliderOne->getPhysicsBody()->getActive())
+		if (!colliderOne || !colliderOne->getEnabled())
 			continue;
 
 		// Check if there is another collider.
@@ -38,7 +38,7 @@ void PhysicsSystem::update(float deltaTime)
 		{
 			// Get the collider component for the other entity.
 			Collider* colliderTwo = *nextIt;
-			if (!colliderTwo || !colliderTwo->getPhysicsBody()->getActive())
+			if (!colliderTwo || !colliderTwo->getEnabled())
 			{
 				++nextIt;
 				continue;
@@ -53,6 +53,8 @@ void PhysicsSystem::update(float deltaTime)
 				collision->bodyTwo = colliderTwo->getPhysicsBody();
 				collision->entityOne = colliderOne->getEntity();
 				collision->entityTwo = colliderTwo->getEntity();
+				collision->colOne = colliderOne;
+				collision->colTwo = colliderTwo;
 				addCollision(collision);
 			}
 
@@ -74,10 +76,8 @@ void PhysicsSystem::addCollision(Collision * collision)
 		{
 			currCol->stillColliding = true;
 			// TO-DO call onCollisionStay()
-			if (collision->bodyOne->onCollisionStay)
-				collision->bodyOne->onCollisionStay(collision->entityOne, collision->entityTwo);
-			if (collision->bodyTwo->onCollisionStay)
-				collision->bodyTwo->onCollisionStay(collision->entityTwo, collision->entityOne);
+			collision->colOne->onCollisionStay(collision->entityOne, collision->entityTwo);
+			collision->colTwo->onCollisionStay(collision->entityTwo, collision->entityOne);
 			return;
 		}
 	}
@@ -85,10 +85,8 @@ void PhysicsSystem::addCollision(Collision * collision)
 	// Register new collision with the system
 	_collisions.push_back(collision);
 	// TO-DO onCollisionEnter()
-	if (collision->bodyOne->onCollisionEnter)
-		collision->bodyOne->onCollisionEnter(collision->entityOne, collision->entityTwo);
-	if (collision->bodyTwo->onCollisionEnter)
-		collision->bodyTwo->onCollisionEnter(collision->entityTwo, collision->entityOne);
+	collision->colOne->onCollisionEnter(collision->entityOne, collision->entityTwo);
+	collision->colTwo->onCollisionEnter(collision->entityTwo, collision->entityOne);
 }
 
 bool PhysicsSystem::checkAABBCollision(Collider* colliderOne, Collider* colliderTwo)
@@ -181,10 +179,8 @@ void PhysicsSystem::verifyCollisions()
 		if (!(*it)->stillColliding)
 		{
 			// TO-DO call onCollisionExit()
-			if ((*it)->bodyOne->onCollisionExit)
-				(*it)->bodyOne->onCollisionExit((*it)->entityOne, (*it)->entityTwo);
-			if ((*it)->bodyTwo->onCollisionExit)
-				(*it)->bodyTwo->onCollisionExit((*it)->entityTwo, (*it)->entityOne);
+			(*it)->colOne->onCollisionExit((*it)->entityOne, (*it)->entityTwo);
+			(*it)->colTwo->onCollisionExit((*it)->entityTwo, (*it)->entityOne);
 			delete *it;
 			*it = nullptr;
 			it = _collisions.erase(it);
@@ -240,6 +236,6 @@ void PhysicsSystem::calculateEdgeNormals(vec3 * allNormals, vec3 * faceNormalsOn
 
 bool Collision::operator==(const Collision & otherCol)
 {
-	return (((bodyOne == otherCol.bodyOne) || (bodyOne == otherCol.bodyTwo)) &&
-		((bodyTwo == otherCol.bodyOne) || (bodyTwo == otherCol.bodyTwo)));
+	return (((entityOne == otherCol.entityOne) || (entityOne == otherCol.entityTwo)) &&
+		((entityTwo == otherCol.entityOne) || (entityTwo == otherCol.entityTwo)));
 }

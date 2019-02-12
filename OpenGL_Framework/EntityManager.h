@@ -49,6 +49,7 @@ public:
 	vector<TransformComponent*> getAllTransforms() const;
 	vector<MeshRendererComponent*> getAllMeshRenderers() const;
 	vector<Collider*> getAllColliders() const;
+	vector<CameraComponent*> getAllCameras() const;
 	// #### Get all component functions ####
 
 	Entity* getEntity(const unsigned int eid);

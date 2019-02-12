@@ -75,11 +75,6 @@ bool PhysicsBodyComponent::getUseGravity() const
 	return _useGravity;
 }
 
-TTag PhysicsBodyComponent::getTag() const
-{
-	return _tag;
-}
-
 //Tags PhysicsBodyComponent::getTag() const
 //{
 //	return _tag;
@@ -113,11 +108,6 @@ void PhysicsBodyComponent::setMass(const float mass)
 void PhysicsBodyComponent::setUseGravity(const bool useGravity)
 {
 	_useGravity = useGravity;
-}
-
-void PhysicsBodyComponent::setTag(const TTag tag)
-{
-	_tag = tag;
 }
 
 bool PhysicsBodyComponent::getCanJump()

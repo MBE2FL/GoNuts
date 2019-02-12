@@ -6,11 +6,13 @@
 
 struct Collision
 {
-	PhysicsBodyComponent* bodyOne;
-	PhysicsBodyComponent* bodyTwo;
+	PhysicsBodyComponent* bodyOne = nullptr;
+	PhysicsBodyComponent* bodyTwo = nullptr;
 	bool stillColliding = true;
 	Entity* entityOne;
 	Entity* entityTwo;
+	Collider* colOne;
+	Collider* colTwo;
 
 	bool operator==(const Collision& otherCol);
 };
