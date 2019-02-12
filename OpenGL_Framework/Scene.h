@@ -83,6 +83,8 @@ public:
 
 	bool _followPlayer = true;
 
+	TransformComponent* getMainCameraTransform() const;
+
 private:
 	string _name;
 	string _filename;

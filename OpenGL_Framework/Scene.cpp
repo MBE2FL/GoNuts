@@ -506,6 +506,11 @@ void Scene::mouseMoved(int x, int y)
 	io.MousePos = ImVec2((float)x, (float)y);
 }
 
+TransformComponent * Scene::getMainCameraTransform() const
+{
+	return _mainCameraTransform;
+}
+
 void Scene::createTables(sqlite3 * db, char * errMsg)
 {
 	unsigned int exit;
