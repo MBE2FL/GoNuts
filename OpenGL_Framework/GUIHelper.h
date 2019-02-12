@@ -15,6 +15,7 @@
 
 using std::vector;
 using std::partition;
+using std::cerr;
 
 class GUIHelper
 {

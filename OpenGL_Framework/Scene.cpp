@@ -263,9 +263,9 @@ void Scene::loadOldFaithful()
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
-	Entity* mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
-	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
-	EntityManager::setMainCamera(mainCamera);
+	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
+	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
+	EntityManager::setMainCamera(_mainCamera);
 
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
@@ -1315,7 +1315,7 @@ int Scene::loadCollidersCallback(void * data, int numRows, char ** rowFields, ch
 	size = vec3(stof(rowFields[4]), stof(rowFields[5]), stof(rowFields[6]));
 	offset = vec3(stof(rowFields[7]), stof(rowFields[8]), stof(rowFields[9]));
 	enabled = stoi(rowFields[10]);
-	tag = GUIHelper::charToTag(rowFields[11]);
+	tag = GUIHelper::charToTag(rowFields[12]);
 
 	//collider = new BoxCollider(centre, size);
 	bounds = Bounds(centre, size);

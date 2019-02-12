@@ -677,7 +677,12 @@ char* GUIHelper::tagToChar(TTag tag)
 	case TTag::Spike:
 		return "Spike";
 		break;
+	case TTag::TopPlatform:
+		return "Top Platform";
+		break;
 	default:
+		cerr << "Tag to Char failed!" << endl;
+		system("pause");
 		return "";
 		break;
 	}
@@ -697,8 +702,14 @@ TTag GUIHelper::charToTag(char* tag)
 		return TTag::Acorn;
 	else if (strcmp(tag, "Spike") == 0)
 		return TTag::Spike;
+	else if (strcmp(tag, "Top Platform") == 0)
+			return TTag::TopPlatform;
 	else
+	{
+		cerr << "Char to Tag failed!" << endl;
+		system("pause");
 		return TTag::Acorn;
+	}
 }
 
 void GUIHelper::drawCollider(Collider * collider)
