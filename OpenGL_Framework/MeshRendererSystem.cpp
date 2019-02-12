@@ -290,17 +290,16 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 		}
 
 		// Bind the mesh.
-		glBindVertexArray(mesh->VAO);
+		
 
 		// If the entity has an animation, play it.
-		if (meshRenderer->getIsAnimated())
-		{
-			PhysicsBodyComponent* _physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, meshRenderer->getEntity());
-			meshRenderer->getAnimation()->animate(shaderProgram, _physicsBody->getVelocity().x / 7.5f);
-		}
+		//if (meshRenderer->getIsAnimated())
+		//{
+		//	PhysicsBodyComponent* _physicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, meshRenderer->getEntity());
+		//	meshRenderer->getAnimation()->animate(shaderProgram, _physicsBody->getVelocity().x / 7.5f);
+		//}
 
-		glDrawArrays(GL_TRIANGLES, 0, mesh->getNumVertices());
-		glBindVertexArray(GL_NONE);
+		mesh->vao.draw();
 
 		// Unbind all the textures.
 		vector<Texture*>::reverse_iterator revIt;

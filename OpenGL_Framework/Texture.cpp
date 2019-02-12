@@ -85,20 +85,20 @@ bool Texture::load(const std::string & file)
 	_Target = GL_TEXTURE_2D;
 	_InternalFormat = GL_RGBA8;
 
-	glGenTextures(1, &this->_TexHandle);
+	glGenTextures(1, &this->_Handle);
 	this->bind();
-	glTextureStorage2D(this->_TexHandle, 1, this->_InternalFormat, this->sizeX, this->sizeY);
+	glTextureStorage2D(this->_Handle, 1, this->_InternalFormat, this->sizeX, this->sizeY);
 
-	glTextureSubImage2D(this->_TexHandle, 0, // We are editing the first and only layer in memory
+	glTextureSubImage2D(this->_Handle, 0, // We are editing the first and only layer in memory
 		0, 0, // No offset
 		this->sizeX, this->sizeY, // the dimensions of our image loaded
 		GL_RGBA, GL_UNSIGNED_BYTE, // Data format and type
 		textureData); // Pointer to the texture data
 
-	glTextureParameteri(this->_TexHandle, GL_TEXTURE_MIN_FILTER, this->_FilterMin);
-	glTextureParameteri(this->_TexHandle, GL_TEXTURE_MAG_FILTER, this->_FilterMag);
-	glTextureParameteri(this->_TexHandle, GL_TEXTURE_WRAP_S, this->_WrapU);
-	glTextureParameteri(this->_TexHandle, GL_TEXTURE_WRAP_T, this->_WrapV);
+	glTextureParameteri(this->_Handle, GL_TEXTURE_MIN_FILTER, this->_FilterMin);
+	glTextureParameteri(this->_Handle, GL_TEXTURE_MAG_FILTER, this->_FilterMag);
+	glTextureParameteri(this->_Handle, GL_TEXTURE_WRAP_S, this->_WrapU);
+	glTextureParameteri(this->_Handle, GL_TEXTURE_WRAP_T, this->_WrapV);
 
 	this->unBind();
 	SOIL_free_image_data(textureData);
@@ -107,9 +107,9 @@ bool Texture::load(const std::string & file)
 
 bool Texture::unload()
 {
-	if (this->_TexHandle != 0)
+	if (this->_Handle != 0)
 	{
-		glDeleteTextures(1, &this->_TexHandle);
+		glDeleteTextures(1, &this->_Handle);
 		return true;
 	}
 	return false;
@@ -117,7 +117,7 @@ bool Texture::unload()
 
 void Texture::bind() const
 {
-	glBindTexture(this->_Target, this->_TexHandle);
+	glBindTexture(this->_Target, this->_Handle);
 }
 
 void Texture::bind(int textureSlot) const
