@@ -28,6 +28,7 @@ using std::stoi;
 using std::istringstream;
 using std::getline;
 using MathUtils::lerp;
+using std::cerr;
 
 
 // Forward declaration
@@ -66,7 +67,7 @@ public:
 	void setFilename(const string& filename);
 	vector<Entity*> getEntities() const;
 	void saveScene();
-	void saveSceneAs(const string& name);
+	Scene* saveSceneAs(const string& name);
 	void loadOldFaithful();
 	void loadScene();
 	void loadSceneFromFile(const string& path);
@@ -76,6 +77,11 @@ public:
 	void keyboardUp(unsigned char key, int mouseX, int mouseY);
 	void mouseClicked(int button, int state, int x, int y);
 	void mouseMoved(int x, int y);
+
+	Light* light;
+	Light* spotLight;
+
+	bool _followPlayer = true;
 
 private:
 	string _name;
@@ -91,8 +97,8 @@ private:
 	TransformComponent* _mainCameraTransform;
 	Entity* _mainCamera;
 
-	Light* light;
-	Light* spotLight;
+	//Light* light;
+	//Light* spotLight;
 
 	GUIHelper* _guiHelper = nullptr;
 

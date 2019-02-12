@@ -21,11 +21,18 @@ void Game::initializeGame()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 
+	Framebuffer::initFrameBuffers();
+	frameBuffer.addDepthTarget();
+	frameBuffer.addColorTarget(GL_RGB8);
+	frameBuffer.init(1900, 1000);
+
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
+
+	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -205,7 +212,6 @@ void Game::initializeGame()
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
 
-	_currentScene->saveScene();
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 
@@ -255,12 +261,25 @@ void Game::draw()
 {
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 
-
+	frameBuffer.clear();
+	frameBuffer.bind();
+	glClear(GL_DEPTH_BUFFER_BIT);
 	////_meshRendererSystem->draw(light, spotLight);
 	_currentScene->draw();
 
+	frameBuffer.unbind();
 
+	shaderOutline.bind();
+	shaderOutline.sendUniform("outline", outline);
+	frameBuffer.bindColorAsTexture(0, 0);
+	glViewport(0, 0, 1900, 1000);
+	frameBuffer.drawFSQ();
+	frameBuffer.unbindTexture(0);//texture
+	
+	shaderOutline.unBind();
+	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
 
@@ -274,6 +293,8 @@ void Game::draw()
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
 	_currentScene->keyboardDown(key, mouseX, mouseY);
+	if (key == 'o')
+		outline = !outline;
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

@@ -57,12 +57,12 @@ public:
 	void setName(const string& name);
 
 	std::string filename;
+	GLuint _Handle;
+	GLenum _Target;
 private:
-	GLuint _TexHandle;
 
 
 	GLenum _InternalFormat;
-	GLenum _Target;
 	GLenum _FilterMag = GL_LINEAR; // Filter parameter
 	GLenum _FilterMin = GL_LINEAR;
 	GLenum _WrapU = GL_REPEAT; // Per axis Wrap parameter

@@ -15,6 +15,8 @@
 #include "Transform.h"
 //#include "Camera.h"
 #include "ParticleEmitter.h"
+//#include "UniformBuffer.h"
+#include "FrameBuffer.h"
 
 //#include "GUIHelper.h"
 
@@ -64,6 +66,8 @@ private:
 	bool slideCheck = false;
 	bool reverse = false;
 
+	bool outline = false;
+
 	float counter = 0.0f;
 
 
@@ -71,4 +75,9 @@ private:
 
 	Entity* _testEntity;
 	Entity* _testEntity2;
+
+
+	Framebuffer frameBuffer;
+
+	ShaderProgram shaderOutline;
 };
