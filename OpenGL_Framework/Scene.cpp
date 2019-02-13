@@ -244,11 +244,11 @@ void Scene::loadOldFaithful()
 
 	light = new Light();
 	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
-	light->setAmbient(vec3(0.20f, 0.78f, 0.79f));
+	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(1.0f, 0.0f, 0.0f));
+	light->setDiffuse(vec3(0.6f));
 	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.54f, 1.0f, 0.0f));
+	light->setSpecular(vec3(0.5f));
 	light->setSpecularExp(100.0f);
 	light->setAttenuationConstant(1.0f);
 	light->setAttenuationLinear(0.1f);
@@ -281,11 +281,11 @@ void Scene::loadScene()
 
 	light = new Light();
 	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
-	light->setAmbient(vec3(0.20f, 0.78f, 0.79f));
+	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(1.0f, 0.0f, 0.0f));
+	light->setDiffuse(vec3(0.6f));
 	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.54f, 1.0f, 0.0f));
+	light->setSpecular(vec3(0.5f));
 	light->setSpecularExp(100.0f);
 	light->setAttenuationConstant(1.0f);
 	light->setAttenuationLinear(0.1f);

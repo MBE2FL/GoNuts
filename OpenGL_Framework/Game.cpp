@@ -26,6 +26,9 @@ void Game::initializeGame()
 	frameBuffer.addColorTarget(GL_RGB8);
 	frameBuffer.init(1900, 1000);
 
+	frameBufferLUT.addColorTarget(GL_RGB8);
+	frameBufferLUT.init(1900, 1000);
+
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
@@ -33,6 +36,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
+	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -265,7 +269,7 @@ void Game::draw()
 
 	frameBuffer.clear();
 	frameBuffer.bind();
-	glClear(GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT);
 	////_meshRendererSystem->draw(light, spotLight);
 	_currentScene->draw();
 
@@ -275,10 +279,24 @@ void Game::draw()
 	shaderOutline.sendUniform("outline", outline);
 	frameBuffer.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
+
+	frameBufferLUT.clear();
+	frameBufferLUT.bind();
 	frameBuffer.drawFSQ();
+	frameBufferLUT.unbind();
+
 	frameBuffer.unbindTexture(0);//texture
 	
 	shaderOutline.unBind();
+
+	shaderLUT.bind();
+	frameBufferLUT.bindColorAsTexture(0, 0);
+	glViewport(0, 0, 1900, 1000);
+	frameBufferLUT.drawFSQ();
+	frameBufferLUT.unbindTexture(0);
+	shaderLUT.unBind();
+
+
 	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
