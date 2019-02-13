@@ -59,6 +59,4 @@ void main()
 	outColour.rgb = ambient + diffuse + specular;
 	outColour.a = textureColour.a;
 	outColour.rgb *= textureColour.rgb;
-
-	if (dot(N,V) < 0.1) outColour.rgb = vec3(0,0,0);
 }
