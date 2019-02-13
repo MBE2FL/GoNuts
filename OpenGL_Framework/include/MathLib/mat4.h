@@ -13,6 +13,7 @@ public:
 						0.0f, 0.0f, 1.0f, 0.0f,
 						0.0f, 0.0f, 0.0f, 1.0f };
 	mat4() {};
+	mat4(const mat4& other);
 	~mat4() {};
 	//Text Output
 	friend std::ostream& operator<<(std::ostream& out, const mat4& source);
@@ -31,7 +32,7 @@ public:
 	vec3 getColumn(int i);
 	//Manipulators
 	void inverse();
-	mat4 getInverse(const mat4& rot, const vec3& tran);
+	//mat4 getInverse(const mat4& rot, const vec3& tran);
 	mat4 getInverse();
 	mat4 transpose() const;
 	void identity();

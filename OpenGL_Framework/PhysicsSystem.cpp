@@ -171,6 +171,11 @@ bool PhysicsSystem::checkSATCollision(Collider * colliderOne, Collider * collide
 
 void PhysicsSystem::verifyCollisions()
 {
+	// Check for any colliders which may have been deleted.
+	vector<Collider*> colliders = _entityManager->getAllColliders();
+	vector<Collider*>::iterator positionOne;
+	vector<Collider*>::iterator positionTwo;
+
 	// Remove any collisions which have ended since the last frame.
 	vector<Collision*>::iterator it;
 
@@ -178,7 +183,17 @@ void PhysicsSystem::verifyCollisions()
 	{
 		if (!(*it)->stillColliding)
 		{
-			// TO-DO call onCollisionExit()
+			// Check for any colliders which may have been deleted.
+			positionOne = find(colliders.begin(), colliders.end(), (*it)->colOne);
+			positionTwo = find(colliders.begin(), colliders.end(), (*it)->colTwo);
+			if ((positionOne == colliders.end()) || (positionTwo == colliders.end()))
+			{
+				delete *it;
+				*it = nullptr;
+				it = _collisions.erase(it);
+				continue;
+			}
+
 			(*it)->colOne->onCollisionExit((*it)->entityOne, (*it)->entityTwo);
 			(*it)->colTwo->onCollisionExit((*it)->entityTwo, (*it)->entityOne);
 			delete *it;

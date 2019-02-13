@@ -62,6 +62,7 @@ public:
 	void update(float deltaTime);
 
 	void addChild(TransformComponent* child);
+	void removeChild(TransformComponent* child);
 	void setParent(TransformComponent* parent);
 	TransformComponent* getParent() const;
 	vector<TransformComponent*> getChildren() const;

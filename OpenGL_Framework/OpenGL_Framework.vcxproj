@@ -107,9 +107,11 @@
     <ClCompile Include="include\MathLib\MathLibCore.cpp" />
     <ClCompile Include="include\MathLib\mat3.cpp" />
     <ClCompile Include="include\MathLib\mat4.cpp" />
+    <ClCompile Include="include\MathLib\Quaternion.cpp" />
     <ClCompile Include="include\MathLib\vec2.cpp" />
     <ClCompile Include="include\MathLib\vec3.cpp" />
     <ClCompile Include="include\MathLib\vec4.cpp" />
+    <ClCompile Include="Joint.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightComponent.cpp" />
     <ClCompile Include="main.cpp" />
@@ -123,6 +125,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SkeletalMesh.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -155,9 +158,11 @@
     <ClInclude Include="include\MathLib\MathLibCore.h" />
     <ClInclude Include="include\MathLib\mat3.h" />
     <ClInclude Include="include\MathLib\mat4.h" />
+    <ClInclude Include="include\MathLib\Quaternion.h" />
     <ClInclude Include="include\MathLib\vec2.h" />
     <ClInclude Include="include\MathLib\vec3.h" />
     <ClInclude Include="include\MathLib\vec4.h" />
+    <ClInclude Include="Joint.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightComponent.h" />
     <ClInclude Include="Mesh.h" />
@@ -171,6 +176,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SkeletalMesh.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />

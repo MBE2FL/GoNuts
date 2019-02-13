@@ -86,11 +86,17 @@ public:
 		//output in cmd: (vec1.x,vec1.y,vec1.z)
 		return out << "(" << source.x << "," << source.y << "," << source.z << ")";
 	}
-	void operator/=(float scalar)
+	void operator/=(const float scalar)
 	{
 		x /= scalar;
 		y /= scalar;
 		z /= scalar;
+	}
+	void operator*=(const float scalar)
+	{
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
 	}
 	//3D Functions
 	float length() const;

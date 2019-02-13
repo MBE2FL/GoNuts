@@ -71,7 +71,8 @@ void Scene::draw()
 		// Retrieve the necessary camera details.
 		CameraComponent* _cameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, mainCamera);
 		TransformComponent* _cameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
-		mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
+		//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
+		mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse();
 
 		for (Collider* collider : colliders)
 		{

@@ -126,7 +126,7 @@ void EntityManager::addComponent(Component * component, Entity * entity)
 		break;
 	}
 
-	_entitiesWithComps[type].push_back(entity);
+	//_entitiesWithComps[type].push_back(entity);
 }
 
 //Component * EntityManager::getComponent(ComponentType compType, const Entity * entity)
@@ -147,65 +147,127 @@ void EntityManager::addComponent(Component * component, Entity * entity)
 
 void EntityManager::deleteEntity(Entity * entity)
 {
-	//// Remove the entity.
-	//for (unsigned int i = 0; i < _entities.size(); i++)
-	//{
-	//	if (_entities[i] == entity)
-	//	{
-	//		delete _entities[i];
-	//		_entities[i] = nullptr;
-	//		_entities.erase(_entities.begin() + i);
-	//		break;
-	//	}
-	//}
+	// Remove the entity.
+	vector<Entity*>::iterator it;
+	for (it = _entities.begin(); it != _entities.end();)
+	{
+		if (*it == entity)
+		{
+			//delete entity;
+			//entity = nullptr;
+			_entities.erase(it);
+			break;
+		}
+		else
+			++it;
+	}
+
+	unordered_map<Entity*, TransformComponent*>::iterator transIt = _transformComps.find(entity);
+	unordered_map<Entity*, MeshRendererComponent*>::iterator meshIt = _meshRendComps.find(entity);
+	unordered_map<Entity*, PhysicsBodyComponent*>::iterator physicsIt = _physicsBodyComps.find(entity);
+	unordered_map<Entity*, Collider*>::iterator colIt = _colliderComps.find(entity);
+	unordered_map<Entity*, CameraComponent*>::iterator camIt = _cameraComps.find(entity);
+
+	// Remove Transform
+	if (transIt != _transformComps.end())
+	{
+		TransformComponent* transform = transIt->second;
+		_allTransforms.erase(remove(_allTransforms.begin(), _allTransforms.end(), transform), _allTransforms.end());
+		_transformComps.erase(transIt);
+		delete transform;
+		transform = nullptr;
+
+		cout << entity->getEid() << " Transform removed!" << endl;
+	}
+	else
+		cerr << entity->getEid() << " Transform FAILED to removed!" << endl;
+	// Remove Mesh Renderer
+	if (meshIt != _meshRendComps.end())
+	{
+		MeshRendererComponent* meshRenderer = meshIt->second;
+		_allMeshRenderers.erase(remove(_allMeshRenderers.begin(), _allMeshRenderers.end(), meshRenderer), _allMeshRenderers.end());
+		_meshRendComps.erase(meshIt);
+		delete meshRenderer;
+		meshRenderer = nullptr;
+
+		cout << entity->getEid() << " Mesh Renderer removed!" << endl;
+	}
+	else
+		cerr << entity->getEid() << " Mesh Renderer FAILED to removed!" << endl;
+	// Remove Physics body
+	if (physicsIt != _physicsBodyComps.end())
+	{
+		PhysicsBodyComponent* physicsBody = physicsIt->second;
+		_allPhysicsBodies.erase(remove(_allPhysicsBodies.begin(), _allPhysicsBodies.end(), physicsIt->second), _allPhysicsBodies.end());
+		_physicsBodyComps.erase(physicsIt);
+		delete physicsBody;
+		physicsBody = nullptr;
+
+		cout << entity->getEid() << " Physics body removed!" << endl;
+	}
+	else
+		cerr << entity->getEid() << " Physics body FAILED to removed!" << endl;
+	// Remove Collider
+	if (colIt != _colliderComps.end())
+	{
+		Collider* collider = colIt->second;
+		_allColliders.erase(remove(_allColliders.begin(), _allColliders.end(), collider), _allColliders.end());
+		_colliderComps.erase(colIt);
+		delete collider;
+		collider = nullptr;
+
+		cout << entity->getEid() << " Collider removed!" << endl;
+	}
+	else
+		cerr << entity->getEid() << " Collider FAILED to removed!" << endl;
+	// Remove Camera
+	if (camIt != _cameraComps.end())
+	{
+		CameraComponent* camera = camIt->second;
+		_allCameras.erase(remove(_allCameras.begin(), _allCameras.end(), camera), _allCameras.end());
+		_cameraComps.erase(camIt);
+		delete camera;
+		camera = nullptr;
+
+		cout << entity->getEid() << " Camera removed!" << endl;
+	}
+	else
+		cerr << entity->getEid() << " Camera FAILED to removed!" << endl;
 
 
-	//// Remove all of the entity's components.
-	//map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt;
-
-	//for (compTypeIt = _components.begin(); compTypeIt != _components.end(); compTypeIt++)
-	//{
-	//	map<unsigned int, Component*>::iterator compIt = compTypeIt->second.find(entity->getEid());
-
-	//	// Delete and clean up all of this entity's components. Then remove this entity's component map.
-	//	if (compIt != compTypeIt->second.end())
-	//	{
-	//		delete compIt->second;
-	//		compIt->second = nullptr;
-	//		//compTypeIt->second.erase(compIt);
-	//		_components.erase(compTypeIt);
-	//	}
-	//}
+	// Finally delete the entity.
+	delete entity;
+	entity = nullptr;
 }
 
 void EntityManager::deleteEntities(const vector<Entity*>& entities)
 {
 }
 
-vector<Entity*> EntityManager::getAllEntitiesWithComponent(ComponentType compType)
-{
-	//vector<Entity*> entities;
-	//
-	//// Find all components of the specified type.
-	//map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt = _components.find(compType);
-
-	//// Find all entities, which possess the specified component type.
-	//if (compTypeIt != _components.end())
-	//{
-	//	map<unsigned int, Component*>::iterator compIt;
-
-	//	for (compIt = compTypeIt->second.begin(); compIt != compTypeIt->second.end(); compIt++)
-	//	{
-	//		entities.push_back(getEntity(compIt->first));
-	//	}
-	//}
-
-	//return entities;
-
-
-	//##### TESTING #####
-	return _entitiesWithComps[compType];
-}
+//vector<Entity*> EntityManager::getAllEntitiesWithComponent(ComponentType compType)
+//{
+//	//vector<Entity*> entities;
+//	//
+//	//// Find all components of the specified type.
+//	//map<ComponentType, map<unsigned int, Component*>>::iterator compTypeIt = _components.find(compType);
+//
+//	//// Find all entities, which possess the specified component type.
+//	//if (compTypeIt != _components.end())
+//	//{
+//	//	map<unsigned int, Component*>::iterator compIt;
+//
+//	//	for (compIt = compTypeIt->second.begin(); compIt != compTypeIt->second.end(); compIt++)
+//	//	{
+//	//		entities.push_back(getEntity(compIt->first));
+//	//	}
+//	//}
+//
+//	//return entities;
+//
+//
+//	//##### TESTING #####
+//	return _entitiesWithComps[compType];
+//}
 
 vector<PhysicsBodyComponent*> EntityManager::getAllPhysicsBodyComponents() const
 {
