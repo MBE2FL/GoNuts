@@ -57,9 +57,12 @@
 //	unBind();
 //}
 //
-Texture::Texture(const std::string & file)
+Texture::Texture(const std::string & file, const bool LUT)
 {
-	this->load(file);
+	if (!LUT)
+		this->load(file);
+	else
+		load3D(file);
 }
 
 Texture::~Texture()
@@ -102,6 +105,49 @@ bool Texture::load(const std::string & file)
 
 	this->unBind();
 	SOIL_free_image_data(textureData);
+	return true;
+}
+
+bool Texture::load3D(const std::string & file)
+{
+	std::ifstream LUTfile(file.c_str());
+	if (LUTfile.is_open()) {
+		while (!LUTfile.eof()) {
+			std::string LUTline;
+			getline(LUTfile, LUTline);
+			if (LUTline.empty()) continue;
+
+			RGB line;
+			if (sscanf_s(LUTline.c_str(), "%f %f %f",
+				&line.r, &line.g, &line.b) == 3)
+			{
+				LUTVec.push_back(line);
+			}
+		}
+	}
+	else
+		return false;
+
+	if (LUTVec.size() != (pow(64.0, 3.0)))
+		return false;
+	_Target = GL_TEXTURE_3D;
+	_InternalFormat = GL_RGB;
+	glEnable(GL_TEXTURE_3D);
+
+	glGenTextures(1, &_Handle);
+	glBindTexture(GL_TEXTURE_3D, _Handle);
+
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, 64, 64, 64, 0, GL_RGB, GL_FLOAT, &LUTVec[0]);
+
+	glBindTexture(GL_TEXTURE_3D, 0);
+	glDisable(GL_TEXTURE_3D);
+
 	return true;
 }
 
