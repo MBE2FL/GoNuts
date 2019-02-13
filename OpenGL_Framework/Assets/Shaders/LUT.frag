@@ -29,8 +29,8 @@ void main()
 
 	vec3 applyLUT = texture(uLUTTex, scale * source.rgb + offset).rgb;
 
-	//outColor.rgb = mix(source.rgb, applyLUT, uAmount);
-	outColor.rgb = source.rgb;
+	outColor.rgb = mix(source.rgb, applyLUT, uAmount);
+	//outColor.rgb = source.rgb;
 	outColor.a = 1.0;
 
 }

@@ -82,4 +82,6 @@ private:
 
 	ShaderProgram shaderOutline;
 	ShaderProgram shaderLUT;
+
+	Texture* LUTTex;
 };
