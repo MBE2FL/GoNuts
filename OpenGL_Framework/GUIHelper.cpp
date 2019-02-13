@@ -846,6 +846,36 @@ void GUIHelper::drawSceneEditor()
 	ImGui::Separator();
 	ImGui::Spacing();
 
+	ImGui::Checkbox("Follow Player", &_sceneManager->getCurrentScene()->_followPlayer);
+	// Display camera transform properties
+	if (ImGui::CollapsingHeader("Main Camera Transform"))
+	{
+		TransformComponent* transform = _sceneManager->getCurrentScene()->getMainCameraTransform();
+		// Position property
+		vec3 temp = transform->getLocalPosition();
+		ImGui::DragFloat3("Position: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalPosition(temp);
+
+		// Rotation property
+		temp = transform->getLocalRotation();
+		ImGui::DragFloat3("Spin Rotation: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalRotation(temp);
+
+		// Scale property
+		temp = transform->getLocalScale();
+		ImGui::DragFloat3("Scale: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalScale(temp);
+
+		// Orbit property
+		temp = transform->getOrbitRotation();
+		ImGui::DragFloat3("Orbit Rotation: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setOrbitRotation(temp);
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
 	// Draw scene hierarchy
 	if (ImGui::CollapsingHeader("Hierarchy:"))
 	{
@@ -853,6 +883,16 @@ void GUIHelper::drawSceneEditor()
 	}
 
 	ImGui::End();
+}
+
+void GUIHelper::drawTransforms()
+{
+	//vector<TransformComponent*> transforms = _entityManager->getAllTransforms();
+
+	//for (TransformComponent* transform : transforms)
+	//{
+
+	//}
 }
 
 void GUIHelper::drawLights()

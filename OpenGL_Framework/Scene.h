@@ -81,6 +81,10 @@ public:
 	Light* light;
 	Light* spotLight;
 
+	bool _followPlayer = true;
+
+	TransformComponent* getMainCameraTransform() const;
+
 private:
 	string _name;
 	string _filename;
@@ -101,6 +105,8 @@ private:
 	GUIHelper* _guiHelper = nullptr;
 
 	bool sliding = false;
+	bool front = true;
+	bool lerping = false;
 
 	void createTables(sqlite3* db, char* errMsg);
 

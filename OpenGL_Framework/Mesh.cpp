@@ -196,6 +196,8 @@ Mesh::~Mesh()
 //}
 bool Mesh::loadFromFile(const string & file)
 {
+	setFilename(file);
+
 	std::ifstream input;
 	input.open(file);
 
