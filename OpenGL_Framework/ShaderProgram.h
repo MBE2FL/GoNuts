@@ -60,6 +60,8 @@ public:
 	string getProgramName() const;
 	void setProgramName(const string& programName);
 
+	void reload();
+
 private:
 	bool _isInit = false;
 	GLuint _vertexShader = GL_NONE;

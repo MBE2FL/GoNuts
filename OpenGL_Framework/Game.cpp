@@ -278,6 +278,7 @@ void Game::draw()
 
 	shaderOutline.bind();
 	shaderOutline.sendUniform("outline", outline);
+	
 	frameBuffer.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
 
@@ -315,6 +316,9 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	_currentScene->keyboardDown(key, mouseX, mouseY);
 	if (key == 'o')
 		outline = !outline;
+	if (key == 'r')
+		shaderOutline.reload();
+	
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
