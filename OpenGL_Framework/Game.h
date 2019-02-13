@@ -23,6 +23,7 @@
 
 #include "SceneManager.h"
 
+#include "FmodWrapper.h"
 
 class Game
 {
@@ -53,6 +54,11 @@ public:
 private:
 
 	float t = 0.0f;
+
+	Sound sound;
+
+	FMOD::Channel* soundChannel = 0;
+	FMOD_VECTOR	pos;
 
 	//UI
 	//GameObject nutOmeter;

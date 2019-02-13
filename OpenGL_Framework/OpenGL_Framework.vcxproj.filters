@@ -197,6 +197,9 @@
     <ClCompile Include="include\MathLib\Quaternion.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
+    <ClCompile Include="FmodWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -343,6 +346,9 @@
     </ClInclude>
     <ClInclude Include="include\MathLib\Quaternion.h">
       <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="FmodWrapper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
