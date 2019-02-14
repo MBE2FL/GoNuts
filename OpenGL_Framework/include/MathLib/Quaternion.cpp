@@ -126,6 +126,11 @@ Quaternion Quaternion::operator*(const Quaternion & otherQuat) const
 
 Quaternion Quaternion::slerp(const Quaternion & begin, const Quaternion & end, float interValue)
 {
+	if (interValue < 0)
+		interValue = 0;
+	if (interValue > 1)
+		interValue = 1;
+
 	Quaternion quat = Quaternion();
 
 	// Calculate the angle between the begin and end quaternions.

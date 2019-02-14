@@ -3,7 +3,7 @@
 SkeletalMesh::SkeletalMesh()
 {
 	// Create new animator
-
+	_animator = new Animator(this);
 	_rootJoint->calculateInverseBindTransform(mat4::Identity);
 }
 
@@ -23,6 +23,16 @@ bool SkeletalMesh::loadFromFile(const string & file)
 
 void SkeletalMesh::uploadToGPU()
 {
+}
+
+void SkeletalMesh::setAnimation(SAnimation * anim)
+{
+	_animator->setAnimation(anim);
+}
+
+void SkeletalMesh::update(float deltaTime)
+{
+	_animator->update(deltaTime);
 }
 
 mat4 * SkeletalMesh::getJointTransforms()
