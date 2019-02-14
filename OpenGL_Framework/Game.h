@@ -90,4 +90,9 @@ private:
 	ShaderProgram shaderLUT;
 
 	Texture* LUTTex;
+	Texture* LUTTexVal;
+
+	SceneManager* sceneManager;
+
+	bool lut = true;
 };

@@ -1,15 +1,42 @@
 #include "Quaternion.h"
+#include "MathLibCore.h"
+
+using MathUtils::toRadians;
+
+Quaternion Quaternion::Identity = Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
+
+Quaternion::Quaternion()
+{
+	_w = 1.0f;
+	_x = 0.0f;
+	_y = 0.0f;
+	_z = 0.0f;
+}
+
+Quaternion::Quaternion(const float w, const float x, const float y, const float z)
+	: _w(w), _x(x), _y(y), _z(z)
+{
+}
 
 Quaternion::Quaternion(const float angle, const vec3 & axis)
 {
-	_w = cosf(angle * 0.5f);
-	_xyz = sinf(angle * 0.5f) * axis;
+	float radians = toRadians(angle);
+
+	_w = cosf(radians * 0.5f);
+
+	vec3 sinHalfTheta = sinf(radians * 0.5f) * axis;
+
+	_x = sinHalfTheta.x;
+	_y = sinHalfTheta.y;
+	_z = sinHalfTheta.z;
 }
 
 Quaternion::Quaternion(const Quaternion & other)
 {
 	_w = other._w;
-	_xyz = other._xyz;
+	_x = other._x;
+	_y = other._y;
+	_z = other._z;
 }
 
 Quaternion::~Quaternion()
@@ -18,7 +45,9 @@ Quaternion::~Quaternion()
 
 void Quaternion::conjugate()
 {
-	_xyz *= -1.0f;
+	_x *= -1.0f;
+	_y *= -1.0f;
+	_z *= -1.0f;
 }
 
 Quaternion Quaternion::getConjugate()
@@ -29,27 +58,112 @@ Quaternion Quaternion::getConjugate()
 	return conj;
 }
 
-void Quaternion::rotate(const float angle, vec3 & vector)
+void Quaternion::rotate(const float angle, const vec3 & axis)
 {
-	Quaternion pure = Quaternion(0.0f, vector);
+	Quaternion q = Quaternion(angle, axis);
+	Quaternion qc = q.getConjugate();
 
-	Quaternion qpqc = *this * pure * this->getConjugate();
 
-	vector = qpqc._xyz;
+	Quaternion qpqc = q * *this * qc;
+}
+
+void Quaternion::rotate(const mat4 & rot)
+{
+	_w = sqrt(1.0f + rot.data[0] + rot.data[5] + rot.data[10]) * 0.5f;
+	_x = (rot.data[6] - rot.data[9]) / (4.0f * _w);
+	_y = (rot.data[8] - rot.data[2]) / (4.0f * _w);
+	_z = (rot.data[1] - rot.data[4]) / (4.0f * _w);
+}
+
+mat4 Quaternion::getRotationMatrix() const
+{
+	mat4 rot;
+
+	rot.data[0] = 1.0f - (2.0f * pow(_y, 2.0f)) - (2.0f * pow(_z, 2.0f));
+	rot.data[1] = (2.0f * _x * _y) + (2.0f * _z * _w);
+	rot.data[2] = (2.0f * _x * _z) - (2.0f * _y * _w);
+	rot.data[3] = 0.0f;
+
+	rot.data[4] = (2.0f * _x * _y) - (2.0f * _z * _w);
+	rot.data[5] = 1.0f - (2.0f * pow(_x, 2.0f)) - (2.0f * pow(_z, 2.0f));
+	rot.data[6] = (2.0f * _y * _z) + (2.0f * _x * _w);
+	rot.data[7] = 0.0f;
+
+	rot.data[8] = (2.0f * _x * _z) + (2.0f * _y * _w);
+	rot.data[9] = (2.0f * _y * _z) - (2.0f * _x * _w);
+	rot.data[10] = 1.0f - (2.0f * pow(_x, 2.0f)) - (2.0f * pow(_y, 2.0f));
+	rot.data[11] = 0.0f;
+
+	rot.data[12] = 0.0f;
+	rot.data[13] = 0.0f;
+	rot.data[14] = 0.0f;
+	rot.data[15] = 1.0f;
+
+	return rot;
 }
 
 Quaternion Quaternion::operator*(const Quaternion & otherQuat) const
 {
-	vec4 q1 = vec4(_xyz, _w);
-	vec4 q2 = vec4(otherQuat._xyz, otherQuat._w);
+	float q1_w = _w;
+	float q1_x = _x;
+	float q1_y = _y;
+	float q1_z = _z;
 
-	float w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
-	float x = (q1.w * q2.x) - (q1.x * q2.w) - (q1.y * q2.z) - (q1.z * q2.y);
-	float y = (q1.w * q2.y) - (q1.x * q2.z) - (q1.y * q2.w) - (q1.z * q2.x);
-	float z = (q1.w * q2.z) - (q1.x * q2.y) - (q1.y * q2.x) - (q1.z * q2.w);
-	vec3 xyz = vec3(x, y, z);
+	float q2_w = otherQuat._w;
+	float q2_x = otherQuat._x;
+	float q2_y = otherQuat._y;
+	float q2_z = otherQuat._z;
 
-	Quaternion q1q2 = Quaternion(w, xyz);
+	float w = (q1_w * q2_w) - (q1_x * q2_x) - (q1_y * q2_y) - (q1_z * q2_z);
+	float x = (q1_w * q2_x) + (q1_x * q2_w) + (q1_y * q2_z) - (q1_z * q2_y);
+	float y = (q1_w * q2_y) - (q1_x * q2_z) + (q1_y * q2_w) + (q1_z * q2_x);
+	float z = (q1_w * q2_z) + (q1_x * q2_y) - (q1_y * q2_x) + (q1_z * q2_w);
+
+	Quaternion q1q2 = Quaternion(w, x, y, z);
 
 	return q1q2;
+}
+
+Quaternion Quaternion::slerp(const Quaternion & begin, const Quaternion & end, float interValue)
+{
+	Quaternion quat = Quaternion();
+
+	// Calculate the angle between the begin and end quaternions.
+	float cosHalfTheta = (begin._w * end._w) + (begin._x * end._x) + (begin._y * end._y) + (begin._z * end._z);
+
+	// If begin = end or begin = -end then theta = 0 and we can return begin.
+	if (fabs(cosHalfTheta) >= 1.0f)
+	{
+		quat._w = begin._w;
+		quat._x = begin._x;
+		quat._y = begin._y;
+		quat._z = begin._z;
+		return quat;
+	}
+
+	float halfTheta = acosf(cosHalfTheta);
+	float sinHalfTheta = sqrtf(1.0f - (cosHalfTheta * cosHalfTheta));
+
+	// If theta = 180 degrees the result is not fully defined.
+	// We could rotate around any axis normal to begin or end.
+	if (fabs(sinHalfTheta) < 0.001f)
+	{
+		quat._w = (begin._w * 0.5f) + (end._w * 0.5f);
+		quat._x = (begin._x * 0.5f) + (end._x * 0.5f);
+		quat._y = (begin._y * 0.5f) + (end._y * 0.5f);
+		quat._z = (begin._z * 0.5f) + (end._z * 0.5f);
+
+		return quat;
+	}
+
+	float ratioBegin = sinf((1.0f - interValue) * halfTheta) / sinHalfTheta;
+	float ratioEnd = sinf(interValue * halfTheta) / sinHalfTheta;
+
+	// Calculate quaternion
+	quat._w = (begin._w * ratioBegin) + (end._w * ratioEnd);
+	quat._x = (begin._x * ratioBegin) + (end._x * ratioEnd);
+	quat._y = (begin._y * ratioBegin) + (end._y * ratioEnd);
+	quat._z = (begin._z * ratioBegin) + (end._z * ratioEnd);
+
+	return quat;
 }
