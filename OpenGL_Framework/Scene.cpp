@@ -29,6 +29,8 @@ void Scene::update(float deltaTime)
 	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
 	//	_playerTransform->setLocalScale(vec3(1.5f));
 	//}
+
+	light->setPosition(vec3(_playerTransform->getLocalPosition().x - 2.0f, light->getPosition().y, light->getPosition().z));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
