@@ -25,7 +25,10 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		entityFactory->plusAcorn();
 
-		_physicsBody->setUseGravity(true);
+		EntityManager* entityManager = EntityManager::getInstance();
+		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+		if (otherCollider->getTag() == TTag::Player)
+			_physicsBody->setUseGravity(true);
 
 		break;
 	}
@@ -36,7 +39,10 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		entityFactory->plusCoin();
 
-		_physicsBody->setUseGravity(true);
+		EntityManager* entityManager = EntityManager::getInstance();
+		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+		if (otherCollider->getTag() == TTag::Player)
+			_physicsBody->setUseGravity(true);
 
 		break;
 	}
