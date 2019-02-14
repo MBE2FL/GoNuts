@@ -516,8 +516,10 @@ void Scene::mouseClicked(int button, int state, int x, int y)
 
 void Scene::mouseMoved(int x, int y)
 {
+#ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
+#endif
 }
 
 TransformComponent * Scene::getMainCameraTransform() const
