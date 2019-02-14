@@ -72,7 +72,7 @@ private:
 	bool slideCheck = false;
 	bool reverse = false;
 
-	bool outline = false;
+	bool outline = true;
 
 	float counter = 0.0f;
 
