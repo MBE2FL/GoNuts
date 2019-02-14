@@ -101,7 +101,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 		Collider* otherCol = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
 
-		if (otherCol->getTag() == TTag::Player)
+		if (otherCol->getTag() == TTag::Player && !otherCol->beastMode)
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
