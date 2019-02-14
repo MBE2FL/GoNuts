@@ -236,7 +236,7 @@ void Game::initializeGame()
 
 	//sound.Load("./Assets/Sounds/drumloop.wav", false);
 
-	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
