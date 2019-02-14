@@ -25,7 +25,10 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		entityFactory->plusAcorn();
 
-		_physicsBody->setUseGravity(true);
+		EntityManager* entityManager = EntityManager::getInstance();
+		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+		if (otherCollider->getTag() == TTag::Player)
+			_physicsBody->setUseGravity(true);
 
 		break;
 	}
@@ -36,7 +39,10 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		entityFactory->plusCoin();
 
-		_physicsBody->setUseGravity(true);
+		EntityManager* entityManager = EntityManager::getInstance();
+		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+		if (otherCollider->getTag() == TTag::Player)
+			_physicsBody->setUseGravity(true);
 
 		break;
 	}
@@ -52,13 +58,13 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 
 		EntityManager* entityManager = EntityManager::getInstance();
 		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
-		TransformComponent* otherTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
-		TransformComponent* thisTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, self);
+		//TransformComponent* otherTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+		//TransformComponent* thisTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, self);
 		Collider* thisCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, self);
 		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
-
-		if (otherTransform->getWorldPosition().y - 0.2f < 
-			thisTransform->getWorldPosition().y + thisCollider->_max.y * 2.0f
+		//float thisHeight = (abs(thisCollider->_max.y) + abs(thisCollider->_min.y)) / 2.0f;
+		//float otherHeight = (abs(otherCollider->_max.y) + abs(otherCollider->_min.y)) / 2.0f;
+		if (otherCollider->_min.y < thisCollider->_max.y - 0.2f
 			&& otherCollider->getTag() == TTag::Player)
 		{
 			float xSpeed = otherBody->getVelocity().x;
@@ -149,7 +155,7 @@ void Collider::onCollisionStay(Entity * self, Entity * other)
 		if (otherCol->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
+			otherBody->addForce(vec3(2.2f, 0.0f, 0.0f));
 		}
 
 		break;
