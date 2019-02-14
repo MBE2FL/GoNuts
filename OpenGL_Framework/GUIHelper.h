@@ -15,6 +15,7 @@
 
 using std::vector;
 using std::partition;
+using std::cerr;
 
 class GUIHelper
 {
@@ -30,6 +31,8 @@ public:
 	bool getPhysicsDebugEnabled() const;
 	static char* projToChar(ProjectionType type);
 	static ProjectionType charToProj(char* type);
+	static char* tagToChar(TTag tag);
+	static TTag charToTag(char* tag);
 
 private:
 	static GUIHelper* _instance;
