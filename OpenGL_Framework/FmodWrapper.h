@@ -62,6 +62,7 @@ public:
 	static void		 SetFalloffInverse(FMOD::Channel* thisChannel);
 	static void		 SetLoop(FMOD::Channel* thisChannel, bool loop);
 	static void		 Set3DMinMaxDistance(FMOD::Channel* thisChannel, float min, float max);
+	static void		 SetVolume(FMOD::Channel* thisChannel, float volume);// between 0.0f and 1.0f
 
 
 	FMOD::Sound     *sound;//sound is the file
