@@ -61,6 +61,7 @@ void Game::initializeGame()
 	//Change
 	ObjectLoader::loadMesh("Garbage", "./Assets/Models/garbagecan_final_unwrap.obj");
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
+	ObjectLoader::loadMesh("Lamp", "./Assets/Models/lamp.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
