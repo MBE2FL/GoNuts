@@ -73,8 +73,17 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+<<<<<<< HEAD
 	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
 	ObjectLoader::loadMesh("Beast Mode.obj", "./Assets/Models/Beast_Mode.obj");
+=======
+	ObjectLoader::loadMesh("Beast Mode", "./Assets/Models/BeastMode.obj");
+
+	ObjectLoader::loadMesh("Building Top 1", "./Assets/Models/Building_Top1.obj");
+	ObjectLoader::loadMesh("Building Top 2", "./Assets/Models/Building_Top2.obj");
+	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
+	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
+>>>>>>> 4a092852c9175683913ecae1648932c48a33e3e5
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
@@ -96,11 +105,8 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Building 2 Texture 3", "./Assets/Textures/Building 2 Texture 3.png");
 	ObjectLoader::loadTexture("Building 3 Texture 1", "./Assets/Textures/Building 3 Texture 1.png");
 	ObjectLoader::loadTexture("Building 3 Texture 3", "./Assets/Textures/Building 3 Texture 3.png");
-	//ObjectLoader::loadTexture("Building Top 1", "./Assets/Textures/Building_Top1.png");
-	//ObjectLoader::loadTexture("Building Top 2", "./Assets/Textures/Building_Top2.png");
-	//ObjectLoader::loadTexture("Building Top 3", "./Assets/Textures/Building_Top3.png");
-	//ObjectLoader::loadTexture("Building Top 4", "./Assets/Textures/Building_Top4.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture1.png");
+	ObjectLoader::loadTexture("Love", "./Assets/Textures/Go Love.png");//valentines day
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
 	ObjectLoader::loadTexture("Chimney", "./Assets/Textures/Chimney Texture.png");
@@ -230,16 +236,43 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
+	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
+
 
 	int dummy = 0;
 	dummy++;
 
 
+<<<<<<< HEAD
 	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+=======
+	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
+	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
+
+	mat4 testMat = testOne.getRotationMatrix();
+	testTwo.getRotationMatrix();
+
+	Quaternion testRotToQuat;
+	testRotToQuat.rotate(testMat);
+
+	Quaternion testVector = Quaternion(0.0f, 10.0f, 0.0f, 0.0f);
+	testVector.rotate(90.0f, vec3(0.0f, 1.0f, 0.0f));
+
+	testOne * testTwo;
+
+	Quaternion::slerp(testOne, testTwo, 0.5f);
+
+
+
+	//sound.Load("./Assets/Sounds/drumloop.wav", false);
+
+	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+>>>>>>> 4a092852c9175683913ecae1648932c48a33e3e5
 
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
 	Sound::SetLoop(soundChannel, true);
+	Sound::SetVolume(soundChannel, 0.2f);
 	
 }
 

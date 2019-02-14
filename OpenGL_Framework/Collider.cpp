@@ -21,7 +21,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### ACORN ###
 	case TTag::Acorn:
 	{
-		std::cout << "Coin Collision Entered!" << std::endl;
+		std::cout << "Acorn Collision Entered!" << std::endl;
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		entityFactory->plusAcorn();
 
