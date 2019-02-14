@@ -105,7 +105,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(vec3(-3.0f, 4, -5.0f));
+			otherTrans->setWorldPosition(vec3(-3.0f, 8, -5.0f));
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
