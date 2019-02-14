@@ -389,7 +389,7 @@ Entity * EntityFactory::createAcorn(const vec3 & position, const vec3 & scale, E
 
 	// Collider
 	BoxCollider* collider = new BoxCollider(meshRenderer->getMesh()->getMeshBounds());
-	collider->setTag(TTag::Acorn);
+	collider->setTag(TTag::Coin);
 
 	// Add all the components to the entity.
 	_entityManager->addComponent(meshRenderer, entity);
