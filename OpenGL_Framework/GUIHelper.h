@@ -40,12 +40,14 @@ private:
 	bool _enablePhysicsDebug = false;
 	bool _showSceneSelector = false;
 	bool _showSceneSaveModal = false;
+	bool _showLightsMenu = false;
 	TransformComponent* _currentTransform = nullptr;
 	EntityManager* _entityManager = nullptr;
 	EntityFactory* _entityFactory = nullptr;
 	SceneManager* _sceneManager = nullptr;
 
 	GUIHelper();
+	void drawMenuBar();
 	void drawHierarchy();
 	void drawHierarchyHelper(TransformComponent* transform);
 	void propertyEditor(TransformComponent* transform, bool* open);
@@ -55,4 +57,7 @@ private:
 	void drawCollider(Collider* collider);
 	void SpawnEntity();
 	void drawScenes();
+	void drawSceneEditor();
+	void drawTransforms();
+	void drawLights();
 };

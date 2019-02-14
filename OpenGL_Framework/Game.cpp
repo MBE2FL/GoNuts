@@ -21,11 +21,23 @@ void Game::initializeGame()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 
+	Framebuffer::initFrameBuffers();
+	frameBuffer.addDepthTarget();
+	frameBuffer.addColorTarget(GL_RGB8);
+	frameBuffer.init(1900, 1000);
+
+	frameBufferLUT.addColorTarget(GL_RGB8);
+	frameBufferLUT.init(1900, 1000);
+
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
+
+	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
+	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
+	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -49,6 +61,7 @@ void Game::initializeGame()
 	//Change
 	ObjectLoader::loadMesh("Garbage", "./Assets/Models/garbagecan_final_unwrap.obj");
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
+	ObjectLoader::loadMesh("Lamp", "./Assets/Models/lamp.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
@@ -64,6 +77,10 @@ void Game::initializeGame()
 
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/new_background.png");
+	ObjectLoader::loadTexture("Background1", "./Assets/Textures/background1.png");
+	ObjectLoader::loadTexture("Background2", "./Assets/Textures/background2.png");
+	ObjectLoader::loadTexture("Background3", "./Assets/Textures/background3.png");
+	ObjectLoader::loadTexture("Background4", "./Assets/Textures/background4.png");
 	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
 	ObjectLoader::loadTexture("Building 1 Texture 1", "./Assets/Textures/Building 1 Texture 1.png");
 	ObjectLoader::loadTexture("Building 1 Texture 2", "./Assets/Textures/Building 1 Texture 2.png");
@@ -205,15 +222,24 @@ void Game::initializeGame()
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
 
-	_currentScene->saveScene();
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 
 	int dummy = 0;
 	dummy++;
+
+
+	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
+	//start to play the sound and save it to a channel so it can be refferenced later
+	soundChannel = sound.Play(true);
+	Sound::SetLoop(soundChannel, true);
+	Sound::SetVolume(soundChannel, 0.2f);
+	
 }
 
 void Game::update()
 {
+	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
 	collided = false;
 	if (!reverse)
@@ -254,12 +280,41 @@ void Game::draw()
 {
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 
-
+	frameBuffer.clear();
+	frameBuffer.bind();
+	//glClear(GL_DEPTH_BUFFER_BIT);
 	////_meshRendererSystem->draw(light, spotLight);
 	_currentScene->draw();
 
+	frameBuffer.unbind();
 
+	shaderOutline.bind();
+	shaderOutline.sendUniform("outline", outline);
+	
+	frameBuffer.bindColorAsTexture(0, 0);
+	glViewport(0, 0, 1900, 1000);
+
+	frameBufferLUT.clear();
+	frameBufferLUT.bind();
+	frameBuffer.drawFSQ();
+	frameBufferLUT.unbind();
+
+	frameBuffer.unbindTexture(0);//texture
+	
+	shaderOutline.unBind();
+
+	shaderLUT.bind();
+	LUTTex->bind(30);
+	frameBufferLUT.bindColorAsTexture(0, 0);
+	glViewport(0, 0, 1900, 1000);
+	frameBufferLUT.drawFSQ();
+	frameBufferLUT.unbindTexture(0);
+	shaderLUT.unBind();
+
+
+	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
 
@@ -273,6 +328,11 @@ void Game::draw()
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
 	_currentScene->keyboardDown(key, mouseX, mouseY);
+	if (key == 'o')
+		outline = !outline;
+	if (key == 'r')
+		shaderOutline.reload();
+	
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

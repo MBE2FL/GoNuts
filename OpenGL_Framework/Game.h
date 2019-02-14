@@ -15,12 +15,15 @@
 #include "Transform.h"
 //#include "Camera.h"
 #include "ParticleEmitter.h"
+//#include "UniformBuffer.h"
+#include "FrameBuffer.h"
 
 //#include "GUIHelper.h"
 
 
 #include "SceneManager.h"
 
+#include "FmodWrapper.h"
 
 class Game
 {
@@ -52,6 +55,11 @@ private:
 
 	float t = 0.0f;
 
+	Sound sound;
+
+	FMOD::Channel* soundChannel = 0;
+	FMOD_VECTOR	pos;
+
 	//UI
 	//GameObject nutOmeter;
 	//GameObject time;
@@ -64,6 +72,8 @@ private:
 	bool slideCheck = false;
 	bool reverse = false;
 
+	bool outline = false;
+
 	float counter = 0.0f;
 
 
@@ -71,4 +81,13 @@ private:
 
 	Entity* _testEntity;
 	Entity* _testEntity2;
+
+
+	Framebuffer frameBuffer;
+	Framebuffer frameBufferLUT;
+
+	ShaderProgram shaderOutline;
+	ShaderProgram shaderLUT;
+
+	Texture* LUTTex;
 };

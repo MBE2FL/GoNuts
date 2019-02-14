@@ -41,24 +41,60 @@ GUIHelper::GUIHelper()
 
 void GUIHelper::draw()
 {
+	drawMenuBar();
+}
+
+void GUIHelper::drawMenuBar()
+{
 	if (ImGui::BeginMainMenuBar())
 	{
+		// Scene menu options.
 		if (ImGui::BeginMenu("Scenes"))
 		{
+			// Load scene from scene manager.
 			if (ImGui::MenuItem("Load Scene"))
 			{
 				_showSceneSelector = !_showSceneSelector;
-				//drawScenes();
 			}
 
+			// Save current scene.
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				SceneManager::getInstance()->getCurrentScene()->saveScene();
+			}
+
+			// Save a scene as a new scene.
 			if (ImGui::MenuItem("Save Scene As"))
 			{
-				_showSceneSaveModal = true;
+				_showSceneSaveModal = !_showSceneSaveModal;
 			}
+
+			// Open the scene editor.
+			if (ImGui::MenuItem("Scene Editor"))
+			{
+				_showSceneEditor = !_showSceneEditor;
+			}
+
 			ImGui::EndMenu();
 		}
+
+		// Light menu options.
+		if (ImGui::BeginMenu("Lights"))
+		{
+			if (ImGui::MenuItem("Settings"))
+			{
+				_showLightsMenu = !_showLightsMenu;
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::Text("				%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 		ImGui::EndMainMenuBar();
 	}
+
+
 
 	if (_showSceneSelector)
 		drawScenes();
@@ -86,47 +122,11 @@ void GUIHelper::draw()
 	}
 
 
-	ImGui::Begin("Scene Editor", &_showSceneEditor);
+	if (_showLightsMenu)
+		drawLights();
 
-	ImGui::Checkbox("Scene Editor", &_showSceneEditor);
-
-	// Open scene editor window
 	if (_showSceneEditor)
-	{
-		ImGui::Begin("Scene Editor", &_showSceneEditor);
-
-		// Open spawn menu window
-		if (ImGui::Button("Spawn Entity"))
-		{
-			_showSpawnEntity = true;
-		}
-
-		if (_showSpawnEntity)
-			SpawnEntity();
-
-		ImGui::Checkbox("Enable Physics Debug", &_enablePhysicsDebug);
-
-		if (_enablePhysicsDebug)
-
-
-		// Close scene editor window
-		if (ImGui::Button("Close"))
-			_showSceneEditor = false;
-
-		ImGui::Spacing();
-		ImGui::Separator();
-		ImGui::Spacing();
-
-		// Draw scene hierarchy
-		if (ImGui::CollapsingHeader("Hierarchy:"))
-		{
-			drawHierarchy();
-		}
-
-		ImGui::End();
-	}
-
-	ImGui::End();
+		drawSceneEditor();
 }
 
 void GUIHelper::update()
@@ -146,17 +146,15 @@ void GUIHelper::drawHierarchy()
 
 	//ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 	// Get all entities in the scene.
-	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::Transform);
+	//vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::Transform);
+	vector<TransformComponent*> transforms = _entityManager->getAllTransforms();
 
 	// Sort the vector, so all the root transform are in the front of the vector.
 	// Erase all the non-root transforms from the vector.
 	EntityManager* entityManager = _entityManager;
-	vector<Entity*>::iterator it;
-	it = partition(entities.begin(), entities.end(), [entityManager](Entity* entity) -> bool
+	vector<TransformComponent*>::iterator it;
+	it = partition(transforms.begin(), transforms.end(), [entityManager](TransformComponent* transform) -> bool
 	{
-		// Get the transform component.
-		TransformComponent* transform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
-
 		// Make sure transform component exists.
 		if (!transform)
 			return false;
@@ -164,12 +162,11 @@ void GUIHelper::drawHierarchy()
 		return transform->isRoot();
 	});
 
-	entities.erase(it, entities.end());
+	transforms.erase(it, transforms.end());
 
 	// Display all the root transforms.
-	for (Entity* entity : entities)
+	for (TransformComponent* transform : transforms)
 	{
-		TransformComponent* transform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
 		transform->getName();
 
 		drawHierarchyHelper(transform);
@@ -194,6 +191,20 @@ void GUIHelper::drawHierarchyHelper(TransformComponent * transform)
 			{
 				_showPropertyEditor = true;
 				_currentTransform = transform;
+			}
+			if (ImGui::SmallButton("Delete"))
+			{
+				for (TransformComponent* child : children)
+				{
+					child->setParent(nullptr);
+				}
+
+				if (transform->getParent())
+					transform->getParent()->removeChild(transform);
+				
+				_entityManager->deleteEntity(transform->getEntity());
+				ImGui::TreePop();
+				return;
 			}
 
 			for (TransformComponent* child : children)
@@ -813,4 +824,117 @@ void GUIHelper::drawScenes()
 
 	ImGui::End();
 
+}
+
+void GUIHelper::drawSceneEditor()
+{
+	// Open scene editor window
+	ImGui::Begin("Scene Editor", &_showSceneEditor);
+
+	// Open spawn menu window
+	if (ImGui::Button("Spawn Entity"))
+	{
+		_showSpawnEntity = true;
+	}
+
+	if (_showSpawnEntity)
+		SpawnEntity();
+
+	ImGui::Checkbox("Enable Physics Debug", &_enablePhysicsDebug);
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::Checkbox("Follow Player", &_sceneManager->getCurrentScene()->_followPlayer);
+	// Display camera transform properties
+	if (ImGui::CollapsingHeader("Main Camera Transform"))
+	{
+		TransformComponent* transform = _sceneManager->getCurrentScene()->getMainCameraTransform();
+		// Position property
+		vec3 temp = transform->getLocalPosition();
+		ImGui::DragFloat3("Position: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalPosition(temp);
+
+		// Rotation property
+		temp = transform->getLocalRotation();
+		ImGui::DragFloat3("Spin Rotation: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalRotation(temp);
+
+		// Scale property
+		temp = transform->getLocalScale();
+		ImGui::DragFloat3("Scale: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalScale(temp);
+
+		// Orbit property
+		temp = transform->getOrbitRotation();
+		ImGui::DragFloat3("Orbit Rotation: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setOrbitRotation(temp);
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// Draw scene hierarchy
+	if (ImGui::CollapsingHeader("Hierarchy:"))
+	{
+		drawHierarchy();
+	}
+
+	ImGui::End();
+}
+
+void GUIHelper::drawTransforms()
+{
+	//vector<TransformComponent*> transforms = _entityManager->getAllTransforms();
+
+	//for (TransformComponent* transform : transforms)
+	//{
+
+	//}
+}
+
+void GUIHelper::drawLights()
+{
+	ImGui::Begin("Light Settings", &_showLightsMenu);
+
+	// Light settings
+	Scene* _currentScene = _sceneManager->getCurrentScene();
+	Light* light = _currentScene->light;
+
+	// Position settings
+	vec3 position = light->getPosition();
+	ImGui::DragFloat3("Light Position: ", &position.x, 0.5f);
+	light->setPosition(position);
+	// Ambient settings
+	vec3 ambient = light->getAmbient();
+	ImGui::ColorEdit3("Ambient Colour: ", &ambient.x);
+	light->setAmbient(ambient);
+	// Diffuse settings
+	vec3 diffuse = light->getDiffuse();
+	ImGui::ColorEdit3("Diffuse Colour: ", &diffuse.x);
+	light->setDiffuse(diffuse);
+	// Specular settings
+	vec3 specular = light->getSpecular();
+	ImGui::ColorEdit3("Specular Colour: ", &specular.x);
+	light->setSpecular(specular);
+	// Specular exponent settings
+	float specularExp = light->getSpecularExp();
+	ImGui::SliderFloat("Specular Exp: ", &specularExp, 0.0f, 250.0f);
+	light->setSpecularExp(specularExp);
+	// Attenuation constant settings
+	float attenuationConstant = light->getAttenuationConstant();
+	ImGui::SliderFloat("Attenuation Constant: ", &attenuationConstant, 0.0f, 20.0f);
+	light->setAttenuationConstant(attenuationConstant);
+	// Attenuation linear settings
+	float attenuationLinear = light->getAttenuationLinear();
+	ImGui::SliderFloat("Attenuation Linear: ", &attenuationLinear, 0.0f, 5.0f);
+	light->setAttenuationLinear(attenuationLinear);
+	// Attenuation quadratic settings
+	float attenuationQuadratic = light->getAttenuationQuadratic();
+	ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
+	light->setAttenuationQuadratic(attenuationQuadratic);
+
+	ImGui::End();
 }

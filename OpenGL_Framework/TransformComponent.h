@@ -8,6 +8,7 @@
 using std::vector;
 using std::string;
 using MathUtils::toRadians;
+using MathUtils::lerp;
 
 
 class TransformComponent : public Component
@@ -61,6 +62,7 @@ public:
 	void update(float deltaTime);
 
 	void addChild(TransformComponent* child);
+	void removeChild(TransformComponent* child);
 	void setParent(TransformComponent* parent);
 	TransformComponent* getParent() const;
 	vector<TransformComponent*> getChildren() const;
@@ -74,6 +76,9 @@ public:
 	vec3 getForward() const;
 	vec3 getUp() const;
 	vec3 getLeft() const;
+
+	void setTarget(TransformComponent* target, const vec3& offset = vec3::Zero);
+	void followTarget(const float speed);
 
 private:
 	vec3 _localPosition;
@@ -90,4 +95,7 @@ private:
 	vector<TransformComponent*> _children;
 
 	string _name;
+
+	TransformComponent* _target = nullptr;
+	vec3 _targetOffset;
 };

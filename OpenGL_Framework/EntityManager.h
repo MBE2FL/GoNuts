@@ -11,12 +11,16 @@
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
+#include <algorithm>
 
 using std::map;
 using std::out_of_range;
 
 using std::unordered_set;
 using std::unordered_map;
+
+using std::remove;
+using std::cerr;
 
 
 //enum class ComponentType
@@ -42,7 +46,7 @@ public:
 	void deleteEntities(const vector<Entity*>& entities);
 
 	// #### Get all component functions ####
-	vector<Entity*> getAllEntitiesWithComponent(ComponentType compType);
+	//vector<Entity*> getAllEntitiesWithComponent(ComponentType compType);
 	//template<typename T>
 	//vector<T> getAllComponentsOfType(ComponentType type);
 	vector<PhysicsBodyComponent*> getAllPhysicsBodyComponents() const;
@@ -68,7 +72,7 @@ private:
 	//map<ComponentType, map<unsigned int, Component*>> _components;
 
 	//unordered_set<Entity*> _entities;
-	unordered_map<ComponentType, vector<Entity*>> _entitiesWithComps;
+	//unordered_map<ComponentType, vector<Entity*>> _entitiesWithComps;
 
 	unordered_map<Entity*, TransformComponent*> _transformComps;
 	unordered_map<Entity*, MeshRendererComponent*> _meshRendComps;

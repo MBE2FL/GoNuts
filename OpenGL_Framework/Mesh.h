@@ -11,6 +11,7 @@
 #include "MathLib/MathLibCore.h"
 
 #include "Collider.h"
+#include "VertexBufferObject.h"
 
 
 #define CHAR_BUFFER_SIZE 128
@@ -32,7 +33,8 @@ public:
 	~Mesh();
 
 	// Load a mesh, and send it to OpenGL
-	bool loadFromFile(const string& file);
+	virtual bool loadFromFile(const string& file);
+	virtual void uploadToGPU();
 	// Release data from OpenGL (VRAM)
 	void Unload();
 
@@ -54,7 +56,9 @@ public:
 	GLuint VBO_Normals = GL_NONE;
 	GLuint VAO = GL_NONE;
 
-private:
+	VertexArrayObject vao;
+
+protected:
 	unsigned int _numFaces = 0;
 	unsigned int _numVertices = 0;
 
@@ -64,6 +68,13 @@ private:
 	Bounds _meshBounds;
 	vec3 minPoint = vec3(0.0f);
 	vec3 maxPoint = vec3(0.0f);
+
+	std::vector<vec4> dataVertex;
+	std::vector<vec4> dataTexture;
+	std::vector<vec4> dataNormal;
+	std::vector<vec4> dataColor;
+
+	bool _IsLoaded = false;
 
 	void computeMinMax(const vec3& vertex);
 };

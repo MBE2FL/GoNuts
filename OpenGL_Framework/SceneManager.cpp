@@ -18,7 +18,12 @@ SceneManager::~SceneManager()
 
 void SceneManager::addScene(Scene * scene)
 {
-	_scenes.push_back(scene);
+	if (scene)
+		_scenes.push_back(scene);
+	else
+	{
+		cerr << "Could not add scene!" << endl;
+	}
 }
 
 void SceneManager::loadSceneFromFile(const string & path, const string & name)
@@ -63,7 +68,8 @@ void SceneManager::saveScene()
 
 void SceneManager::saveSceneAs(const string & name)
 {
-	_currentScene->saveSceneAs(name);
+	Scene* newScene = _currentScene->saveSceneAs(name);
+	addScene(newScene);
 }
 
 Scene * SceneManager::getCurrentScene() const
@@ -78,58 +84,4 @@ vector<Scene*> SceneManager::getScenes() const
 
 SceneManager::SceneManager()
 {
-	/*sqlite3* db;
-	char* msgErr;
-
-	int exit = 0;
-	exit = sqlite3_open("Scenes.db", &db);
-
-	if (exit != SQLITE_OK)
-	{
-		cout << "Could not open scenes database!" << endl;
-		return;
-	}
-
-
-	cout << "Opened scenes database successfully." << endl;*/
-
-
-	//// Create a table for tranforms.
-	//string createTable = "CREATE TABLE IF NOT EXISTS main.Transforms("
-	//	"ID	INT PRIMARY	KEY			NOT NULL, "
-	//	"Name			TEXT					NOT NULL );";
-
-	//exit = sqlite3_exec(db, createTable.c_str(), NULL, 0, &msgErr);
-
-	//if (exit != SQLITE_OK)
-	//{
-	//	cout << "Could not create entity table! " << msgErr << endl;
-	//	sqlite3_free(msgErr);
-	//}
-	//else
-	//	cout << "Entity table created successfully." << endl;
-
-	//// Create a table for entities.
-	//createTable = "CREATE TABLE IF NOT EXISTS main.Entities("
-	//	"ID				INT						NOT NULL, "
-	//	"Name			TEXT					NOT NULL, "
-	//	"Transform_ID	INT								, "
-	//	"PRIMARY KEY (ID), "
-	//	"FOREIGN KEY (Transform_ID) REFERENCES Transforms (ID) );";
-
-	//exit = sqlite3_exec(db, createTable.c_str(), NULL, 0, &msgErr);
-
-	//if (exit != SQLITE_OK)
-	//{
-	//	cout << "Could not create entity table! " << msgErr << endl;
-	//	sqlite3_free(msgErr);
-	//}
-	//else
-	//	cout << "Entity table created successfully." << endl;
-
-	//// TO-DO
-	//// Re-create all scenes
-
-
-	//sqlite3_close(db);
 }

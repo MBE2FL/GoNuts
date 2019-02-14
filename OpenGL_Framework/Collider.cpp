@@ -52,11 +52,23 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 
 		EntityManager* entityManager = EntityManager::getInstance();
 		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		TransformComponent* otherTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+		TransformComponent* thisTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, self);
+		Collider* thisCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, self);
+		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+
+		if (otherTransform->getWorldPosition().y - 0.2f < 
+			thisTransform->getWorldPosition().y + thisCollider->_max.y * 2.0f
+			&& otherCollider->getTag() == TTag::Player)
+		{
+			float xSpeed = otherBody->getVelocity().x;
+			otherBody->addImpluseForce(vec3(-xSpeed*1.2f, 0.0f, 0.0f));
+		}
 
 		otherBody->setUseGravity(false);
 		//otherBody->setVelocity(vec3(0.0f));
 
-		if (otherBody->getVelocity().y < 0.0f)
+		if (otherBody->getVelocity().y < 0.0f && otherCollider->getTag() == TTag::Player)
 		{
 			float ySpeed = otherBody->getVelocity().y;
 			otherBody->addImpluseForce(vec3(0.0f, -ySpeed, 0.0f));
@@ -131,13 +143,13 @@ void Collider::onCollisionStay(Entity * self, Entity * other)
 		//std::cout << "Platform Collision Stayed!" << std::endl;
 
 		EntityManager* entityManger = EntityManager::getInstance();
-		//PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
+		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 		Collider* otherCol = entityManger->getComponent<Collider*>(ComponentType::Collider, other);
 
 		if (otherCol->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			//otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
+			otherBody->addForce(vec3(1.2f, 0.0f, 0.0f));
 		}
 
 		break;

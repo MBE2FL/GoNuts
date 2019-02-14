@@ -163,7 +163,8 @@ vec3 TransformComponent::getWorldPosition() const
 {
 	if (_parent)
 	{
-		vec4 temp = _parent->getLocalToWorldMatrix() * vec4(_localPosition, 1.0f);
+		//vec4 temp = _parent->getLocalToWorldMatrix() * vec4(_localPosition, 1.0f);
+		vec4 temp = _parent->getLocalToWorldMatrix() * vec4(getTranslation(), 1.0f);
 		return vec3(temp);
 	}
 	else
@@ -285,10 +286,22 @@ void TransformComponent::addChild(TransformComponent * child)
 	_children.push_back(child);
 }
 
+void TransformComponent::removeChild(TransformComponent * child)
+{
+	child->setParent(nullptr);
+
+	vector<TransformComponent*>::iterator position = std::find(_children.begin(), _children.end(), child);
+
+	if (position != _children.end())
+		_children.erase(position);
+}
+
 void TransformComponent::setParent(TransformComponent * parent)
 {
-	//_parent = parent;
-	parent->addChild(this);
+	if (parent)
+		parent->addChild(this);
+	else
+		_parent = nullptr;
 }
 
 TransformComponent * TransformComponent::getParent() const
@@ -334,4 +347,16 @@ vec3 TransformComponent::getUp() const
 vec3 TransformComponent::getLeft() const
 {
 	return _localToWorldMatrix.getLeft();
+}
+
+void TransformComponent::setTarget(TransformComponent * target, const vec3 & offset)
+{
+	_target = target;
+	_targetOffset = offset;
+}
+
+void TransformComponent::followTarget(const float speed)
+{
+	if (_target)
+		setWorldPosition(lerp(getWorldPosition(), _target->getWorldPosition() - _targetOffset, speed));
 }

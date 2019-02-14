@@ -4,6 +4,7 @@
 //#include <string>
 #include <iostream>
 #include "SOIL/SOIL.h"
+#include <fstream>
 //
 //using std::string;
 //using std::cout;
@@ -29,18 +30,27 @@
 #pragma once
 #include "GL/glew.h"
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
 
+struct RGB
+{
+	float r = 0;
+	float g = 0;
+	float b = 0;
+};
 class Texture
 {
 public:
 	Texture() = default;
-	Texture(const std::string &file);
+	Texture(const std::string &file, const bool LUT = false);
 	~Texture();
 
 	// Loads the texture
 	bool load(const std::string &file);
+	bool load3D(const std::string &file);
 	// Unloads the texture
 	bool unload();
 
@@ -57,12 +67,15 @@ public:
 	void setName(const string& name);
 
 	std::string filename;
+	GLuint _Handle;
+	GLenum _Target;
+
+	std::vector<RGB> LUTVec;
+
 private:
-	GLuint _TexHandle;
 
 
 	GLenum _InternalFormat;
-	GLenum _Target;
 	GLenum _FilterMag = GL_LINEAR; // Filter parameter
 	GLenum _FilterMin = GL_LINEAR;
 	GLenum _WrapU = GL_REPEAT; // Per axis Wrap parameter
