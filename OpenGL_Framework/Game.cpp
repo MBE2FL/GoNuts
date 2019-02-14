@@ -73,17 +73,17 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
-<<<<<<< HEAD
+
 	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
 	ObjectLoader::loadMesh("Beast Mode.obj", "./Assets/Models/Beast_Mode.obj");
-=======
+
 	ObjectLoader::loadMesh("Beast Mode", "./Assets/Models/BeastMode.obj");
 
 	ObjectLoader::loadMesh("Building Top 1", "./Assets/Models/Building_Top1.obj");
 	ObjectLoader::loadMesh("Building Top 2", "./Assets/Models/Building_Top2.obj");
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
->>>>>>> 4a092852c9175683913ecae1648932c48a33e3e5
+
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
@@ -243,9 +243,9 @@ void Game::initializeGame()
 	dummy++;
 
 
-<<<<<<< HEAD
+
 	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-=======
+
 	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
 	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
 
@@ -266,8 +266,8 @@ void Game::initializeGame()
 
 	//sound.Load("./Assets/Sounds/drumloop.wav", false);
 
-	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
->>>>>>> 4a092852c9175683913ecae1648932c48a33e3e5
+	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
 
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
