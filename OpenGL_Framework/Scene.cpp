@@ -22,13 +22,15 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
-	if (_entityFactory->getAcornCount() > 2)
-	{
-		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
-		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
-		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
-		_playerTransform->setLocalScale(vec3(1.5f));
-	}
+	//if (_entityFactory->getAcornCount() > 2)
+	//{
+	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
+	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
+	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
+	//	_playerTransform->setLocalScale(vec3(1.5f));
+	//}
+
+	light->setPosition(vec3(_playerTransform->getLocalPosition().x - 2.0f, light->getPosition().y, light->getPosition().z));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
@@ -49,7 +51,7 @@ void Scene::update(float deltaTime)
 	else if (!front /*&& !_playerPhysicsBody->getCanJump()*/)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
-			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -10.0f),//where we want to go with lerp
+			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
 
