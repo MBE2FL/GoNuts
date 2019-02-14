@@ -38,6 +38,7 @@ void Game::initializeGame()
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
+	LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -314,7 +315,12 @@ void Game::draw()
 	shaderOutline.unBind();
 
 	shaderLUT.bind();
-	LUTTex->bind(30);
+
+	if(lut)
+		LUTTex->bind(30);
+	else if  (!lut)
+		LUTTexVal->bind(30);
+
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
 	frameBufferLUT.drawFSQ();
@@ -340,7 +346,8 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		outline = !outline;
 	if (key == 'r')
 		shaderOutline.reload();
-	
+	if (key == 'v')
+		lut = !lut;
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
