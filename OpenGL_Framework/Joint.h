@@ -19,6 +19,7 @@ public:
 	void setName(const string& name);
 	vector<Joint*> getChildren() const;
 	mat4 getAnimatedTransform() const;
+	void setAnimatedTransform(const mat4& transform);
 	mat4 getInverseBindTransfrom() const;
 
 	void addChild(Joint* child);

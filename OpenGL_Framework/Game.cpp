@@ -38,6 +38,7 @@ void Game::initializeGame()
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
+	LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -55,6 +56,9 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
+	ObjectLoader::loadMesh("Couch", "./Assets/Models/couch.obj");
+	ObjectLoader::loadMesh("Table", "./Assets/Models/table.obj");
+	ObjectLoader::loadMesh("Round Table", "./Assets/Models/roundtable.obj");
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
 	//Change
 	ObjectLoader::loadMesh("Flag", "./Assets/Models/flag_final_unwrap.obj");
@@ -63,17 +67,23 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
 	ObjectLoader::loadMesh("Lamp", "./Assets/Models/lamp.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
+	ObjectLoader::loadMesh("Plant", "./Assets/Models/smallplant.obj");
+	ObjectLoader::loadMesh("Planter", "./Assets/Models/planter.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+
+	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
+
 	ObjectLoader::loadMesh("Beast Mode", "./Assets/Models/BeastMode.obj");
 
 	ObjectLoader::loadMesh("Building Top 1", "./Assets/Models/Building_Top1.obj");
 	ObjectLoader::loadMesh("Building Top 2", "./Assets/Models/Building_Top2.obj");
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
+
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
@@ -209,7 +219,7 @@ void Game::initializeGame()
 	Scene* testScene = new Scene("TEST SCENE");
 	//testScene->saveScene();
 
-	SceneManager* sceneManager = SceneManager::getInstance();
+	sceneManager = SceneManager::getInstance();
 
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
@@ -234,6 +244,9 @@ void Game::initializeGame()
 	dummy++;
 
 
+
+	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
 	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
 	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
 
@@ -252,14 +265,20 @@ void Game::initializeGame()
 
 
 
+
+	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
+
 	//sound.Load("./Assets/Sounds/drumloop.wav", false);
 
+
 	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
 
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
 	Sound::SetLoop(soundChannel, true);
-	Sound::SetVolume(soundChannel, 0.2f);
+	Sound::SetVolume(soundChannel, 0.05f);
 	
 }
 
@@ -332,7 +351,12 @@ void Game::draw()
 	shaderOutline.unBind();
 
 	shaderLUT.bind();
-	LUTTex->bind(30);
+
+	if(lut)
+		LUTTex->bind(30);
+	else if  (!lut)
+		LUTTexVal->bind(30);
+
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
 	frameBufferLUT.drawFSQ();
@@ -358,7 +382,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		outline = !outline;
 	if (key == 'r')
 		shaderOutline.reload();
-	
+	if (key == 'v')
+		lut = !lut;
+	if (key == '1')
+		sceneManager->loadScene("sceney");
+	//if (key == '1')
+	//	sceneManager->loadScene("");
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

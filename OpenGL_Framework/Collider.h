@@ -74,6 +74,8 @@ public:
 
 	vec3 _max;
 	vec3 _min;
+
+	bool beastMode = false;
 protected:
 	Bounds* _bounds;
 	vec3 _contactOffset;

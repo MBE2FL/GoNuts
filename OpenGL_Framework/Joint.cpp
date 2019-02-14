@@ -46,6 +46,11 @@ mat4 Joint::getAnimatedTransform() const
 	return _animatedTransform;
 }
 
+void Joint::setAnimatedTransform(const mat4 & transform)
+{
+	_animatedTransform = transform;
+}
+
 mat4 Joint::getInverseBindTransfrom() const
 {
 	return _inverseBindTransform;

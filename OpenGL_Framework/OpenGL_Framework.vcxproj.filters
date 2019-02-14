@@ -200,6 +200,18 @@
     <ClCompile Include="FmodWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="JointTransform.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFrame.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="SAnimation.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -349,6 +361,18 @@
     </ClInclude>
     <ClInclude Include="FmodWrapper.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JointTransform.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="SAnimation.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFrame.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
