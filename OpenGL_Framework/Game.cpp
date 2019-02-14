@@ -244,6 +244,9 @@ void Game::initializeGame()
 
 
 
+
+	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
 	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
 	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
 
