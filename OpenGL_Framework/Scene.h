@@ -108,8 +108,6 @@ private:
 	bool front = true;
 	bool lerping = false;
 
-	void createTables(sqlite3* db, char* errMsg);
-
 	void errorCheck(char* success, char* failure, char* errMsg);
 	void saveTransforms(sqlite3* db, char* errMsg);
 	void saveCameras(sqlite3* db, char* errMsg);
