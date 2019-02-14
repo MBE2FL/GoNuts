@@ -237,6 +237,7 @@ void Game::initializeGame()
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
 
 	int dummy = 0;
