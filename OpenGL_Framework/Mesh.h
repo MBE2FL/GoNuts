@@ -33,8 +33,8 @@ public:
 	~Mesh();
 
 	// Load a mesh, and send it to OpenGL
-	bool loadFromFile(const string& file);
-	void uploadToGPU();
+	virtual bool loadFromFile(const string& file);
+	virtual void uploadToGPU();
 	// Release data from OpenGL (VRAM)
 	void Unload();
 
@@ -57,7 +57,8 @@ public:
 	GLuint VAO = GL_NONE;
 
 	VertexArrayObject vao;
-private:
+
+protected:
 	unsigned int _numFaces = 0;
 	unsigned int _numVertices = 0;
 

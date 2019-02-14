@@ -286,10 +286,22 @@ void TransformComponent::addChild(TransformComponent * child)
 	_children.push_back(child);
 }
 
+void TransformComponent::removeChild(TransformComponent * child)
+{
+	child->setParent(nullptr);
+
+	vector<TransformComponent*>::iterator position = std::find(_children.begin(), _children.end(), child);
+
+	if (position != _children.end())
+		_children.erase(position);
+}
+
 void TransformComponent::setParent(TransformComponent * parent)
 {
-	//_parent = parent;
-	parent->addChild(this);
+	if (parent)
+		parent->addChild(this);
+	else
+		_parent = nullptr;
 }
 
 TransformComponent * TransformComponent::getParent() const

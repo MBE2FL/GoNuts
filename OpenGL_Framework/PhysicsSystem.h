@@ -3,6 +3,8 @@
 #include "System.h"
 #include "BoxCollider.h"
 
+using std::find;
+
 
 struct Collision
 {

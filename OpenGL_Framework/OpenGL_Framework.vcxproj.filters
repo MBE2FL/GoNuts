@@ -47,6 +47,12 @@
     <Filter Include="Header Files\MathLib">
       <UniqueIdentifier>{34d1392d-d40c-45d7-ac6c-6170f848b7a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\EntitySystem\Components\Animation">
+      <UniqueIdentifier>{53541670-9e6e-4bbc-8bdb-ac655278d847}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Components\Animation">
+      <UniqueIdentifier>{1c4aaab7-ccc0-4bef-9b42-3f72813f1825}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -180,6 +186,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Joint.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalMesh.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MathLib\Quaternion.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="FmodWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -318,6 +336,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Joint.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalMesh.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MathLib\Quaternion.h">
+      <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="FmodWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

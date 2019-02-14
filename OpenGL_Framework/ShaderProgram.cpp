@@ -219,6 +219,11 @@ void ShaderProgram::setProgramName(const string & programName)
 	_programName = programName;
 }
 
+void ShaderProgram::reload()
+{
+	load(_vertFilename, _fragFilename);
+}
+
 string ShaderProgram::readFile(const string & fileName) const
 {
 	ifstream inStream(fileName);

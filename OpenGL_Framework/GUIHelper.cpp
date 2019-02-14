@@ -146,17 +146,15 @@ void GUIHelper::drawHierarchy()
 
 	//ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 	// Get all entities in the scene.
-	vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::Transform);
+	//vector<Entity*> entities = _entityManager->getAllEntitiesWithComponent(ComponentType::Transform);
+	vector<TransformComponent*> transforms = _entityManager->getAllTransforms();
 
 	// Sort the vector, so all the root transform are in the front of the vector.
 	// Erase all the non-root transforms from the vector.
 	EntityManager* entityManager = _entityManager;
-	vector<Entity*>::iterator it;
-	it = partition(entities.begin(), entities.end(), [entityManager](Entity* entity) -> bool
+	vector<TransformComponent*>::iterator it;
+	it = partition(transforms.begin(), transforms.end(), [entityManager](TransformComponent* transform) -> bool
 	{
-		// Get the transform component.
-		TransformComponent* transform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
-
 		// Make sure transform component exists.
 		if (!transform)
 			return false;
@@ -164,12 +162,11 @@ void GUIHelper::drawHierarchy()
 		return transform->isRoot();
 	});
 
-	entities.erase(it, entities.end());
+	transforms.erase(it, transforms.end());
 
 	// Display all the root transforms.
-	for (Entity* entity : entities)
+	for (TransformComponent* transform : transforms)
 	{
-		TransformComponent* transform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
 		transform->getName();
 
 		drawHierarchyHelper(transform);
@@ -194,6 +191,20 @@ void GUIHelper::drawHierarchyHelper(TransformComponent * transform)
 			{
 				_showPropertyEditor = true;
 				_currentTransform = transform;
+			}
+			if (ImGui::SmallButton("Delete"))
+			{
+				for (TransformComponent* child : children)
+				{
+					child->setParent(nullptr);
+				}
+
+				if (transform->getParent())
+					transform->getParent()->removeChild(transform);
+				
+				_entityManager->deleteEntity(transform->getEntity());
+				ImGui::TreePop();
+				return;
 			}
 
 			for (TransformComponent* child : children)

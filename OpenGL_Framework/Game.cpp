@@ -77,6 +77,10 @@ void Game::initializeGame()
 
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/new_background.png");
+	ObjectLoader::loadTexture("Background1", "./Assets/Textures/background1.png");
+	ObjectLoader::loadTexture("Background2", "./Assets/Textures/background2.png");
+	ObjectLoader::loadTexture("Background3", "./Assets/Textures/background3.png");
+	ObjectLoader::loadTexture("Background4", "./Assets/Textures/background4.png");
 	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
 	ObjectLoader::loadTexture("Building 1 Texture 1", "./Assets/Textures/Building 1 Texture 1.png");
 	ObjectLoader::loadTexture("Building 1 Texture 2", "./Assets/Textures/Building 1 Texture 2.png");
@@ -223,10 +227,19 @@ void Game::initializeGame()
 
 	int dummy = 0;
 	dummy++;
+
+
+	sound.Load("./Assets/Sounds/drumloop.wav", false);
+
+	//start to play the sound and save it to a channel so it can be refferenced later
+	soundChannel = sound.Play(true);
+	Sound::SetLoop(soundChannel, true);
+	
 }
 
 void Game::update()
 {
+	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
 	collided = false;
 	if (!reverse)
@@ -279,6 +292,7 @@ void Game::draw()
 
 	shaderOutline.bind();
 	shaderOutline.sendUniform("outline", outline);
+	
 	frameBuffer.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
 
@@ -316,6 +330,9 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	_currentScene->keyboardDown(key, mouseX, mouseY);
 	if (key == 'o')
 		outline = !outline;
+	if (key == 'r')
+		shaderOutline.reload();
+	
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

@@ -27,20 +27,25 @@ out vec4 outColor;
 //    2.0, 0.0, -2.0, 
 //    1.0, 0.0, -1.0 
 //);
+mat3 sx;
+mat3 sy;
 
-mat3 sx = mat3( 
-    0.0, 2.0, 0.0, 
-    0.0, 0.0, 0.0, 
-    0.0, -2.0, 0.0 
-);
-mat3 sy = mat3( 
-    0.0, 0.0, 0.0, 
-    2.0, 0.0, -2.0, 
-    0.0, 0.0, 0.0 
-);
+
 
 void main()
 {
+	
+	sx = mat3( 
+	    0.0, 2.0, 0.0, 
+	    0.0, 0.0, 0.0, 
+	    0.0, -2.0, 0.0 
+	);
+	sy = mat3( 
+	    0.0, 0.0, 0.0, 
+	    2.0, 0.0, -2.0, 
+	    0.0, 0.0, 0.0 
+	);
+
 	//vec4 source = texture(uSceneTex, texcoord);
 	vec3 diffuse = texture(uSceneTex, texcoord).rgb;
 	if (outline)
