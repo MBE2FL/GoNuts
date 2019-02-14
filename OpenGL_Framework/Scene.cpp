@@ -51,7 +51,7 @@ void Scene::update(float deltaTime)
 	else if (!front /*&& !_playerPhysicsBody->getCanJump()*/)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
-			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -10.0f),//where we want to go with lerp
+			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
 
