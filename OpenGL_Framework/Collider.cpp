@@ -23,12 +23,15 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 	{
 		std::cout << "Acorn Collision Entered!" << std::endl;
 		EntityFactory* entityFactory = EntityFactory::getInstance();
-		entityFactory->plusAcorn();
+		
 
 		EntityManager* entityManager = EntityManager::getInstance();
 		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
 		if (otherCollider->getTag() == TTag::Player)
+		{
 			_physicsBody->setUseGravity(true);
+			entityFactory->plusAcorn();
+		}
 
 		break;
 	}
@@ -37,12 +40,15 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 	{
 		std::cout << "Coin Collision Entered!" << std::endl;
 		EntityFactory* entityFactory = EntityFactory::getInstance();
-		entityFactory->plusCoin();
+		
 
 		EntityManager* entityManager = EntityManager::getInstance();
 		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
 		if (otherCollider->getTag() == TTag::Player)
+		{
 			_physicsBody->setUseGravity(true);
+			entityFactory->plusCoin();
+		}
 
 		break;
 	}
@@ -202,6 +208,8 @@ void Collider::onCollisionExit(Entity * self, Entity * other)
 	case TTag::Coin:
 		break;
 	case TTag::Acorn:
+		std::cout << "Acorn Collision Exited!" << std::endl;
+
 		break;
 	case TTag::Spike:
 		break;
