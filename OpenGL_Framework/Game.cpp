@@ -273,7 +273,7 @@ void Game::initializeGame()
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
 	Sound::SetLoop(soundChannel, true);
-	Sound::SetVolume(soundChannel, 0.2f);
+	Sound::SetVolume(soundChannel, 0.05f);
 	
 }
 
