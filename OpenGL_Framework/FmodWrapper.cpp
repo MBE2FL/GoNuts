@@ -217,3 +217,8 @@ void Sound::Set3DMinMaxDistance(FMOD::Channel * thisChannel, float min, float ma
 		FmodErrorCheck(result);
 	}
 }
+
+void Sound::SetVolume(FMOD::Channel * thisChannel, float volume)
+{
+	thisChannel->setVolume(volume);
+}
