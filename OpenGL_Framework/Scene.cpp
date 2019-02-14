@@ -22,7 +22,7 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
-	if (_entityFactory->getAcornCount() > 2)
+	if (_entityFactory->getAcornCount() > 30)
 	{
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
