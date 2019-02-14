@@ -38,6 +38,7 @@ void Game::initializeGame()
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
+	LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
@@ -75,7 +76,6 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
 
 	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
-	ObjectLoader::loadMesh("Beast Mode.obj", "./Assets/Models/Beast_Mode.obj");
 
 	ObjectLoader::loadMesh("Beast Mode", "./Assets/Models/BeastMode.obj");
 
@@ -219,7 +219,7 @@ void Game::initializeGame()
 	Scene* testScene = new Scene("TEST SCENE");
 	//testScene->saveScene();
 
-	SceneManager* sceneManager = SceneManager::getInstance();
+	sceneManager = SceneManager::getInstance();
 
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
@@ -264,10 +264,11 @@ void Game::initializeGame()
 
 
 
+
 	//sound.Load("./Assets/Sounds/drumloop.wav", false);
 
-	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 
+	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
@@ -345,7 +346,12 @@ void Game::draw()
 	shaderOutline.unBind();
 
 	shaderLUT.bind();
-	LUTTex->bind(30);
+
+	if(lut)
+		LUTTex->bind(30);
+	else if  (!lut)
+		LUTTexVal->bind(30);
+
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
 	frameBufferLUT.drawFSQ();
@@ -371,7 +377,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		outline = !outline;
 	if (key == 'r')
 		shaderOutline.reload();
-	
+	if (key == 'v')
+		lut = !lut;
+	if (key == '1')
+		sceneManager->loadScene("sceney");
+	//if (key == '1')
+	//	sceneManager->loadScene("");
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

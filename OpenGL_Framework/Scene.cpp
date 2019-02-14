@@ -22,13 +22,15 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
-	if (_entityFactory->getAcornCount() > 2)
-	{
-		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
-		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
-		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
-		_playerTransform->setLocalScale(vec3(1.5f));
-	}
+	//if (_entityFactory->getAcornCount() > 2)
+	//{
+	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
+	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
+	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
+	//	_playerTransform->setLocalScale(vec3(1.5f));
+	//}
+
+	light->setPosition(vec3(_playerTransform->getLocalPosition().x - 2.0f, light->getPosition().y, light->getPosition().z));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
