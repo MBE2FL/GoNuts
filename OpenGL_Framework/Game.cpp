@@ -222,6 +222,25 @@ void Game::initializeGame()
 
 	int dummy = 0;
 	dummy++;
+
+	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
+	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
+
+	mat4 testMat = testOne.getRotationMatrix();
+	testTwo.getRotationMatrix();
+
+	Quaternion testRotToQuat;
+	testRotToQuat.rotate(testMat);
+
+	Quaternion testVector = Quaternion(0.0f, 10.0f, 0.0f, 0.0f);
+	testVector.rotate(90.0f, vec3(0.0f, 1.0f, 0.0f));
+
+	testOne * testTwo;
+
+	Quaternion::slerp(testOne, testTwo, 0.5f);
+
+
+
 }
 
 void Game::update()
