@@ -55,6 +55,9 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Coin", "./Assets/Models/coin.obj");
 	ObjectLoader::loadMesh("Cube", "./Assets/Models/Cube.obj");
 	ObjectLoader::loadMesh("Cone", "./Assets/Models/cone.obj");
+	ObjectLoader::loadMesh("Couch", "./Assets/Models/couch.obj");
+	ObjectLoader::loadMesh("Table", "./Assets/Models/table.obj");
+	ObjectLoader::loadMesh("Round Table", "./Assets/Models/roundtable.obj");
 	ObjectLoader::loadMesh("FatBoi", "./Assets/Models/Fat_Boi_Ultimate_Rigged_Edition.obj");
 	//Change
 	ObjectLoader::loadMesh("Flag", "./Assets/Models/flag_final_unwrap.obj");
@@ -63,11 +66,14 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
 	ObjectLoader::loadMesh("Lamp", "./Assets/Models/lamp.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
+	ObjectLoader::loadMesh("Plant", "./Assets/Models/smallplant.obj");
+	ObjectLoader::loadMesh("Planter", "./Assets/Models/planter.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
 	ObjectLoader::loadMesh("Beast Mode.obj", "./Assets/Models/Beast_Mode.obj");
 
 
@@ -229,7 +235,7 @@ void Game::initializeGame()
 	dummy++;
 
 
-	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 
 	//start to play the sound and save it to a channel so it can be refferenced later
 	soundChannel = sound.Play(true);
