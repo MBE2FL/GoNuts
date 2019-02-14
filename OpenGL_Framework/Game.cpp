@@ -61,13 +61,19 @@ void Game::initializeGame()
 	//Change
 	ObjectLoader::loadMesh("Garbage", "./Assets/Models/garbagecan_final_unwrap.obj");
 	ObjectLoader::loadMesh("Lever", "./Assets/Models/lever.obj");
+	ObjectLoader::loadMesh("Lamp", "./Assets/Models/lamp.obj");
 	ObjectLoader::loadMesh("Plane", "./Assets/Models/plane.obj");
 	ObjectLoader::loadMesh("Platform", "./Assets/Models/Platform.obj");
 	ObjectLoader::loadMesh("Spikes", "./Assets/Models/spikes.obj");
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
-	ObjectLoader::loadMesh("Beast Mode.obj", "./Assets/Models/Beast_Mode.obj");
+	ObjectLoader::loadMesh("Beast Mode", "./Assets/Models/BeastMode.obj");
+
+	ObjectLoader::loadMesh("Building Top 1", "./Assets/Models/Building_Top1.obj");
+	ObjectLoader::loadMesh("Building Top 2", "./Assets/Models/Building_Top2.obj");
+	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
+	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
@@ -76,6 +82,10 @@ void Game::initializeGame()
 
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
 	ObjectLoader::loadTexture("Background", "./Assets/Textures/new_background.png");
+	ObjectLoader::loadTexture("Background1", "./Assets/Textures/background1.png");
+	ObjectLoader::loadTexture("Background2", "./Assets/Textures/background2.png");
+	ObjectLoader::loadTexture("Background3", "./Assets/Textures/background3.png");
+	ObjectLoader::loadTexture("Background4", "./Assets/Textures/background4.png");
 	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
 	ObjectLoader::loadTexture("Building 1 Texture 1", "./Assets/Textures/Building 1 Texture 1.png");
 	ObjectLoader::loadTexture("Building 1 Texture 2", "./Assets/Textures/Building 1 Texture 2.png");
@@ -85,11 +95,8 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Building 2 Texture 3", "./Assets/Textures/Building 2 Texture 3.png");
 	ObjectLoader::loadTexture("Building 3 Texture 1", "./Assets/Textures/Building 3 Texture 1.png");
 	ObjectLoader::loadTexture("Building 3 Texture 3", "./Assets/Textures/Building 3 Texture 3.png");
-	//ObjectLoader::loadTexture("Building Top 1", "./Assets/Textures/Building_Top1.png");
-	//ObjectLoader::loadTexture("Building Top 2", "./Assets/Textures/Building_Top2.png");
-	//ObjectLoader::loadTexture("Building Top 3", "./Assets/Textures/Building_Top3.png");
-	//ObjectLoader::loadTexture("Building Top 4", "./Assets/Textures/Building_Top4.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture1.png");
+	ObjectLoader::loadTexture("Love", "./Assets/Textures/Go Love.png");//valentines day
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
 	ObjectLoader::loadTexture("Chimney", "./Assets/Textures/Chimney Texture.png");
@@ -219,9 +226,12 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
+	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
+
 
 	int dummy = 0;
 	dummy++;
+
 
 	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
 	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
@@ -241,10 +251,20 @@ void Game::initializeGame()
 
 
 
+	//sound.Load("./Assets/Sounds/drumloop.wav", false);
+
+	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+
+	//start to play the sound and save it to a channel so it can be refferenced later
+	soundChannel = sound.Play(true);
+	Sound::SetLoop(soundChannel, true);
+	Sound::SetVolume(soundChannel, 0.2f);
+	
 }
 
 void Game::update()
 {
+	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
 	collided = false;
 	if (!reverse)
