@@ -4,6 +4,7 @@
 #include "vec4.h"
 #include "mat3.h"
 #include "mat4.h"
+#include "Quaternion.h"
 
 namespace MathUtils
 {
