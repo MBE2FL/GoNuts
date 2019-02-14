@@ -84,6 +84,7 @@ public:
 	bool _followPlayer = true;
 
 	TransformComponent* getMainCameraTransform() const;
+	void createTables(sqlite3 * db, char * errMsg);
 
 private:
 	string _name;

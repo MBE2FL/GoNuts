@@ -666,7 +666,7 @@ void GUIHelper::drawCamera(CameraComponent * camera)
 	ImGui::Text(aspectText.c_str());
 }
 
-char* tagToChar(TTag tag)
+char*GUIHelper::tagToChar(TTag tag)
 {
 	switch (tag)
 	{
@@ -694,7 +694,7 @@ char* tagToChar(TTag tag)
 	}
 }
 
-TTag charToTag(char* tag)
+TTag GUIHelper::charToTag(char* tag)
 {
 	if (strcmp(tag, "Player") == 0)
 		return TTag::Player;
