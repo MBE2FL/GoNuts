@@ -210,7 +210,7 @@ void Game::initializeGame()
 	Scene* testScene = new Scene("TEST SCENE");
 	//testScene->saveScene();
 
-	SceneManager* sceneManager = SceneManager::getInstance();
+	sceneManager = SceneManager::getInstance();
 
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
@@ -365,6 +365,10 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		shaderOutline.reload();
 	if (key == 'v')
 		lut = !lut;
+	if (key == '1')
+		sceneManager->loadScene("sceney");
+	//if (key == '1')
+	//	sceneManager->loadScene("");
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
