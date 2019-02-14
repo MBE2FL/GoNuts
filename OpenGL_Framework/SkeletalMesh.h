@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Mesh.h"
-#include "Joint.h"
+#include "Animator.h"
 
 
 class SkeletalMesh : public Mesh
@@ -14,14 +14,14 @@ public:
 
 	bool loadFromFile(const string& file);
 	void uploadToGPU();
-	//void setAnimation(Animation anim);
-	//void update();
+	void setAnimation(SAnimation* anim);
+	void update(float deltaTime);
 	mat4* getJointTransforms();
 
 private:
 	Joint* _rootJoint;
 	unsigned int _numOfJoints;
-	// Animator;
+	Animator* _animator;
 
 
 	void getJointTransformsHelper(Joint* joint, mat4* jointTransforms);
