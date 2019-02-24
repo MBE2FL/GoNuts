@@ -52,6 +52,7 @@ public:
 	void sendUniform(const string& name, const vec4& vector);
 	void sendUniformMat3(const string& name, float* matrix, bool transpose);
 	void sendUniformMat4(const string& name, float* matrix, bool transpose);
+	void sendUniformMat4Array(const string& name, const unsigned int numOfMat, float* matrix, bool transpose);
 
 	string getVertFilename() const;
 	void setVertFilename(const string& vertFilename);

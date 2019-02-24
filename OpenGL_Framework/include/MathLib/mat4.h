@@ -44,6 +44,7 @@ public:
 
 	void translate(const vec3& translation);
 	void scale(const vec3& scale);
+	static vec4 transform(const mat4& transMat, const vec4& position);
 
 	static mat4 PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar);
 	static mat4 OrthographicProjection(float left, float right, float top, float bottom, float near, float far);

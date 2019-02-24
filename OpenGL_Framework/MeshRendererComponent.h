@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Mesh.h"
+#include "SkeletalMesh.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "Animation.h"

@@ -509,6 +509,15 @@ void mat4::scale(const vec3& scale)
 	*this = s;
 }
 
+vec4 mat4::transform(const mat4 & transMat, const vec4 & position)
+{
+	vec4 result;
+
+	result = transMat * position;
+
+	return result;
+}
+
 mat4 mat4::PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar)
 {
 	FOVy = FOVy * 180.0f / PI;

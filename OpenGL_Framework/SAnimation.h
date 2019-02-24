@@ -1,20 +1,17 @@
 #pragma once
 
-#include "KeyFrame.h"
-#include <vector>
-
-using std::vector;
+#include "JointAnimation.h"
 
 class SAnimation
 {
 public:
-	SAnimation(const float duration, const vector<KeyFrame*>& keyFrames);
+	SAnimation(const float duration, const vector<JointAnimation*>& jointAnims);
 	~SAnimation();
 
 	float getDuration() const;
-	vector<KeyFrame*> getKeyFrames() const;
+	vector<JointAnimation*> getJointAnims() const;
 
 private:
 	float _duration;
-	vector<KeyFrame*> _keyFrames;
+	vector<JointAnimation*> _jointAnims;
 };

@@ -105,6 +105,10 @@ private:
 
 	GUIHelper* _guiHelper = nullptr;
 
+	SkeletalMesh* skeletalMeshTest = nullptr;
+	SkeletalMesh* skeletalMeshTestTwo = nullptr;
+	bool skeletalTest = false;
+
 	bool sliding = false;
 	bool front = true;
 	bool lerping = false;

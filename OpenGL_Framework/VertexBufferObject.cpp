@@ -17,6 +17,13 @@ int VertexArrayObject::addVBO(VertexBufferData descriptor)
 	return 1;
 }
 
+int VertexArrayObject::addIBO(IndexBufferData descriptor)
+{
+	iboData = descriptor;
+	isIndexed = true;
+	return 1;
+}
+
 VertexBufferData * VertexArrayObject::getVboData(AttributeLocations loc)
 {
 	for (size_t i = 0; i < vboData.size(); ++i)
@@ -56,7 +63,7 @@ GLuint VertexArrayObject::getVboHandle(AttributeLocations loc) const
 	return 0;
 }
 
-void VertexArrayObject::createVAO(GLenum vboUsage)
+void VertexArrayObject::createVAO(GLenum vboUsage, GLenum iboUsage)
 {
 	if (vaoHandle)
 	{
@@ -64,25 +71,87 @@ void VertexArrayObject::createVAO(GLenum vboUsage)
 	}
 
 	vboUsageType = vboUsage;
+	iboUsageType = iboUsage;
+
+	// Create and bind VAO handle.
 	glGenVertexArrays(1, &vaoHandle);
 	this->bind();
-	auto numberOfBuffers = vboData.size();
-	vboHandles.resize(numberOfBuffers);
 
-	glGenBuffers(numberOfBuffers, &vboHandles[0]);
 
-	for (size_t i = 0; i < numberOfBuffers; ++i)
+	if (!isIndexed)
 	{
-		VertexBufferData* attrib = &vboData[i];
+		// Create VBO handles
+		auto numberOfBuffers = vboData.size();
+		vboHandles.resize(numberOfBuffers);
 
-		attrib->numVertices = attrib->numElements / attrib->numElementsPerAttribute;
+		glGenBuffers(numberOfBuffers, &vboHandles[0]);
 
-		glEnableVertexAttribArray(attrib->attributeType);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[i]);
-		glBufferData(GL_ARRAY_BUFFER, attrib->numElements * attrib->sizeOfElement, attrib->data, vboUsage);
+		for (size_t i = 0; i < numberOfBuffers; ++i)
+		{
+			VertexBufferData* attrib = &vboData[i];
 
-		glVertexAttribPointer(attrib->attributeType, attrib->numElementsPerAttribute, attrib->elementType, GL_FALSE, 0, reinterpret_cast<void*>(0));
+			attrib->numVertices = attrib->numElements / attrib->numElementsPerAttribute;
+
+			glEnableVertexAttribArray(attrib->attributeType);
+			glBindBuffer(GL_ARRAY_BUFFER, vboHandles[i]);
+			glBufferData(GL_ARRAY_BUFFER, attrib->numElements * attrib->sizeOfElement, attrib->data, vboUsage);
+
+			glVertexAttribPointer(attrib->attributeType, attrib->numElementsPerAttribute, attrib->elementType, GL_FALSE, 0, reinterpret_cast<void*>(0));
+		}
 	}
+
+	//if (isIndexed)
+	//{
+	//	// Create IBO handles
+	//	numberOfBuffers = iboData.size();
+	//	iboHandles.resize(numberOfBuffers);
+
+	//	glGenBuffers(numberOfBuffers, &iboHandles[0]);
+
+	//	for (size_t i = 0; i < numberOfBuffers; ++i)
+	//	{
+	//		IndexBufferData* attrib = &iboData[i];
+
+	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboHandles[i]);
+	//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, attrib->numIndices * attrib->sizeOfIndex, attrib->data, iboUsage);
+	//	}
+
+	//	// Cleanup
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
+	//}
+
+
+	if (isIndexed)
+	{
+		// Create VBO handles
+		auto numberOfBuffers = vboData.size();
+		vboHandles.resize(numberOfBuffers);
+
+		// Create IBO handle
+		glGenBuffers(numberOfBuffers, &vboHandles[0]);
+		glGenBuffers(1, &iboHandle);
+
+		IndexBufferData* iboAttrib = &iboData;
+
+		for (size_t i = 0; i < numberOfBuffers; ++i)
+		{
+			VertexBufferData* attrib = &vboData[i];
+
+			attrib->numVertices = attrib->numElements / attrib->numElementsPerAttribute;
+
+			glEnableVertexAttribArray(attrib->attributeType);
+			glBindBuffer(GL_ARRAY_BUFFER, vboHandles[i]);
+			glBufferData(GL_ARRAY_BUFFER, attrib->numElements * attrib->sizeOfElement, attrib->data, vboUsage);
+
+			glVertexAttribPointer(attrib->attributeType, attrib->numElementsPerAttribute, attrib->elementType, GL_FALSE, 0, reinterpret_cast<void*>(0));
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboHandle);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, iboAttrib->numIndices * iboAttrib->sizeOfIndex, iboAttrib->data, iboUsage);
+		}
+	}
+
+	// Cleanup
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
 	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 	this->unbind();
 }
@@ -113,7 +182,18 @@ void VertexArrayObject::draw() const
 	if (vaoHandle)
 	{
 		this->bind();
-		glDrawArrays(primitiveType, 0, vboData[0].numVertices);
+
+		if (!isIndexed)
+		{
+			glDrawArrays(primitiveType, 0, vboData[0].numVertices);
+		}
+		else
+		{
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboHandle);
+			glDrawElements(primitiveType, iboData.numIndices, iboData.elementType, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
+		}
+
 		this->unbind();
 	}
 }

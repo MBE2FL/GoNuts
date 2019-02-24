@@ -1,9 +1,9 @@
 #include "SAnimation.h"
 
-SAnimation::SAnimation(const float duration, const vector<KeyFrame*> & keyFrames)
+SAnimation::SAnimation(const float duration, const vector<JointAnimation*> & jointAnims)
 {
 	_duration = duration;
-	_keyFrames = keyFrames;
+	_jointAnims = jointAnims;
 }
 
 SAnimation::~SAnimation()
@@ -15,7 +15,7 @@ float SAnimation::getDuration() const
 	return _duration;
 }
 
-vector<KeyFrame*> SAnimation::getKeyFrames() const
+vector<JointAnimation*> SAnimation::getJointAnims() const
 {
-	return _keyFrames;
+	return _jointAnims;
 }

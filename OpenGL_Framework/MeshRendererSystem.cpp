@@ -229,6 +229,13 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 		shaderProgram->sendUniformMat4("uView", cameraInverse.data, false);
 		shaderProgram->sendUniformMat4("uProj", _cameraComp->getProjection().data, false);
 
+		if (mesh->_isSkeletal)
+		{
+			SkeletalMesh* skeletalMesh = dynamic_cast<SkeletalMesh*>(mesh);
+			vector<mat4> jointTransforms = skeletalMesh->getJointTransforms();
+			shaderProgram->sendUniformMat4Array("jointTransforms", skeletalMesh->getNumOfJoints(), jointTransforms[0].data, false);
+		}
+
 		shaderProgram->sendUniform("uTex", 0);
 
 		/*for (Entity* lightEntity : lightEntities)

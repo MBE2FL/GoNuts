@@ -10,6 +10,8 @@ using std::string;
 class Joint
 {
 public:
+	Joint();
+	Joint(unsigned int index, const string& name, const mat4& inverseBindTransform);
 	Joint(unsigned int index, const string& name, mat4& localBindTransform);
 	~Joint();
 
@@ -20,7 +22,9 @@ public:
 	vector<Joint*> getChildren() const;
 	mat4 getAnimatedTransform() const;
 	void setAnimatedTransform(const mat4& transform);
+	void setLocalBindTransform(const mat4& localBindTransform);
 	mat4 getInverseBindTransfrom() const;
+	void setInverseBindTransform(const mat4& inverseBindTransform);
 
 	void addChild(Joint* child);
 	void calculateInverseBindTransform(const mat4& parentBindTransform);

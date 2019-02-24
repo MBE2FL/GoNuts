@@ -1,46 +1,6 @@
 #include "Mesh.h"
 
 
-struct MeshFace
-{
-	MeshFace()
-	{
-		vertices[0] = 0;
-		vertices[1] = 0;
-		vertices[2] = 0;
-
-		textureUVs[0] = 0;
-		textureUVs[1] = 0;
-		textureUVs[2] = 0;
-
-		normals[0] = 0;
-		normals[1] = 0;
-		normals[2] = 0;
-	}
-
-	MeshFace(unsigned v1, unsigned v2, unsigned v3,
-		unsigned t1, unsigned t2, unsigned t3,
-		unsigned n1, unsigned n2, unsigned n3)
-	{
-		vertices[0] = v1;
-		vertices[1] = v2;
-		vertices[2] = v3;
-
-		textureUVs[0] = t1;
-		textureUVs[1] = t2;
-		textureUVs[2] = t3;
-
-		normals[0] = n1;
-		normals[1] = n2;
-		normals[2] = n3;
-	}
-
-	unsigned vertices[3];
-	unsigned textureUVs[3];
-	unsigned normals[3];
-};
-
-
 Mesh::Mesh()
 {
 }
@@ -49,16 +9,16 @@ Mesh::~Mesh()
 {
 }
 
-//bool Mesh::loadFromFile(const string & file)
+//bool Mesh::loadFromFile(const string & path)
 //{
-//	setFilename(file);
+//	setFilename(path);
 //
-//	ifstream input;
-//	input.open(file);
+//	ifstream file;
+//	file.open(path);
 //
-//	if (!input)
+//	if (!file)
 //	{
-//		cout << "Could not open the file." << endl;
+//		cout << "Could not open the path." << endl;
 //		return false;
 //	}
 //
@@ -77,9 +37,9 @@ Mesh::~Mesh()
 //	vector<float> unPackedTextureData;
 //	vector<float> unPackedNormalData;
 //
-//	while (!input.eof())
+//	while (!file.eof())
 //	{
-//		input.getline(inputString, CHAR_BUFFER_SIZE);
+//		file.getline(inputString, CHAR_BUFFER_SIZE);
 //
 //		// Found a comment
 //		if (strstr(inputString, "#") != nullptr)
@@ -127,7 +87,7 @@ Mesh::~Mesh()
 //		}
 //	}
 //
-//	input.close();
+//	file.close();
 //
 //	// Create the mesh bounding box for this mesh
 //	vec3 size = maxPoint - minPoint;
@@ -194,14 +154,14 @@ Mesh::~Mesh()
 //
 //	return true;
 //}
-bool Mesh::loadFromFile(const string & file)
+bool Mesh::loadFromFile(const string & path)
 {
-	setFilename(file);
+	setFilename(path);
 
-	std::ifstream input;
-	input.open(file);
+	std::ifstream file;
+	file.open(path);
 
-	if (!input)
+	if (!file)
 	{
 		_IsLoaded = false;
 		return false;
@@ -222,9 +182,9 @@ bool Mesh::loadFromFile(const string & file)
 	float x, y, z;
 	MeshFace faceTemp;
 
-	while (!input.eof()) // Go to end of file
+	while (!file.eof()) // Go to end of path
 	{
-		input.getline(line, CHAR_BUFFER_SIZE);
+		file.getline(line, CHAR_BUFFER_SIZE);
 
 		switch (line[0])
 		{
@@ -261,7 +221,7 @@ bool Mesh::loadFromFile(const string & file)
 			break;
 		}
 	}
-	input.close();
+	file.close();
 
 	//Create the mesh bounding box for this mesh
 	vec3 size = maxPoint - minPoint;

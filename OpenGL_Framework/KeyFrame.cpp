@@ -1,9 +1,15 @@
 #include "KeyFrame.h"
 
-KeyFrame::KeyFrame(const float startTime, const unordered_map<string, JointTransform*> jointKeyFrames)
+KeyFrame::KeyFrame()
+{
+	_startTime = 0.0f;
+	_jointTransform = nullptr;
+}
+
+KeyFrame::KeyFrame(const float startTime, JointTransform* jointTransform)
 {
 	_startTime = startTime;
-	_jointKeyFrames = jointKeyFrames;
+	_jointTransform = jointTransform;
 }
 
 KeyFrame::~KeyFrame()
@@ -15,7 +21,17 @@ float KeyFrame::getStartTime() const
 	return _startTime;
 }
 
-unordered_map<string, JointTransform*> KeyFrame::getJointKeyFrames() const
+void KeyFrame::setStartTime(const float startTime)
 {
-	return _jointKeyFrames;
+	_startTime = startTime;
+}
+
+JointTransform* KeyFrame::getJointTransform() const
+{
+	return _jointTransform;
+}
+
+void KeyFrame::setJointTransform(JointTransform * jointTransform)
+{
+	_jointTransform = jointTransform;
 }

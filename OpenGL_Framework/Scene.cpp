@@ -2,6 +2,7 @@
 
 #include "GUIHelper.h"
 
+
 Scene::Scene(const string & name)
 {
 	_name = name;
@@ -63,6 +64,14 @@ void Scene::update(float deltaTime)
 	{
 		_mainCameraTransform->setTarget(_playerTransform, vec3(-6, -1.5f, -8));
 		_mainCameraTransform->followTarget(deltaTime * 3.0f);
+	}
+
+
+	skeletalTest = true;
+	if (skeletalTest)
+	{
+		//skeletalMeshTest->update(deltaTime);
+		//skeletalMeshTestTwo->update(deltaTime);
 	}
 }
 
@@ -269,6 +278,28 @@ void Scene::loadOldFaithful()
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
 
+	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.4f), nullptr, "Skeleton");
+	//skeletalMeshTest = new SkeletalMesh();
+	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	//skeletalMeshTest->loadFromFile("./Assets/ANIM_TEST.dae");
+	//skeletalMeshTest->_isSkeletal = true;
+	//
+	//vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	//_entityManager->addComponent(meshRenderer, entity);
+
+
+	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.4f), nullptr, "SkeletonTwo");
+	//skeletalMeshTestTwo = new SkeletalMesh();
+	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	//skeletalMeshTestTwo->loadFromFile("./Assets/fatboi.dae");
+	//skeletalMeshTestTwo->_isSkeletal = true;
+
+	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
+	//meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	//_entityManager->addComponent(meshRenderer, entity);
+
+
 	light = new Light();
 	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
 	light->setAmbient(vec3(0.7f));
@@ -395,6 +426,10 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 27: // the escape key
 	//case 'q': // the 'q' key
 		exit(1);
+		break;
+	case 'p':
+		//skeletalTest = !skeletalTest;
+		ObjectLoader::getShaderProgram("SkeletalAnim")->reload();
 		break;
 	}
 

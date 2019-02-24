@@ -39,6 +39,14 @@ Quaternion::Quaternion(const Quaternion & other)
 	_z = other._z;
 }
 
+Quaternion::Quaternion(const mat4 & rot)
+{
+	_w = sqrt(1.0f + rot.data[0] + rot.data[5] + rot.data[10]) * 0.5f;
+	_x = (rot.data[6] - rot.data[9]) / (4.0f * _w);
+	_y = (rot.data[8] - rot.data[2]) / (4.0f * _w);
+	_z = (rot.data[1] - rot.data[4]) / (4.0f * _w);
+}
+
 Quaternion::~Quaternion()
 {
 }
@@ -65,14 +73,6 @@ void Quaternion::rotate(const float angle, const vec3 & axis)
 
 
 	Quaternion qpqc = q * *this * qc;
-}
-
-void Quaternion::rotate(const mat4 & rot)
-{
-	_w = sqrt(1.0f + rot.data[0] + rot.data[5] + rot.data[10]) * 0.5f;
-	_x = (rot.data[6] - rot.data[9]) / (4.0f * _w);
-	_y = (rot.data[8] - rot.data[2]) / (4.0f * _w);
-	_z = (rot.data[1] - rot.data[4]) / (4.0f * _w);
 }
 
 mat4 Quaternion::getRotationMatrix() const

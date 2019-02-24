@@ -14,7 +14,7 @@ mat4 JointTransform::getLocalTransform()
 {
 	mat4 localTransformMatrix;
 	localTransformMatrix.translate(_localPosition);
-	localTransformMatrix * _localRotation.getRotationMatrix();
+	localTransformMatrix = localTransformMatrix * _localRotation.getRotationMatrix();
 
 	return localTransformMatrix;
 }

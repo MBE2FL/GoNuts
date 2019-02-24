@@ -1,10 +1,27 @@
 #include "SkeletalMesh.h"
+#include <sstream>
+
+using std::stringstream;
+using tinyxml2::XMLDocument;
+using tinyxml2::XMLText;
+using tinyxml2::XMLError;
+using tinyxml2::XMLNode;
+using tinyxml2::XMLElement;
+
+struct VertexJointInfo
+{
+	unsigned int id;
+	float weight;
+};
 
 SkeletalMesh::SkeletalMesh()
 {
 	// Create new animator
 	_animator = new Animator(this);
-	_rootJoint->calculateInverseBindTransform(mat4::Identity);
+	//_rootJoint->calculateInverseBindTransform(mat4::Identity);
+
+	_zyCorrection.rotateX(toRadians(-90.0f));
+	_zyCorrectionInverted = _zyCorrection.getInverse();
 }
 
 SkeletalMesh::~SkeletalMesh()
@@ -16,13 +33,204 @@ Joint * SkeletalMesh::getRootJoint() const
 	return _rootJoint;
 }
 
-bool SkeletalMesh::loadFromFile(const string & file)
+bool SkeletalMesh::loadFromFile(const string & path)
 {
-	return false;
+	setFilename(path);
+
+	XMLDocument colladeFile;
+	XMLError result = colladeFile.LoadFile(path.c_str());
+	if (result != 0)
+	{
+		_IsLoaded = false;
+		return false;
+	}
+	
+	XMLNode* rootNode = colladeFile.FirstChildElement("COLLADA");
+
+	//loadGeoTwo(rootNode);
+	loadGeoFour(rootNode);
+	loadAnimTwo(rootNode);
+	loadJoints(rootNode);
+	loadJointHierarchy(rootNode);
+
+
+	//ifstream file;
+	//file.open(path);
+
+	//// File could not open.
+	//if (!file)
+	//{
+	//	_IsLoaded = false;
+	//	return false;
+	//}
+
+	//string line;
+	//std::getline(file, line);
+
+	//findLine(line, file, "<library_geometries>");
+	//loadGeometry(line, file);
+
+	//findLine(line, file, "<library_animations>");
+	//loadAnimations(line, file);
+
+	return true;
 }
 
 void SkeletalMesh::uploadToGPU()
 {
+	unsigned int numTris = (unsigned int)(dataVertex.size() / 3);
+
+	if (dataVertex.size() > 0)
+	{
+		VertexBufferData posAttrib;
+		posAttrib.attributeType = AttributeLocations::VERTEX;
+		posAttrib.data = &dataVertex[0];
+		posAttrib.sizeOfElement = sizeof(float);
+		posAttrib.elementType = GL_FLOAT;
+		posAttrib.numElementsPerAttribute = 4;
+		posAttrib.numElements = numTris * 3 * posAttrib.numElementsPerAttribute;
+		vao.addVBO(posAttrib);
+	}
+
+	if (dataTexture.size() > 0)
+	{
+		VertexBufferData textureAttrib;
+		textureAttrib.attributeType = AttributeLocations::TEXCOORD;
+		textureAttrib.data = &dataTexture[0];
+		textureAttrib.sizeOfElement = sizeof(float);
+		textureAttrib.elementType = GL_FLOAT;
+		textureAttrib.numElementsPerAttribute = 4;
+		textureAttrib.numElements = numTris * 3 * textureAttrib.numElementsPerAttribute;
+		vao.addVBO(textureAttrib);
+	}
+
+	if (dataNormal.size() > 0)
+	{
+		VertexBufferData normalAttrib;
+		normalAttrib.attributeType = AttributeLocations::NORMAL;
+		normalAttrib.data = &dataNormal[0];
+		normalAttrib.sizeOfElement = sizeof(float);
+		normalAttrib.elementType = GL_FLOAT;
+		normalAttrib.numElementsPerAttribute = 4;
+		normalAttrib.numElements = numTris * 3 * normalAttrib.numElementsPerAttribute;
+		vao.addVBO(normalAttrib);
+	}
+
+	if (_jointIdsPerVertex.size() > 0)
+	{
+		VertexBufferData jointIDSAttrib;
+		jointIDSAttrib.attributeType = AttributeLocations::JOINT_IDS;
+		jointIDSAttrib.data = &_jointIdsPerVertex[0];
+		jointIDSAttrib.sizeOfElement = sizeof(int);
+		jointIDSAttrib.elementType = GL_INT;
+		jointIDSAttrib.numElementsPerAttribute = 4;
+		jointIDSAttrib.numElements = numTris * 3 * jointIDSAttrib.numElementsPerAttribute;
+		vao.addVBO(jointIDSAttrib);
+	}
+
+	
+	//vector<vec4> floatTest;
+	//for (ivec4 joint : _jointIdsPerVertex)
+	//{
+	//	vec4 floatJoint = vec4(static_cast<float>(joint.x), static_cast<float>(joint.y),
+	//		static_cast<float>(joint.z), static_cast<float>(joint.w));
+	//	floatTest.push_back(floatJoint);
+	//}
+
+	//if (_jointIdsPerVertex.size() > 0)
+	//{
+	//	VertexBufferData jointIDSAttrib;
+	//	jointIDSAttrib.attributeType = AttributeLocations::JOINT_IDS;
+	//	jointIDSAttrib.data = &floatTest[0];
+	//	jointIDSAttrib.sizeOfElement = sizeof(float);
+	//	jointIDSAttrib.elementType = GL_FLOAT;
+	//	jointIDSAttrib.numElementsPerAttribute = 4;
+	//	jointIDSAttrib.numElements = numTris * 3 * jointIDSAttrib.numElementsPerAttribute;
+	//	vao.addVBO(jointIDSAttrib);
+	//}
+
+	if (_jointWeightsPerVertex.size() > 0)
+	{
+		VertexBufferData jointWeightsAttrib;
+		jointWeightsAttrib.attributeType = AttributeLocations::JOINT_WEIGHTS;
+		jointWeightsAttrib.data = &_jointWeightsPerVertex[0];
+		jointWeightsAttrib.sizeOfElement = sizeof(float);
+		jointWeightsAttrib.elementType = GL_FLOAT;
+		jointWeightsAttrib.numElementsPerAttribute = 4;
+		jointWeightsAttrib.numElements = numTris * 3 * jointWeightsAttrib.numElementsPerAttribute;
+		vao.addVBO(jointWeightsAttrib);
+	}
+
+	//if (dataVertex.size() > 0)
+	//{
+	//	VertexBufferData posAttrib;
+	//	posAttrib.attributeType = AttributeLocations::VERTEX;
+	//	posAttrib.data = &dataVertex[0];
+	//	posAttrib.sizeOfElement = sizeof(float);
+	//	posAttrib.elementType = GL_FLOAT;
+	//	posAttrib.numElementsPerAttribute = 4;
+	//	posAttrib.numElements = dataVertex.size() * posAttrib.numElementsPerAttribute;
+	//	vao.addVBO(posAttrib);
+
+	//	//IndexBufferData jointIDSIBOAttrib;
+	//	//jointIDSIBOAttrib.data = &vertexIndices[0];
+	//	//jointIDSIBOAttrib.sizeOfIndex = sizeof(unsigned int);
+	//	//jointIDSIBOAttrib.elementType = GL_UNSIGNED_INT;
+	//	//jointIDSIBOAttrib.numIndices = vertexIndices.size();
+	//	//vao.addIBO(jointIDSIBOAttrib);
+	//}
+
+	//if (dataTexture.size() > 0)
+	//{
+	//	VertexBufferData textureAttrib;
+	//	textureAttrib.attributeType = AttributeLocations::TEXCOORD;
+	//	textureAttrib.data = &dataTexture[0];
+	//	textureAttrib.sizeOfElement = sizeof(float);
+	//	textureAttrib.elementType = GL_FLOAT;
+	//	textureAttrib.numElementsPerAttribute = 4;
+	//	textureAttrib.numElements = dataTexture.size() * textureAttrib.numElementsPerAttribute;
+	//	vao.addVBO(textureAttrib);
+	//}
+
+	//if (dataNormal.size() > 0)
+	//{
+	//	VertexBufferData normalAttrib;
+	//	normalAttrib.attributeType = AttributeLocations::NORMAL;
+	//	normalAttrib.data = &dataNormal[0];
+	//	normalAttrib.sizeOfElement = sizeof(float);
+	//	normalAttrib.elementType = GL_FLOAT;
+	//	normalAttrib.numElementsPerAttribute = 4;
+	//	normalAttrib.numElements = dataNormal.size() * normalAttrib.numElementsPerAttribute;
+	//	vao.addVBO(normalAttrib);
+	//}
+
+	//if (_jointIDS.size() > 0)
+	//{
+	//	VertexBufferData jointIDSVBOAttrib;
+	//	jointIDSVBOAttrib.attributeType = AttributeLocations::JOINT_IDS;
+	//	jointIDSVBOAttrib.data = &_jointIDS[0];
+	//	jointIDSVBOAttrib.sizeOfElement = sizeof(int);
+	//	jointIDSVBOAttrib.elementType = GL_INT;
+	//	jointIDSVBOAttrib.numElementsPerAttribute = 4;
+	//	jointIDSVBOAttrib.numElements = _jointIDS.size() * jointIDSVBOAttrib.numElementsPerAttribute;
+	//	vao.addVBO(jointIDSVBOAttrib);
+	//}
+
+	//if (_jointWeights.size() > 0)
+	//{
+	//	VertexBufferData jointWeightsVBOAttrib;
+	//	jointWeightsVBOAttrib.attributeType = AttributeLocations::JOINT_WEIGHTS;
+	//	jointWeightsVBOAttrib.data = &_jointWeights[0];
+	//	jointWeightsVBOAttrib.sizeOfElement = sizeof(float);
+	//	jointWeightsVBOAttrib.elementType = GL_FLOAT;
+	//	jointWeightsVBOAttrib.numElementsPerAttribute = 4;
+	//	jointWeightsVBOAttrib.numElements = _jointWeights.size() * jointWeightsVBOAttrib.numElementsPerAttribute;
+	//	vao.addVBO(jointWeightsVBOAttrib);
+	//}
+
+
+	vao.createVAO();
+	_IsLoaded = true;
 }
 
 void SkeletalMesh::setAnimation(SAnimation * anim)
@@ -35,23 +243,1183 @@ void SkeletalMesh::update(float deltaTime)
 	_animator->update(deltaTime);
 }
 
-mat4 * SkeletalMesh::getJointTransforms()
+vector<mat4> SkeletalMesh::getJointTransforms()
 {
-	//vector<mat4> jointTransforms;
-	//jointTransforms.reserve(_numOfJoints);
+	_jointTransforms.clear();
+	_jointTransforms.resize(_numOfJoints); // MOVE
 
-	mat4* jointTransforms = new mat4[_numOfJoints];
-	getJointTransformsHelper(_rootJoint, jointTransforms);
+	getJointTransformsHelper(_rootJoint);
 
-	return jointTransforms;
+	return _jointTransforms;
 }
 
-void SkeletalMesh::getJointTransformsHelper(Joint * joint, mat4 * jointTransforms)
+unsigned int SkeletalMesh::getNumOfJoints() const
 {
-	jointTransforms[joint->getIndex()] = joint->getAnimatedTransform();
+	return _numOfJoints;
+}
+
+void SkeletalMesh::getJointTransformsHelper(Joint * joint)
+{
+	_jointTransforms[joint->getIndex()] = joint->getAnimatedTransform();
 
 	for (Joint* child : joint->getChildren())
 	{
-		getJointTransformsHelper(child, jointTransforms);
+		getJointTransformsHelper(child);
+	}
+}
+
+void SkeletalMesh::findLine(string & line, ifstream & file, const string & word)
+{
+	while (line.find(word) == string::npos)
+	{
+		std::getline(file, line);
+	}
+}
+
+void SkeletalMesh::getNextLine(string & line, ifstream & file)
+{
+	std::getline(file, line);
+}
+
+const char* SkeletalMesh::findWord(const char * line, ifstream & file, const char * word)
+{
+	return strstr(line, word);
+}
+
+void SkeletalMesh::loadGeometry(string & line, ifstream & file)
+{
+	//Unique data
+	vector<vec3> vertexDataLoad;
+	vector<vec2> textureDataLoad;
+	vector<vec3> normalDataLoad;
+
+
+	// Find array of mesh positions.
+	findLine(line, file, "<source id=");
+	findLine(line, file, "<float_array id=");
+
+	// Load in array of mesh positions as vec3.
+	size_t index = line.find('>');
+	string subLine = line.substr(index + 1);
+	stringstream ss(subLine);
+	string word;
+	size_t count = 0;
+	vec3 vertex;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			vertex.x = stof(word);
+		else if (count == 2)
+			vertex.y = stof(word);
+		else
+		{
+			vertex.z = stof(word);
+			vertexDataLoad.push_back(vertex);
+			computeMinMax(vertexDataLoad.back());
+			count = 0;
+		}
+	}
+
+
+	// Find array of mesh normals.
+	findLine(line, file, "<source id=");
+	findLine(line, file, "<float_array id=");
+
+	// Load in array of mesh normals as vec3.
+	index = line.find('>');
+	subLine = line.substr(index + 1);
+	ss = stringstream(subLine);
+	count = 0;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			vertex.x = stof(word);
+		else if (count == 2)
+			vertex.y = stof(word);
+		else
+		{
+			vertex.z = stof(word);
+			normalDataLoad.push_back(vertex);
+			count = 0;
+		}
+	}
+
+
+	// Find array of mesh uvs.
+	findLine(line, file, "<source id=");
+	findLine(line, file, "<float_array id=");
+
+	// Load in array of mesh uvs as vec3.
+	index = line.find('>');
+	subLine = line.substr(index + 1);
+	ss = stringstream(subLine);
+	count = 0;
+	vec2 uv;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			uv.x = stof(word);
+		else
+		{
+			uv.y = stof(word);
+			textureDataLoad.push_back(uv);
+			count = 0;
+		}
+	}
+
+
+	// Find array of mesh triangles.
+	findLine(line, file, "<triangles");
+	findLine(line, file, "<p>");
+
+	index = line.find('>');
+	subLine = line.substr(index + 1);
+	ss = stringstream(subLine);
+	count = 0;
+
+	// Index/Face data
+	vector<MeshFace> faceData;
+	MeshFace faceTemp;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			faceTemp.vertices[0] = stoi(word);
+		else if (count == 2)
+			faceTemp.normals[0] = stoi(word);
+		else if (count == 3)
+			faceTemp.textureUVs[0] = stoi(word);
+		else if (count == 5)
+			faceTemp.vertices[1] = stoi(word);
+		else if (count == 6)
+			faceTemp.normals[1] = stoi(word);
+		else if (count == 7)
+			faceTemp.textureUVs[1] = stoi(word);
+		else if (count == 9)
+			faceTemp.vertices[2] = stoi(word);
+		else if (count == 10)
+			faceTemp.normals[2] = stoi(word);
+		else if (count == 11)
+		{
+			faceTemp.textureUVs[2] = stoi(word);
+			faceData.push_back(faceTemp);
+		}
+		else if (count == 12)
+			count = 0;
+	}
+
+
+	//Create the mesh bounding box for this mesh
+	vec3 size = maxPoint - minPoint;
+	vec3 centre = size * 0.5f;
+	_meshBounds = Bounds(centre, size);
+
+	//Unpack the data
+	for (unsigned i = 0; i < faceData.size(); i++)
+	{
+		for (unsigned j = 0; j < 3; j++)
+		{
+			//vec4 data = vec4(
+			//	vertexDataLoad[faceData[i].vertices[j]].x,
+			//	vertexDataLoad[faceData[i].vertices[j]].y,
+			//	vertexDataLoad[faceData[i].vertices[j]].z,
+			//	1.0f);
+			dataVertex.push_back(vec4(
+				vertexDataLoad[faceData[i].vertices[j]].x,
+				vertexDataLoad[faceData[i].vertices[j]].y,
+				vertexDataLoad[faceData[i].vertices[j]].z,
+				1.0f));
+
+			dataTexture.push_back(vec4(
+				textureDataLoad[faceData[i].textureUVs[j]].x,
+				textureDataLoad[faceData[i].textureUVs[j]].y,
+				0.0f,
+				1.0f));
+
+			dataNormal.push_back(vec4(
+				normalDataLoad[faceData[i].normals[j]].x,
+				normalDataLoad[faceData[i].normals[j]].y,
+				normalDataLoad[faceData[i].normals[j]].z,
+				1.0f));
+		}
+
+
+
+	}
+
+	uploadToGPU();
+
+	vertexDataLoad.clear(); //Clear the vectors from RAM now that everything's in the GPU.
+	textureDataLoad.clear();
+	normalDataLoad.clear();
+	faceData.clear();
+}
+
+void SkeletalMesh::loadAnimations(string & line, ifstream & file)
+{
+	KeyFrame* keyFrame = nullptr;
+	vector<KeyFrame*> keyFrames;
+	JointAnimation* jointAnim = nullptr;
+	vector<JointAnimation*> jointAnims;
+	
+
+	//findLine(line, file, "<animation id=");
+	getNextLine(line, file);
+
+	// Load in all bone animations.
+	while (line.find("<animation id="))
+	{
+		// Ignore any IK or Pole bone animations.
+		if ((line.find("IK") != string::npos) || (line.find("Pole") != string::npos))
+		{
+			findLine(line, file, "</animation>");
+			getNextLine(line, file);
+			continue;
+		}
+
+		// Load in key frame times.
+		getNextLine(line, file);
+		getNextLine(line, file);
+
+		size_t index = line.find('>');
+		string subLine = line.substr(index + 1);
+		stringstream ss(subLine);
+		string word;
+		float time;
+
+		while (std::getline(ss, word, ' '))
+		{
+			keyFrame = new KeyFrame();
+			time = stof(word);
+			keyFrame->setStartTime(time);
+			keyFrames.push_back(keyFrame);
+		}
+
+
+		// Load in key frame local transformation matrices.
+		findLine(line, file, "<source id=");
+		getNextLine(line, file);
+
+		index = line.find('>');
+		subLine = line.substr(index + 1);
+		ss = stringstream(subLine);
+		size_t count = 0;
+		size_t frameIndex = 0;
+		mat4 localTransform;
+
+
+		while (std::getline(ss, word, ' '))
+		{
+			++count;
+
+			// Row 1
+			if (count == 1)
+				localTransform.data[0] = stof(word);
+			else if (count == 2)
+				localTransform.data[4] = stof(word);
+			else if (count == 3)
+				localTransform.data[8] = stof(word);
+			else if (count == 4)
+				localTransform.data[12] = stof(word);
+			// Row 2
+			else if (count == 5)
+				localTransform.data[1] = stof(word);
+			else if (count == 6)
+				localTransform.data[5] = stof(word);
+			else if (count == 7)
+				localTransform.data[9] = stof(word);
+			else if (count == 8)
+				localTransform.data[13] = stof(word);
+			// Row 3
+			else if (count == 9)
+				localTransform.data[2] = stof(word);
+			else if (count == 10)
+				localTransform.data[6] = stof(word);
+			else if (count == 11)
+				localTransform.data[10] = stof(word);
+			else if (count == 12)
+				localTransform.data[14] = stof(word);
+			// Row 4
+			else if (count == 13)
+				localTransform.data[3] = stof(word);
+			else if (count == 14)
+				localTransform.data[7] = stof(word);
+			else if (count == 15)
+				localTransform.data[11] = stof(word);
+			else if (count == 16)
+			{
+				localTransform.data[15] = stof(word);
+
+				// Create a joint transform for this key frame's local transformation.
+				vec3 position = localTransform.getTranslation();
+				Quaternion rotation = Quaternion(localTransform);
+
+				JointTransform* jointTrans = new JointTransform(position, rotation);
+				keyFrames[frameIndex]->setJointTransform(jointTrans);
+
+				++frameIndex;
+				count = 0;
+			}
+		}
+
+		jointAnim = new JointAnimation(keyFrames);
+		jointAnims.push_back(jointAnim);
+
+		findLine(line, file, "</animation>");
+		getNextLine(line, file);
+	}
+
+	SAnimation* anim = new SAnimation(keyFrames.back()->getStartTime(), jointAnims);
+
+	_animator->setAnimation(anim);
+
+
+}
+
+void SkeletalMesh::loadGeoTwo(XMLNode * rootNode)
+{
+	//Unique data
+	vector<vec3> vertexDataLoad;
+	vector<vec2> textureDataLoad;
+	vector<vec3> normalDataLoad;
+
+	XMLNode* meshNode = rootNode->FirstChildElement("asset")->NextSiblingElement("library_geometries")->FirstChildElement("geometry")
+		->FirstChildElement("mesh");
+
+	XMLNode* sourceNode = meshNode->FirstChildElement("source");
+
+	// Find array of mesh positions.
+	XMLNode* arrayNode = sourceNode->FirstChildElement("float_array");
+	//XMLText* pos = testnode->FirstChild()->ToText();
+	//pos->Value();
+
+	// Load in array of mesh positions as vec3.
+	stringstream ss(arrayNode->FirstChild()->Value());
+	string word;
+	size_t count = 0;
+	vec3 vertex;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			vertex.x = stof(word);
+		else if (count == 2)
+			vertex.y = stof(word);
+		else
+		{
+			vertex.z = stof(word);
+
+			// Apply z to y axis correction.
+			//vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
+
+			vertexDataLoad.push_back(vertex);
+			computeMinMax(vertexDataLoad.back());
+			count = 0;
+		}
+	}
+
+
+
+	// Find array of mesh normals.
+	sourceNode = sourceNode->NextSiblingElement();
+	arrayNode = sourceNode->FirstChildElement("float_array");
+
+	// Load in array of mesh normals as vec3.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	count = 0;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			vertex.x = stof(word);
+		else if (count == 2)
+			vertex.y = stof(word);
+		else
+		{
+			vertex.z = stof(word);
+
+			// Apply z to y axis correction.
+			//vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
+
+			normalDataLoad.push_back(vertex);
+			count = 0;
+		}
+	}
+
+
+	
+	// Find array of mesh uvs.
+	sourceNode = sourceNode->NextSiblingElement();
+	arrayNode = sourceNode->FirstChildElement("float_array");
+
+	// Load in array of mesh uvs as vec3.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	count = 0;
+	vec2 uv;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			uv.x = stof(word);
+		else
+		{
+			uv.y = stof(word);
+			textureDataLoad.push_back(uv);
+			count = 0;
+		}
+	}
+
+
+
+	// Find array of mesh triangles.
+	sourceNode = meshNode->LastChildElement();
+	arrayNode = sourceNode->LastChild();
+
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	count = 0;
+
+	// Index/Face data
+	vector<MeshFace> faceData;
+	MeshFace faceTemp;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			faceTemp.vertices[0] = stoi(word);
+		else if (count == 2)
+			faceTemp.normals[0] = stoi(word);
+		else if (count == 3)
+			faceTemp.textureUVs[0] = stoi(word);
+		else if (count == 5)
+			faceTemp.vertices[1] = stoi(word);
+		else if (count == 6)
+			faceTemp.normals[1] = stoi(word);
+		else if (count == 7)
+			faceTemp.textureUVs[1] = stoi(word);
+		else if (count == 9)
+			faceTemp.vertices[2] = stoi(word);
+		else if (count == 10)
+			faceTemp.normals[2] = stoi(word);
+		else if (count == 11)
+		{
+			faceTemp.textureUVs[2] = stoi(word);
+			faceData.push_back(faceTemp);
+		}
+		else if (count == 12)
+			count = 0;
+	}
+
+
+	//Create the mesh bounding box for this mesh
+	vec3 size = maxPoint - minPoint;
+	vec3 centre = size * 0.5f;
+	_meshBounds = Bounds(centre, size);
+
+	//Unpack the data
+	for (unsigned i = 0; i < faceData.size(); i++)
+	{
+		for (unsigned j = 0; j < 3; j++)
+		{
+			//vec4 data = vec4(
+			//	vertexDataLoad[faceData[i].vertices[j]].x,
+			//	vertexDataLoad[faceData[i].vertices[j]].y,
+			//	vertexDataLoad[faceData[i].vertices[j]].z,
+			//	1.0f);
+			dataVertex.push_back(vec4(
+				vertexDataLoad[faceData[i].vertices[j]].x,
+				vertexDataLoad[faceData[i].vertices[j]].y,
+				vertexDataLoad[faceData[i].vertices[j]].z,
+				1.0f));
+
+			dataTexture.push_back(vec4(
+				textureDataLoad[faceData[i].textureUVs[j]].x,
+				textureDataLoad[faceData[i].textureUVs[j]].y,
+				0.0f,
+				1.0f));
+
+			dataNormal.push_back(vec4(
+				normalDataLoad[faceData[i].normals[j]].x,
+				normalDataLoad[faceData[i].normals[j]].y,
+				normalDataLoad[faceData[i].normals[j]].z,
+				1.0f));
+		}
+
+
+
+	}
+
+	//uploadToGPU();
+
+	vertexDataLoad.clear(); //Clear the vectors from RAM now that everything's in the GPU.
+	textureDataLoad.clear();
+	normalDataLoad.clear();
+	faceData.clear();
+}
+
+void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
+{
+	//Unique data
+	vector<vec3> vertexDataLoad;
+	vector<vec2> textureDataLoad;
+	vector<vec3> normalDataLoad;
+
+	XMLNode* meshNode = rootNode->FirstChildElement("asset")->NextSiblingElement("library_geometries")->FirstChildElement("geometry")
+		->FirstChildElement("mesh");
+
+	XMLNode* sourceNode = meshNode->FirstChildElement("source");
+
+	// Find array of mesh positions.
+	XMLNode* arrayNode = sourceNode->FirstChildElement("float_array");
+	//XMLText* pos = testnode->FirstChild()->ToText();
+	//pos->Value();
+
+	// Load in array of mesh positions as vec3.
+	stringstream ss(arrayNode->FirstChild()->Value());
+	string word;
+	size_t count = 0;
+	vec3 vertex;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			vertex.x = stof(word);
+		else if (count == 2)
+			vertex.y = stof(word);
+		else
+		{
+			vertex.z = stof(word);
+
+			// Apply z to y axis correction.
+			//vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
+
+			vertexDataLoad.push_back(vertex);
+			computeMinMax(vertexDataLoad.back());
+			count = 0;
+		}
+	}
+
+
+
+	// Find array of mesh normals.
+	sourceNode = sourceNode->NextSiblingElement();
+	arrayNode = sourceNode->FirstChildElement("float_array");
+
+	// Load in array of mesh normals as vec3.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	count = 0;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			vertex.x = stof(word);
+		else if (count == 2)
+			vertex.y = stof(word);
+		else
+		{
+			vertex.z = stof(word);
+
+			// Apply z to y axis correction.
+			//vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
+
+			normalDataLoad.push_back(vertex);
+			count = 0;
+		}
+	}
+
+
+
+	// Find array of mesh uvs.
+	sourceNode = sourceNode->NextSiblingElement();
+	arrayNode = sourceNode->FirstChildElement("float_array");
+
+	// Load in array of mesh uvs as vec3.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	count = 0;
+	vec2 uv;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		if (count == 1)
+			uv.x = stof(word);
+		else
+		{
+			uv.y = stof(word);
+			textureDataLoad.push_back(uv);
+			count = 0;
+		}
+	}
+
+
+
+	// Find array of mesh triangles.
+	sourceNode = meshNode->LastChildElement();
+	arrayNode = sourceNode->LastChild();
+
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	count = 0;
+
+	// Index/Face data
+	vector<MeshFace> faceData;
+	MeshFace faceTemp;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		// Vertex One
+		if (count == 1)
+		{
+			faceTemp.vertices[0] = stoi(word);
+			vertexIndices.push_back(stoi(word));
+		}
+		else if (count == 2)
+		{
+			faceTemp.normals[0] = stoi(word);
+		}
+		else if (count == 3)
+		{
+			faceTemp.textureUVs[0] = stoi(word);
+		}
+		// Vertex Two
+		else if (count == 5)
+		{
+			faceTemp.vertices[1] = stoi(word);
+			vertexIndices.push_back(stoi(word));
+		}
+		else if (count == 6)
+		{
+			faceTemp.normals[1] = stoi(word);
+		}
+		else if (count == 7)
+		{
+			faceTemp.textureUVs[1] = stoi(word);
+		}
+		// Vertex Three
+		else if (count == 9)
+		{
+			faceTemp.vertices[2] = stoi(word);
+			vertexIndices.push_back(stoi(word));
+		}
+		else if (count == 10)
+		{
+			faceTemp.normals[2] = stoi(word);
+		}
+		else if (count == 11)
+		{
+			faceTemp.textureUVs[2] = stoi(word);
+			faceData.push_back(faceTemp);
+		}
+		else if (count == 12)
+			count = 0;
+	}
+
+
+	//Create the mesh bounding box for this mesh
+	vec3 size = maxPoint - minPoint;
+	vec3 centre = size * 0.5f;
+	_meshBounds = Bounds(centre, size);
+
+	//Unpack the data
+	for (unsigned i = 0; i < faceData.size(); i++)
+	{
+		for (unsigned j = 0; j < 3; j++)
+		{
+			//vec4 data = vec4(
+			//	vertexDataLoad[faceData[i].vertices[j]].x,
+			//	vertexDataLoad[faceData[i].vertices[j]].y,
+			//	vertexDataLoad[faceData[i].vertices[j]].z,
+			//	1.0f);
+			dataVertex.push_back(vec4(
+				vertexDataLoad[faceData[i].vertices[j]].x,
+				vertexDataLoad[faceData[i].vertices[j]].y,
+				vertexDataLoad[faceData[i].vertices[j]].z,
+				1.0f));
+
+			dataTexture.push_back(vec4(
+				textureDataLoad[faceData[i].textureUVs[j]].x,
+				textureDataLoad[faceData[i].textureUVs[j]].y,
+				0.0f,
+				1.0f));
+
+			dataNormal.push_back(vec4(
+				normalDataLoad[faceData[i].normals[j]].x,
+				normalDataLoad[faceData[i].normals[j]].y,
+				normalDataLoad[faceData[i].normals[j]].z,
+				1.0f));
+		}
+
+
+
+	}
+
+	//uploadToGPU();
+
+	vertexDataLoad.clear(); //Clear the vectors from RAM now that everything's in the GPU.
+	textureDataLoad.clear();
+	normalDataLoad.clear();
+	faceData.clear();
+}
+
+void SkeletalMesh::loadAnimTwo(XMLNode * rootNode)
+{
+	KeyFrame* keyFrame = nullptr;
+	vector<KeyFrame*> keyFrames;
+	JointAnimation* jointAnim = nullptr;
+	vector<JointAnimation*> jointAnims;
+	float duration = 0.0f;
+
+
+	XMLElement* animNode = rootNode->FirstChildElement()->NextSiblingElement("library_animations")->FirstChildElement();
+	XMLNode* sourceNode;
+	XMLNode* arrayNode;
+	string name;
+
+	// Load in all bone animations.
+	while (animNode)
+	{
+		name = animNode->FirstAttribute()->Value();
+		// Ignore any IK or Pole bone animations.
+		if ((name.find("IK") != string::npos) || (name.find("Pole") != string::npos))
+		{
+			animNode = animNode->NextSiblingElement();
+			continue;
+		}
+
+		// Load in key frame times.
+		sourceNode = animNode->FirstChildElement();
+		arrayNode = sourceNode->FirstChildElement();
+
+		stringstream ss(arrayNode->FirstChild()->Value());
+		string word;
+		float time = 0.0f;
+
+		while (std::getline(ss, word, ' '))
+		{
+			keyFrame = new KeyFrame();
+			time = stof(word);
+			keyFrame->setStartTime(time);
+			keyFrames.push_back(keyFrame);
+		}
+
+		duration = (duration > +time) ? duration : time;
+
+		// Load in key frame local transformation matrices.
+		sourceNode = sourceNode->NextSiblingElement();
+		arrayNode = sourceNode->FirstChildElement();
+
+		ss = stringstream(arrayNode->FirstChild()->Value());
+		size_t count = 0;
+		size_t frameIndex = 0;
+		mat4 localTransform;
+
+
+		while (std::getline(ss, word, ' '))
+		{
+			++count;
+
+			// Row 1
+			if (count == 1)
+				localTransform.data[0] = stof(word);
+			else if (count == 2)
+				localTransform.data[4] = stof(word);
+			else if (count == 3)
+				localTransform.data[8] = stof(word);
+			else if (count == 4)
+				localTransform.data[12] = stof(word);
+			// Row 2
+			else if (count == 5)
+				localTransform.data[1] = stof(word);
+			else if (count == 6)
+				localTransform.data[5] = stof(word);
+			else if (count == 7)
+				localTransform.data[9] = stof(word);
+			else if (count == 8)
+				localTransform.data[13] = stof(word);
+			// Row 3
+			else if (count == 9)
+				localTransform.data[2] = stof(word);
+			else if (count == 10)
+				localTransform.data[6] = stof(word);
+			else if (count == 11)
+				localTransform.data[10] = stof(word);
+			else if (count == 12)
+				localTransform.data[14] = stof(word);
+			// Row 4
+			else if (count == 13)
+				localTransform.data[3] = stof(word);
+			else if (count == 14)
+				localTransform.data[7] = stof(word);
+			else if (count == 15)
+				localTransform.data[11] = stof(word);
+			else if (count == 16)
+			{
+				localTransform.data[15] = stof(word);
+
+				// Apply z to y axis correction.
+				//if (!jointAnim)
+					//localTransform = _zyCorrection * localTransform;
+
+				// Create a joint transform for this key frame's local transformation.
+				vec3 position = localTransform.getTranslation();
+				Quaternion rotation = Quaternion(localTransform);
+
+				JointTransform* jointTrans = new JointTransform(position, rotation);
+				keyFrames[frameIndex]->setJointTransform(jointTrans);
+
+				++frameIndex;
+				count = 0;
+			}
+		}
+
+		jointAnim = new JointAnimation(keyFrames);
+		jointAnims.push_back(jointAnim);
+
+		string target = animNode->LastChildElement()->Attribute("target");
+		target = target.substr(0, target.find('/'));
+		jointAnim->setName(target);
+
+
+		keyFrames.clear();
+		animNode = animNode->NextSiblingElement();
+	}
+
+	SAnimation* anim = new SAnimation(duration, jointAnims);
+
+	_animator->setAnimation(anim);
+}
+
+void SkeletalMesh::loadJoints(XMLNode * rootNode)
+{
+	XMLElement* controllerNode = rootNode->FirstChildElement()->NextSiblingElement("library_controllers")->FirstChildElement();
+	XMLNode* skinNode = controllerNode->FirstChild();
+	XMLNode* sourceNode = skinNode->FirstChildElement("source");
+	// Find array of joints.
+	XMLNode* arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joints.
+	stringstream ss(arrayNode->FirstChild()->Value());
+	string word;
+	unsigned int index = 0;
+	//vector<Joint*> joints;
+	Joint* joint = nullptr;
+
+	while (std::getline(ss, word, ' '))
+	{
+		joint = new Joint();
+		joint->setIndex(index);
+		joint->setName(word);
+		_joints.push_back(joint);
+
+		// Check if the current joint is the root joint.
+		if (index == 0)
+			_rootJoint = joint;
+
+		++index;
+	}
+
+	_numOfJoints = _joints.size();
+
+	// Find array of joint bind transforms.
+	sourceNode = sourceNode->NextSibling();
+	arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joint bind transforms.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	unsigned int count = 0;
+	index = 0;
+	mat4 inverseBindTransform;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		// Row 1
+		if (count == 1)
+			inverseBindTransform.data[0] = stof(word);
+		else if (count == 2)
+			inverseBindTransform.data[4] = stof(word);
+		else if (count == 3)
+			inverseBindTransform.data[8] = stof(word);
+		else if (count == 4)
+			inverseBindTransform.data[12] = stof(word);
+		// Row 2
+		else if (count == 5)
+			inverseBindTransform.data[1] = stof(word);
+		else if (count == 6)
+			inverseBindTransform.data[5] = stof(word);
+		else if (count == 7)
+			inverseBindTransform.data[9] = stof(word);
+		else if (count == 8)
+			inverseBindTransform.data[13] = stof(word);
+		// Row 3
+		else if (count == 9)
+			inverseBindTransform.data[2] = stof(word);
+		else if (count == 10)
+			inverseBindTransform.data[6] = stof(word);
+		else if (count == 11)
+			inverseBindTransform.data[10] = stof(word);
+		else if (count == 12)
+			inverseBindTransform.data[14] = stof(word);
+		// Row 4
+		else if (count == 13)
+			inverseBindTransform.data[3] = stof(word);
+		else if (count == 14)
+			inverseBindTransform.data[7] = stof(word);
+		else if (count == 15)
+			inverseBindTransform.data[11] = stof(word);
+		else if (count == 16)
+		{
+			inverseBindTransform.data[15] = stof(word);
+
+			// Apply z to y axis correction.
+			//if (index == 0)
+				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+
+			_joints[index]->setInverseBindTransform(inverseBindTransform);
+
+			++index;
+			count = 0;
+		}
+	}
+
+
+	// Find array of joint bind transforms.
+	sourceNode = sourceNode->NextSibling();
+	arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joint bind transforms.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	vector<float> weights;
+
+	while (std::getline(ss, word, ' '))
+	{
+		weights.push_back(stof(word));
+	}
+
+
+
+	// Find arrays of joints and skin weights.
+	XMLNode* vertexWeightsNode = skinNode->FirstChildElement("vertex_weights");
+	XMLNode* vcountNode = vertexWeightsNode->FirstChildElement("vcount");
+	XMLNode* vcountArrayNode = vcountNode->FirstChild();
+	XMLNode* vNode = vertexWeightsNode->FirstChildElement("v");
+	XMLNode* vArrayNode = vNode->FirstChild();
+
+	// Load in array of joints and skin weights.
+	stringstream vcountSS(vcountArrayNode->Value());
+	stringstream vSS(vArrayNode->Value());
+
+	//vector<int> jointIDS;
+	//vector<float> jointWeights;
+	vector<VertexJointInfo> jointIDWeights;
+	VertexJointInfo info;
+
+	index = 0;
+
+
+	// Load all the joint/weight pairings in first.
+	while (std::getline(vSS, word, ' '))
+	{
+		++index;
+
+		if (index == 1)
+			info.id = stoul(word);
+			//jointIDS.push_back(stoul(word));
+		else if (index == 2)
+		{
+			info.weight = weights[stoi(word)];
+			jointIDWeights.push_back(info);
+			//jointWeights.push_back(weights[stoi(word)]);
+			index = 0;
+		}
+	}
+
+	index = 0;
+
+	ivec4 currVertexJointIDS;
+	vec4 currVertexJointWeights;
+	vector<VertexJointInfo> adjustedJointIDWeights;
+	vector<ivec4> jointIDS;
+	vector<vec4> jointWeights;
+
+	// Load in all joints affecting the vertices.
+	while (std::getline(vcountSS, word, ' '))
+	{
+		unsigned int vertexCount = stoul(word);
+
+		// Joint has more than the max of 4 joints affecting it.
+		if (vertexCount > 4)
+		{
+			// Copy all id/weight pairs.
+			for (unsigned int i = index; i < (index + vertexCount); ++i)
+			{
+				adjustedJointIDWeights.push_back(jointIDWeights[i]);
+			}
+
+
+			// Sort list of pairs.
+			sort(adjustedJointIDWeights.begin(), adjustedJointIDWeights.end(), 
+				[](const VertexJointInfo& a, const VertexJointInfo& b) -> bool
+			{
+				return (a.weight > b.weight);
+			});
+
+
+			// Normalize weights of the top four pairs.
+			float weightTotal = 0.0f;
+
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				weightTotal += adjustedJointIDWeights[i].weight;
+			}
+
+			float normWeight = 0.0f;
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				info = adjustedJointIDWeights[i];
+				normWeight = info.weight / weightTotal;
+				
+				if (i == 0)
+				{
+					currVertexJointIDS.x = info.id;
+					currVertexJointWeights.x = normWeight;
+				}
+				else if (i == 1)
+				{
+					currVertexJointIDS.y = info.id;
+					currVertexJointWeights.y = normWeight;
+				}
+				else if (i == 2)
+				{
+					currVertexJointIDS.z = info.id;
+					currVertexJointWeights.z = normWeight;
+				}
+				else if (i == 3)
+				{
+					currVertexJointIDS.w = info.id;
+					currVertexJointWeights.w = normWeight;
+				}
+			}
+
+			adjustedJointIDWeights.clear();
+
+		}
+		// Joint has the max of 4 joints or less affecting it.
+		else
+		{
+			unsigned int insertIndex = 0;
+			for (unsigned int i = index; i < (index + vertexCount); ++i)
+			{
+				info = jointIDWeights[i];
+
+				if (insertIndex == 0)
+				{
+					currVertexJointIDS.x = info.id;
+					currVertexJointWeights.x = info.weight;
+				}
+				else if (insertIndex == 1)
+				{
+					currVertexJointIDS.y = info.id;
+					currVertexJointWeights.y = info.weight;
+				}
+				else if (insertIndex == 2)
+				{
+					currVertexJointIDS.z = info.id;
+					currVertexJointWeights.z = info.weight;
+				}
+				else if (insertIndex == 3)
+				{
+					currVertexJointIDS.w = info.id;
+					currVertexJointWeights.w = info.weight;
+				}
+
+				++insertIndex;
+			}
+		}
+
+		jointIDS.push_back(currVertexJointIDS);
+		jointWeights.push_back(currVertexJointWeights);
+		currVertexJointIDS = ivec4(0);
+		currVertexJointWeights = vec4(0.0f);
+		index += vertexCount;
+	}
+
+
+	// Create a joint id and weight for each time the same vertex appears in the mesh.
+	for (unsigned int vertexIndex : vertexIndices)
+	{
+		_jointIdsPerVertex.push_back(jointIDS[vertexIndex]);
+		_jointWeightsPerVertex.push_back(jointWeights[vertexIndex]);
+	}
+
+	uploadToGPU();
+}
+
+void SkeletalMesh::loadJointHierarchy(XMLNode * rootNode)
+{
+	XMLElement* visualSceneNode = rootNode->FirstChildElement()->NextSiblingElement("library_visual_scenes")->FirstChildElement();
+
+	// Find root joint.
+	XMLNode* armatureNode = visualSceneNode->FirstChildElement("node")->NextSiblingElement("node");
+	XMLElement* jointNode = armatureNode->FirstChildElement("node");
+
+	// Load in joint hierarchy.
+	unsigned int index = 0;
+	loadJointHierarchyHelper(jointNode, &index);
+}
+
+void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int * index)
+{
+	Joint* joint = _joints[*index];
+
+	// Make sure skin joint indices and the joint hierarchy indices are the same.
+	if (joint->getIndex() != *index)
+	{
+		cerr << "Skin joint index does not match joint hierarchy index!" << endl;
+		system("pause");
+		exit(0);
+	}
+
+	string jointID = jointNode->FirstAttribute()->Value();
+	string jointName = jointNode->Attribute("name");
+
+	joint->setName(jointID);
+
+
+	XMLElement* childNode = jointNode->FirstChildElement("node");
+
+	// Go through all of this joint's children.
+	while (childNode)
+	{
+		// This joint has a child.
+		++(*index);
+		joint->addChild(_joints[*index]);
+		loadJointHierarchyHelper(childNode, index);
+		childNode = childNode->NextSiblingElement("node");
 	}
 }

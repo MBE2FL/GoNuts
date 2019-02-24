@@ -1,22 +1,23 @@
 #pragma once
 
 #include "JointTransform.h"
-#include <unordered_map>
-#include <string>
 
-using std::unordered_map;
-using std::string;
 
 class KeyFrame
 {
 public:
-	KeyFrame(const float startTime, const unordered_map<string, JointTransform*> jointKeyFrames);
+	KeyFrame();
+	KeyFrame(const float startTime, JointTransform* jointTransform);
 	~KeyFrame();
 
 	float getStartTime() const;
-	unordered_map<string, JointTransform*> getJointKeyFrames() const;
+	void setStartTime(const float startTime);
+	//unordered_map<string, JointTransform*> getJointKeyFrames() const;
+	JointTransform* getJointTransform() const;
+	void setJointTransform(JointTransform* jointTransform);
 
 private:
 	float _startTime;
-	unordered_map<string, JointTransform*> _jointKeyFrames;
+	//unordered_map<string, JointTransform*> _jointKeyFrames;
+	JointTransform* _jointTransform;
 };

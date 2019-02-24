@@ -28,7 +28,9 @@ enum AttributeLocations
 	VERTEX = 0,
 	TEXCOORD = 1,
 	NORMAL = 2,
-	COLOR = 3,
+	JOINT_IDS = 3,
+	JOINT_WEIGHTS = 4,
+	COLOR = 5,
 	INSTANCED_COL_0 = 12,
 	INSTANCED_COL_1 = 13,
 	INSTANCED_COL_2 = 14,
@@ -68,6 +70,22 @@ struct VertexBufferData
 
 };
 
+struct IndexBufferData
+{
+	IndexBufferData()
+	{
+		numIndices = 0;
+		elementType = GL_UNSIGNED_INT;
+	}
+
+
+	GLuint numIndices;
+	GLuint sizeOfIndex;
+	GLenum elementType;
+
+	void* data;
+};
+
 class VertexArrayObject
 {
 public:
@@ -75,6 +93,7 @@ public:
 	~VertexArrayObject();
 
 	int addVBO(VertexBufferData descriptor);
+	int addIBO(IndexBufferData descriptor);
 
 	VertexBufferData* getVboData(AttributeLocations loc);
 
@@ -83,7 +102,7 @@ public:
 	GLenum getPrimitiveType() const; 
 	void setPrimitiveType(GLenum type);
 
-	void createVAO(GLenum vboUsage = GL_STATIC_DRAW);
+	void createVAO(GLenum vboUsage = GL_STATIC_DRAW, GLenum iboUsage = GL_STATIC_DRAW);
 	void reuploadVAO();
 
 	void draw() const;
@@ -97,9 +116,14 @@ private:
 	GLuint vaoHandle; // Handle for the VAO itself
 	GLenum primitiveType; // How the primitive is drawn Ex GL_TRIANGLE/GL_LINE/GL_POINT
 	GLenum vboUsageType;
+	GLenum iboUsageType;
 	// https://www.khronos.org/opengl/wiki/Primitive	//GL_TRIANGLE_STRIP/GL_LINE_STRIP
 	std::vector<VertexBufferData> vboData;	// Vector for the vbo data and their respective handles
+	IndexBufferData iboData;
 	std::vector<GLuint> vboHandles;
+	GLuint iboHandle;
 	// We separate the handles from the data itself so that you can reuse the same data on the CPU
 	// and send it to 2 separate VAO's for instance, morpth targets with multiple keyframes
+
+	bool isIndexed = false;
 };

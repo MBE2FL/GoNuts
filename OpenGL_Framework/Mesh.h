@@ -26,6 +26,46 @@ using std::strstr;
 using std::sscanf;
 
 
+struct MeshFace
+{
+	MeshFace()
+	{
+		vertices[0] = 0;
+		vertices[1] = 0;
+		vertices[2] = 0;
+
+		textureUVs[0] = 0;
+		textureUVs[1] = 0;
+		textureUVs[2] = 0;
+
+		normals[0] = 0;
+		normals[1] = 0;
+		normals[2] = 0;
+	}
+
+	MeshFace(unsigned v1, unsigned v2, unsigned v3,
+		unsigned t1, unsigned t2, unsigned t3,
+		unsigned n1, unsigned n2, unsigned n3)
+	{
+		vertices[0] = v1;
+		vertices[1] = v2;
+		vertices[2] = v3;
+
+		textureUVs[0] = t1;
+		textureUVs[1] = t2;
+		textureUVs[2] = t3;
+
+		normals[0] = n1;
+		normals[1] = n2;
+		normals[2] = n3;
+	}
+
+	unsigned vertices[3];
+	unsigned textureUVs[3];
+	unsigned normals[3];
+};
+
+
 class Mesh
 {
 public:
@@ -33,7 +73,7 @@ public:
 	~Mesh();
 
 	// Load a mesh, and send it to OpenGL
-	virtual bool loadFromFile(const string& file);
+	virtual bool loadFromFile(const string& path);
 	virtual void uploadToGPU();
 	// Release data from OpenGL (VRAM)
 	void Unload();
@@ -57,6 +97,9 @@ public:
 	GLuint VAO = GL_NONE;
 
 	VertexArrayObject vao;
+
+	// TEST VArialbe
+	bool _isSkeletal = false;
 
 protected:
 	unsigned int _numFaces = 0;

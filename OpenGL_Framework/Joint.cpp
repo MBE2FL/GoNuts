@@ -1,5 +1,21 @@
 #include "Joint.h"
 
+Joint::Joint()
+{
+	_index = 0;
+	_name = "";
+	_localBindTransform = mat4::Identity;
+	_inverseBindTransform = mat4::Identity;
+}
+
+Joint::Joint(unsigned int index, const string & name, const mat4 & inverseBindTransform)
+{
+	_index = index;
+	_name = name;
+	_localBindTransform = mat4::Identity;
+	_inverseBindTransform = inverseBindTransform;
+}
+
 Joint::Joint(unsigned int index, const string & name, mat4 & localBindTransform)
 {
 	_index = index;
@@ -51,9 +67,19 @@ void Joint::setAnimatedTransform(const mat4 & transform)
 	_animatedTransform = transform;
 }
 
+void Joint::setLocalBindTransform(const mat4 & localBindTransform)
+{
+	_localBindTransform = localBindTransform;
+}
+
 mat4 Joint::getInverseBindTransfrom() const
 {
 	return _inverseBindTransform;
+}
+
+void Joint::setInverseBindTransform(const mat4 & inverseBindTransform)
+{
+	_inverseBindTransform = inverseBindTransform;
 }
 
 void Joint::addChild(Joint * child)

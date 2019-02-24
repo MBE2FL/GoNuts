@@ -2,6 +2,8 @@
 
 #include <string>
 
+//#include "SkeletalMesh.h"
+
 Game::Game()
 {
 	updateTimer = new Timer();
@@ -34,6 +36,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
+	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
@@ -145,6 +148,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Smooth", "./Assets/Textures/Smooth Shading.png");
 	ObjectLoader::loadTexture("Normal", "./Assets/Textures/Acorn_Texture_n.png");
 	ObjectLoader::loadTexture("Beast Mode", "./Assets/Textures/Beast_Mode_-_UV.png");
+	ObjectLoader::loadTexture("Anim Test Tex", "./Assets/ANIM_TEST_TEX.png");
 
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
@@ -244,6 +248,12 @@ void Game::initializeGame()
 	dummy++;
 
 
+	//SkeletalMesh testSkeleton;
+	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	//testSkeleton.loadFromFile("./Assets/ANIM_TEST.dae");
+	//testSkeleton._isSkeletal = true;
+
+
 
 	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 
@@ -253,8 +263,7 @@ void Game::initializeGame()
 	mat4 testMat = testOne.getRotationMatrix();
 	testTwo.getRotationMatrix();
 
-	Quaternion testRotToQuat;
-	testRotToQuat.rotate(testMat);
+	Quaternion testRotToQuat = Quaternion(testMat);
 
 	Quaternion testVector = Quaternion(0.0f, 10.0f, 0.0f, 0.0f);
 	testVector.rotate(90.0f, vec3(0.0f, 1.0f, 0.0f));

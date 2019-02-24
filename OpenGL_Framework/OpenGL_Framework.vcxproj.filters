@@ -212,6 +212,13 @@
     <ClCompile Include="Animator.cpp">
       <Filter>Source Files\EntitySystem\Components\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="JointAnimation.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="include\TinyXML\tinyxml2.cpp" />
+    <ClCompile Include="include\MathLib\ivec4.cpp">
+      <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -373,6 +380,13 @@
     </ClInclude>
     <ClInclude Include="Animator.h">
       <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="JointAnimation.h">
+      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TinyXML\tinyxml2.h" />
+    <ClInclude Include="include\MathLib\ivec4.h">
+      <Filter>Header Files\MathLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

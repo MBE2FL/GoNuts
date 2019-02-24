@@ -189,6 +189,12 @@ void ShaderProgram::sendUniformMat4(const string & name, float * matrix, bool tr
 	glUniformMatrix4fv(location, 1, transpose, matrix);
 }
 
+void ShaderProgram::sendUniformMat4Array(const string & name, const unsigned int numOfMat, float * matrix, bool transpose)
+{
+	GLint location = getUniformLocation(name);
+	glUniformMatrix4fv(location, numOfMat, transpose, matrix);
+}
+
 string ShaderProgram::getVertFilename() const
 {
 	return _vertFilename;

@@ -24,13 +24,13 @@ private:
 	SAnimation* _animation;
 	float _currentTime = 0.0f;
 
-	KeyFrame* _prevFrame;
-	KeyFrame* _nextFrame;
+	//KeyFrame* _prevFrame;
+	//KeyFrame* _nextFrame;
 
 	unordered_map<string, mat4> _currentPose;
 
 	void calculateCurrentPose();
 	void getPrevNextFrames();
-	void blendPoses(float interValue);
+	void blendPoses(KeyFrame* prevFrame, KeyFrame* nextFrame, float interValue, const string& jointName);
 	void applyPoseToJoints(Joint* joint, const mat4& parentTransform);
 };

@@ -39,48 +39,56 @@ void Animator::update(float deltaTime)
 void Animator::calculateCurrentPose()
 {
 	getPrevNextFrames();
-	float interValue = invLerp(_currentTime, _prevFrame->getStartTime(), _nextFrame->getStartTime());
-	blendPoses(interValue);
+	//float interValue = invLerp(_currentTime, _prevFrame->getStartTime(), _nextFrame->getStartTime());
+	//blendPoses(interValue);
 }
 
 void Animator::getPrevNextFrames()
 {
-	vector<KeyFrame*> prevNextFrames;
-	vector<KeyFrame*> allFrames = _animation->getKeyFrames();
-	_prevFrame = allFrames[0];
-	_nextFrame = allFrames[0];
+	// Find the previous and next frame on animation for each joint.
+	vector<JointAnimation*> jointAnims = _animation->getJointAnims();
 
-	// Find the frames before and after the current animation time. ##Maybe keey track of the current frame.
-	for (size_t i = 1; i < allFrames.size(); ++i)
+	for (JointAnimation* jointAnim : jointAnims)
 	{
-		_nextFrame = allFrames[i];
-		if (_nextFrame->getStartTime() > _currentTime)
-			break;
+		vector<KeyFrame*> allFrames = jointAnim->getKeyFrames();
+		KeyFrame* prevFrame = allFrames[0];
+		KeyFrame* nextFrame = allFrames[0];
+		string jointName = jointAnim->getName();
 
-		_prevFrame = allFrames[i];
+		// Find the frames before and after the current animation time. ##Maybe keey track of the current frame.
+		for (size_t i = 1; i < allFrames.size(); ++i)
+		{
+			nextFrame = allFrames[i];
+			if (nextFrame->getStartTime() > _currentTime)
+				break;
+
+			prevFrame = allFrames[i];
+		}
+
+		// Blend between the previous and next frame of animation.
+		float interValue = invLerp(_currentTime, prevFrame->getStartTime(), nextFrame->getStartTime());
+		//prevFrame = allFrames[0];
+		//nextFrame = allFrames[0];
+		//interValue = 0.0f;
+		blendPoses(prevFrame, nextFrame, interValue, jointName);
 	}
 }
 
-void Animator::blendPoses(float interValue)
+void Animator::blendPoses(KeyFrame * prevFrame, KeyFrame * nextFrame, float interValue, const string & jointName)
 {
-	unordered_map<string, JointTransform*> prevFrameKeys = _prevFrame->getJointKeyFrames();
-	unordered_map<string, JointTransform*> nextFrameKeys = _nextFrame->getJointKeyFrames();
-	unordered_map<string, JointTransform*>::iterator it;
+	// Blend joint's previous frame's transform with it's next frame's transform.
+	JointTransform* prevJointTransform = prevFrame->getJointTransform();
+	JointTransform* nextJointTransform = nextFrame->getJointTransform();
 
-	// Go through each joint in the previous key frame, and blend it with the same joint in the next key frame.
-	for (it = prevFrameKeys.begin(); it != prevFrameKeys.end(); ++it)
-	{
-		JointTransform* prevTransform = prevFrameKeys[it->first];
-		JointTransform* nextTransform = nextFrameKeys[it->first];
-		JointTransform currTransform = JointTransform::interpolate(*prevTransform, *nextTransform, interValue);
-		_currentPose[it->first] = currTransform.getLocalTransform();
-	}
+	JointTransform currJointTransform = JointTransform::interpolate(*prevJointTransform, *nextJointTransform, interValue);
+	_currentPose[jointName] = currJointTransform.getLocalTransform();
 }
+
 
 void Animator::applyPoseToJoints(Joint * joint, const mat4 & parentLocalToWorldMatrix)
 {
 	mat4 localTransformMatrix = _currentPose[joint->getName()];
-	mat4 localToWorldMatrix = parentLocalToWorldMatrix * localToWorldMatrix;
+	mat4 localToWorldMatrix = parentLocalToWorldMatrix * localTransformMatrix;
 
 	for (Joint* child : joint->getChildren())
 	{
@@ -88,6 +96,6 @@ void Animator::applyPoseToJoints(Joint * joint, const mat4 & parentLocalToWorldM
 	}
 
 	// Similar to the camera view, calculate this joint's transfrom with the start transfrom acting as the origin.
-	localToWorldMatrix * joint->getInverseBindTransfrom();
+	localToWorldMatrix = localToWorldMatrix * joint->getInverseBindTransfrom();
 	joint->setAnimatedTransform(localToWorldMatrix);
 }
