@@ -34,7 +34,8 @@ public:
 	void inverse();
 	//mat4 getInverse(const mat4& rot, const vec3& tran);
 	mat4 getInverse();
-	mat4 transpose() const;
+	void transpose();
+	mat4 getTranspose() const;
 	void identity();
 	float determinant();
 

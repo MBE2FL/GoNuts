@@ -29,6 +29,8 @@ public:
 	void addChild(Joint* child);
 	void calculateInverseBindTransform(const mat4& parentBindTransform);
 
+	mat4 _loadedInInverseBindTransform;
+
 private:
 	unsigned int _index;
 	string _name;

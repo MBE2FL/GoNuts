@@ -163,6 +163,32 @@ mat4 mat4::getInverse()
 	return transRot;
 }
 
+void mat4::transpose()
+{
+	mat4 temp = mat4(*this);
+
+
+	data[0] = temp.data[0];
+	data[1] = temp.data[4];
+	data[2] = temp.data[8];
+	data[3] = temp.data[12];
+
+	data[4] = temp.data[1];
+	data[5] = temp.data[5];
+	data[6] = temp.data[9];
+	data[7] = temp.data[13];
+
+	data[8] = temp.data[2];
+	data[9] = temp.data[6];
+	data[10] = temp.data[10];
+	data[11] = temp.data[14];
+
+	data[12] = temp.data[3];
+	data[13] = temp.data[7];
+	data[14] = temp.data[11];
+	data[15] = temp.data[15];
+}
+
 //mat4 mat4::getInverse()
 //{
 //	float DetMOM[16];
@@ -322,7 +348,7 @@ mat4 mat4::getInverse()
 //	return result;
 //}
 
-mat4 mat4::transpose() const
+mat4 mat4::getTranspose() const
 {
 	mat4 result;
 

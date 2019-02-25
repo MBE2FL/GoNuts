@@ -811,7 +811,7 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 			vertex.z = stof(word);
 
 			// Apply z to y axis correction.
-			//vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
+			vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
 
 			vertexDataLoad.push_back(vertex);
 			computeMinMax(vertexDataLoad.back());
@@ -842,7 +842,7 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 			vertex.z = stof(word);
 
 			// Apply z to y axis correction.
-			//vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
+			vertex = mat4::transform(_zyCorrection, vec4(vertex, 1.0f));
 
 			normalDataLoad.push_back(vertex);
 			count = 0;
@@ -1081,8 +1081,8 @@ void SkeletalMesh::loadAnimTwo(XMLNode * rootNode)
 				localTransform.data[15] = stof(word);
 
 				// Apply z to y axis correction.
-				//if (!jointAnim)
-					//localTransform = _zyCorrection * localTransform;
+				if (!jointAnim)
+					localTransform = _zyCorrection * localTransform;
 
 				// Create a joint transform for this key frame's local transformation.
 				vec3 position = localTransform.getTranslation();
@@ -1197,9 +1197,19 @@ void SkeletalMesh::loadJoints(XMLNode * rootNode)
 			inverseBindTransform.data[15] = stof(word);
 
 			// Apply z to y axis correction.
-			//if (index == 0)
+			if (index == 2 || index == 3)
+			{
 				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+				mat4 Corr;
+				Corr.rotateY(toRadians(180.0f));
+				inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
+			}
+			else
+			{
+				inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+			}
 
+			//_joints[index]->_loadedInInverseBindTransform = inverseBindTransform;
 			_joints[index]->setInverseBindTransform(inverseBindTransform);
 
 			++index;
@@ -1391,6 +1401,9 @@ void SkeletalMesh::loadJointHierarchy(XMLNode * rootNode)
 	// Load in joint hierarchy.
 	unsigned int index = 0;
 	loadJointHierarchyHelper(jointNode, &index);
+
+	// After loading in all the joint's local bind transforms, calculate their inverse bind transforms.
+	//_rootJoint->calculateInverseBindTransform(mat4::Identity);
 }
 
 void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int * index)
@@ -1405,10 +1418,70 @@ void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int
 		exit(0);
 	}
 
-	string jointID = jointNode->FirstAttribute()->Value();
-	string jointName = jointNode->Attribute("name");
+	// Retrieve this joint's name.
+	//string jointID = jointNode->FirstAttribute()->Value();
+	//joint->setName(jointID);
+	//string jointName = jointNode->Attribute("name");
 
-	joint->setName(jointID);
+	//// Retrieve this joint's localBindTransform.
+	//XMLNode* transformNode = jointNode->FirstChildElement("matrix")->FirstChild();
+	//
+	//stringstream ss = stringstream(transformNode->Value());
+	//size_t count = 0;
+	//string word;
+	//mat4 localBindTransform;
+
+	//while (std::getline(ss, word, ' '))
+	//{
+	//	++count;
+
+	//	// Row 1
+	//	if (count == 1)
+	//		localBindTransform.data[0] = stof(word);
+	//	else if (count == 2)
+	//		localBindTransform.data[4] = stof(word);
+	//	else if (count == 3)
+	//		localBindTransform.data[8] = stof(word);
+	//	else if (count == 4)
+	//		localBindTransform.data[12] = stof(word);
+	//	// Row 2
+	//	else if (count == 5)
+	//		localBindTransform.data[1] = stof(word);
+	//	else if (count == 6)
+	//		localBindTransform.data[5] = stof(word);
+	//	else if (count == 7)
+	//		localBindTransform.data[9] = stof(word);
+	//	else if (count == 8)
+	//		localBindTransform.data[13] = stof(word);
+	//	// Row 3
+	//	else if (count == 9)
+	//		localBindTransform.data[2] = stof(word);
+	//	else if (count == 10)
+	//		localBindTransform.data[6] = stof(word);
+	//	else if (count == 11)
+	//		localBindTransform.data[10] = stof(word);
+	//	else if (count == 12)
+	//		localBindTransform.data[14] = stof(word);
+	//	// Row 4
+	//	else if (count == 13)
+	//		localBindTransform.data[3] = stof(word);
+	//	else if (count == 14)
+	//		localBindTransform.data[7] = stof(word);
+	//	else if (count == 15)
+	//		localBindTransform.data[11] = stof(word);
+	//	else if (count == 16)
+	//	{
+	//		localBindTransform.data[15] = stof(word);
+
+	//		// Apply z to y axis correction.
+	//		if (*index == 0)
+	//			localBindTransform = _zyCorrection * localBindTransform;
+
+	//		joint->setLocalBindTransform(localBindTransform);
+
+	//		count = 0;
+	//	}
+	//}
 
 
 	XMLElement* childNode = jointNode->FirstChildElement("node");
