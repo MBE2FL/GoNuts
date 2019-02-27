@@ -54,6 +54,10 @@ private:
 	unordered_map<string, Joint*> _skinJoints;
 
 
+	// FBX variables
+	FbxManager* _fbxManager;
+
+
 	void getJointTransformsHelper(Joint* joint);
 
 	void findLine(string& line, ifstream& file, const string& word);

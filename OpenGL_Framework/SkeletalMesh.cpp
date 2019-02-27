@@ -1,5 +1,6 @@
 #include "SkeletalMesh.h"
 #include <sstream>
+#include <fbxsdk.h>
 
 using std::stringstream;
 using tinyxml2::XMLDocument;
@@ -7,6 +8,7 @@ using tinyxml2::XMLText;
 using tinyxml2::XMLError;
 using tinyxml2::XMLNode;
 using tinyxml2::XMLElement;
+
 
 struct VertexJointInfo
 {
@@ -22,6 +24,8 @@ SkeletalMesh::SkeletalMesh()
 
 	_zyCorrection.rotateX(toRadians(-90.0f));
 	_zyCorrectionInverted = _zyCorrection.getInverse();
+
+	_fbxManager = FbxManager::Create();
 }
 
 SkeletalMesh::~SkeletalMesh()
@@ -1008,6 +1012,8 @@ void SkeletalMesh::loadAnimTwo(XMLNode * rootNode)
 
 
 	XMLElement* animNode = rootNode->FirstChildElement()->NextSiblingElement("library_animations")->FirstChildElement();
+	//XMLElement* test = animNode->FirstChildElement();
+	//test->Value();
 	XMLNode* sourceNode;
 	XMLNode* arrayNode;
 	string name;
