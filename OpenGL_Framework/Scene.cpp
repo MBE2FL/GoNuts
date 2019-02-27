@@ -278,27 +278,27 @@ void Scene::loadOldFaithful()
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
 
-	//entity = _entityFactory->createEmpty(vec3(1.0f, 2.6f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
-	//skeletalMeshTest = new SkeletalMesh();
-	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//skeletalMeshTest->loadFromFile("./Assets/ANIM_TEST.dae");
-	//skeletalMeshTest->_isSkeletal = true;
-	//
-	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
-	//vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
-	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	//_entityManager->addComponent(meshRenderer, entity);
+	entity = _entityFactory->createEmpty(vec3(1.0f, 2.6f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
+	skeletalMeshTest = new SkeletalMesh();
+	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	skeletalMeshTest->loadFromFile("./Assets/ANIM_TEST.dae");
+	skeletalMeshTest->_isSkeletal = true;
+	
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
 
 
-	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.1f), nullptr, "SkeletonTwo");
-	//skeletalMeshTestTwo = new SkeletalMesh();
-	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//skeletalMeshTestTwo->loadFromFile("./Assets/fatboi.dae");
-	//skeletalMeshTestTwo->_isSkeletal = true;
+	entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.02f), nullptr, "SkeletonTwo");
+	skeletalMeshTestTwo = new SkeletalMesh();
+	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	skeletalMeshTestTwo->loadFromFile("./Assets/fatboi.dae");
+	skeletalMeshTestTwo->_isSkeletal = true;
 
-	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
-	//meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	//_entityManager->addComponent(meshRenderer, entity);
+	textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
+	meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
 
 
 	light = new Light();

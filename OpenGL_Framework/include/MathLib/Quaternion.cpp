@@ -45,6 +45,55 @@ Quaternion::Quaternion(const mat4 & rot)
 	_x = (rot.data[6] - rot.data[9]) / (4.0f * _w);
 	_y = (rot.data[8] - rot.data[2]) / (4.0f * _w);
 	_z = (rot.data[1] - rot.data[4]) / (4.0f * _w);
+
+
+	float m01 = rot.data[4];
+	float m02 = rot.data[8];
+
+	float m10 = rot.data[1];
+	float m12 = rot.data[9];
+
+	float m20 = rot.data[2];
+	float m21 = rot.data[6];
+
+	float m00 = rot.data[0];
+	float m11 = rot.data[5];
+	float m22 = rot.data[10];
+
+	float trace = m00 + m11 + m22;
+
+	if (trace > 0)
+	{
+		float s = sqrt(1.0f + trace) * 2.0f;
+		_w = 0.25f * s;
+		_x = (m21 - m12) / s;
+		_y = (m02 - m20) / s;
+		_z = (m10 - m01) / s;
+	}
+	else if ((m00 > m11) && (m00 > m22))
+	{
+		float s = sqrt(1.0f + m00 - m11 - m22) * 2.0f;
+		_w = (m21 - m12) / s;
+		_x = 0.25f * s;
+		_y = (m01 + m10) / s;
+		_z = (m02 + m20) / s;
+	}
+	else if (m11 > m22)
+	{
+		float s = sqrt(1.0f + m11 - m00 - m22) * 2.0f;
+		_w = (m02 - m20) / s;
+		_x = (m01 + m10) / s;
+		_y = 0.25f * s;
+		_z = (m12 + m21) / s;
+	}
+	else
+	{
+		float s = sqrt(1.0f + m22 - m00 - m11) * 2.0f;
+		_w = (m10 - m01) / s;
+		_x = (m02 + m20) / s;
+		_y = (m12 + m21) / s;
+		_z = 0.25f * s;
+	}
 }
 
 Quaternion::~Quaternion()

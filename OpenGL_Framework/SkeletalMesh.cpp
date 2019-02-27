@@ -801,6 +801,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		if (count == 1)
@@ -832,6 +835,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		if (count == 1)
@@ -863,6 +869,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		if (count == 1)
@@ -890,6 +899,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		// Vertex One
@@ -1201,9 +1213,9 @@ void SkeletalMesh::loadJoints(XMLNode * rootNode)
 			if (index == 2 || index == 3)
 			{
 				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
-				mat4 Corr;
-				Corr.rotateY(toRadians(180.0f));
-				inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
+				//mat4 Corr;
+				//Corr.rotateY(toRadians(180.0f));
+				//inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
 			}
 			else
 			{
@@ -1818,16 +1830,21 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 
 	if (_skinJoints.find(jointID) == _skinJoints.end())
 	{
-		jointID = jointID.substr(jointID.find('_') + 1, string::npos);
+		string subJointID = jointID.substr(jointID.find('_') + 1, string::npos);
 
-		if (_skinJoints.find(jointID) == _skinJoints.end())
+		if (_skinJoints.find(subJointID) == _skinJoints.end())
 		{
 			system("pause");
 			exit(0);
 		}
+		else
+		{
+			joint = _skinJoints[subJointID];
+			joint->setName(jointID);
+		}
 	}
-
-	joint = _skinJoints[jointID];
+	else
+		joint = _skinJoints[jointID];
 
 
 	_joints.push_back(joint);
