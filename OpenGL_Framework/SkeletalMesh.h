@@ -5,10 +5,12 @@
 #include "tinyxml2.h"
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 
 using std::cerr;
 using std::endl;
 using std::sort;
+using std::unordered_map;
 
 #define MAX_JOINTS 70
 #define MAX_WEIGHTS 4
@@ -48,6 +50,9 @@ private:
 
 	vector<unsigned int> vertexIndices;
 
+	// Unordered joints loaded in from skin joints section.
+	unordered_map<string, Joint*> _skinJoints;
+
 
 	void getJointTransformsHelper(Joint* joint);
 
@@ -61,6 +66,9 @@ private:
 	void loadGeoFour(tinyxml2::XMLNode* rootNode);
 	void loadAnimTwo(tinyxml2::XMLNode* rootNode);
 	void loadJoints(tinyxml2::XMLNode* rootNode);
+	void loadJointsTwo(tinyxml2::XMLNode* rootNode);
 	void loadJointHierarchy(tinyxml2::XMLNode* rootNode);
+	void loadJointHierarchyTwo(tinyxml2::XMLNode* rootNode);
 	void loadJointHierarchyHelper(tinyxml2::XMLElement* jointNode, unsigned int* index);
+	void loadJointHierarchyHelperTwo(tinyxml2::XMLElement* jointNode);
 };

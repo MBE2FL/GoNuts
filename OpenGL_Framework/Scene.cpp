@@ -290,7 +290,7 @@ void Scene::loadOldFaithful()
 	//_entityManager->addComponent(meshRenderer, entity);
 
 
-	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.4f), nullptr, "SkeletonTwo");
+	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.1f), nullptr, "SkeletonTwo");
 	//skeletalMeshTestTwo = new SkeletalMesh();
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
 	//skeletalMeshTestTwo->loadFromFile("./Assets/fatboi.dae");

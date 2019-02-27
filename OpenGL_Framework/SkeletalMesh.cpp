@@ -50,8 +50,9 @@ bool SkeletalMesh::loadFromFile(const string & path)
 	//loadGeoTwo(rootNode);
 	loadGeoFour(rootNode);
 	loadAnimTwo(rootNode);
-	loadJoints(rootNode);
-	loadJointHierarchy(rootNode);
+	//loadJoints(rootNode);
+	loadJointsTwo(rootNode);
+	loadJointHierarchyTwo(rootNode);
 
 
 	//ifstream file;
@@ -1390,6 +1391,286 @@ void SkeletalMesh::loadJoints(XMLNode * rootNode)
 	uploadToGPU();
 }
 
+void SkeletalMesh::loadJointsTwo(tinyxml2::XMLNode * rootNode)
+{
+	XMLElement* controllerNode = rootNode->FirstChildElement()->NextSiblingElement("library_controllers")->FirstChildElement();
+	XMLNode* skinNode = controllerNode->FirstChild();
+	XMLNode* sourceNode = skinNode->FirstChildElement("source");
+	// Find array of joints.
+	XMLNode* arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joints.
+	stringstream ss(arrayNode->FirstChild()->Value());
+	string word;
+	unsigned int index = 0;
+	//vector<Joint*> joints;
+	Joint* joint = nullptr;
+
+	while (std::getline(ss, word, ' '))
+	{
+		joint = new Joint();
+		joint->setIndex(index);
+		joint->setName(word);
+		_joints.push_back(joint);
+		_skinJoints[word] = joint;
+
+		// Check if the current joint is the root joint.
+		//if (index == 0)
+		//	_rootJoint = joint;
+
+		++index;
+	}
+
+	_numOfJoints = _joints.size();
+
+	// Find array of joint bind transforms.
+	sourceNode = sourceNode->NextSibling();
+	arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joint bind transforms.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	unsigned int count = 0;
+	index = 0;
+	mat4 inverseBindTransform;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		// Row 1
+		if (count == 1)
+			inverseBindTransform.data[0] = stof(word);
+		else if (count == 2)
+			inverseBindTransform.data[4] = stof(word);
+		else if (count == 3)
+			inverseBindTransform.data[8] = stof(word);
+		else if (count == 4)
+			inverseBindTransform.data[12] = stof(word);
+		// Row 2
+		else if (count == 5)
+			inverseBindTransform.data[1] = stof(word);
+		else if (count == 6)
+			inverseBindTransform.data[5] = stof(word);
+		else if (count == 7)
+			inverseBindTransform.data[9] = stof(word);
+		else if (count == 8)
+			inverseBindTransform.data[13] = stof(word);
+		// Row 3
+		else if (count == 9)
+			inverseBindTransform.data[2] = stof(word);
+		else if (count == 10)
+			inverseBindTransform.data[6] = stof(word);
+		else if (count == 11)
+			inverseBindTransform.data[10] = stof(word);
+		else if (count == 12)
+			inverseBindTransform.data[14] = stof(word);
+		// Row 4
+		else if (count == 13)
+			inverseBindTransform.data[3] = stof(word);
+		else if (count == 14)
+			inverseBindTransform.data[7] = stof(word);
+		else if (count == 15)
+			inverseBindTransform.data[11] = stof(word);
+		else if (count == 16)
+		{
+			inverseBindTransform.data[15] = stof(word);
+
+			// Apply z to y axis correction.
+			if (index == 2 || index == 3)
+			{
+				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+				mat4 Corr;
+				Corr.rotateY(toRadians(180.0f));
+				inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
+			}
+			else
+			{
+				inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+			}
+
+			//_joints[index]->_loadedInInverseBindTransform = inverseBindTransform;
+			_joints[index]->setInverseBindTransform(inverseBindTransform);
+
+			++index;
+			count = 0;
+		}
+	}
+
+
+	// Find array of joint bind transforms.
+	sourceNode = sourceNode->NextSibling();
+	arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joint bind transforms.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	vector<float> weights;
+
+	while (std::getline(ss, word, ' '))
+	{
+		weights.push_back(stof(word));
+	}
+
+
+
+	// Find arrays of joints and skin weights.
+	XMLNode* vertexWeightsNode = skinNode->FirstChildElement("vertex_weights");
+	XMLNode* vcountNode = vertexWeightsNode->FirstChildElement("vcount");
+	XMLNode* vcountArrayNode = vcountNode->FirstChild();
+	XMLNode* vNode = vertexWeightsNode->FirstChildElement("v");
+	XMLNode* vArrayNode = vNode->FirstChild();
+
+	// Load in array of joints and skin weights.
+	stringstream vcountSS(vcountArrayNode->Value());
+	stringstream vSS(vArrayNode->Value());
+
+	//vector<int> jointIDS;
+	//vector<float> jointWeights;
+	vector<VertexJointInfo> jointIDWeights;
+	VertexJointInfo info;
+
+	index = 0;
+
+
+	// Load all the joint/weight pairings in first.
+	while (std::getline(vSS, word, ' '))
+	{
+		++index;
+
+		if (index == 1)
+			info.id = stoul(word);
+		//jointIDS.push_back(stoul(word));
+		else if (index == 2)
+		{
+			info.weight = weights[stoi(word)];
+			jointIDWeights.push_back(info);
+			//jointWeights.push_back(weights[stoi(word)]);
+			index = 0;
+		}
+	}
+
+	index = 0;
+
+	ivec4 currVertexJointIDS;
+	vec4 currVertexJointWeights;
+	vector<VertexJointInfo> adjustedJointIDWeights;
+	vector<ivec4> jointIDS;
+	vector<vec4> jointWeights;
+
+	// Load in all joints affecting the vertices.
+	while (std::getline(vcountSS, word, ' '))
+	{
+		unsigned int vertexCount = stoul(word);
+
+		// Joint has more than the max of 4 joints affecting it.
+		if (vertexCount > 4)
+		{
+			// Copy all id/weight pairs.
+			for (unsigned int i = index; i < (index + vertexCount); ++i)
+			{
+				adjustedJointIDWeights.push_back(jointIDWeights[i]);
+			}
+
+
+			// Sort list of pairs.
+			sort(adjustedJointIDWeights.begin(), adjustedJointIDWeights.end(),
+				[](const VertexJointInfo& a, const VertexJointInfo& b) -> bool
+			{
+				return (a.weight > b.weight);
+			});
+
+
+			// Normalize weights of the top four pairs.
+			float weightTotal = 0.0f;
+
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				weightTotal += adjustedJointIDWeights[i].weight;
+			}
+
+			float normWeight = 0.0f;
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				info = adjustedJointIDWeights[i];
+				normWeight = info.weight / weightTotal;
+
+				if (i == 0)
+				{
+					currVertexJointIDS.x = info.id;
+					currVertexJointWeights.x = normWeight;
+				}
+				else if (i == 1)
+				{
+					currVertexJointIDS.y = info.id;
+					currVertexJointWeights.y = normWeight;
+				}
+				else if (i == 2)
+				{
+					currVertexJointIDS.z = info.id;
+					currVertexJointWeights.z = normWeight;
+				}
+				else if (i == 3)
+				{
+					currVertexJointIDS.w = info.id;
+					currVertexJointWeights.w = normWeight;
+				}
+			}
+
+			adjustedJointIDWeights.clear();
+
+		}
+		// Joint has the max of 4 joints or less affecting it.
+		else
+		{
+			unsigned int insertIndex = 0;
+			for (unsigned int i = index; i < (index + vertexCount); ++i)
+			{
+				info = jointIDWeights[i];
+
+				if (insertIndex == 0)
+				{
+					currVertexJointIDS.x = info.id;
+					currVertexJointWeights.x = info.weight;
+				}
+				else if (insertIndex == 1)
+				{
+					currVertexJointIDS.y = info.id;
+					currVertexJointWeights.y = info.weight;
+				}
+				else if (insertIndex == 2)
+				{
+					currVertexJointIDS.z = info.id;
+					currVertexJointWeights.z = info.weight;
+				}
+				else if (insertIndex == 3)
+				{
+					currVertexJointIDS.w = info.id;
+					currVertexJointWeights.w = info.weight;
+				}
+
+				++insertIndex;
+			}
+		}
+
+		jointIDS.push_back(currVertexJointIDS);
+		jointWeights.push_back(currVertexJointWeights);
+		currVertexJointIDS = ivec4(0);
+		currVertexJointWeights = vec4(0.0f);
+		index += vertexCount;
+	}
+
+
+	// Create a joint id and weight for each time the same vertex appears in the mesh.
+	for (unsigned int vertexIndex : vertexIndices)
+	{
+		_jointIdsPerVertex.push_back(jointIDS[vertexIndex]);
+		_jointWeightsPerVertex.push_back(jointWeights[vertexIndex]);
+	}
+
+	uploadToGPU();
+
+	_joints.clear();
+}
+
 void SkeletalMesh::loadJointHierarchy(XMLNode * rootNode)
 {
 	XMLElement* visualSceneNode = rootNode->FirstChildElement()->NextSiblingElement("library_visual_scenes")->FirstChildElement();
@@ -1404,6 +1685,23 @@ void SkeletalMesh::loadJointHierarchy(XMLNode * rootNode)
 
 	// After loading in all the joint's local bind transforms, calculate their inverse bind transforms.
 	//_rootJoint->calculateInverseBindTransform(mat4::Identity);
+}
+
+void SkeletalMesh::loadJointHierarchyTwo(tinyxml2::XMLNode * rootNode)
+{
+	XMLElement* visualSceneNode = rootNode->FirstChildElement()->NextSiblingElement("library_visual_scenes")->FirstChildElement();
+
+	// Find root joint.
+	XMLElement* armatureNode = visualSceneNode->FirstChildElement("node");
+	while (armatureNode && (strcmp(armatureNode->Attribute("id"), "Armature") != 0))
+	{
+		armatureNode = armatureNode->NextSiblingElement();
+	}
+
+	XMLElement* jointNode = armatureNode->FirstChildElement("node");
+
+	// Load in joint hierarchy.
+	loadJointHierarchyHelperTwo(jointNode);
 }
 
 void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int * index)
@@ -1493,6 +1791,85 @@ void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int
 		++(*index);
 		joint->addChild(_joints[*index]);
 		loadJointHierarchyHelper(childNode, index);
+		childNode = childNode->NextSiblingElement("node");
+	}
+}
+
+void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
+{
+	// Retrieve this joint's name.
+	string jointID = jointNode->FirstAttribute()->Value();
+	
+
+	//Joint* joint = _joints[*index];
+	Joint* joint = nullptr;
+	 //Joint* joint = _skinJoints[jointID];
+
+	//if (_skinJoints.find(jointID) == _skinJoints.end())
+	//{
+	//	jointID = jointNode->Attribute("name");
+
+	//	if (_skinJoints.find(jointID) == _skinJoints.end())
+	//	{
+	//		system("pause");
+	//		exit(0);
+	//	}
+	//}
+
+	if (_skinJoints.find(jointID) == _skinJoints.end())
+	{
+		jointID = jointID.substr(jointID.find('_') + 1, string::npos);
+
+		if (_skinJoints.find(jointID) == _skinJoints.end())
+		{
+			system("pause");
+			exit(0);
+		}
+	}
+
+	joint = _skinJoints[jointID];
+
+
+	_joints.push_back(joint);
+
+	if (_joints.size() == 1)
+		_rootJoint = joint;
+
+
+	XMLElement* childNode = jointNode->FirstChildElement("node");
+
+	// Go through all of this joint's children.
+	while (childNode)
+	{
+		// This joint has a child.
+		jointID = childNode->FirstAttribute()->Value();
+
+		//if (_skinJoints.find(jointID) == _skinJoints.end())
+		//{
+		//	jointID = childNode->Attribute("name");
+
+		//	if (_skinJoints.find(jointID) == _skinJoints.end())
+		//	{
+		//		system("pause");
+		//		exit(0);
+		//	}
+		//}
+
+		if (_skinJoints.find(jointID) == _skinJoints.end())
+		{
+			jointID = jointID.substr(jointID.find('_') + 1, string::npos);
+
+			if (_skinJoints.find(jointID) == _skinJoints.end())
+			{
+				system("pause");
+				exit(0);
+			}
+		}
+
+		joint->addChild(_skinJoints[jointID]);
+
+		loadJointHierarchyHelperTwo(childNode);
+
 		childNode = childNode->NextSiblingElement("node");
 	}
 }
