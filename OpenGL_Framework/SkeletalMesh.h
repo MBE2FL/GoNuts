@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_map>
+#include <fbxsdk.h>
 
 using std::cerr;
 using std::endl;
@@ -30,6 +31,15 @@ public:
 	void update(float deltaTime);
 	vector<mat4> getJointTransforms();
 	unsigned int getNumOfJoints() const;
+
+	// FBX functions
+	bool loadFromFileFBX(const string& path);
+	void printNode(FbxNode* node);
+	void printTabs();
+	FbxString getAttributeTypeName(FbxNodeAttribute::EType type);
+	void printAttribute(FbxNodeAttribute* pAttribute);
+	int numTabs = 0;
+	void loadGeoFBX(FbxNode* node);
 
 private:
 	Joint* _rootJoint;

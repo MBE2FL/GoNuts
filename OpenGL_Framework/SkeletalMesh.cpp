@@ -1,6 +1,5 @@
 #include "SkeletalMesh.h"
 #include <sstream>
-#include <fbxsdk.h>
 
 using std::stringstream;
 using tinyxml2::XMLDocument;
@@ -24,8 +23,6 @@ SkeletalMesh::SkeletalMesh()
 
 	_zyCorrection.rotateX(toRadians(-90.0f));
 	_zyCorrectionInverted = _zyCorrection.getInverse();
-
-	_fbxManager = FbxManager::Create();
 }
 
 SkeletalMesh::~SkeletalMesh()
@@ -261,6 +258,188 @@ vector<mat4> SkeletalMesh::getJointTransforms()
 unsigned int SkeletalMesh::getNumOfJoints() const
 {
 	return _numOfJoints;
+}
+
+bool SkeletalMesh::loadFromFileFBX(const string & path)
+{
+	// Create an fbx manager.
+	_fbxManager = FbxManager::Create();
+
+
+	// Specify which elements to import from the fbx file.
+	FbxIOSettings* ios = FbxIOSettings::Create(_fbxManager, IOSROOT);
+	_fbxManager->SetIOSettings(ios);
+	//ios->SetBoolProp(IMP_FBX_ANIMATION, true);
+
+	// Create an fbx importer.
+	FbxImporter* importer = FbxImporter::Create(_fbxManager, "");
+
+	// Import fbx file.
+	if (!importer->Initialize(path.c_str(), -1, _fbxManager->GetIOSettings()))
+	{
+		cerr << "FBX file failed to import! " << importer->GetStatus().GetErrorString() << endl;
+		system("pause");
+		exit(-1);
+	}
+
+	// Create an fbx scene.
+	FbxScene* fbxScene = FbxScene::Create(_fbxManager, "MyScene");
+
+	// Import the fbx file into the fbx scene.
+	importer->Import(fbxScene);
+
+
+	// Print the nodes of the scene and their attributes recursively.
+	FbxNode* rootNode = fbxScene->GetRootNode();
+	if (rootNode)
+	{
+		for (int i = 0; i < rootNode->GetChildCount(); ++i)
+			printNode(rootNode->GetChild(i));
+	}
+
+
+	if (rootNode)
+	{
+		for (int i = 0; i < rootNode->GetChildCount(); ++i)
+			loadGeoFBX(rootNode);
+	}
+
+
+	// Free up memory used by the importer.
+	importer->Destroy();
+	   
+	// Free up memory used by the fbx sdk.
+	_fbxManager->Destroy();
+
+
+	return true;
+}
+
+void SkeletalMesh::printNode(FbxNode * node)
+{
+	printTabs();
+	const char* nodeName = node->GetName();
+	FbxDouble3 translation = node->LclTranslation.Get();
+	FbxDouble3 rotation = node->LclRotation.Get();
+	FbxDouble3 scaling = node->LclScaling.Get();
+
+	// Print the contents of the node.
+	cout << "\n" <<
+		nodeName << "\n" <<
+		"Translation: " << translation[0] << " " << translation[1] << " " << translation[2] << "\n" <<
+		"Rotation: " << rotation[0] << " " << rotation[1] << " " << rotation[2] << "\n" <<
+		"Scale: " << scaling[0] << " " << scaling[1] << " " << scaling[2] << endl;
+
+	numTabs++;
+
+	// Print the node's attributes.
+	for (int i = 0; i < node->GetNodeAttributeCount(); i++)
+		printAttribute(node->GetNodeAttributeByIndex(i));
+
+	// Recursively print the children.
+	for (int j = 0; j < node->GetChildCount(); j++)
+		printNode(node->GetChild(j));
+
+	numTabs--;
+	printTabs();
+	printf("\n");
+}
+
+void SkeletalMesh::printTabs()
+{
+	for (int i = 0; i < numTabs; i++)
+		printf("\t");
+}
+
+FbxString SkeletalMesh::getAttributeTypeName(FbxNodeAttribute::EType type)
+{
+	switch (type) {
+	case FbxNodeAttribute::eUnknown: return "unidentified";
+	case FbxNodeAttribute::eNull: return "null";
+	case FbxNodeAttribute::eMarker: return "marker";
+	case FbxNodeAttribute::eSkeleton: return "skeleton";
+	case FbxNodeAttribute::eMesh: return "mesh";
+	case FbxNodeAttribute::eNurbs: return "nurbs";
+	case FbxNodeAttribute::ePatch: return "patch";
+	case FbxNodeAttribute::eCamera: return "camera";
+	case FbxNodeAttribute::eCameraStereo: return "stereo";
+	case FbxNodeAttribute::eCameraSwitcher: return "camera switcher";
+	case FbxNodeAttribute::eLight: return "light";
+	case FbxNodeAttribute::eOpticalReference: return "optical reference";
+	case FbxNodeAttribute::eOpticalMarker: return "marker";
+	case FbxNodeAttribute::eNurbsCurve: return "nurbs curve";
+	case FbxNodeAttribute::eTrimNurbsSurface: return "trim nurbs surface";
+	case FbxNodeAttribute::eBoundary: return "boundary";
+	case FbxNodeAttribute::eNurbsSurface: return "nurbs surface";
+	case FbxNodeAttribute::eShape: return "shape";
+	case FbxNodeAttribute::eLODGroup: return "lodgroup";
+	case FbxNodeAttribute::eSubDiv: return "subdiv";
+	default: return "unknown";
+	}
+}
+
+void SkeletalMesh::printAttribute(FbxNodeAttribute * pAttribute)
+{
+	if (!pAttribute) return;
+
+	FbxString typeName = getAttributeTypeName(pAttribute->GetAttributeType());
+	FbxString attrName = pAttribute->GetName();
+	printTabs();
+	// Note: to retrieve the character array of a FbxString, use its Buffer() method.
+	cout << typeName.Buffer() << " " << attrName.Buffer() << endl;
+}
+
+void SkeletalMesh::loadGeoFBX(FbxNode * node)
+{
+	vector<vec3> vertexDataLoad;
+	FbxNodeAttribute::EType attributeType;
+
+	if (node->GetNodeAttribute() == NULL)
+	{
+		cout << "NULL Node Attribute\n" << endl;
+	}
+	else
+	{
+		attributeType = (node->GetNodeAttribute()->GetAttributeType());
+		switch (attributeType)
+		{
+		case FbxNodeAttribute::eMesh:
+		{
+			//DisplayMesh(node);
+			FbxMesh* mesh = (FbxMesh*)node->GetNodeAttribute();
+			string name = node->GetName();
+
+			FbxVector4* controlPoints = mesh->GetControlPoints();
+			int polyCount = mesh->GetPolygonCount();
+
+			for (int i = 0; i < polyCount; ++i)
+			{
+				int polySize = mesh->GetPolygonSize(i);
+
+				for (int j = 0; j < polySize; ++j)
+				{
+					int controlPointIndex = mesh->GetPolygonVertex(i, j);
+					FbxVector4 vertex = controlPoints[controlPointIndex];
+					
+					vec3 newVertex = vec3(static_cast<float>(vertex.mData[0]), static_cast<float>(vertex.mData[1]), static_cast<float>(vertex.mData[2]));
+
+					vertexDataLoad.push_back(newVertex);
+					computeMinMax(vertexDataLoad.back());
+				}
+			}
+
+
+		}
+			break;
+		default:
+			break;
+		}
+	}
+
+	for (int i = 0; i < node->GetChildCount(); i++)
+	{
+		loadGeoFBX(node->GetChild(i));
+	}
 }
 
 void SkeletalMesh::getJointTransformsHelper(Joint * joint)
@@ -1219,9 +1398,9 @@ void SkeletalMesh::loadJoints(XMLNode * rootNode)
 			if (index == 2 || index == 3)
 			{
 				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
-				//mat4 Corr;
-				//Corr.rotateY(toRadians(180.0f));
-				//inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
+				mat4 Corr;
+				Corr.rotateY(toRadians(180.0f));
+				inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
 			}
 			else
 			{
@@ -1494,17 +1673,17 @@ void SkeletalMesh::loadJointsTwo(tinyxml2::XMLNode * rootNode)
 			inverseBindTransform.data[15] = stof(word);
 
 			// Apply z to y axis correction.
-			if (index == 2 || index == 3)
-			{
+			//if (index == 2 || index == 3)
+			//{
 				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
-				mat4 Corr;
-				Corr.rotateY(toRadians(180.0f));
-				inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
-			}
-			else
-			{
+				//mat4 Corr;
+				//Corr.rotateY(toRadians(180.0f));
+				//inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
+			//}
+			//else
+			//{
 				inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
-			}
+			//}
 
 			//_joints[index]->_loadedInInverseBindTransform = inverseBindTransform;
 			_joints[index]->setInverseBindTransform(inverseBindTransform);
