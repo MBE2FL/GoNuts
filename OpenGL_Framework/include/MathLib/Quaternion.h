@@ -16,7 +16,8 @@ public:
 	void conjugate();
 	Quaternion getConjugate();
 	void rotate(const float angle, const vec3& axis);
-	mat4 getRotationMatrix() const;
+	mat4 getRotationMatrix();
+	void normalize();
 
 	Quaternion operator*(const Quaternion& otherQuat) const;
 
