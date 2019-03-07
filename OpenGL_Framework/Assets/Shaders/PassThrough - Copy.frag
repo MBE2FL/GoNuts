@@ -56,7 +56,8 @@ void main()
 
 	vec3 specular = lightSpecular * textureLookUp.r;
 
-	outColour.rgb = ambient + diffuse + specular;
+//	outColour.rgb = ambient + diffuse + specular;
+	outColour.rgb = ambient + diffuse;
 	outColour.a = textureColour.a;
 	outColour.rgb *= textureColour.rgb;
 }
