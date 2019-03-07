@@ -31,6 +31,9 @@ void Game::initializeGame()
 	frameBufferLUT.addColorTarget(GL_RGB8);
 	frameBufferLUT.init(1900, 1000);
 
+	frameBufferShadow.addDepthTarget();
+	frameBufferShadow.init(2048, 2048);
+
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
