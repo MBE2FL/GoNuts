@@ -22,6 +22,7 @@ public:
 	vector<Joint*> getChildren() const;
 	mat4 getAnimatedTransform() const;
 	void setAnimatedTransform(const mat4& transform);
+	mat4 getLocalBindTransform() const;
 	void setLocalBindTransform(const mat4& localBindTransform);
 	mat4 getInverseBindTransfrom() const;
 	void setInverseBindTransform(const mat4& inverseBindTransform);

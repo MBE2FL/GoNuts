@@ -19,6 +19,10 @@ public:
 	void setAnimation(SAnimation* animation);
 	void update(float deltaTime);
 
+
+    // DEBUG
+	void nextFrame();
+
 private:
 	SkeletalMesh* _mesh;
 	SAnimation* _animation;
@@ -26,6 +30,7 @@ private:
 
 	//KeyFrame* _prevFrame;
 	//KeyFrame* _nextFrame;
+	unsigned int frameNum = 0;
 
 	unordered_map<string, mat4> _currentPose;
 

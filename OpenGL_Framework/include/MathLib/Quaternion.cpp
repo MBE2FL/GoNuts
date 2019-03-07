@@ -19,8 +19,10 @@ Quaternion::Quaternion(const float w, const float x, const float y, const float 
 	normalize();
 }
 
-Quaternion::Quaternion(const float angle, const vec3 & axis)
+Quaternion::Quaternion(const float angle, vec3 axis)
 {
+	axis.normalize();
+
 	float radians = toRadians(angle);
 
 	_w = cosf(radians * 0.5f);
@@ -30,6 +32,7 @@ Quaternion::Quaternion(const float angle, const vec3 & axis)
 	_x = sinHalfTheta.x;
 	_y = sinHalfTheta.y;
 	_z = sinHalfTheta.z;
+
 	normalize();
 }
 
@@ -45,62 +48,6 @@ Quaternion::Quaternion(const Quaternion & other)
 
 Quaternion::Quaternion(const mat4 & rot)
 {
-	//_w = sqrt(1.0f + rot.data[0] + rot.data[5] + rot.data[10]) * 0.5f;
-	//_x = (rot.data[6] - rot.data[9]) / (4.0f * _w);
-	//_y = (rot.data[8] - rot.data[2]) / (4.0f * _w);
-	//_z = (rot.data[1] - rot.data[4]) / (4.0f * _w);
-
-
-	//float m01 = rot.data[4];
-	//float m02 = rot.data[8];
-
-	//float m10 = rot.data[1];
-	//float m12 = rot.data[9];
-
-	//float m20 = rot.data[2];
-	//float m21 = rot.data[6];
-
-	//float m00 = rot.data[0];
-	//float m11 = rot.data[5];
-	//float m22 = rot.data[10];
-
-	//float trace = m00 + m11 + m22;
-
-	//if ((1.0f + trace) > 0)
-	//{
-	//	float s = sqrt(1.0f + trace) * 2.0f;
-	//	_w = 0.25f * s;
-	//	_x = (m21 - m12) / s;
-	//	_y = (m02 - m20) / s;
-	//	_z = (m10 - m01) / s;
-	//}
-	//else if ((m00 > m11) && (m00 > m22))
-	//{
-	//	float s = sqrt(1.0f + m00 - m11 - m22) * 2.0f;
-	//	_w = (m21 - m12) / s;
-	//	_x = 0.25f * s;
-	//	_y = (m01 + m10) / s;
-	//	_z = (m02 + m20) / s;
-	//}
-	//else if (m11 > m22)
-	//{
-	//	float s = sqrt(1.0f + m11 - m00 - m22) * 2.0f;
-	//	_w = (m02 - m20) / s;
-	//	_x = (m01 + m10) / s;
-	//	_y = 0.25f * s;
-	//	_z = (m12 + m21) / s;
-	//}
-	//else
-	//{
-	//	float s = sqrt(1.0f + m22 - m00 - m11) * 2.0f;
-	//	_w = (m10 - m01) / s;
-	//	_x = (m02 + m20) / s;
-	//	_y = (m12 + m21) / s;
-	//	_z = 0.25f * s;
-	//}
-
-
-
 	// #################### Post Hogue
 	float trace = 1.0f + rot.data[0] + rot.data[5] + rot.data[10];
 
@@ -108,9 +55,9 @@ Quaternion::Quaternion(const mat4 & rot)
 	if (trace > 0.00000001f)
 	{
 		float s = sqrt(trace) * 2.0f;
-		_x = (rot.data[9] - rot.data[6]) / s;
-		_y = (rot.data[2] - rot.data[8]) / s;
-		_z = (rot.data[4] - rot.data[1]) / s;
+		_x = (rot.data[6] - rot.data[9]) / s;
+		_y = (rot.data[8] - rot.data[2]) / s;
+		_z = (rot.data[1] - rot.data[4]) / s;
 		_w = 0.25f * s;
 	}
 	else
@@ -120,32 +67,63 @@ Quaternion::Quaternion(const mat4 & rot)
 		{
 			float s = sqrt(1.0f + rot.data[0] - rot.data[5] - rot.data[10]) * 2.0f;
 			_x = 0.25f * s;
-			_y = (rot.data[4] + rot.data[1]) / s;
-			_z = (rot.data[2] + rot.data[8]) / s;
-			_w = (rot.data[9] - rot.data[6]) / s;
+			_y = (rot.data[1] + rot.data[4]) / s;
+			_z = (rot.data[8] + rot.data[2]) / s;
+			_w = (rot.data[6] - rot.data[9]) / s;
 		}
 		// Column 1
 		else if (rot.data[5] > rot.data[10])
 		{
 			float s = sqrt(1.0f + rot.data[5] - rot.data[0] - rot.data[10]) * 2.0f;
-			_x = (rot.data[4] + rot.data[1]) / s;
+			_x = (rot.data[1] + rot.data[4]) / s;
 			_y = 0.25f * s;
-			_z = (rot.data[9] + rot.data[6]) / s;
-			_w = (rot.data[2] - rot.data[8]) / s;
+			_z = (rot.data[6] + rot.data[9]) / s;
+			_w = (rot.data[8] - rot.data[2]) / s;
 		}
 		// Column 2
 		else
 		{
 			float s = sqrt(1.0f + rot.data[10] - rot.data[0] - rot.data[5]) * 2.0f;
-			_x = (rot.data[2] + rot.data[8]) / s;
-			_y = (rot.data[9] + rot.data[6]) / s;
+			_x = (rot.data[8] + rot.data[2]) / s;
+			_y = (rot.data[6] + rot.data[9]) / s;
 			_z = 0.25f * s;
-			_w = (rot.data[4] - rot.data[1]) / s;
+			_w = (rot.data[1] - rot.data[4]) / s;
 		}
 	}
 
 	normalize();
+}
 
+Quaternion::Quaternion(const float eulerX, const float eulerY, const float eulerZ)
+{
+	//vec3 xAxis = vec3(1.0f, 0.0f, 0.0f);
+	//vec3 yAxis = vec3(0.0f, 1.0f, 0.0f);
+	//vec3 zAxis = vec3(0.0f, 0.0f, 1.0f);
+
+	//Quaternion xQuat = Quaternion(eulerX, xAxis);
+	//Quaternion yQuat = Quaternion(eulerY, yAxis);
+	//Quaternion zQuat = Quaternion(eulerZ, zAxis);
+
+	//*this = Quaternion((xQuat * yQuat) * zQuat);
+
+	const float sinPitch = sin(eulerX * 0.5f);
+	const float cosPitch = cos(eulerX * 0.5f);
+
+	const float sinYaw = sin(eulerY * 0.5f);
+	const float cosYaw = cos(eulerY * 0.5f);
+
+	const float sinRoll = sin(eulerZ * 0.5f);
+	const float cosRoll = cos(eulerZ * 0.5f);
+
+	const float cosPitchCosYaw = cosPitch * cosYaw;
+	const float sinPitchSinYaw = sinPitch * sinYaw;
+
+	_x = (sinRoll * cosPitchCosYaw) - (cosRoll * sinPitchSinYaw);
+	_y = (cosRoll * sinPitch * cosYaw) + (sinRoll * cosPitch * sinYaw);
+	_z = (cosRoll * cosPitch * sinYaw) - (sinRoll * sinPitch * cosYaw);
+	_w = (cosRoll * cosPitchCosYaw) + (sinRoll * sinPitchSinYaw);
+
+	normalize();
 }
 
 Quaternion::~Quaternion()
@@ -167,7 +145,7 @@ Quaternion Quaternion::getConjugate()
 	return conj;
 }
 
-void Quaternion::rotate(const float angle, const vec3 & axis)
+void Quaternion::rotate(const float angle, vec3 axis)
 {
 	Quaternion q = Quaternion(angle, axis);
 	Quaternion qc = q.getConjugate();
@@ -179,7 +157,7 @@ void Quaternion::rotate(const float angle, const vec3 & axis)
 mat4 Quaternion::getRotationMatrix()
 {
 	mat4 rot;
-	normalize();
+	//normalize();
 	//float sqrW = pow(_w, 2.0f);
 	//float sqrX = pow(_x, 2.0f);
 	//float sqrY = pow(_y, 2.0f);
@@ -204,100 +182,31 @@ mat4 Quaternion::getRotationMatrix()
 	float zz = _z * _z;
 	float zw = _z * _w;
 
+	// Row #1
 	rot.data[0] = 1.0f - (2.0f * (yy + zz));
-	rot.data[1] = 2.0f * (xy - zw);
-	rot.data[2] = 2.0f * (xz + yw);
-	rot.data[3] = 0.0f;
-
-	rot.data[4] = 2.0f * (xy + zw);
-	rot.data[5] = 1.0f - (2.0f * (xx + zz));
-	rot.data[6] = 2.0f * (yz - xy);
-	rot.data[7] = 0.0f;
-
-	rot.data[8] = 2.0f * (xz - yw);
-	rot.data[9] = 2.0f * (yz + xw);
-	rot.data[10] = 1.0f - (2.0f * (xx + yy));
-	rot.data[11] = 0.0f;
-
+	rot.data[4] = 2.0f * (xy - zw);
+	rot.data[8] = 2.0f * (xz + yw);
 	rot.data[12] = 0.0f;
+
+	// Row #2
+	rot.data[1] = 2.0f * (xy + zw);
+	rot.data[5] = 1.0f - (2.0f * (xx + zz));
+	rot.data[9] = 2.0f * (yz - xw);
 	rot.data[13] = 0.0f;
+
+	// Row #3
+	rot.data[2] = 2.0f * (xz - yw);
+	rot.data[6] = 2.0f * (yz + xw);
+	rot.data[10] = 1.0f - (2.0f * (xx + yy));
 	rot.data[14] = 0.0f;
+
+
+	// Row #4
+	rot.data[3] = 0.0f;
+	rot.data[7] = 0.0f;
+	rot.data[11] = 0.0f;
 	rot.data[15] = 1.0f;
 
-	/*rot.data[0] = 1.0f - (2.0f * ((_y * _y) + (_z * _z)));
-	rot.data[1] = 2.0f * ((_x * _y) - (_z * _w));
-	rot.data[2] = 2.0f * ((_x * _z) + (_y * _w));
-	rot.data[3] = 0.0f;
-
-	rot.data[4] = 2.0f * ((_x * _y) + (_z * _w));
-	rot.data[5] = 1.0f - (2.0f * ((_x * _x) + (_z * _z)));
-	rot.data[6] = 2.0f * ((_y * _z) - (_x * _w));
-	rot.data[7] = 0.0f;
-
-	rot.data[8] = 2.0f * ((_x * _z) - (_y * _w));
-	rot.data[9] = 2.0f * ((_y * _z) + (_x * _w));
-	rot.data[10] = 1.0f - (2.0f * ((_x * _x) + (_y * _y)));
-	rot.data[11] = 0.0f;
-
-	rot.data[12] = 0.0f;
-	rot.data[13] = 0.0f;
-	rot.data[14] = 0.0f;
-	rot.data[15] = 1.0f;*/
-
-
-
-
-	//float sqrW = pow(_w, 2.0f);
-	//float sqrX = pow(_x, 2.0f);
-	//float sqrY = pow(_y, 2.0f);
-	//float sqrZ = pow(_z, 2.0f);
-
-	//// quat not normalized.
-	//if ((sqrW + sqrX + sqrY + sqrZ) != 1.0f)
-	//{
-
-
-	//	float inverseSqrLen = 1 / (sqrW + sqrX + sqrY + sqrZ);
-
-
-	//	rot.data[0] = (sqrX - sqrY - sqrZ + sqrW) * inverseSqrLen;
-	//	rot.data[1] = ((2.0f * _x * _y) + (2.0f * _z * _w)) * inverseSqrLen;
-	//	rot.data[2] = ((2.0f * _x * _z) - (2.0f * _y * _w)) * inverseSqrLen;
-	//	rot.data[3] = 0.0f;
-
-	//	rot.data[4] = ((2.0f * _x * _y) - (2.0f * _z * _w)) * inverseSqrLen;
-	//	rot.data[5] = (-sqrX + sqrY - sqrZ + sqrW) * inverseSqrLen;
-	//	rot.data[6] = ((2.0f * _y * _z) + (2.0f * _x * _w)) * inverseSqrLen;
-	//	rot.data[7] = 0.0f;
-
-	//	rot.data[8] = ((2.0f * _x * _z) + (2.0f * _y * _w)) * inverseSqrLen;
-	//	rot.data[9] = ((2.0f * _y * _z) - (2.0f * _x * _w)) * inverseSqrLen;
-	//	rot.data[10] = (-sqrX - sqrY + sqrZ + sqrW) * inverseSqrLen;
-	//	rot.data[11] = 0.0f;
-	//}
-	//else
-	//{
-	//	rot.data[0] = 1.0f - (2.0f * pow(_y, 2.0f)) - (2.0f * pow(_z, 2.0f));
-	//	rot.data[1] = (2.0f * _x * _y) + (2.0f * _z * _w);
-	//	rot.data[2] = (2.0f * _x * _z) - (2.0f * _y * _w);
-	//	rot.data[3] = 0.0f;
-	//	
-	//	rot.data[4] = (2.0f * _x * _y) - (2.0f * _z * _w);
-	//	rot.data[5] = 1.0f - (2.0f * pow(_x, 2.0f)) - (2.0f * pow(_z, 2.0f));
-	//	rot.data[6] = (2.0f * _y * _z) + (2.0f * _x * _w);
-	//	rot.data[7] = 0.0f;
-	//	
-	//	rot.data[8] = (2.0f * _x * _z) + (2.0f * _y * _w);
-	//	rot.data[9] = (2.0f * _y * _z) - (2.0f * _x * _w);
-	//	rot.data[10] = 1.0f - (2.0f * pow(_x, 2.0f)) - (2.0f * pow(_y, 2.0f));
-	//	rot.data[11] = 0.0f;
-	//}
-
-
-	//rot.data[12] = 0.0f;
-	//rot.data[13] = 0.0f;
-	//rot.data[14] = 0.0f;
-	//rot.data[15] = 1.0f;
 
 	return rot;
 }
@@ -314,6 +223,34 @@ void Quaternion::normalize()
 	_y /= mag;
 	_z /= mag;
 	_w /= mag;
+}
+
+Quaternion Quaternion::getNormalized() const
+{
+	Quaternion normQuat = *this;
+	normQuat.normalize();
+
+	return normQuat;
+}
+
+void Quaternion::setW(const float w)
+{
+	_w = w;
+}
+
+void Quaternion::setX(const float x)
+{
+	_x = x;
+}
+
+void Quaternion::setY(const float y)
+{
+	_y = y;
+}
+
+void Quaternion::setZ(const float z)
+{
+	_z = z;
 }
 
 Quaternion Quaternion::operator*(const Quaternion & otherQuat) const
@@ -345,18 +282,22 @@ Quaternion Quaternion::slerp(const Quaternion & begin, const Quaternion & end, f
 	if (interValue > 1)
 		interValue = 1;
 
+	// Normalize inputs
+	Quaternion nBegin = begin.getNormalized();
+	Quaternion nEnd = end.getNormalized();
+
 	Quaternion quat = Quaternion();
 
 	// Calculate the angle between the begin and end quaternions.
-	float cosHalfTheta = (begin._w * end._w) + (begin._x * end._x) + (begin._y * end._y) + (begin._z * end._z);
+	float cosHalfTheta = (nBegin._w * nEnd._w) + (nBegin._x * nEnd._x) + (nBegin._y * nEnd._y) + (nBegin._z * nEnd._z);
 
 	// If begin = end or begin = -end then theta = 0 and we can return begin.
 	if (fabs(cosHalfTheta) >= 1.0f)
 	{
-		quat._w = begin._w;
-		quat._x = begin._x;
-		quat._y = begin._y;
-		quat._z = begin._z;
+		quat._w = nBegin._w;
+		quat._x = nBegin._x;
+		quat._y = nBegin._y;
+		quat._z = nBegin._z;
 		return quat;
 	}
 
@@ -367,10 +308,10 @@ Quaternion Quaternion::slerp(const Quaternion & begin, const Quaternion & end, f
 	// We could rotate around any axis normal to begin or end.
 	if (fabs(sinHalfTheta) < 0.001f)
 	{
-		quat._w = (begin._w * 0.5f) + (end._w * 0.5f);
-		quat._x = (begin._x * 0.5f) + (end._x * 0.5f);
-		quat._y = (begin._y * 0.5f) + (end._y * 0.5f);
-		quat._z = (begin._z * 0.5f) + (end._z * 0.5f);
+		quat._w = (nBegin._w * 0.5f) + (nEnd._w * 0.5f);
+		quat._x = (nBegin._x * 0.5f) + (nEnd._x * 0.5f);
+		quat._y = (nBegin._y * 0.5f) + (nEnd._y * 0.5f);
+		quat._z = (nBegin._z * 0.5f) + (nEnd._z * 0.5f);
 
 		return quat;
 	}
@@ -379,10 +320,32 @@ Quaternion Quaternion::slerp(const Quaternion & begin, const Quaternion & end, f
 	float ratioEnd = sinf(interValue * halfTheta) / sinHalfTheta;
 
 	// Calculate quaternion
-	quat._w = (begin._w * ratioBegin) + (end._w * ratioEnd);
-	quat._x = (begin._x * ratioBegin) + (end._x * ratioEnd);
-	quat._y = (begin._y * ratioBegin) + (end._y * ratioEnd);
-	quat._z = (begin._z * ratioBegin) + (end._z * ratioEnd);
+	quat._w = (nBegin._w * ratioBegin) + (nEnd._w * ratioEnd);
+	quat._x = (nBegin._x * ratioBegin) + (nEnd._x * ratioEnd);
+	quat._y = (nBegin._y * ratioBegin) + (nEnd._y * ratioEnd);
+	quat._z = (nBegin._z * ratioBegin) + (nEnd._z * ratioEnd);
 
 	return quat;
+}
+
+Quaternion Quaternion::nslerp(const Quaternion & begin, const Quaternion & end, float interValue)
+{
+	Quaternion result = Quaternion();
+
+	float dot = begin._w * end._w + begin._x * end._x + begin._y * end._y + begin._z * end._z;
+	float blendI = 1.0f - interValue;
+	if (dot < 0) {
+		result._w = blendI * begin._w + interValue * -end._w;
+		result._x = blendI * begin._x + interValue * -end._x;
+		result._y = blendI * begin._y + interValue * -end._y;
+		result._z = blendI * begin._z + interValue * -end._z;
+	}
+	else {
+		result._w = blendI * begin._w + interValue * end._w;
+		result._x = blendI * begin._x + interValue * end._x;
+		result._y = blendI * begin._y + interValue * end._y;
+		result._z = blendI * begin._z + interValue * end._z;
+	}
+	result.normalize();
+	return result;
 }

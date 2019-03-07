@@ -1,5 +1,6 @@
 #include "mat4.h"
 #include "vec4.h"
+#include "Quaternion.h"
 
 mat4 mat4::Identity = mat4();
 
@@ -25,6 +26,53 @@ mat4::mat4(const mat4 & other)
 	{
 		data[i] = other.data[i];
 	}
+}
+
+mat4::mat4(const vec3 & position, vec3 & eulerAngles)
+{
+	float A = cos(eulerAngles.x);
+	float B = sin(eulerAngles.x);
+	float C = cos(eulerAngles.y);
+	float D = sin(eulerAngles.y);
+	float E = cos(eulerAngles.z);
+	float F = sin(eulerAngles.z);
+	float AD = A * D;
+	float BD = B * D;
+
+	// Row #1
+	data[0] = C * E;
+	data[4] = -C * F;
+	data[8] = D;
+	data[12] = position.x;
+
+	// Row #2;
+	data[1] = (BD * E) + (A * F);
+	data[5] = (-BD * F) + (A * E);
+	data[9] = -B * C;
+	data[13] = position.y;
+
+	// Row #3
+	data[2] = (-AD * E) + (B * F);
+	data[6] = (AD * F) + (B * E);
+	data[10] = A * C;
+	data[14] = position.z;
+
+	// Row #4
+	data[3] = 0.0f;
+	data[7] = 0.0f;
+	data[11] = 0.0f;
+	data[15] = 1.0f;
+
+}
+
+mat4::mat4(const vec3 & position, Quaternion & rotation)
+{
+	*this = rotation.getRotationMatrix();
+
+	data[12] = position.x;
+	data[13] = position.y;
+	data[14] = position.z;
+	data[15] = 1.0f;
 }
 
 mat4 mat4::operator+(const mat4& rhs) const

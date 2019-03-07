@@ -22,7 +22,7 @@ mat4 JointTransform::getLocalTransform()
 JointTransform JointTransform::interpolate(const JointTransform & begin, const JointTransform & end, float interValue)
 {
 	vec3 position = lerp(begin._localPosition, end._localPosition, interValue);
-	Quaternion rotation = Quaternion::slerp(begin._localRotation, end._localRotation, interValue);
+	Quaternion rotation = Quaternion::nslerp(begin._localRotation, end._localRotation, interValue);
 
 	return JointTransform(position, rotation);
 }
