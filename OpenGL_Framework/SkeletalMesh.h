@@ -6,7 +6,6 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_map>
-#include <fbxsdk.h>
 
 using std::cerr;
 using std::endl;
@@ -31,15 +30,6 @@ public:
 	void update(float deltaTime);
 	vector<mat4> getJointTransforms();
 	unsigned int getNumOfJoints() const;
-
-	// FBX functions
-	bool loadFromFileFBX(const string& path);
-	void printNode(FbxNode* node);
-	void printTabs();
-	FbxString getAttributeTypeName(FbxNodeAttribute::EType type);
-	void printAttribute(FbxNodeAttribute* pAttribute);
-	int numTabs = 0;
-	void loadGeoFBX(FbxNode* node);
 
 
 	// Source tools SMD file functions
@@ -81,9 +71,6 @@ private:
 	// Unordered joints loaded in from skin joints section.
 	unordered_map<string, Joint*> _skinJoints;
 
-
-	// FBX variables
-	FbxManager* _fbxManager;
 
 
 	void getJointTransformsHelper(Joint* joint);
