@@ -49,7 +49,7 @@ void main()
 
 	normal = mat3(uView) * mat3(uModel) * totalNormal.xyz;
 
-	//totalLocalPos = jointTransforms[1] * vec4(in_vert, 1.0);
+	//totalLocalPos = jointTransforms[6] * vec4(in_vert, 1.0);
 
 	//vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f);
 	vec4 viewSpace = uView * uModel * totalLocalPos;

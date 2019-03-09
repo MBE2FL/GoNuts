@@ -71,7 +71,7 @@ void Scene::update(float deltaTime)
 	if (skeletalTest)
 	{
 		//skeletalMeshTest->update(deltaTime);
-		//skeletalMeshTestTwo->update(deltaTime);
+		skeletalMeshTestTwo->update(deltaTime);
 	}
 }
 
@@ -278,27 +278,45 @@ void Scene::loadOldFaithful()
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
 
+	entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
+	skeletalMeshTest = new SkeletalMesh();
+	//skeletalMeshTest->loadFromFile("./Assets/Better Collada Test/Character Running.dae");
+	//skeletalMeshTest->loadFromFile("./Assets/model.dae");
+	skeletalMeshTest->loadFromFileSMD("./Assets/Source Exports/Cube.smd", "./Assets/Source Exports/anims/ArmatureAction.smd", 24.0f);
+	skeletalMeshTest->_isSkeletal = true;
+	
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
+
+	// ########## FBX MODEL
 	//entity = _entityFactory->createEmpty(vec3(1.0f, 2.6f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
 	//skeletalMeshTest = new SkeletalMesh();
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//skeletalMeshTest->loadFromFile("./Assets/ANIM_TEST.dae");
+	//skeletalMeshTest->loadFromFileFBX("./Assets/Character Running.fbx");
 	//skeletalMeshTest->_isSkeletal = true;
-	//
+
 	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
 	//vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
 	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
 	//_entityManager->addComponent(meshRenderer, entity);
 
+	_followPlayer = false;
+	entity = _entityFactory->createEmpty(vec3(0.0f, 0.8f, 0.0f), vec3(0.6f), nullptr, "SkeletonTwo");
+	skeletalMeshTestTwo = new SkeletalMesh();
+	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	string path = "./Assets/Test Exporter/Character Running/";
+	//string path = "./Assets/Test Exporter/Test/";
+	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
+	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Jump.nutAnim");
+	skeletalMeshTestTwo->_isSkeletal = true;
 
-	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.1f), nullptr, "SkeletonTwo");
-	//skeletalMeshTestTwo = new SkeletalMesh();
-	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//skeletalMeshTestTwo->loadFromFile("./Assets/fatboi.dae");
-	//skeletalMeshTestTwo->_isSkeletal = true;
-
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
-	//meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	//_entityManager->addComponent(meshRenderer, entity);
+	textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
 
 
 	light = new Light();
@@ -431,6 +449,9 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	case 'p':
 		//skeletalTest = !skeletalTest;
 		ObjectLoader::getShaderProgram("SkeletalAnim")->reload();
+		break;
+	case 'b':
+		skeletalMeshTestTwo->getAnimator()->nextFrame();
 		break;
 	}
 

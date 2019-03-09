@@ -36,6 +36,13 @@ void Animator::update(float deltaTime)
 
 }
 
+void Animator::nextFrame()
+{
+	++frameNum;
+	if (frameNum >= _animation->getJointAnims().front()->getKeyFrames().size())
+		frameNum = 0;
+}
+
 void Animator::calculateCurrentPose()
 {
 	getPrevNextFrames();
@@ -67,8 +74,8 @@ void Animator::getPrevNextFrames()
 
 		// Blend between the previous and next frame of animation.
 		float interValue = invLerp(_currentTime, prevFrame->getStartTime(), nextFrame->getStartTime());
-		//prevFrame = allFrames[0];
-		//nextFrame = allFrames[0];
+		//prevFrame = allFrames[frameNum];
+		//nextFrame = allFrames[frameNum];
 		//interValue = 0.0f;
 		blendPoses(prevFrame, nextFrame, interValue, jointName);
 	}
@@ -81,6 +88,7 @@ void Animator::blendPoses(KeyFrame * prevFrame, KeyFrame * nextFrame, float inte
 	JointTransform* nextJointTransform = nextFrame->getJointTransform();
 
 	JointTransform currJointTransform = JointTransform::interpolate(*prevJointTransform, *nextJointTransform, interValue);
+	//JointTransform currJointTransform = *prevJointTransform;
 	_currentPose[jointName] = currJointTransform.getLocalTransform();
 }
 
@@ -88,6 +96,7 @@ void Animator::blendPoses(KeyFrame * prevFrame, KeyFrame * nextFrame, float inte
 void Animator::applyPoseToJoints(Joint * joint, const mat4 & parentLocalToWorldMatrix)
 {
 	mat4 localTransformMatrix = _currentPose[joint->getName()];
+	//mat4 localTransformMatrix = joint->getLocalBindTransform();
 	mat4 localToWorldMatrix = parentLocalToWorldMatrix * localTransformMatrix;
 
 	for (Joint* child : joint->getChildren())
@@ -95,7 +104,8 @@ void Animator::applyPoseToJoints(Joint * joint, const mat4 & parentLocalToWorldM
 		applyPoseToJoints(child, localToWorldMatrix);
 	}
 
-	// Similar to the camera view, calculate this joint's transfrom with the start transfrom acting as the origin.
+	// Similar to the camera view, calculate this joint's transfrom with the start transform acting as the origin.
+	//localToWorldMatrix = joint->getLocalBindTransform();
 	localToWorldMatrix = localToWorldMatrix * joint->getInverseBindTransfrom();
 	joint->setAnimatedTransform(localToWorldMatrix);
 }

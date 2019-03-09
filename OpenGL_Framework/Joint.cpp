@@ -67,6 +67,11 @@ void Joint::setAnimatedTransform(const mat4 & transform)
 	_animatedTransform = transform;
 }
 
+mat4 Joint::getLocalBindTransform() const
+{
+	return _localBindTransform;
+}
+
 void Joint::setLocalBindTransform(const mat4 & localBindTransform)
 {
 	_localBindTransform = localBindTransform;
