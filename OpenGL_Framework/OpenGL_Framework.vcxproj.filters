@@ -219,6 +219,7 @@
     <ClCompile Include="include\MathLib\ivec4.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
+    <ClCompile Include="UIComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -387,6 +388,9 @@
     <ClInclude Include="include\TinyXML\tinyxml2.h" />
     <ClInclude Include="include\MathLib\ivec4.h">
       <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
