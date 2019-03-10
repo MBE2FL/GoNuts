@@ -241,6 +241,15 @@
     <ClCompile Include="UISystem.cpp">
       <Filter>Source Files\EntitySystem\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="UIAnimation.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIAnimator.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIKeyFrame.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -420,6 +429,15 @@
       <Filter>Header Files\EntitySystem\Systems</Filter>
     </ClInclude>
     <ClInclude Include="UICanvas.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIKeyFrame.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIAnimator.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIAnimation.h">
       <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
     </ClInclude>
   </ItemGroup>
