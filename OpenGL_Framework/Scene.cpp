@@ -330,7 +330,7 @@ void Scene::loadOldFaithful()
 
 	UICanvas* testCanvas = new UICanvas();
 
-	UIImage* testImage = new UIImage(vec3(0.0f, 0.0f, -2.0f));
+	UIImage* testImage = new UIImage(vec3(2.0f, 1.0f, 0.0f));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
 	testCanvas->addImage("Test", testImage);

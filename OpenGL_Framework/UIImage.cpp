@@ -92,6 +92,7 @@ void UIImage::setTexture(Texture * texture)
 
 	float size = static_cast<float>((_texture->getSizeX() > _texture->getSizeY()) ? _texture->getSizeX() : _texture->getSizeY());
 	_transform->setLocalScale(vec3(size, size, 1.0f));
+	_transform->setLocalScale(vec3(10, 10, 1.0f));
 }
 
 Mesh * UIImage::getMesh() const
