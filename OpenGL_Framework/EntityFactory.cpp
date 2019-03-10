@@ -44,7 +44,23 @@ Entity * EntityFactory::createEmpty(const vec3 & position, const vec3& scale, En
 	return entity;
 }
 
-Entity * EntityFactory::createPerspectiveCamera(const vec3 & position, const float fovY, const float aspect, 
+Entity * EntityFactory::createOrthographicCamera(const vec3 & position, const float left, const float right, const float bottom, const float top, const float zNear, const float zFar, const string & name)
+{
+	// Create a new empty entity.
+	Entity* entity = createEmpty(position, vec3(1.0f), nullptr, name);
+
+	// Create camera component.
+	CameraComponent* camera = new CameraComponent();
+	camera->setOrthographic(left, right, bottom, top, zNear, zFar);
+	camera->setCullingActive(false);
+
+	// Add the camera component to the entity.
+	_entityManager->addComponent(camera, entity);
+
+	return entity;
+}
+
+Entity * EntityFactory::createPerspectiveCamera(const vec3 & position, const float fovY, const float aspect,
 	const float zNear, const float zFar, const string& name)
 {
 	// Create a new empty entity.

@@ -14,6 +14,7 @@
 #include "PhysicsSystem.h"
 //#include "GUIHelper.h"
 #include <sstream>
+#include "UISystem.h"
 
 
 #define WINDOW_WIDTH			1900
@@ -104,6 +105,9 @@ private:
 	//Light* spotLight;
 
 	GUIHelper* _guiHelper = nullptr;
+
+	UISystem* _uiSystem;
+	Entity* _uiCamera;
 
 	SkeletalMesh* skeletalMeshTest = nullptr;
 	SkeletalMesh* skeletalMeshTestTwo = nullptr;
