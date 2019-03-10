@@ -99,7 +99,9 @@ private:
 	TransformComponent* _playerTransform;
 	PhysicsBodyComponent* _playerPhysicsBody;
 	TransformComponent* _mainCameraTransform;
+	TransformComponent* _shadowCameraTransform;
 	Entity* _mainCamera;
+	Entity* _shadowCamera;
 
 	//Light* light;
 	//Light* spotLight;
