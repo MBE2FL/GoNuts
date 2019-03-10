@@ -253,6 +253,8 @@ void Scene::loadOldFaithful()
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
+	//_shadowCamera = _entityFactory->createOrth
+
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);

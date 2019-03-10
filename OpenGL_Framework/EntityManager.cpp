@@ -3,6 +3,7 @@
 EntityManager* EntityManager::_instance = nullptr;
 Entity* EntityManager::_mainCamera = nullptr;
 TransformComponent* EntityManager::_playerTransform = nullptr;
+Entity* EntityManager::_shadowCamera = nullptr;
 
 EntityManager::EntityManager()
 {
@@ -323,6 +324,16 @@ void EntityManager::setMainCamera(Entity * camera)
 Entity * EntityManager::getMainCamera()
 {
 	return _mainCamera;
+}
+
+void EntityManager::setShadowCamera(Entity * camera)
+{
+	_shadowCamera = camera;
+}
+
+Entity * EntityManager::getShadowCamera()
+{
+	return _shadowCamera;
 }
 
 TransformComponent * EntityManager::getPlayerTransform()
