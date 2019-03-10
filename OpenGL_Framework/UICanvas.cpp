@@ -14,6 +14,10 @@ UICanvas::~UICanvas()
 
 void UICanvas::update(float deltaTime)
 {
+	for (auto const& imageKeyVal : _images)
+	{
+		imageKeyVal.second->getTransform()->update(deltaTime);
+	}
 }
 
 void UICanvas::draw(mat4 & camView, mat4 & camProj)

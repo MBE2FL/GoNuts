@@ -83,6 +83,7 @@ void Scene::update(float deltaTime)
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
+	_uiSystem->draw();
 
 #ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -323,8 +324,14 @@ void Scene::loadOldFaithful()
 	_entityManager->addComponent(meshRenderer, entity);
 
 
-	UIImage* testImage = new UIImage(vec3(2.0f, 2.0f, 0.0f));
+	UICanvas* testCanvas = new UICanvas();
+
+	UIImage* testImage = new UIImage(vec3(0.0f, 0.0f, -2.0f));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
+
+	testCanvas->addImage("Test", testImage);
+
+	_uiSystem->addCanvas("TESTC", testCanvas);
 
 
 

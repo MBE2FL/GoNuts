@@ -14,6 +14,7 @@ public:
 	~UISystem();
 
 	void update(float deltaTime);
+	void draw();
 	void addCanvas(const string& name, UICanvas* canvas);
 	void deleteCanvas(const string& name);
 	Entity* getCamera() const;
