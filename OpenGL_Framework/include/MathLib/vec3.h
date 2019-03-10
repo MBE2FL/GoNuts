@@ -19,7 +19,7 @@ public:
 	float x, y, z;
 
 	vec3();
-	vec3(vec2 vec2, float Z);
+	vec3(const vec2& vec2, float Z);
 	vec3(float num) : x(num), y(num), z(num) {}
 	//vec3 vec1 = {x,y,z};
 	vec3(float X, float Y, float Z) :x(X), y(Y), z(Z) {}

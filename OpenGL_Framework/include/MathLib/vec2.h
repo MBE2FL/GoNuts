@@ -65,4 +65,5 @@ public:
 	float DistanceBetweenObj(vec2& v);
 	vec2 CrossProduct(vec2& v);
 	static vec2 Zero;
+	static vec2 One;
 };

@@ -11,7 +11,7 @@ vec3::vec3()
 	z = 0.0f;
 }
 
-vec3::vec3(vec2 vec2, float Z)
+vec3::vec3(const vec2 & vec2, float Z)
 {
 	x = vec2.x;
 	y = vec2.y;

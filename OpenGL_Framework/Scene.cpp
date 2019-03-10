@@ -12,6 +12,9 @@ Scene::Scene(const string & name)
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = EntityFactory::getInstance();
 
+	_uiSystem = new UISystem(_entityManager);
+	_uiCamera = _uiSystem->getCamera();
+
 #ifdef _DEBUG
 	_guiHelper = GUIHelper::getInstance();
 #endif
@@ -68,17 +71,18 @@ void Scene::update(float deltaTime)
 
 
 	skeletalTest = true;
-	if (skeletalTest)
+	if (skeletalTest && skeletalMeshTestTwo)
 	{
 		//skeletalMeshTest->update(deltaTime);
 		skeletalMeshTestTwo->update(deltaTime);
 	}
+
+	_uiSystem->update(deltaTime);
 }
 
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
-
 
 #ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -319,6 +323,11 @@ void Scene::loadOldFaithful()
 	textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
 	meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
 	_entityManager->addComponent(meshRenderer, entity);
+
+
+	UIImage* testImage = new UIImage(vec3(2.0f, 2.0f, 0.0f));
+	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
+
 
 
 	light = new Light();
