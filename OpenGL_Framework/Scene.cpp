@@ -35,7 +35,7 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
-	light->setPosition(vec3(_playerTransform->getLocalPosition().x - 2.0f, light->getPosition().y, light->getPosition().z));
+	light->setPosition(_playerTransform->getLocalPosition() + vec3(0.0f, -0.5f, 0.0f));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
@@ -65,7 +65,7 @@ void Scene::update(float deltaTime)
 	//	_playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
 	if (_followPlayer)
 	{
-		_mainCameraTransform->setTarget(_playerTransform, vec3(-6, -1.5f, -8));
+		_mainCameraTransform->setTarget(_playerTransform, vec3(-6, 1.5f, -8));
 		_mainCameraTransform->followTarget(deltaTime * 3.0f);
 	}
 
@@ -334,7 +334,7 @@ void Scene::loadOldFaithful()
 
 	UICanvas* testCanvas = new UICanvas();
 
-	UIImage* testImage = new UIImage(vec3(0.0f, 0.0f, -2.0f));
+	UIImage* testImage = new UIImage(vec3(2.0f, 1.0f, 0.0f));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
 	testCanvas->addImage("Test", testImage);
@@ -344,7 +344,7 @@ void Scene::loadOldFaithful()
 
 
 	light = new Light();
-	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
 	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
 	light->setDiffuse(vec3(0.6f));
@@ -381,7 +381,7 @@ void Scene::loadScene()
 	EntityManager::setMainCamera(_mainCamera);
 
 	light = new Light();
-	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
 	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
 	light->setDiffuse(vec3(0.6f));
