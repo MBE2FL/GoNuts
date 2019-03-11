@@ -440,5 +440,8 @@
     <ClInclude Include="UIAnimation.h">
       <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
     </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

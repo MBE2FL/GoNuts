@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <iostream>
 
+using MathUtils::invLerp;
+using MathUtils::lerp;
 using std::unordered_map;
 using std::cout;
 using std::endl;
@@ -19,6 +21,7 @@ public:
 
 private:
 	UIAnimation* currentAnimation;
+	UIKeyFrame* currentKeyFrame;
 	float currentTime = 0.0f;
 	unordered_map<string, UIAnimation*> animations;
 

@@ -4,12 +4,16 @@
 #include "Texture.h"
 #include "MathLib/MathLibCore.h"
 #include "ObjectLoader.h"
+#include "UIAnimation.h"
+#include "UIAnimator.h"
 
 class UIImage
 {
 public:
 	UIImage(const vec3& pos = vec3::Zero, const vec3& scale = vec3::One, const vec3& localRotation = vec3::Zero, const float alpha = 1.0f);
-	//void setAnimation(UIAnimation*);
+
+	void setAnimation(UIAnimation*);
+	UIAnimator* getAnimator();
 
 	vec3 getlocalPosition() const;
 	void setlocalPosition(const vec3& pos);
@@ -37,5 +41,5 @@ private:
 	TransformComponent* _transform;
 	float _alpha;
 	bool _isHover = false;
-	//UIAnimator* = nullptr;
+	UIAnimator* _animator = nullptr;
 };

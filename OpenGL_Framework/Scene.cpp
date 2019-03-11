@@ -83,7 +83,6 @@ void Scene::update(float deltaTime)
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
-	_uiSystem->draw();
 
 #ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -131,6 +130,11 @@ void Scene::draw()
 	// Update imgui draw data
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
+}
+
+void Scene::drawUI()
+{
+	_uiSystem->draw();
 }
 
 void Scene::imguiDraw()
