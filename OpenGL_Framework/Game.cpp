@@ -359,6 +359,7 @@ void Game::draw()
 	frameBufferLUT.clear();
 	frameBufferLUT.bind();
 	frameBuffer.drawFSQ();
+	_currentScene->drawUI();
 	frameBufferLUT.unbind();
 
 	frameBuffer.unbindTexture(0);//texture
@@ -382,7 +383,6 @@ void Game::draw()
 	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
-	_currentScene->drawUI();
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
