@@ -338,6 +338,16 @@ void Scene::loadOldFaithful()
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
 	testCanvas->addImage("Test", testImage);
+	UIKeyFrame frame1(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame frame2(0.8f, vec3(5.0f, 1.0f, 0.0f), vec3(2.0f, 2.0f, 1.0f), Quaternion::Identity, 1.0f);
+
+	vector<UIKeyFrame*> testVec;
+	testVec.push_back(&frame1);
+	testVec.push_back(&frame2);
+
+	UIAnimation* animu = new UIAnimation(0.8f, "test", testVec);
+
+	testImage->getAnimator()->addAnimation(animu);
 
 	_uiSystem->addCanvas("TESTC", testCanvas);
 
