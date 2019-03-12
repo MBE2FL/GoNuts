@@ -12,9 +12,10 @@
 #include "TransformSystem.h"
 #include "MeshRendererSystem.h"
 #include "PhysicsSystem.h"
+#include "UISystem.h"
 //#include "GUIHelper.h"
 #include <sstream>
-#include "UISystem.h"
+
 
 
 #define WINDOW_WIDTH			1900

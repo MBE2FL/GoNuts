@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIImage.h"
+#include "UIButton.h"
 #include <unordered_map>
 
 using std::unordered_map;
@@ -18,4 +19,5 @@ public:
 
 private:
 	unordered_map<string, UIImage*> _images;
+	vector<UIButton> buttons;
 };

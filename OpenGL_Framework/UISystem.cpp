@@ -53,6 +53,11 @@ Entity * UISystem::getCamera() const
 	return _camera;
 }
 
+void UISystem::checkClick(int x, int y)
+{
+
+}
+
 void UISystem::init(EntityManager * entityManager)
 {
 	// Create a new entity.

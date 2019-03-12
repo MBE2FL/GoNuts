@@ -26,6 +26,9 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
+	if (_uiSystem)
+		_uiSystem->update(deltaTime);
+
 	if (_entityFactory->getAcornCount() > 18)
 	{
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
@@ -39,7 +42,7 @@ void Scene::update(float deltaTime)
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
-		_playerTransform->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
+		_playerTransform->setWorldPosition(_playerTransform->getPlayerSpawnPosition());
 		_playerPhysicsBody->setVelocity(vec3(0.0f));
 		_playerTransform->setLocalScale(vec3(0.2f));
 	}
@@ -65,7 +68,7 @@ void Scene::update(float deltaTime)
 	//	_playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
 	if (_followPlayer)
 	{
-		_mainCameraTransform->setTarget(_playerTransform, vec3(-6, 1.5f, -8));
+		_mainCameraTransform->setTarget(_playerTransform, vec3(-6, -1.5f, -8));
 		_mainCameraTransform->followTarget(deltaTime * 3.0f);
 	}
 
@@ -77,7 +80,7 @@ void Scene::update(float deltaTime)
 		skeletalMeshTestTwo->update(deltaTime);
 	}
 
-	_uiSystem->update(deltaTime);
+
 }
 
 void Scene::draw()
@@ -134,6 +137,7 @@ void Scene::draw()
 
 void Scene::drawUI()
 {
+	if (_uiSystem)
 	_uiSystem->draw();
 }
 
@@ -338,14 +342,16 @@ void Scene::loadOldFaithful()
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
 	testCanvas->addImage("Test", testImage);
-	UIKeyFrame frame1(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-	UIKeyFrame frame2(0.8f, vec3(5.0f, 1.0f, 0.0f), vec3(2.0f, 2.0f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
 
 	vector<UIKeyFrame*> testVec;
-	testVec.push_back(&frame1);
-	testVec.push_back(&frame2);
+	testVec.push_back(frame1);
+	testVec.push_back(frame2);
+	testVec.push_back(frame3);
 
-	UIAnimation* animu = new UIAnimation(0.8f, "test", testVec);
+	UIAnimation* animu = new UIAnimation("test", testVec);
 
 	testImage->getAnimator()->addAnimation(animu);
 
@@ -578,6 +584,7 @@ void Scene::mouseClicked(int button, int state, int x, int y)
 		{
 		case GLUT_LEFT_BUTTON:
 			io.MouseDown[0] = true;
+			_uiSystem->checkClick(x, y);
 			break;
 		case GLUT_RIGHT_BUTTON:
 			io.MouseDown[1] = true;

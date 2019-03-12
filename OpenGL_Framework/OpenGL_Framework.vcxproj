@@ -144,6 +144,7 @@
     <ClCompile Include="TransformSystem.cpp" />
     <ClCompile Include="UIAnimation.cpp" />
     <ClCompile Include="UIAnimator.cpp" />
+    <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UICanvas.cpp" />
     <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="UIImage.cpp" />

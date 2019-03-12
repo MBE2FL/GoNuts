@@ -1,13 +1,17 @@
 #pragma once
 #include "UIImage.h"
 
-class Button: public UIImage
+class UIButton: public UIImage
 {
 public:
-	Button();
-	~Button();
+	UIButton();
+	~UIButton();
+
+	bool getHover() const;
+	void setHover(const bool isHover);
 
 private:
 
 	bool isClicked = false;
+	bool _isHover = false;
 };

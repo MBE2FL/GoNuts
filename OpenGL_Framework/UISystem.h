@@ -18,6 +18,7 @@ public:
 	void addCanvas(const string& name, UICanvas* canvas);
 	void deleteCanvas(const string& name);
 	Entity* getCamera() const;
+	void checkClick(int x, int y);
 
 private:
 	unordered_map<string, UICanvas*> canvases;

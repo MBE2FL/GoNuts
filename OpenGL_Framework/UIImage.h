@@ -15,8 +15,8 @@ public:
 	void setAnimation(UIAnimation*);
 	UIAnimator* getAnimator();
 
-	vec3 getlocalPosition() const;
-	void setlocalPosition(const vec3& pos);
+	vec3 getLocalPosition() const;
+	void setLocalPosition(const vec3& pos);
 	vec3 getScale() const;
 	void setScale(const vec3& scale);
 	vec3 getLocalRotation() const;
@@ -27,8 +27,6 @@ public:
 	TransformComponent* getTransform() const;
 	float getAlpha() const;
 	void setAlpha(const float alpha);
-	bool getHover() const;
-	void setHover(const bool isHover);
 	Texture* getTexture() const;
 	void setTexture(Texture* texture);
 	Mesh* getMesh() const;
@@ -40,6 +38,5 @@ private:
 	Texture* _texture;
 	TransformComponent* _transform;
 	float _alpha;
-	bool _isHover = false;
 	UIAnimator* _animator = nullptr;
 };

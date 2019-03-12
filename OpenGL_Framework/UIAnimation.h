@@ -8,7 +8,7 @@ using std::vector;
 class UIAnimation
 {
 public:
-	UIAnimation(float _duration,string _name, vector<UIKeyFrame*> _keyFrames);
+	UIAnimation(string _name, vector<UIKeyFrame*> _keyFrames);
 
 	float getDuration();
 	string getName();

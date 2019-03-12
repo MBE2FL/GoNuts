@@ -2,7 +2,7 @@
 
 UIImage::UIImage(const vec3 & pos, const vec3 & scale, const vec3 & localRotation, const float alpha)
 {
-	_animator = new UIAnimator;
+	_animator = new UIAnimator(this);
 	_transform = new TransformComponent();
 	_transform->setLocalPosition(pos);
 	_transform->setLocalScale(scale);
@@ -22,12 +22,12 @@ UIAnimator * UIImage::getAnimator()
 	return _animator;
 }
 
-vec3 UIImage::getlocalPosition() const
+vec3 UIImage::getLocalPosition() const
 {
 	return _transform->getLocalPosition();
 }
 
-void UIImage::setlocalPosition(const vec3 & pos)
+void UIImage::setLocalPosition(const vec3 & pos)
 {
 	_transform->setLocalPosition(pos);
 }
@@ -80,16 +80,6 @@ float UIImage::getAlpha() const
 void UIImage::setAlpha(const float alpha)
 {
 	_alpha = alpha;
-}
-
-bool UIImage::getHover() const
-{
-	return _isHover;
-}
-
-void UIImage::setHover(const bool isHover)
-{
-	_isHover = isHover;
 }
 
 Texture * UIImage::getTexture() const
