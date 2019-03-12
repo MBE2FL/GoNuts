@@ -89,6 +89,7 @@ public:
 	TransformComponent* getMainCameraTransform() const;
 	void createTables(sqlite3 * db, char * errMsg);
 
+	TransformComponent* getPlayTrans() { return _playerTransform; }
 private:
 	string _name;
 	string _filename;

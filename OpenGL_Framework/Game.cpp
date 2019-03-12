@@ -24,9 +24,10 @@ void Game::initializeGame()
 	glEnable(GL_MULTISAMPLE);
 
 	Framebuffer::initFrameBuffers();
-	frameBuffer.addDepthTarget();
-	frameBuffer.addColorTarget(GL_RGB8);
-	frameBuffer.init(1900, 1000);
+	gbuffer.init(1900, 1000);
+	//frameBufferOutline.addDepthTarget();
+	frameBufferOutline.addColorTarget(GL_RGB8);
+	frameBufferOutline.init(1900, 1000);
 
 	frameBufferLUT.addColorTarget(GL_RGB8);
 	frameBufferLUT.init(1900, 1000);
@@ -35,13 +36,14 @@ void Game::initializeGame()
 	frameBufferShadow.init(2048, 2048);
 
 	// Load shaders and mesh
-	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
+	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
-	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/PassThrough - Copy.frag");
+	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/UI.frag");
 
+	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
@@ -342,30 +344,105 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 
-	frameBuffer.clear();
-	frameBuffer.bind();
-	//glClear(GL_DEPTH_BUFFER_BIT);
-	////_meshRendererSystem->draw(light, spotLight);
+	gbuffer.clear();
+	gbuffer.setViewport();
+	gbuffer.bind();
 	_currentScene->draw();
+	gbuffer.unbind();
 
-	frameBuffer.unbind();
+	
+	//shaderGbuffer.bind();
+	//
+	//gbuffer.bindDepthAsTexture(0);
+	//gbuffer.bindColorAsTexture(0, 1);
+	//gbuffer.bindColorAsTexture(1, 2);
+	//gbuffer.bindResolution();
+	//frameBufferOutline.clear();
+	//frameBufferOutline.bind();
+	////glClear(GL_DEPTH_BUFFER_BIT);
+	//////_meshRendererSystem->draw(light, spotLight);
+	////_currentScene->draw();
+	//
+	//gbuffer.renderToFSQ();
+	////gbuffer.drawFSQ();
+	//frameBufferOutline.unbind();
+	//
+	//gbuffer.unbindTexture(2);
+	//gbuffer.unbindTexture(1);
+	//gbuffer.unbindTexture(0);
+	//shaderGbuffer.unBind();
+	//
+	//
+	//
+	//
+	//shaderOutline.bind();
+	//shaderOutline.sendUniform("outline", outline);
+	//frameBufferOutline.bindColorAsTexture(0, 0);
+	//glViewport(0, 0, 1900, 1000);
+	//
+	//frameBufferLUT.clear();
+	//frameBufferLUT.bind();
+	//
+	////frameBufferOutline.renderToFSQ();
+	//frameBufferOutline.drawFSQ();
+	//frameBufferLUT.unbind();
+	//
+	//frameBufferOutline.unbindTexture(0);//texture
+	//
+	//shaderOutline.unBind();
+	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+	mat4 uProjInverse = camera->getProjection().getInverse();
+
+	TransformComponent* playerTrans = _currentScene->getPlayTrans();
 
 	shaderOutline.bind();
 	shaderOutline.sendUniform("outline", outline);
-	
-	frameBuffer.bindColorAsTexture(0, 0);
+	shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+	shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
+
+	gbuffer.bindColorAsTexture(0, 0);
+	gbuffer.bindColorAsTexture(1, 1);
+	gbuffer.bindDepthAsTexture(2);
+	gbuffer.bindResolution();
 	glViewport(0, 0, 1900, 1000);
 
 	frameBufferLUT.clear();
 	frameBufferLUT.bind();
-	frameBuffer.drawFSQ();
-	_currentScene->drawUI();
+
+	//frameBufferOutline.renderToFSQ();
+	gbuffer.drawFSQ();
 	frameBufferLUT.unbind();
 
-	frameBuffer.unbindTexture(0);//texture
-	
+	gbuffer.unbindTexture(0);//texture
+	gbuffer.unbindTexture(1);//texture
+	gbuffer.unbindTexture(2);//texture
+
 	shaderOutline.unBind();
 
+
+
+	//shaderGbuffer.bind();
+	//gbuffer.bindDepthAsTexture(0);
+	//frameBufferLUT.bindColorAsTexture(0, 1);
+	//gbuffer.bindColorAsTexture(1, 2);
+	//glViewport(0, 0, 1900, 1000);
+	//
+	//frameBufferOutline.clear();
+	//frameBufferOutline.bind();
+	//
+	////frameBufferLUT.renderToFSQ();
+	//gbuffer.drawFSQ();
+	//
+	//frameBufferOutline.unbind();
+	//gbuffer.unbindTexture(2);
+	//frameBufferLUT.unbindTexture(1);
+	//gbuffer.unbindTexture(0);
+	//
+	//shaderGbuffer.unBind();
+
+
+
+	
 	shaderLUT.bind();
 
 	if(lut)
@@ -375,10 +452,11 @@ void Game::draw()
 
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
-	frameBufferLUT.drawFSQ();
+	Framebuffer::drawFSQ();
 	frameBufferLUT.unbindTexture(0);
 	shaderLUT.unBind();
 
+	_currentScene->drawUI();
 
 	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);

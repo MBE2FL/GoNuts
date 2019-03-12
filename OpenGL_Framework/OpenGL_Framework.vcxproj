@@ -60,8 +60,8 @@
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /Y /S /E ".\bin*.dll" "$(SolutionDir)$(Configuration)"
+xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -83,8 +83,8 @@
       <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /Y /S /E ".\bin*.dll" "$(SolutionDir)$(Configuration)"
+xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
