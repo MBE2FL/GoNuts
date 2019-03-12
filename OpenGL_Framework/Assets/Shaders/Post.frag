@@ -9,7 +9,7 @@ Copyright (C) 2015-2017 Stephen Thompson
 
 #version 420 //Version of OpenGL we're using. - 4.2
 
-uniform sampler2D uSceneTex; 
+layout(binding = 0) uniform sampler2D uSceneTex; 
 //layout(binding = 30) uniform sampler3D uLUTTex;
 uniform bool outline;
 
@@ -71,7 +71,7 @@ void main()
 	}
 
 
-	//outColor.rgb = source.rgb;
+	//outColor.rgb = vec3(1,0,0);
 	outColor.a = 1.0;
 
 }

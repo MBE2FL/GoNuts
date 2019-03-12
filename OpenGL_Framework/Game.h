@@ -83,11 +83,13 @@ private:
 	Entity* _testEntity2;
 
 
-	Framebuffer frameBuffer;
+	Framebuffer frameBufferOutline;
 	Framebuffer frameBufferLUT;
+	GBuffer gbuffer;
 
 	Framebuffer frameBufferShadow;
 
+	ShaderProgram shaderGbuffer;
 	ShaderProgram shaderOutline;
 	ShaderProgram shaderLUT;
 
