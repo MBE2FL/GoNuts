@@ -14,13 +14,16 @@ layout(location = 2) in vec3 in_normal;
 layout(location = 3) in vec4 in_jointIndices; // NEW
 layout(location = 4) in vec4 in_weights; // NEW
 
-out vec2 texCoord;
-out vec3 normal;
-out vec3 position;
-
+struct vData
+{
+	vec2 texcoord;
+	vec3 norm;
+	vec3 pos;
+};
+layout(location = 0) out vData o;
 void main()
 {
-	texCoord = in_uv;
+	o.texcoord = in_uv;
 	//normal = mat3(uView) * mat3(uModel) * in_normal;
 
 	vec4 totalLocalPos = vec4(0.0, 0.0, 0.0, 0.0);
@@ -47,7 +50,7 @@ void main()
 		totalNormal += worldNormal * in_weights[i];
 	}
 
-	normal = mat3(uView) * mat3(uModel) * totalNormal.xyz;
+	o.norm = mat3(uView) * mat3(uModel) * totalNormal.xyz;
 
 	//totalLocalPos = jointTransforms[6] * vec4(in_vert, 1.0);
 
@@ -56,5 +59,5 @@ void main()
 
 	gl_Position = uProj * viewSpace;
 
-	position = viewSpace.xyz;
+	o.pos = viewSpace.xyz;
 }

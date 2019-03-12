@@ -17,9 +17,14 @@ layout(binding = 0)uniform sampler2D uTexDepth;
 layout(binding = 1)uniform sampler2D uTex;
 layout(binding = 2)uniform sampler2D uTexNormal;
 
-in vec2 texCoord;
-in vec3 normal;
-in vec3 position;
+struct vData
+{
+	vec2 texcoord;
+	vec3 norm;
+	vec3 pos;
+};
+layout(location = 0) in vData o;
+
 
 out vec4 outColour;
 
@@ -27,7 +32,7 @@ const float levels = 3;
 
 void main()
 {
-	vec2 textureCoord = vec2(texCoord.x, -texCoord.y);
+	vec2 textureCoord = vec2(o.texcoord.x, -o.texcoord.y);
 
 	vec4 textureColour = texture(uTex, textureCoord);
 	vec3 N;
@@ -35,7 +40,7 @@ void main()
 	//if (NormalTex.rgb != vec3(0,0,0)) N = NormalTex.rgb; 
 	N = NormalTex.rgb;
 
-	vec3 P = position;
+	vec3 P = o.pos;
 	vec3 L = normalize(lightPosition.xyz - P);
 
 	float diffuseLight = max(dot(N, L), 0.05);

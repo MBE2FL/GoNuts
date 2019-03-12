@@ -36,7 +36,7 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 	_shadowCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, shadowCamera);
 	_shadowCameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, shadowCamera);
 	//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
-	mat4 shadowCameraInverse = _shadowCameraTrans->getLocalToWorldMatrix().getInverse();
+	//mat4 shadowCameraInverse = _shadowCameraTrans->getLocalToWorldMatrix().getInverse();
 
 
 

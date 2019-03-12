@@ -390,10 +390,20 @@ void Game::draw()
 	//frameBufferOutline.unbindTexture(0);//texture
 	//
 	//shaderOutline.unBind();
+	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+	mat4 uProjInverse = camera->getProjection().getInverse();
+
+	TransformComponent* playerTrans = _currentScene->getPlayTrans();
 
 	shaderOutline.bind();
 	shaderOutline.sendUniform("outline", outline);
+	shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+	shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
+
 	gbuffer.bindColorAsTexture(0, 0);
+	gbuffer.bindColorAsTexture(1, 1);
+	gbuffer.bindDepthAsTexture(2);
+	gbuffer.bindResolution();
 	glViewport(0, 0, 1900, 1000);
 
 	frameBufferLUT.clear();
@@ -404,8 +414,33 @@ void Game::draw()
 	frameBufferLUT.unbind();
 
 	gbuffer.unbindTexture(0);//texture
+	gbuffer.unbindTexture(1);//texture
+	gbuffer.unbindTexture(2);//texture
 
 	shaderOutline.unBind();
+
+
+
+	//shaderGbuffer.bind();
+	//gbuffer.bindDepthAsTexture(0);
+	//frameBufferLUT.bindColorAsTexture(0, 1);
+	//gbuffer.bindColorAsTexture(1, 2);
+	//glViewport(0, 0, 1900, 1000);
+	//
+	//frameBufferOutline.clear();
+	//frameBufferOutline.bind();
+	//
+	////frameBufferLUT.renderToFSQ();
+	//gbuffer.drawFSQ();
+	//
+	//frameBufferOutline.unbind();
+	//gbuffer.unbindTexture(2);
+	//frameBufferLUT.unbindTexture(1);
+	//gbuffer.unbindTexture(0);
+	//
+	//shaderGbuffer.unBind();
+
+
 
 	
 	shaderLUT.bind();

@@ -20,7 +20,7 @@ void main()
 	vec4 albedoColor = texture(uTexAlbedo, texOffset);
 	if(albedoColor.a < 0.5)	discard;
 	
-	outColor = albedoColor.rgb;
+	outColor = albedoColor.rgb * vec3(0.7);
 
 	// Fix length after rasterizer interpolates
 	outNormal = normalize(o.norm) * 0.5 + 0.5;
