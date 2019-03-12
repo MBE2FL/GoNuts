@@ -326,7 +326,7 @@ void Scene::loadOldFaithful()
 	string path = "./Assets/Test Exporter/Character Running/";
 	//string path = "./Assets/Test Exporter/Test/";
 	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
-	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Jump.nutAnim");
+	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
 	skeletalMeshTestTwo->_isSkeletal = true;
 
 	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);

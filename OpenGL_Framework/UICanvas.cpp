@@ -74,6 +74,11 @@ void UICanvas::addImage(const string & name, UIImage * image)
 	_images[name] = image;
 }
 
+void UICanvas::addButton(UIButton* button)
+{
+	buttons.push_back(button);
+}
+
 void UICanvas::deleteImage(const string & name)
 {
 	_images.erase(name);

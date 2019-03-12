@@ -55,7 +55,7 @@ Entity * UISystem::getCamera() const
 
 void UISystem::checkClick(int x, int y)
 {
-
+	
 }
 
 void UISystem::init(EntityManager * entityManager)
