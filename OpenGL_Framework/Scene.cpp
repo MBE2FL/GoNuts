@@ -12,6 +12,9 @@ Scene::Scene(const string & name)
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = EntityFactory::getInstance();
 
+	_uiSystem = new UISystem(_entityManager);
+	_uiCamera = _uiSystem->getCamera();
+
 #ifdef _DEBUG
 	_guiHelper = GUIHelper::getInstance();
 #endif
@@ -23,6 +26,9 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
+	if (_uiSystem)
+		_uiSystem->update(deltaTime);
+
 	if (_entityFactory->getAcornCount() > 18)
 	{
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
@@ -32,11 +38,11 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
-	light->setPosition(vec3(_playerTransform->getLocalPosition().x - 2.0f, light->getPosition().y, light->getPosition().z));
+	light->setPosition(_playerTransform->getLocalPosition() + vec3(0.0f, -0.5f, 0.0f));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
-		_playerTransform->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
+		_playerTransform->setWorldPosition(_playerTransform->getPlayerSpawnPosition());
 		_playerPhysicsBody->setVelocity(vec3(0.0f));
 		_playerTransform->setLocalScale(vec3(0.2f));
 	}
@@ -68,17 +74,18 @@ void Scene::update(float deltaTime)
 
 
 	skeletalTest = true;
-	if (skeletalTest)
+	if (skeletalTest && skeletalMeshTestTwo)
 	{
 		//skeletalMeshTest->update(deltaTime);
-		//skeletalMeshTestTwo->update(deltaTime);
+		skeletalMeshTestTwo->update(deltaTime);
 	}
+
+
 }
 
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
-
 
 #ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -126,6 +133,12 @@ void Scene::draw()
 	// Update imgui draw data
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
+}
+
+void Scene::drawUI()
+{
+	if (_uiSystem)
+	_uiSystem->draw();
 }
 
 void Scene::imguiDraw()
@@ -253,6 +266,10 @@ void Scene::loadOldFaithful()
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
+	_shadowCamera = _entityFactory->createOrthographicCamera(100, -100, 100, -100, 300, -300);
+	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
+	EntityManager::setShadowCamera(_shadowCamera);
+
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
@@ -278,31 +295,72 @@ void Scene::loadOldFaithful()
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
 
+	entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
+	skeletalMeshTest = new SkeletalMesh();
+	//skeletalMeshTest->loadFromFile("./Assets/Better Collada Test/Character Running.dae");
+	//skeletalMeshTest->loadFromFile("./Assets/model.dae");
+	skeletalMeshTest->loadFromFileSMD("./Assets/Source Exports/Cube.smd", "./Assets/Source Exports/anims/ArmatureAction.smd", 24.0f);
+	skeletalMeshTest->_isSkeletal = true;
+	
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
+
+	// ########## FBX MODEL
 	//entity = _entityFactory->createEmpty(vec3(1.0f, 2.6f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
 	//skeletalMeshTest = new SkeletalMesh();
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//skeletalMeshTest->loadFromFile("./Assets/ANIM_TEST.dae");
+	//skeletalMeshTest->loadFromFileFBX("./Assets/Character Running.fbx");
 	//skeletalMeshTest->_isSkeletal = true;
-	//
+
 	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
 	//vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
 	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
 	//_entityManager->addComponent(meshRenderer, entity);
 
+	_followPlayer = false;
+	entity = _entityFactory->createEmpty(vec3(0.0f, 0.8f, 0.0f), vec3(0.6f), nullptr, "SkeletonTwo");
+	skeletalMeshTestTwo = new SkeletalMesh();
+	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	string path = "./Assets/Test Exporter/Character Running/";
+	//string path = "./Assets/Test Exporter/Test/";
+	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
+	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
+	skeletalMeshTestTwo->_isSkeletal = true;
 
-	//entity = _entityFactory->createEmpty(vec3(1.0f, 7.0f, -5.0f), vec3(0.4f), nullptr, "SkeletonTwo");
-	//skeletalMeshTestTwo = new SkeletalMesh();
-	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//skeletalMeshTestTwo->loadFromFile("./Assets/fatboi.dae");
-	//skeletalMeshTestTwo->_isSkeletal = true;
-
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
-	//meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	//_entityManager->addComponent(meshRenderer, entity);
+	textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
+
+
+	UICanvas* testCanvas = new UICanvas();
+
+	UIImage* testImage = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
+
+	testCanvas->addImage("Test", testImage);
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+
+	vector<UIKeyFrame*> testVec;
+	testVec.push_back(frame1);
+	testVec.push_back(frame2);
+	testVec.push_back(frame3);
+
+	UIAnimation* animu = new UIAnimation("test", testVec);
+
+	testImage->getAnimator()->addAnimation(animu);
+
+	_uiSystem->addCanvas("TESTC", testCanvas);
+
 
 
 	light = new Light();
-	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
 	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
 	light->setDiffuse(vec3(0.6f));
@@ -339,7 +397,7 @@ void Scene::loadScene()
 	EntityManager::setMainCamera(_mainCamera);
 
 	light = new Light();
-	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
 	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
 	light->setDiffuse(vec3(0.6f));
@@ -432,6 +490,9 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		//skeletalTest = !skeletalTest;
 		ObjectLoader::getShaderProgram("SkeletalAnim")->reload();
 		break;
+	case 'b':
+		skeletalMeshTestTwo->getAnimator()->nextFrame();
+		break;
 	}
 
 	if (key == 'w' && !_playerPhysicsBody->getCanJump())
@@ -523,6 +584,7 @@ void Scene::mouseClicked(int button, int state, int x, int y)
 		{
 		case GLUT_LEFT_BUTTON:
 			io.MouseDown[0] = true;
+			_uiSystem->checkClick(x, y);
 			break;
 		case GLUT_RIGHT_BUTTON:
 			io.MouseDown[1] = true;

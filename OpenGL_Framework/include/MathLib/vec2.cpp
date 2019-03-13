@@ -1,6 +1,7 @@
 #include "vec2.h"
 
-vec2 vec2::Zero = vec2(0, 0);
+vec2 vec2::Zero = vec2(0.0f, 0.0f);
+vec2 vec2::One = vec2(1.0f, 1.0f);
 
 vec2::~vec2()
 {

@@ -63,6 +63,8 @@ public:
 	// #### Useful specific funtions ####
 	static void setMainCamera(Entity* camera);
 	static Entity* getMainCamera();
+	static void setShadowCamera(Entity* camera);
+	static Entity* getShadowCamera();
 	static TransformComponent* getPlayerTransform();
 	static void setPlayerTransform(TransformComponent* transform);
 	// #### Useful specific funtions ####
@@ -89,6 +91,7 @@ private:
 	static EntityManager* _instance;
 	static Entity* _mainCamera;
 	static TransformComponent* _playerTransform;
+	static Entity* _shadowCamera;
 };
 
 //template<typename T>

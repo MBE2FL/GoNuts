@@ -4,6 +4,7 @@
 #include <ostream>
 
 class vec4;
+class Quaternion;
 
 class mat4
 {
@@ -14,6 +15,8 @@ public:
 						0.0f, 0.0f, 0.0f, 1.0f };
 	mat4() {};
 	mat4(const mat4& other);
+	mat4(const vec3& position, vec3& eulerAngles);
+	mat4(const vec3& position, Quaternion& rotation);
 	~mat4() {};
 	//Text Output
 	friend std::ostream& operator<<(std::ostream& out, const mat4& source);

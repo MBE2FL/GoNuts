@@ -17,6 +17,9 @@ public:
 	TransformComponent();
 	~TransformComponent();
 
+	vec3 getPlayerSpawnPosition()const;
+	void setPlayerSpawnPosition(const vec3& newSpawn);
+
 	void setLocalPosition(const vec3& newPosition);
 	void setLocalRotation(const vec3& rotation);
 	void setLocalRotationAngleX(const float newAngle);
@@ -81,6 +84,9 @@ public:
 	void followTarget(const float speed);
 
 private:
+	//This is used for the players spawn position
+	vec3 _playerSpawnPosition = vec3(-3.0f, 8, -5.0f);
+
 	vec3 _localPosition;
 	vec3 _localRotation;
 	vec3 _orbitRotation;

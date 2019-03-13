@@ -53,6 +53,18 @@
     <Filter Include="Source Files\EntitySystem\Components\Animation">
       <UniqueIdentifier>{1c4aaab7-ccc0-4bef-9b42-3f72813f1825}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\EntitySystem\Components\Animation\UI">
+      <UniqueIdentifier>{df995147-73a0-46af-be2c-bec83af71841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EntitySystem\Components\Animation\Skeleton">
+      <UniqueIdentifier>{3b023ea5-f152-4055-9d3a-46e5fc9de43b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Components\Animation\Skeleton">
+      <UniqueIdentifier>{55ca955f-be57-4c2e-97b4-663eb4506e6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Components\Animation\UI">
+      <UniqueIdentifier>{cfb2ac35-298b-4a1c-8967-51b078e48d39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -188,36 +200,57 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Joint.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="SkeletalMesh.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="include\MathLib\Quaternion.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
     <ClCompile Include="FmodWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JointTransform.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyFrame.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="SAnimation.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="JointAnimation.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="include\TinyXML\tinyxml2.cpp" />
     <ClCompile Include="include\MathLib\ivec4.cpp">
       <Filter>Header Files\MathLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Joint.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="JointAnimation.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="JointTransform.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFrame.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="SAnimation.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalMesh.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="UIImage.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UICanvas.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UISystem.cpp">
+      <Filter>Source Files\EntitySystem\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="UIAnimation.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIAnimator.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIKeyFrame.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIButton.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -357,36 +390,57 @@
     <ClInclude Include="FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Joint.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="SkeletalMesh.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="include\MathLib\Quaternion.h">
       <Filter>Header Files\MathLib</Filter>
     </ClInclude>
     <ClInclude Include="FmodWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JointTransform.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="SAnimation.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyFrame.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animator.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="JointAnimation.h">
-      <Filter>Header Files\EntitySystem\Components\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="include\TinyXML\tinyxml2.h" />
     <ClInclude Include="include\MathLib\ivec4.h">
       <Filter>Header Files\MathLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalMesh.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Joint.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="JointAnimation.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="JointTransform.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFrame.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="SAnimation.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="UIImage.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UISystem.h">
+      <Filter>Header Files\EntitySystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="UICanvas.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIKeyFrame.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIAnimator.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIAnimation.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

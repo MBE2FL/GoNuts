@@ -5,10 +5,12 @@
 #include "tinyxml2.h"
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 
 using std::cerr;
 using std::endl;
 using std::sort;
+using std::unordered_map;
 
 #define MAX_JOINTS 70
 #define MAX_WEIGHTS 4
@@ -29,15 +31,33 @@ public:
 	vector<mat4> getJointTransforms();
 	unsigned int getNumOfJoints() const;
 
+
+	// Source tools SMD file functions
+	bool loadFromFileSMD(const string& armaturePath, const string& animPath, const float fps);
+	void loadJointsSMD(string& line, ifstream& file);
+	void loadBindPosesSMD(string& line, ifstream& file);
+	void loadTrianglesSMD(string& line, ifstream& file);
+	void createJointAnims(string& line, ifstream& file, unordered_map<size_t, JointAnimation*>& jointAnims);
+	void loadAnimSMD(string& line, ifstream& file, const float fps, unordered_map<size_t, JointAnimation*>& jointAnims);
+
+	// Custom NUT file functions
+	bool loadFromFileNUT(const string& armaturePath, const string& animPath);
+	void loadJointsNUT(string& line, ifstream& file);
+	void loadBindPosesNUT(string& line, ifstream& file);
+	void loadTrianglesNUT(string& line, ifstream& file);
+	void createJointAnimsNUT(string& line, ifstream& file);
+
+
+	// DEBUG
+	Animator* getAnimator() const;
+
 private:
 	Joint* _rootJoint;
 	unsigned int _numOfJoints;
 	Animator* _animator;
 
-
 	vector<ivec4> _jointIdsPerVertex;
 	vector<vec4> _jointWeightsPerVertex;
-
 
 	vector<Joint*> _joints;
 	vector<mat4> _jointTransforms;
@@ -47,6 +67,10 @@ private:
 	mat4 _zyCorrectionInverted;
 
 	vector<unsigned int> vertexIndices;
+
+	// Unordered joints loaded in from skin joints section.
+	unordered_map<string, Joint*> _skinJoints;
+
 
 
 	void getJointTransformsHelper(Joint* joint);
@@ -61,6 +85,9 @@ private:
 	void loadGeoFour(tinyxml2::XMLNode* rootNode);
 	void loadAnimTwo(tinyxml2::XMLNode* rootNode);
 	void loadJoints(tinyxml2::XMLNode* rootNode);
+	void loadJointsTwo(tinyxml2::XMLNode* rootNode);
 	void loadJointHierarchy(tinyxml2::XMLNode* rootNode);
+	void loadJointHierarchyTwo(tinyxml2::XMLNode* rootNode);
 	void loadJointHierarchyHelper(tinyxml2::XMLElement* jointNode, unsigned int* index);
+	void loadJointHierarchyHelperTwo(tinyxml2::XMLElement* jointNode);
 };

@@ -192,3 +192,13 @@ void Texture::setName(const string & name)
 {
 	_name = name;
 }
+
+int Texture::getSizeX() const
+{
+	return sizeX;
+}
+
+int Texture::getSizeY() const
+{
+	return sizeY;
+}

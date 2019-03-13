@@ -8,9 +8,28 @@ using tinyxml2::XMLError;
 using tinyxml2::XMLNode;
 using tinyxml2::XMLElement;
 
+
 struct VertexJointInfo
 {
 	unsigned int id;
+	float weight;
+};
+
+struct JointParent
+{
+	JointParent(Joint* _joint, size_t _parentId)
+	{
+		joint = _joint;
+		parentId = _parentId;
+	}
+
+	Joint* joint = nullptr;
+	size_t parentId = 0;
+};
+
+struct SkinJoint
+{
+	size_t id;
 	float weight;
 };
 
@@ -50,8 +69,9 @@ bool SkeletalMesh::loadFromFile(const string & path)
 	//loadGeoTwo(rootNode);
 	loadGeoFour(rootNode);
 	loadAnimTwo(rootNode);
-	loadJoints(rootNode);
-	loadJointHierarchy(rootNode);
+	//loadJoints(rootNode);
+	loadJointsTwo(rootNode);
+	loadJointHierarchyTwo(rootNode);
 
 
 	//ifstream file;
@@ -272,7 +292,15 @@ void SkeletalMesh::findLine(string & line, ifstream & file, const string & word)
 {
 	while (line.find(word) == string::npos)
 	{
-		std::getline(file, line);
+		// Search file for a line containing the specified word.
+		if (!file.eof())
+			std::getline(file, line);
+		// File does not contain a line with the specified word.
+		else
+		{
+			line = "";
+			break;
+		}
 	}
 }
 
@@ -800,6 +828,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		if (count == 1)
@@ -831,6 +862,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		if (count == 1)
@@ -862,6 +896,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		if (count == 1)
@@ -889,6 +926,9 @@ void SkeletalMesh::loadGeoFour(tinyxml2::XMLNode * rootNode)
 
 	while (std::getline(ss, word, ' '))
 	{
+		if (word == "")
+			continue;
+
 		++count;
 
 		// Vertex One
@@ -995,6 +1035,8 @@ void SkeletalMesh::loadAnimTwo(XMLNode * rootNode)
 
 
 	XMLElement* animNode = rootNode->FirstChildElement()->NextSiblingElement("library_animations")->FirstChildElement();
+	//XMLElement* test = animNode->FirstChildElement();
+	//test->Value();
 	XMLNode* sourceNode;
 	XMLNode* arrayNode;
 	string name;
@@ -1390,6 +1432,286 @@ void SkeletalMesh::loadJoints(XMLNode * rootNode)
 	uploadToGPU();
 }
 
+void SkeletalMesh::loadJointsTwo(tinyxml2::XMLNode * rootNode)
+{
+	XMLElement* controllerNode = rootNode->FirstChildElement()->NextSiblingElement("library_controllers")->FirstChildElement();
+	XMLNode* skinNode = controllerNode->FirstChild();
+	XMLNode* sourceNode = skinNode->FirstChildElement("source");
+	// Find array of joints.
+	XMLNode* arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joints.
+	stringstream ss(arrayNode->FirstChild()->Value());
+	string word;
+	unsigned int index = 0;
+	//vector<Joint*> joints;
+	Joint* joint = nullptr;
+
+	while (std::getline(ss, word, ' '))
+	{
+		joint = new Joint();
+		joint->setIndex(index);
+		joint->setName(word);
+		_joints.push_back(joint);
+		_skinJoints[word] = joint;
+
+		// Check if the current joint is the root joint.
+		//if (index == 0)
+		//	_rootJoint = joint;
+
+		++index;
+	}
+
+	_numOfJoints = _joints.size();
+
+	// Find array of joint bind transforms.
+	sourceNode = sourceNode->NextSibling();
+	arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joint bind transforms.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	unsigned int count = 0;
+	index = 0;
+	mat4 inverseBindTransform;
+
+	while (std::getline(ss, word, ' '))
+	{
+		++count;
+
+		// Row 1
+		if (count == 1)
+			inverseBindTransform.data[0] = stof(word);
+		else if (count == 2)
+			inverseBindTransform.data[4] = stof(word);
+		else if (count == 3)
+			inverseBindTransform.data[8] = stof(word);
+		else if (count == 4)
+			inverseBindTransform.data[12] = stof(word);
+		// Row 2
+		else if (count == 5)
+			inverseBindTransform.data[1] = stof(word);
+		else if (count == 6)
+			inverseBindTransform.data[5] = stof(word);
+		else if (count == 7)
+			inverseBindTransform.data[9] = stof(word);
+		else if (count == 8)
+			inverseBindTransform.data[13] = stof(word);
+		// Row 3
+		else if (count == 9)
+			inverseBindTransform.data[2] = stof(word);
+		else if (count == 10)
+			inverseBindTransform.data[6] = stof(word);
+		else if (count == 11)
+			inverseBindTransform.data[10] = stof(word);
+		else if (count == 12)
+			inverseBindTransform.data[14] = stof(word);
+		// Row 4
+		else if (count == 13)
+			inverseBindTransform.data[3] = stof(word);
+		else if (count == 14)
+			inverseBindTransform.data[7] = stof(word);
+		else if (count == 15)
+			inverseBindTransform.data[11] = stof(word);
+		else if (count == 16)
+		{
+			inverseBindTransform.data[15] = stof(word);
+
+			// Apply z to y axis correction.
+			//if (index == 2 || index == 3)
+			//{
+				//inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+				//mat4 Corr;
+				//Corr.rotateY(toRadians(180.0f));
+				//inverseBindTransform = Corr * inverseBindTransform * _zyCorrectionInverted;
+			//}
+			//else
+			//{
+				inverseBindTransform = inverseBindTransform * _zyCorrectionInverted;
+			//}
+
+			//_joints[index]->_loadedInInverseBindTransform = inverseBindTransform;
+			_joints[index]->setInverseBindTransform(inverseBindTransform);
+
+			++index;
+			count = 0;
+		}
+	}
+
+
+	// Find array of joint bind transforms.
+	sourceNode = sourceNode->NextSibling();
+	arrayNode = sourceNode->FirstChild();
+
+	// Load in array of joint bind transforms.
+	ss = stringstream(arrayNode->FirstChild()->Value());
+	vector<float> weights;
+
+	while (std::getline(ss, word, ' '))
+	{
+		weights.push_back(stof(word));
+	}
+
+
+
+	// Find arrays of joints and skin weights.
+	XMLNode* vertexWeightsNode = skinNode->FirstChildElement("vertex_weights");
+	XMLNode* vcountNode = vertexWeightsNode->FirstChildElement("vcount");
+	XMLNode* vcountArrayNode = vcountNode->FirstChild();
+	XMLNode* vNode = vertexWeightsNode->FirstChildElement("v");
+	XMLNode* vArrayNode = vNode->FirstChild();
+
+	// Load in array of joints and skin weights.
+	stringstream vcountSS(vcountArrayNode->Value());
+	stringstream vSS(vArrayNode->Value());
+
+	//vector<int> jointIDS;
+	//vector<float> jointWeights;
+	vector<VertexJointInfo> jointIDWeights;
+	VertexJointInfo info;
+
+	index = 0;
+
+
+	// Load all the joint/weight pairings in first.
+	while (std::getline(vSS, word, ' '))
+	{
+		++index;
+
+		if (index == 1)
+			info.id = stoul(word);
+		//jointIDS.push_back(stoul(word));
+		else if (index == 2)
+		{
+			info.weight = weights[stoi(word)];
+			jointIDWeights.push_back(info);
+			//jointWeights.push_back(weights[stoi(word)]);
+			index = 0;
+		}
+	}
+
+	index = 0;
+
+	ivec4 currVertexJointIDS;
+	vec4 currVertexJointWeights;
+	vector<VertexJointInfo> adjustedJointIDWeights;
+	vector<ivec4> jointIDS;
+	vector<vec4> jointWeights;
+
+	// Load in all joints affecting the vertices.
+	while (std::getline(vcountSS, word, ' '))
+	{
+		unsigned int vertexCount = stoul(word);
+
+		// Joint has more than the max of 4 joints affecting it.
+		if (vertexCount > 4)
+		{
+			// Copy all id/weight pairs.
+			for (unsigned int i = index; i < (index + vertexCount); ++i)
+			{
+				adjustedJointIDWeights.push_back(jointIDWeights[i]);
+			}
+
+
+			// Sort list of pairs.
+			sort(adjustedJointIDWeights.begin(), adjustedJointIDWeights.end(),
+				[](const VertexJointInfo& a, const VertexJointInfo& b) -> bool
+			{
+				return (a.weight > b.weight);
+			});
+
+
+			// Normalize weights of the top four pairs.
+			float weightTotal = 0.0f;
+
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				weightTotal += adjustedJointIDWeights[i].weight;
+			}
+
+			float normWeight = 0.0f;
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				info = adjustedJointIDWeights[i];
+				normWeight = info.weight / weightTotal;
+
+				if (i == 0)
+				{
+					currVertexJointIDS.x = info.id;
+					currVertexJointWeights.x = normWeight;
+				}
+				else if (i == 1)
+				{
+					currVertexJointIDS.y = info.id;
+					currVertexJointWeights.y = normWeight;
+				}
+				else if (i == 2)
+				{
+					currVertexJointIDS.z = info.id;
+					currVertexJointWeights.z = normWeight;
+				}
+				else if (i == 3)
+				{
+					currVertexJointIDS.w = info.id;
+					currVertexJointWeights.w = normWeight;
+				}
+			}
+
+			adjustedJointIDWeights.clear();
+
+		}
+		// Joint has the max of 4 joints or less affecting it.
+		else
+		{
+			unsigned int insertIndex = 0;
+			for (unsigned int i = index; i < (index + vertexCount); ++i)
+			{
+				info = jointIDWeights[i];
+
+				if (insertIndex == 0)
+				{
+					currVertexJointIDS.x = info.id;
+					currVertexJointWeights.x = info.weight;
+				}
+				else if (insertIndex == 1)
+				{
+					currVertexJointIDS.y = info.id;
+					currVertexJointWeights.y = info.weight;
+				}
+				else if (insertIndex == 2)
+				{
+					currVertexJointIDS.z = info.id;
+					currVertexJointWeights.z = info.weight;
+				}
+				else if (insertIndex == 3)
+				{
+					currVertexJointIDS.w = info.id;
+					currVertexJointWeights.w = info.weight;
+				}
+
+				++insertIndex;
+			}
+		}
+
+		jointIDS.push_back(currVertexJointIDS);
+		jointWeights.push_back(currVertexJointWeights);
+		currVertexJointIDS = ivec4(0);
+		currVertexJointWeights = vec4(0.0f);
+		index += vertexCount;
+	}
+
+
+	// Create a joint id and weight for each time the same vertex appears in the mesh.
+	for (unsigned int vertexIndex : vertexIndices)
+	{
+		_jointIdsPerVertex.push_back(jointIDS[vertexIndex]);
+		_jointWeightsPerVertex.push_back(jointWeights[vertexIndex]);
+	}
+
+	uploadToGPU();
+
+	_joints.clear();
+}
+
 void SkeletalMesh::loadJointHierarchy(XMLNode * rootNode)
 {
 	XMLElement* visualSceneNode = rootNode->FirstChildElement()->NextSiblingElement("library_visual_scenes")->FirstChildElement();
@@ -1404,6 +1726,23 @@ void SkeletalMesh::loadJointHierarchy(XMLNode * rootNode)
 
 	// After loading in all the joint's local bind transforms, calculate their inverse bind transforms.
 	//_rootJoint->calculateInverseBindTransform(mat4::Identity);
+}
+
+void SkeletalMesh::loadJointHierarchyTwo(tinyxml2::XMLNode * rootNode)
+{
+	XMLElement* visualSceneNode = rootNode->FirstChildElement()->NextSiblingElement("library_visual_scenes")->FirstChildElement();
+
+	// Find root joint.
+	XMLElement* armatureNode = visualSceneNode->FirstChildElement("node");
+	while (armatureNode && (strcmp(armatureNode->Attribute("id"), "Armature") != 0))
+	{
+		armatureNode = armatureNode->NextSiblingElement();
+	}
+
+	XMLElement* jointNode = armatureNode->FirstChildElement("node");
+
+	// Load in joint hierarchy.
+	loadJointHierarchyHelperTwo(jointNode);
 }
 
 void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int * index)
@@ -1495,4 +1834,1292 @@ void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int
 		loadJointHierarchyHelper(childNode, index);
 		childNode = childNode->NextSiblingElement("node");
 	}
+}
+
+void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
+{
+	// Retrieve this joint's name.
+	string jointID = jointNode->FirstAttribute()->Value();
+	
+
+	//Joint* joint = _joints[*index];
+	Joint* joint = nullptr;
+	 //Joint* joint = _skinJoints[jointID];
+
+	//if (_skinJoints.find(jointID) == _skinJoints.end())
+	//{
+	//	jointID = jointNode->Attribute("name");
+
+	//	if (_skinJoints.find(jointID) == _skinJoints.end())
+	//	{
+	//		system("pause");
+	//		exit(0);
+	//	}
+	//}
+
+	if (_skinJoints.find(jointID) == _skinJoints.end())
+	{
+		string subJointID = jointID.substr(jointID.find('_') + 1, string::npos);
+
+		if (_skinJoints.find(subJointID) == _skinJoints.end())
+		{
+			system("pause");
+			exit(0);
+		}
+		else
+		{
+			joint = _skinJoints[subJointID];
+			joint->setName(jointID);
+		}
+	}
+	else
+		joint = _skinJoints[jointID];
+
+
+	_joints.push_back(joint);
+
+	if (_joints.size() == 1)
+		_rootJoint = joint;
+
+
+	XMLElement* childNode = jointNode->FirstChildElement("node");
+
+	// Go through all of this joint's children.
+	while (childNode)
+	{
+		// This joint has a child.
+		jointID = childNode->FirstAttribute()->Value();
+
+		//if (_skinJoints.find(jointID) == _skinJoints.end())
+		//{
+		//	jointID = childNode->Attribute("name");
+
+		//	if (_skinJoints.find(jointID) == _skinJoints.end())
+		//	{
+		//		system("pause");
+		//		exit(0);
+		//	}
+		//}
+
+		if (_skinJoints.find(jointID) == _skinJoints.end())
+		{
+			jointID = jointID.substr(jointID.find('_') + 1, string::npos);
+
+			if (_skinJoints.find(jointID) == _skinJoints.end())
+			{
+				system("pause");
+				exit(0);
+			}
+		}
+
+		joint->addChild(_skinJoints[jointID]);
+
+		loadJointHierarchyHelperTwo(childNode);
+
+		childNode = childNode->NextSiblingElement("node");
+	}
+}
+
+
+
+
+bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & animPath, const float fps)
+{
+	// Load in armature file.
+	ifstream file;
+	file.open(armaturePath);
+
+	if (!file.is_open())
+	{
+		cerr << "Could not open armature SMD file!" << endl;
+		system("pause");
+		return false;
+	}
+
+	string line;
+
+	// Find the nodes (joint) section of the SMD file.
+	findLine(line, file, "nodes");
+
+	if (line.empty())
+	{
+		cerr << "Armature SMD file does not contain a nodes (joint) section!" << endl;
+		system("pause");
+		return false;
+	}
+	// Load in the joints, and their hierarchy.
+	loadJointsSMD(line, file);
+
+
+	// Find the skeleton (bind pose) section of the SMD file.
+	findLine(line, file, "skeleton");
+
+	if (line.empty())
+	{
+		cerr << "Armature SMD file does not contain a skeleton (bind pose) section!" << endl;
+		system("pause");
+		return false;
+	}
+	// Load in the bind poses.
+	loadBindPosesSMD(line, file);
+
+
+	// Find the triangles section of the SMD file.
+	findLine(line, file, "triangles");
+
+	if (line.empty())
+	{
+		cerr << "Armature SMD file does not contain a triangles section!" << endl;
+		system("pause");
+		return false;
+	}
+	// Load in the bind poses.
+	loadTrianglesSMD(line, file);
+
+	file.close();
+
+
+
+	// Load in animation file.
+	file.open(animPath);
+
+	if (!file.is_open())
+	{
+		cerr << "Could not open animation SMD file!" << endl;
+		system("pause");
+		return false;
+	}
+
+	// Find the nodes (joint) section of the SMD file.
+	findLine(line, file, "nodes");
+
+	if (line.empty())
+	{
+		cerr << "Animation SMD file does not contain a nodes (joint) section!" << endl;
+		system("pause");
+		return false;
+	}
+	// Load in joints, and create joint animations for each joint.
+	unordered_map<size_t, JointAnimation*> jointAnims;
+	createJointAnims(line, file, jointAnims);
+
+
+	// Find the skeleton (animation poses) section of the SMD file.
+	findLine(line, file, "skeleton");
+
+	if (line.empty())
+	{
+		cerr << "Animation SMD file does not contain a skeleton (animation poses) section!" << endl;
+		system("pause");
+		return false;
+	}
+	// Load in the animation poses.
+	loadAnimSMD(line, file, fps, jointAnims);
+
+
+	return true;
+}
+
+void SkeletalMesh::loadJointsSMD(string & line, ifstream & file)
+{
+	getNextLine(line, file);
+
+	int parentId = 0;
+	vector<JointParent*> jointParents;
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		Joint* joint = nullptr;
+		JointParent* jointParent = nullptr;
+
+		// Extract joint id, name, and parent id from current line.
+		while (std::getline(ss, word, '"'))
+		{
+			// Create a new joint, with the joint index stored in word.
+			if (wordIndex == 0)
+			{
+				joint = new Joint();
+				joint->setIndex(stoi(word));
+
+				++wordIndex;
+			}
+			// Set the joint's name.
+			else if (wordIndex == 1)
+			{
+				joint->setName(word);
+
+				++wordIndex;
+			}
+			// Find the joint's parent, if any.
+			else
+			{
+				// Store joint.
+				_joints.push_back(joint);
+
+				parentId = stoi(word);
+
+				// Joint has a parent.
+				if (parentId > -1)
+				{
+					jointParent = new JointParent(joint, parentId);
+					jointParents.push_back(jointParent);
+				}
+				// Joint has no parent, and is the root joint.
+				else
+				{
+					_rootJoint = joint;
+				}
+
+				wordIndex = 0;
+			}
+		}
+
+		getNextLine(line, file);
+	}
+
+	_numOfJoints = _joints.size();
+
+	// Set up joint hierarchy
+	for (JointParent* jp : jointParents)
+	{
+		parentId = jp->parentId;
+		_joints[parentId]->addChild(jp->joint);
+	}
+}
+
+void SkeletalMesh::loadBindPosesSMD(string & line, ifstream & file)
+{
+	getNextLine(line, file);
+	getNextLine(line, file);
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		Joint* joint = nullptr;
+		vec3 position;
+		vec3 rotation;
+		
+
+		// Extract joint id, position, and rotation from current line.
+		while (std::getline(ss, word, ' '))
+		{
+			if (word == "")
+				continue;
+
+			// Find the joint, with the joint index stored in word.
+			if (wordIndex == 0)
+			{
+				joint = _joints[stoi(word)];
+
+				++wordIndex;
+			}
+			// Get pos.X.
+			else if (wordIndex == 1)
+			{
+				position.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get pos.Y.
+			else if (wordIndex == 2)
+			{
+				position.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get pos.Z.
+			else if (wordIndex == 3)
+			{
+				position.z = stof(word);
+
+				++wordIndex;
+			}
+			// Get rot.X.
+			else if (wordIndex == 4)
+			{
+				rotation.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get rot.Y.
+			else if (wordIndex == 5)
+			{
+				rotation.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get rot.z.
+			else if (wordIndex == 6)
+			{
+				rotation.z = stof(word);
+
+				wordIndex = 0;
+
+				// Create bind pose transformation matrix.
+				mat4 localBindPose = mat4(position, rotation);
+				joint->setLocalBindTransform(localBindPose);
+			}
+			// Error while parsing bind pose.
+			else
+			{
+				cerr << "Error parsing in bind pose!" << endl;
+				system("pause");
+			}
+		}
+
+		getNextLine(line, file);
+	}
+
+
+	// Compute the inverse local bind pose for each joint.
+	_rootJoint->calculateInverseBindTransform(mat4::Identity);
+}
+
+void SkeletalMesh::loadTrianglesSMD(string & line, ifstream & file)
+{
+	getNextLine(line, file); // Skip "Material" line
+	getNextLine(line, file);
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		vec4 vertex;
+		vec4 normal;
+		vec4 uv;
+		SkinJoint* skinJoint = nullptr;
+		vector<SkinJoint*> skinJoints;
+		size_t numOfJoints = 0;
+
+
+		// Extract vertex, normal, uv, number of joints affecting this vertex, and each joint's id with it's weight from the current line.
+		while (std::getline(ss, word, ' '))
+		{
+			if (word == "")
+				continue;
+
+
+			if (wordIndex == 0)
+			{
+				++wordIndex;
+				continue;
+			}
+			// Get vertex.X.
+			else if (wordIndex == 1)
+			{
+				vertex.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get vertex.Y.
+			else if (wordIndex == 2)
+			{
+				vertex.y = stof(word);;
+
+				++wordIndex;
+			}
+			// Get vertex.Z.
+			else if (wordIndex == 3)
+			{
+				vertex.z = stof(word);
+				dataVertex.push_back(vertex);
+
+				++wordIndex;
+			}
+			// Get normal.X.
+			else if (wordIndex == 4)
+			{
+				normal.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get normal.Y.
+			else if (wordIndex == 5)
+			{
+				normal.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get normal.Z.
+			else if (wordIndex == 6)
+			{
+				normal.z = stof(word);
+				dataNormal.push_back(normal);
+
+				++wordIndex;
+			}
+			// Get uv.X.
+			else if (wordIndex == 7)
+			{
+				uv.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get uv.Y.
+			else if (wordIndex == 8)
+			{
+				uv.y = stof(word);
+				dataTexture.push_back(uv);
+
+				++wordIndex;
+			}
+			// Get total number of joints.
+			else if (wordIndex == 9)
+			{
+				numOfJoints = stoi(word);
+
+				// Get all the joint ids and their weights.
+				for (size_t i = 0; i < numOfJoints; ++i)
+				{
+					std::getline(ss, word, ' ');
+
+					// Get joint id.
+					skinJoint = new SkinJoint();
+					skinJoint->id = stoi(word);
+
+					std::getline(ss, word, ' ');
+
+					// Get joint weight.
+					skinJoint->weight = stof(word);
+
+
+					skinJoints.push_back(skinJoint);
+				}
+
+				// Recalculate joint weights, if there are more than four skin joints.
+				if (skinJoints.size() > 4)
+				{
+					// Sort list of pairs, from the most influential joints to the least.
+					sort(skinJoints.begin(), skinJoints.end(),
+						[](SkinJoint* a, SkinJoint* b) -> bool
+					{
+						return (a->weight > b->weight);
+					});
+
+					skinJoints.resize(4);
+
+					// Normalize the remaining weights.
+					float totalWeight = 0.0f;
+
+					for (SkinJoint* sj : skinJoints)
+					{
+						totalWeight += sj->weight;
+					}
+
+					for (SkinJoint* sj : skinJoints)
+					{
+						sj->weight /= totalWeight;
+					}
+				}
+
+				// Load in joint ids and weights.
+				ivec4 jointIds;
+				vec4 jointWeights;
+
+				for (size_t i = 0; i < skinJoints.size(); ++i)
+				{
+					SkinJoint* sj = skinJoints[i];
+
+					switch (i)
+					{
+					case 0:
+						jointIds.x = sj->id;
+						jointWeights.x = sj->weight;
+						break;
+					case 1:
+						jointIds.y = sj->id;
+						jointWeights.y = sj->weight;
+						break;
+					case 2:
+						jointIds.z = sj->id;
+						jointWeights.z = sj->weight;
+						break;
+					case 3:
+						jointIds.w = sj->id;
+						jointWeights.w = sj->weight;
+						break;
+					default:
+						cerr << "Error while loading in joint ids and weights!" << endl;
+						system("pause");
+						break;
+					}
+				}
+
+				_jointIdsPerVertex.push_back(jointIds);
+				_jointWeightsPerVertex.push_back(jointWeights);
+
+
+				wordIndex = 0;
+			}
+			// Error while parsing triangle.
+			else
+			{
+				cerr << "Error parsing in triangle!" << endl;
+				system("pause");
+			}
+		}
+
+		getNextLine(line, file);
+
+		if (line == "Material")
+			getNextLine(line, file);
+	}
+
+
+	// Send vertex, normal, texture, joint ids and joint weights to the GPU.
+	uploadToGPU();
+}
+
+void SkeletalMesh::createJointAnims(string & line, ifstream & file, unordered_map<size_t, JointAnimation*> & jointAnims)
+{
+	getNextLine(line, file);
+
+
+	size_t jointIndex = 0;
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t jointId = 0;
+		string jointName = "";
+
+		// Extract joint id and name from current line.
+		std::getline(ss, word, '"');
+		jointId = stoi(word);
+		std::getline(ss, word, '"');
+		jointName = word;
+
+
+		// Ignore any non-deform joints. (IK and pull targets)
+		if ((jointName.find("ik") != string::npos) || (jointName.find("pull") != string::npos))
+		{
+			getNextLine(line, file);
+			continue;
+		}
+
+		// Verify joint at current joint index, matches the joint in _joints at the same index.
+		if (_joints[jointIndex]->getName() != jointName)
+		{
+			cerr << "Animation joint index does not match armature joint index!" << endl;
+			system("pause");
+			exit(-1);
+		}
+
+
+		// Create a joint animation for the skin joint.
+		jointAnims[jointId] = new JointAnimation(jointName);
+		
+
+
+		++jointIndex;
+		getNextLine(line, file);
+	}
+}
+
+void SkeletalMesh::loadAnimSMD(string & line, ifstream & file, const float fps, unordered_map<size_t, JointAnimation*> & jointAnims)
+{
+	getNextLine(line, file);
+
+
+	float time = 0;
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		KeyFrame* keyFrame = nullptr;
+		size_t jointId;
+		vec3 position;
+		vec3 rotation;
+
+		// Found a key frame.
+		if (line.find("time") != string::npos)
+		{
+			// Extract key frame time.
+			std::getline(ss, word, ' '); // Skip "time" word.
+			std::getline(ss, word, ' ');
+
+			time = stof(word) / fps;
+		}
+
+
+		// Extract joint id, position, and rotation from current line.
+		while (std::getline(ss, word, ' '))
+		{
+			if (word == "")
+				continue;
+
+			// Extract the joint id.
+			if (wordIndex == 0)
+			{
+				jointId = stoi(word);
+
+				// Ignore key frames for any non-deform joints. (IK and pull targets)
+				if (jointAnims.find(jointId) == jointAnims.end())
+					break;
+
+				++wordIndex;
+			}
+			// Get pos.X.
+			else if (wordIndex == 1)
+			{
+				position.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get pos.Y.
+			else if (wordIndex == 2)
+			{
+				position.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get pos.Z.
+			else if (wordIndex == 3)
+			{
+				position.z = stof(word);
+
+				++wordIndex;
+			}
+			// Get rot.X.
+			else if (wordIndex == 4)
+			{
+				rotation.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get rot.Y.
+			else if (wordIndex == 5)
+			{
+				rotation.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get rot.z.
+			else if (wordIndex == 6)
+			{
+				rotation.z = stof(word);
+
+				wordIndex = 0;
+
+				// Create animation pose transformation matrix.
+				//mat4 localAnimPose = mat4(position, rotation);
+				Quaternion quatRotation = Quaternion(rotation.x, rotation.y, rotation.z);
+
+				//Eigen::Matrix<float, 3, 3> testMat;
+				//testMat.
+				//Eigen::Quaternion<float> testQuat;
+				//testQuat = Eigen::Quaternion<float>()
+
+				JointTransform* jointTransform = new JointTransform(position, quatRotation);
+				keyFrame = new KeyFrame();
+				keyFrame->setStartTime(time);
+				keyFrame->setJointTransform(jointTransform);
+
+				jointAnims[jointId]->addKeyFrame(keyFrame);
+			}
+			// Error while parsing animation pose.
+			else
+			{
+				cerr << "Error parsing in animation pose!" << endl;
+				system("pause");
+			}
+		}
+
+		getNextLine(line, file);
+	}
+
+	vector<JointAnimation*> finalJointAnims;
+	for (auto i : jointAnims)
+	{
+		finalJointAnims.push_back(i.second);
+	}
+
+	SAnimation* animation = new SAnimation(time, finalJointAnims);
+
+	_animator->setAnimation(animation);
+}
+
+
+
+
+
+bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & animPath)
+{
+	// Load in armature file.
+	ifstream file;
+	file.open(armaturePath);
+
+	if (!file.is_open())
+	{
+		cerr << "Could not open armature NUT file!" << endl;
+		system("pause");
+		exit(-1);
+	}
+
+	string line;
+
+	// Find the bones (joint) section of the NUT file.
+	findLine(line, file, "Bones");
+
+	if (line.empty())
+	{
+		cerr << "Armature NUT file does not contain a bones (joint) section!" << endl;
+		system("pause");
+		exit(-1);
+	}
+	// Load in the joints, and their hierarchy.
+	loadJointsNUT(line, file);
+
+
+	// Find the bind pose section of the NUT file.
+	findLine(line, file, "BindPose");
+
+	if (line.empty())
+	{
+		cerr << "Armature NUT file does not contain a bind pose section!" << endl;
+		system("pause");
+		exit(-1);
+	}
+	// Load in the bind poses.
+	loadBindPosesNUT(line, file);
+
+
+	// Find the triangles section of the NUT file.
+	findLine(line, file, "Triangles");
+
+	if (line.empty())
+	{
+		cerr << "Armature NUT file does not contain a Triangles section!" << endl;
+		system("pause");
+		exit(-1);
+	}
+	// Load in the triangles.
+	loadTrianglesNUT(line, file);
+
+	file.close();
+
+
+
+	// Load in animation file.
+	file.open(animPath);
+
+	if (!file.is_open())
+	{
+		cerr << "Could not open animation NUT file!" << endl;
+		system("pause");
+		exit(-1);
+	}
+
+	// Find the nodes (joint) section of the NUT file.
+	//findLine(line, file, "nodes");
+	getNextLine(line, file);
+
+	if (line.empty())
+	{
+		cerr << "Animation NUT file does not joint animation section!" << endl;
+		system("pause");
+		exit(-1);
+	}
+	// Load in joint animations.
+	createJointAnimsNUT(line, file);
+
+
+	return true;
+}
+
+void SkeletalMesh::loadJointsNUT(string & line, ifstream & file)
+{
+	getNextLine(line, file);
+
+	int parentId = 0;
+	vector<JointParent*> jointParents;
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		Joint* joint = nullptr;
+		JointParent* jointParent = nullptr;
+
+		// Extract joint id, name, and parent id from current line.
+		while (std::getline(ss, word, '"'))
+		{
+			// Create a new joint, with the joint index stored in word.
+			if (wordIndex == 0)
+			{
+				joint = new Joint();
+				joint->setIndex(stoi(word));
+
+				++wordIndex;
+			}
+			// Set the joint's name.
+			else if (wordIndex == 1)
+			{
+				joint->setName(word);
+
+				++wordIndex;
+			}
+			// Find the joint's parent, if any.
+			else
+			{
+				// Store joint.
+				_joints.push_back(joint);
+
+				parentId = stoi(word);
+
+				// Joint has a parent.
+				if (parentId > -1)
+				{
+					jointParent = new JointParent(joint, parentId);
+					jointParents.push_back(jointParent);
+				}
+				// Joint has no parent, and is the root joint.
+				else
+				{
+					_rootJoint = joint;
+				}
+
+				wordIndex = 0;
+			}
+		}
+
+		getNextLine(line, file);
+	}
+
+	_numOfJoints = _joints.size();
+
+	// Set up joint hierarchy
+	for (JointParent* jp : jointParents)
+	{
+		parentId = jp->parentId;
+		_joints[parentId]->addChild(jp->joint);
+	}
+}
+
+void SkeletalMesh::loadBindPosesNUT(string & line, ifstream & file)
+{
+	getNextLine(line, file);
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		Joint* joint = nullptr;
+		vec3 position;
+		Quaternion rotation;
+
+
+		// Extract joint id, position, and rotation from current line.
+		while (std::getline(ss, word, ' '))
+		{
+			if (word == "")
+				continue;
+
+			// Find the joint, with the joint index stored in word.
+			if (wordIndex == 0)
+			{
+				joint = _joints[stoi(word)];
+
+				++wordIndex;
+			}
+			// Get pos.X.
+			else if (wordIndex == 1)
+			{
+				position.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get pos.Y.
+			else if (wordIndex == 2)
+			{
+				position.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get pos.Z.
+			else if (wordIndex == 3)
+			{
+				position.z = stof(word);
+
+				++wordIndex;
+			}
+			// Get quat.W.
+			else if (wordIndex == 4)
+			{
+				rotation.setW(stof(word));
+
+				++wordIndex;
+			}
+			// Get quat.X.
+			else if (wordIndex == 5)
+			{
+				rotation.setX(stof(word));
+
+				++wordIndex;
+			}
+			// Get quat.Y.
+			else if (wordIndex == 6)
+			{
+				rotation.setY(stof(word));
+
+				++wordIndex;
+			}
+			// Get quat.Z.
+			else if (wordIndex == 7)
+			{
+				rotation.setZ(stof(word));
+
+				wordIndex = 0;
+
+				// Create bind pose transformation matrix.
+				mat4 localBindPose = mat4(position, rotation);
+				joint->setLocalBindTransform(localBindPose);
+			}
+			// Error while parsing bind pose.
+			else
+			{
+				cerr << "Error parsing in bind pose!" << endl;
+				system("pause");
+			}
+		}
+
+		getNextLine(line, file);
+	}
+
+
+	// Compute the inverse local bind pose for each joint.
+	_rootJoint->calculateInverseBindTransform(mat4::Identity);
+}
+
+void SkeletalMesh::loadTrianglesNUT(string & line, ifstream & file)
+{
+	getNextLine(line, file); // Skip "Tri: #" line
+	getNextLine(line, file);
+
+	while (line != "end")
+	{
+		stringstream ss(line);
+		string word;
+		size_t wordIndex = 0;
+		vec4 vertex;
+		vec4 normal;
+		vec4 uv;
+		SkinJoint* skinJoint = nullptr;
+		vector<SkinJoint*> skinJoints;
+		size_t numOfJoints = 0;
+
+
+		// Extract vertex, normal, uv, number of joints affecting this vertex, and each joint's id with it's weight from the current line.
+		while (std::getline(ss, word, ' '))
+		{
+			if (word == "")
+				continue;
+
+
+			if (wordIndex == 0)
+			{
+				++wordIndex;
+				continue;
+			}
+			// Get vertex.X.
+			else if (wordIndex == 1)
+			{
+				vertex.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get vertex.Y.
+			else if (wordIndex == 2)
+			{
+				vertex.y = stof(word);;
+
+				++wordIndex;
+			}
+			// Get vertex.Z.
+			else if (wordIndex == 3)
+			{
+				vertex.z = stof(word);
+				dataVertex.push_back(vertex);
+
+				++wordIndex;
+			}
+			// Get normal.X.
+			else if (wordIndex == 4)
+			{
+				normal.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get normal.Y.
+			else if (wordIndex == 5)
+			{
+				normal.y = stof(word);
+
+				++wordIndex;
+			}
+			// Get normal.Z.
+			else if (wordIndex == 6)
+			{
+				normal.z = stof(word);
+				dataNormal.push_back(normal);
+
+				++wordIndex;
+			}
+			// Get uv.X.
+			else if (wordIndex == 7)
+			{
+				uv.x = stof(word);
+
+				++wordIndex;
+			}
+			// Get uv.Y.
+			else if (wordIndex == 8)
+			{
+				uv.y = stof(word);
+				dataTexture.push_back(uv);
+
+				++wordIndex;
+			}
+			// Get total number of joints.
+			else if (wordIndex == 9)
+			{
+				numOfJoints = stoi(word);
+
+				// Get all the joint ids and their weights.
+				for (size_t i = 0; i < numOfJoints; ++i)
+				{
+					std::getline(ss, word, ' ');
+
+					// Get joint id.
+					skinJoint = new SkinJoint();
+					skinJoint->id = stoi(word);
+
+					std::getline(ss, word, ' ');
+
+					// Get joint weight.
+					skinJoint->weight = stof(word);
+
+
+					skinJoints.push_back(skinJoint);
+				}
+
+				// Recalculate joint weights, if there are more than four skin joints.
+				if (skinJoints.size() > 4)
+				{
+					// Sort list of pairs, from the most influential joints to the least.
+					sort(skinJoints.begin(), skinJoints.end(),
+						[](SkinJoint* a, SkinJoint* b) -> bool
+					{
+						return (a->weight > b->weight);
+					});
+
+					skinJoints.resize(4);
+
+					// Normalize the remaining weights.
+					float totalWeight = 0.0f;
+
+					for (SkinJoint* sj : skinJoints)
+					{
+						totalWeight += sj->weight;
+					}
+
+					for (SkinJoint* sj : skinJoints)
+					{
+						sj->weight /= totalWeight;
+					}
+				}
+
+				// Load in joint ids and weights.
+				ivec4 jointIds;
+				vec4 jointWeights;
+
+				for (size_t i = 0; i < skinJoints.size(); ++i)
+				{
+					SkinJoint* sj = skinJoints[i];
+
+					switch (i)
+					{
+					case 0:
+						jointIds.x = sj->id;
+						jointWeights.x = sj->weight;
+						break;
+					case 1:
+						jointIds.y = sj->id;
+						jointWeights.y = sj->weight;
+						break;
+					case 2:
+						jointIds.z = sj->id;
+						jointWeights.z = sj->weight;
+						break;
+					case 3:
+						jointIds.w = sj->id;
+						jointWeights.w = sj->weight;
+						break;
+					default:
+						cerr << "Error while loading in joint ids and weights!" << endl;
+						system("pause");
+						break;
+					}
+				}
+
+				_jointIdsPerVertex.push_back(jointIds);
+				_jointWeightsPerVertex.push_back(jointWeights);
+
+
+				wordIndex = 0;
+			}
+			// Error while parsing triangle.
+			else
+			{
+				cerr << "Error parsing in triangle!" << endl;
+				system("pause");
+			}
+		}
+
+		getNextLine(line, file);
+
+		if (line.find("Tri:") != string::npos)
+			getNextLine(line, file);
+	}
+
+
+	// Send vertex, normal, texture, joint ids and joint weights to the GPU.
+	uploadToGPU();
+}
+
+void SkeletalMesh::createJointAnimsNUT(string & line, ifstream & file)
+{
+	vector<JointAnimation*> jointAnims;
+	float duration = 0.0f;
+
+	while (line != "eof")
+	{
+		JointAnimation* jointAnim = new JointAnimation(line);
+		vector<KeyFrame*> keyFrames;
+		getNextLine(line, file);
+
+		while (line != "end")
+		{
+			stringstream ss(line);
+			string word;
+
+			size_t wordIndex = 0;
+			KeyFrame* keyFrame = nullptr;
+			vec3 position;
+			Quaternion rotation;
+
+
+			// Extract time, position, and rotation from current line.
+			while (std::getline(ss, word, ' '))
+			{
+				if (word == "")
+					continue;
+
+				// Extract the time, and create a new key frame.
+				if (wordIndex == 0)
+				{
+					float time = stof(word);
+
+					keyFrame = new KeyFrame();
+					keyFrame->setStartTime(time);
+
+					// Calculate the maximum time of all the joint animations.
+					duration = (duration > +time) ? duration : time;
+
+					++wordIndex;
+				}
+				// Get pos.X.
+				else if (wordIndex == 1)
+				{
+					position.x = stof(word);
+
+					++wordIndex;
+				}
+				// Get pos.Y.
+				else if (wordIndex == 2)
+				{
+					position.y = stof(word);
+
+					++wordIndex;
+				}
+				// Get pos.Z.
+				else if (wordIndex == 3)
+				{
+					position.z = stof(word);
+
+					++wordIndex;
+				}
+				// Get quat.W.
+				else if (wordIndex == 4)
+				{
+					rotation.setW(stof(word));
+
+					++wordIndex;
+				}
+				// Get quat.X.
+				else if (wordIndex == 5)
+				{
+					rotation.setX(stof(word));
+
+					++wordIndex;
+				}
+				// Get quat.Y.
+				else if (wordIndex == 6)
+				{
+					rotation.setY(stof(word));
+
+					++wordIndex;
+				}
+				// Get quat.Z.
+				else if (wordIndex == 7)
+				{
+					rotation.setZ(stof(word));
+
+					wordIndex = 0;
+
+					// Create animation pose transform.
+					JointTransform* jointTransform = new JointTransform(position, rotation);
+					keyFrame->setJointTransform(jointTransform);
+
+					keyFrames.push_back(keyFrame);
+				}
+				// Error while parsing animation pose.
+				else
+				{
+					cerr << "Error parsing in animation pose!" << endl;
+					system("pause");
+				}
+			}
+
+			getNextLine(line, file);
+		}
+
+		// Add joint animation.
+		jointAnim->setKeyFrames(keyFrames);
+		jointAnims.push_back(jointAnim);
+		keyFrames.clear();
+
+		getNextLine(line, file);
+	}
+
+	// Create animation, with all the joint animations.
+	SAnimation* animation = new SAnimation(duration, jointAnims);
+
+	_animator->setAnimation(animation);
+}
+
+Animator * SkeletalMesh::getAnimator() const
+{
+	return _animator;
 }

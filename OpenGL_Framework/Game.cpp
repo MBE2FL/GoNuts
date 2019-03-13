@@ -31,12 +31,16 @@ void Game::initializeGame()
 	frameBufferLUT.addColorTarget(GL_RGB8);
 	frameBufferLUT.init(1900, 1000);
 
+	frameBufferShadow.addDepthTarget();
+	frameBufferShadow.init(2048, 2048);
+
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/PassThrough - Copy.frag");
+	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/UI.frag");
 
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
@@ -86,6 +90,8 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building Top 2", "./Assets/Models/Building_Top2.obj");
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
+
+	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad2.obj");
 
 
 
@@ -353,6 +359,7 @@ void Game::draw()
 	frameBufferLUT.clear();
 	frameBufferLUT.bind();
 	frameBuffer.drawFSQ();
+	_currentScene->drawUI();
 	frameBufferLUT.unbind();
 
 	frameBuffer.unbindTexture(0);//texture
@@ -376,7 +383,6 @@ void Game::draw()
 	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
-
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();

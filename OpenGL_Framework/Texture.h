@@ -65,6 +65,8 @@ public:
 
 	string getName() const;
 	void setName(const string& name);
+	int getSizeX() const;
+	int getSizeY() const;
 
 	std::string filename;
 	GLuint _Handle;

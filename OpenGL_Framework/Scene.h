@@ -12,8 +12,10 @@
 #include "TransformSystem.h"
 #include "MeshRendererSystem.h"
 #include "PhysicsSystem.h"
+#include "UISystem.h"
 //#include "GUIHelper.h"
 #include <sstream>
+
 
 
 #define WINDOW_WIDTH			1900
@@ -60,6 +62,7 @@ public:
 
 	void update(float deltaTime);
 	void draw();
+	void drawUI();
 	void imguiDraw();
 	string getName() const;
 	void setName(const string& name);
@@ -98,12 +101,17 @@ private:
 	TransformComponent* _playerTransform;
 	PhysicsBodyComponent* _playerPhysicsBody;
 	TransformComponent* _mainCameraTransform;
+	TransformComponent* _shadowCameraTransform;
 	Entity* _mainCamera;
+	Entity* _shadowCamera;
 
 	//Light* light;
 	//Light* spotLight;
 
 	GUIHelper* _guiHelper = nullptr;
+
+	UISystem* _uiSystem;
+	Entity* _uiCamera;
 
 	SkeletalMesh* skeletalMeshTest = nullptr;
 	SkeletalMesh* skeletalMeshTestTwo = nullptr;

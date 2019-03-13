@@ -1,0 +1,23 @@
+def visualmatrix(armature, bone_name):
+    '''
+        return a local transformation matrix that 
+        captures the visual transformation including
+        IK chain etc
+    '''
+    pose_bone = armature.pose.bones[bone_name]
+    data_bone = armature.data.bones[bone_name]
+
+    M_pose = pose_bone.matrix
+    M_data = data_bone.matrix_local
+
+    # grab the parent's world pose and rest matrices
+    if data_bone.parent:
+        M_parent_data = data_bone.parent.matrix_local.copy()
+        M_parent_pose = pose_bone.parent.matrix.copy()
+    else:
+        M_parent_data = mathutils.Matrix()
+        M_parent_pose = mathutils.Matrix()
+
+    visual_matrix = M_data.copy().invert() * M_parent_data * M_parent_pose.invert() * M_pose
+
+    return visual_matrix

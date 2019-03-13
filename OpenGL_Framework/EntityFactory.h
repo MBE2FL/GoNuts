@@ -18,6 +18,8 @@ public:
 	Entity* createEmpty(const vec3& position = vec3(0.0f), const vec3& scale = vec3(1.0f), Entity* parent = nullptr, const string& name = "Empty");
 	Entity* createPerspectiveCamera(const vec3& position = vec3(0.0f), const float fovY = 60.0f, 
 		const float aspect = 1.8f, const float zNear = 1.0f, const float zFar = 1000.0f, const string& name = "Camera");
+	Entity* createOrthographicCamera(const vec3& position, const float left,
+		const float right, const float bottom, const float top, const float zNear = 1.0f, const float zFar = 1000.0f, const string& name = "Ortho Camera");
 	Entity* createCoin(const vec3& position = vec3(0.0f), const vec3& scale = vec3(1.0f), Entity* parent = nullptr, const string& name = "Coin");
 	Entity* createPlatform(const vec3& position = vec3(0.0f), const vec3& scale = vec3(1.0f), Entity* parent = nullptr, const string& name = "Platform");
 	Entity* createTopPlatform(const vec3& position = vec3(0.0f), const vec3& scale = vec3(1.0f), Entity* parent = nullptr, const string& name = "Top Platform");

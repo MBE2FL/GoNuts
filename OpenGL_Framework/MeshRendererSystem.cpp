@@ -3,6 +3,8 @@
 MeshRendererSystem::MeshRendererSystem(EntityManager * entityManager)
 	: System(entityManager)
 {
+	shadowFramebuffer.addDepthTarget();
+	shadowFramebuffer.init(2048, 2048);
 }
 
 MeshRendererSystem::~MeshRendererSystem()
@@ -16,9 +18,12 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 
 	// Retrieve the main camera.
 	Entity* mainCamera = EntityManager::getMainCamera();
+	Entity* shadowCamera = EntityManager::getShadowCamera();
 
 	// If no main camera was set, draw nothing.
 	if (!mainCamera)
+		return;
+	if (!shadowCamera)
 		return;
 
 	// Retrieve the necessary camera details.
@@ -26,6 +31,13 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 	_cameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
 	mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse();
+
+	// Retrieve the necessary camera details.
+	_shadowCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, shadowCamera);
+	_shadowCameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, shadowCamera);
+	//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
+	//mat4 shadowCameraInverse = _shadowCameraTrans->getLocalToWorldMatrix().getInverse();
+
 
 
 	// Sort the vector, so all the transparent meshes are at the back of the vector.
