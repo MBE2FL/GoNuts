@@ -49,6 +49,8 @@ void Game::initializeGame()
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
 	LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
+	toonRamp = new Texture("./Assets/Textures/toon1.png");
+
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
@@ -412,6 +414,9 @@ void Game::draw()
 	gbuffer.bindColorAsTexture(0, 0);
 	gbuffer.bindColorAsTexture(1, 1);
 	gbuffer.bindDepthAsTexture(2);
+
+	toonRamp->bind(5);
+
 	gbuffer.bindResolution();
 	glViewport(0, 0, 1900, 1000);
 
@@ -422,9 +427,11 @@ void Game::draw()
 	gbuffer.drawFSQ();
 	frameBufferLUT.unbind();
 
-	gbuffer.unbindTexture(0);//texture
-	gbuffer.unbindTexture(1);//texture
+	toonRamp->unBind();
+
 	gbuffer.unbindTexture(2);//texture
+	gbuffer.unbindTexture(1);//texture
+	gbuffer.unbindTexture(0);//texture
 
 	shaderOutline.unBind();
 

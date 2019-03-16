@@ -95,6 +95,7 @@ private:
 
 	Texture* LUTTex;
 	Texture* LUTTexVal;
+	Texture* toonRamp;
 
 	SceneManager* sceneManager;
 

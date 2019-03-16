@@ -27,6 +27,7 @@ uniform float attenuationQuadratic;
 layout(binding = 0) uniform sampler2D uSceneTex; 
 layout(binding = 1) uniform sampler2D uSceneNormal; 
 layout(binding = 2) uniform sampler2D uSceneDepth; 
+layout(binding = 5) uniform sampler2D uSceneToon; 
 //layout(binding = 30) uniform sampler3D uLUTTex;
 layout(std140, binding = 4) uniform Resolution
 {
@@ -73,7 +74,7 @@ void main()
 	);
 
 	//vec4 source = texture(uSceneTex, texcoord);
-	vec3 diffuse = texture(uSceneTex, texcoord).rgb;
+	vec3 texColor = texture(uSceneTex, texcoord).rgb;
 	if (outline)
 	{
 		mat3 I;
@@ -89,7 +90,7 @@ void main()
 		float gy = dot(sy[0], I[0]) + dot(sy[1], I[1]) + dot(sy[2], I[2]);
 		
 		float g = sqrt(pow(gx, 2.0)+pow(gy, 2.0));
-		diffuse = diffuse - vec3(g);
+		texColor = texColor - vec3(g);
 	}
 
 	//outColor.rgb = vec3(1,0,0);
@@ -109,14 +110,15 @@ void main()
 	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
 
 	//vec3 lightDir = normalize(POS.xyz - position.xyz);
-	vec3 lightDir = normalize(vec3(1,-1,-1));
+	vec3 lightDir = normalize(vec3(-1,3,2));
 	float NdotL = dot(normal, lightDir);		
 	// Clamp NdotL so that there are negative values, otherwise 
 	// the opposite side of an object would receive negative lighting!
 	NdotL = max(NdotL, 0.0);
 	
-	outColor.rgb += diffuse + vec3(0.6) * NdotL;
+	outColor.rgb += texColor + vec3(0.5) * NdotL;
 
 	//outColor.rgb = normal;
+	//outColor.rgb = texture(uSceneToon, texOffset).rgb;
 
 }
