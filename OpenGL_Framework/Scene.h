@@ -72,6 +72,7 @@ public:
 	void saveScene();
 	Scene* saveSceneAs(const string& name);
 	void loadOldFaithful();
+	void loadMainMenu();
 	void loadScene();
 	void loadSceneFromFile(const string& path);
 	EntityManager* getEntityManager() const;

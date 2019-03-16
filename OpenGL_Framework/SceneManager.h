@@ -11,6 +11,7 @@ public:
 	void loadSceneFromFile(const string& path, const string& name);
 	void loadScene(const string& name);
 	void loadOldFaithful(const string& name);
+	void loadMainMenu(const string& name);
 	void saveScene();
 	void saveSceneAs(const string& name);
 	Scene* getCurrentScene() const;

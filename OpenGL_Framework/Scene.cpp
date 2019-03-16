@@ -320,7 +320,7 @@ void Scene::loadOldFaithful()
 	//_entityManager->addComponent(meshRenderer, entity);
 
 	_followPlayer = false;
-	entity = _entityFactory->createEmpty(vec3(0.0f, 0.8f, 0.0f), vec3(0.6f), nullptr, "SkeletonTwo");
+	entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
 	skeletalMeshTestTwo = new SkeletalMesh();
 	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
 	string path = "./Assets/Test Exporter/Character Running/";
@@ -338,7 +338,7 @@ void Scene::loadOldFaithful()
 
 	UICanvas* testCanvas = new UICanvas();
 
-	UIImage* testImage = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	UIImage* testImage = new UIImage(vec3(-2.0f, -2.0f, 0.0f));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
 	testCanvas->addImage("Test", testImage);
@@ -356,6 +356,93 @@ void Scene::loadOldFaithful()
 	testImage->getAnimator()->addAnimation(animu);
 
 	_uiSystem->addCanvas("TESTC", testCanvas);
+
+
+
+	light = new Light();
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
+	light->setAmbient(vec3(0.7f));
+	//light->setAmbient(vec3(0));
+	light->setDiffuse(vec3(0.6f));
+	//light->setDiffuse(vec3(0));
+	light->setSpecular(vec3(0.5f));
+	light->setSpecularExp(100.0f);
+	light->setAttenuationConstant(1.0f);
+	light->setAttenuationLinear(0.1f);
+	light->setAttenuationQuadratic(0.01f);
+
+	spotLight = new Light();
+	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
+	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
+	spotLight->setDiffuse(vec3(1));
+	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
+	spotLight->setSpecularExp(100.0f);
+	spotLight->setAttenuationConstant(0.1f);
+	spotLight->setAttenuationLinear(0.01f);
+	spotLight->setAttenuationQuadratic(0.01f);
+}
+
+void Scene::loadMainMenu()
+{
+	EntityManager::setInstance(_entityManager);
+	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
+
+#ifdef _DEBUG
+
+	_guiHelper->update();
+#endif
+
+	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+
+	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
+	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
+	EntityManager::setMainCamera(_mainCamera);
+
+	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
+	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
+	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
+	EntityManager::setPlayerTransform(_playerTransform);
+
+	UICanvas* MainMenuCanvas = new UICanvas();
+
+	UIImage* background = new UIImage(vec3(0.0f, 0.0f, 1.0f), vec3(1.5f, 0.8f, 1.0f));
+	background->setTexture(ObjectLoader::getTexture("Menu Picture"));
+	MainMenuCanvas->addImage("background", background);
+
+	UIImage*  blackVertBar = new UIImage(vec3(-5.0f, 10.0f, 0.0f), vec3(7.0f, 5.0f, 1.0f));
+	blackVertBar->setTexture(ObjectLoader::getTexture("Vert black bar"));
+	MainMenuCanvas->addImage("blackVertBar", blackVertBar);
+
+	UIImage* start = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	start->setTexture(ObjectLoader::getTexture("start button"));
+	MainMenuCanvas->addImage("start", start);
+
+	UIImage* levelSelect = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	levelSelect->setTexture(ObjectLoader::getTexture("level select button"));
+	MainMenuCanvas->addImage("levelSelect", levelSelect);
+
+	UIImage* extras = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	extras->setTexture(ObjectLoader::getTexture("extras button"));
+	MainMenuCanvas->addImage("extras", extras);
+
+	UIImage* exit = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	exit->setTexture(ObjectLoader::getTexture("exit button"));
+	MainMenuCanvas->addImage("exit", extras);
+	
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+
+	vector<UIKeyFrame*> testVec;
+	testVec.push_back(frame1);
+	testVec.push_back(frame2);
+	testVec.push_back(frame3);
+
+	//UIAnimation* animu = new UIAnimation("test", testVec);
+
+	//testImage->getAnimator()->addAnimation(animu);
+
+	_uiSystem->addCanvas("TESTC", MainMenuCanvas);
 
 
 

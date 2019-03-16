@@ -158,6 +158,14 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Beast Mode", "./Assets/Textures/Beast_Mode_-_UV.png");
 	ObjectLoader::loadTexture("Anim Test Tex", "./Assets/ANIM_TEST_TEX.png");
 
+	//ui textures
+	ObjectLoader::loadTexture("Menu Picture", "./Assets//Textures/Menu Picture.png");
+	ObjectLoader::loadTexture("Vert black bar", "./Assets/Textures/Vertical black bar.png");
+	ObjectLoader::loadTexture("start button", "./Assets/Textures/START button.png");
+	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
+	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
+	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
+
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
 	//nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
@@ -239,6 +247,7 @@ void Game::initializeGame()
 
 	sceneManager->addScene(testScene);
 	sceneManager->loadOldFaithful(testScene->getName());
+	//sceneManager->loadMainMenu(testScene->getName());
 	_currentScene = sceneManager->getCurrentScene();
 
 
