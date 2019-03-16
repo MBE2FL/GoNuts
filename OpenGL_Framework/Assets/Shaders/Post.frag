@@ -89,13 +89,8 @@ void main()
 		float gy = dot(sy[0], I[0]) + dot(sy[1], I[1]) + dot(sy[2], I[2]);
 		
 		float g = sqrt(pow(gx, 2.0)+pow(gy, 2.0));
-		outColor = vec4(diffuse - vec3(g), 1.0);
+		diffuse = diffuse - vec3(g);
 	}
-	else
-	{
-		outColor.rgb = diffuse;
-	}
-
 
 	//outColor.rgb = vec3(1,0,0);
 	outColor.a = 1.0;
@@ -108,17 +103,20 @@ void main()
 	vec4 position = uProjInverse * (vec4(texOffset, depth, 1.0) * 2 - 1);
 	position /= position.w;
 	
-	vec4 albedoColor = texture(uSceneTex, texOffset);
-	//outColor.rgb = vec3(0); 
+	
+	outColor.rgb = vec3(0); 
 	
 	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
 
-	vec3 lightDir = normalize(POS.xyz - position.xyz);
+	//vec3 lightDir = normalize(POS.xyz - position.xyz);
+	vec3 lightDir = normalize(vec3(1,-1,-1));
 	float NdotL = dot(normal, lightDir);		
 	// Clamp NdotL so that there are negative values, otherwise 
 	// the opposite side of an object would receive negative lighting!
 	NdotL = max(NdotL, 0.0);
-	outColor.rgb += vec3(0.6) * NdotL;
+	
+	outColor.rgb += diffuse + vec3(0.6) * NdotL;
+
 	//outColor.rgb = normal;
 
 }
