@@ -110,15 +110,21 @@ void main()
 	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
 
 	//vec3 lightDir = normalize(POS.xyz - position.xyz);
-	vec3 lightDir = normalize(vec3(-1,3,2));
-	float NdotL = dot(normal, lightDir);		
-	// Clamp NdotL so that there are negative values, otherwise 
-	// the opposite side of an object would receive negative lighting!
-	NdotL = max(NdotL, 0.0);
+	vec3 lightDir = normalize(vec3(-1,2,2));
+	float diffuseLight = max(dot(normal, lightDir), 0.05);		
 	
-	outColor.rgb += texColor + vec3(0.5) * NdotL;
+	diffuseLight * 0.5 + 0.5;
+	diffuseLight = clamp(diffuseLight, 0.05, 0.95);
+	vec4 textureLookUp = texture(uSceneToon, vec2(diffuseLight, 0.5));
+
+	vec3 ambient = texColor.rgb;
+	vec3 diffuse = vec3(0.4) * textureLookUp.r;
+	
+	//outColor.rgb += texColor + vec3(0.5) * NdotL;
+	outColor.rgb = ambient + diffuse;
+	//outColor.rgb *= texColor.rgb;
 
 	//outColor.rgb = normal;
-	//outColor.rgb = texture(uSceneToon, texOffset).rgb;
+	//outColor.rgb = textureLookUp.rgb;
 
 }
