@@ -117,8 +117,8 @@ void main()
 	diffuseLight = clamp(diffuseLight, 0.05, 0.95);
 	vec4 textureLookUp = texture(uSceneToon, vec2(diffuseLight, 0.5));
 
-	vec3 ambient = texColor.rgb;
-	vec3 diffuse = vec3(0.4) * textureLookUp.r;
+	vec3 ambient = texColor.rgb*0.8;
+	vec3 diffuse = vec3(0.35) * textureLookUp.r;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
 	outColor.rgb = ambient + diffuse;

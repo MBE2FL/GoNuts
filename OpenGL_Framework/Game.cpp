@@ -47,7 +47,7 @@ void Game::initializeGame()
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
-	LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
+	//LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
 	toonRamp = new Texture("./Assets/Textures/toon1.png");
 
@@ -461,10 +461,9 @@ void Game::draw()
 	
 	shaderLUT.bind();
 
-	if(lut)
-		LUTTex->bind(30);
-	else if  (!lut)
-		LUTTexVal->bind(30);
+	shaderLUT.sendUniform("lut", lut);
+	LUTTex->bind(30);
+	
 
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
