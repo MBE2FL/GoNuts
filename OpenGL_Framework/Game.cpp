@@ -111,13 +111,20 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Background4", "./Assets/Textures/background4.png");
 	ObjectLoader::loadTexture("Building", "./Assets/Textures/Building Layout.png");
 	ObjectLoader::loadTexture("Building 1 Texture 1", "./Assets/Textures/Building 1 Texture 1.png");
+	ObjectLoader::loadTexture("Building 1 Texture 1 Background", "./Assets/Textures/Building 1 Texture 1 Background.png");
 	ObjectLoader::loadTexture("Building 1 Texture 2", "./Assets/Textures/Building 1 Texture 2.png");
+	ObjectLoader::loadTexture("Building 1 Texture 2 Background", "./Assets/Textures/Building 1 Texture 2 Background.png");
 	ObjectLoader::loadTexture("Building 1 Texture 3", "./Assets/Textures/Building 1 Texture 3.png");
+	ObjectLoader::loadTexture("Building 1 Texture 3 Background", "./Assets/Textures/Building 1 Texture 3 Background.png");
 	ObjectLoader::loadTexture("Building 2 Texture 1", "./Assets/Textures/Building 2 Texture 1.png");
+	ObjectLoader::loadTexture("Building 2 Texture 1 Background", "./Assets/Textures/Building 2 Texture 1 Background.png");
 	ObjectLoader::loadTexture("Building 2 Texture 2", "./Assets/Textures/Building 2 Texture 2.png");
 	ObjectLoader::loadTexture("Building 2 Texture 3", "./Assets/Textures/Building 2 Texture 3.png");
+	ObjectLoader::loadTexture("Building 2 Texture 3 Background", "./Assets/Textures/Building 2 Texture 3 Background.png");
 	ObjectLoader::loadTexture("Building 3 Texture 1", "./Assets/Textures/Building 3 Texture 1.png");
+	ObjectLoader::loadTexture("Building 3 Texture 1 Background", "./Assets/Textures/Building 3 Texture 1 Background.png");
 	ObjectLoader::loadTexture("Building 3 Texture 3", "./Assets/Textures/Building 3 Texture 3.png");
+	ObjectLoader::loadTexture("Building 3 Texture 3 Background", "./Assets/Textures/Building 3 Texture 3 Background.png");
 	ObjectLoader::loadTexture("Billboard", "./Assets/Textures/Billboard_Texture1.png");
 	ObjectLoader::loadTexture("Love", "./Assets/Textures/Go Love.png");//valentines day
 	ObjectLoader::loadTexture("Button", "./Assets/Textures/Button_Texture.png");
