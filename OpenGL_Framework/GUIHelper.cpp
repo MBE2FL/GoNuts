@@ -688,6 +688,15 @@ char*GUIHelper::tagToChar(TTag tag)
 	case TTag::Spike:
 		return "Spike";
 		break;
+	case TTag::Checkpoint:
+		return "Checkpoint";
+		break;
+	case TTag::VictoryPoint:
+		return "VictoryPoint";
+		break;
+	case TTag::Generic:
+		return "Generic";
+		break;
 	default:
 		return "";
 		break;
@@ -708,6 +717,12 @@ TTag GUIHelper::charToTag(char* tag)
 		return TTag::Acorn;
 	else if (strcmp(tag, "Spike") == 0)
 		return TTag::Spike;
+	else if (strcmp(tag, "Checkpoint") == 0)
+		return TTag::Checkpoint;
+	else if (strcmp(tag, "Victorypoint") == 0)
+		return TTag::VictoryPoint;
+	else if (strcmp(tag, "Generic") == 0)
+		return TTag::Generic;
 	else
 		return TTag::Acorn;
 }
@@ -719,7 +734,8 @@ void GUIHelper::drawCollider(Collider * collider)
 	char* currTagChar = tagToChar(tag);
 	if (ImGui::BeginCombo("Tag", currTagChar))
 	{
-		static const TTag allTags[6] = { TTag::Player, TTag::Platform, TTag::Enemy, TTag::Coin, TTag::Acorn, TTag::Spike };
+		static const TTag allTags[9] = { TTag::Player, TTag::Platform, TTag::Enemy, TTag::Coin, TTag::Acorn, TTag::Spike, TTag::Checkpoint
+		, TTag::VictoryPoint, TTag::Generic};
 		for (TTag currTag : allTags)
 		{
 			char* tagChar = tagToChar(currTag);

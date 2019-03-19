@@ -144,6 +144,7 @@
     <ClCompile Include="TransformSystem.cpp" />
     <ClCompile Include="UIAnimation.cpp" />
     <ClCompile Include="UIAnimator.cpp" />
+    <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UICanvas.cpp" />
     <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="UIImage.cpp" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="Animator.h" />
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="UIButton.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />

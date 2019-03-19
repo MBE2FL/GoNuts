@@ -91,7 +91,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 
-	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad.obj");
+	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad2.obj");
 
 
 
@@ -359,6 +359,7 @@ void Game::draw()
 	frameBufferLUT.clear();
 	frameBufferLUT.bind();
 	frameBuffer.drawFSQ();
+	_currentScene->drawUI();
 	frameBufferLUT.unbind();
 
 	frameBuffer.unbindTexture(0);//texture
@@ -382,7 +383,6 @@ void Game::draw()
 	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
-
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();

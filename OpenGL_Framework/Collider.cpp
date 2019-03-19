@@ -111,10 +111,41 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(vec3(-3.0f, 8, -5.0f));
+			otherTrans->setWorldPosition(otherTrans->getPlayerSpawnPosition());
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
+		break;
+	}
+		//### CHECKPOINT ###
+	case TTag::Checkpoint:
+	{
+		std::cout << "Checkpoint Collision Entered!" << std::endl;
+
+		EntityManager* entityManager = EntityManager::getInstance();
+
+
+		Collider* otherCol = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+
+		if (otherCol->getTag() == TTag::Player)
+		{
+			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
+
+			otherTrans->setPlayerSpawnPosition(otherTrans->getWorldPosition());
+		}
+		break;
+	}
+		//### VictoryPoint
+	case TTag::VictoryPoint:
+	{
+		std::cout << "Victorypoint Collision Entered!" << std::endl;
+		//add things later on when more ui stuff is done to change to the scoreboard scene or which ever scene is next
+		break;
+	}
+		//### Generic ###
+	case TTag::Generic:
+	{
+		std::cout << "Generic Collision Entered!" << std::endl;
 		break;
 	}
 		//### TOP PLATFORM ###
@@ -131,7 +162,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
+			otherTrans->setWorldPosition(otherTrans->getPlayerSpawnPosition());
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}

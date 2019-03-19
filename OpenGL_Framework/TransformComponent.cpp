@@ -9,6 +9,16 @@ TransformComponent::~TransformComponent()
 {
 }
 
+vec3 TransformComponent::getPlayerSpawnPosition() const
+{
+	return _playerSpawnPosition;
+}
+
+void TransformComponent::setPlayerSpawnPosition(const vec3 & newSpawn)
+{
+	_playerSpawnPosition = newSpawn;
+}
+
 void TransformComponent::setLocalPosition(const vec3 & newPosition)
 {
 	_localPosition = newPosition;

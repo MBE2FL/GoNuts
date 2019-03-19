@@ -18,5 +18,4 @@ void main()
 	
 	outColour.a = textureColour.a;
 	outColour.rgb = textureColour.rgb;
-	outColour = vec4(1.0, 0.0, 0.0, 1.0);
 }

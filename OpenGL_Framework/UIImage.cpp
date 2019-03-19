@@ -2,6 +2,7 @@
 
 UIImage::UIImage(const vec3 & pos, const vec3 & scale, const vec3 & localRotation, const float alpha)
 {
+	_animator = new UIAnimator(this);
 	_transform = new TransformComponent();
 	_transform->setLocalPosition(pos);
 	_transform->setLocalScale(scale);
@@ -11,12 +12,22 @@ UIImage::UIImage(const vec3 & pos, const vec3 & scale, const vec3 & localRotatio
 	_shaderProgram = ObjectLoader::getShaderProgram("UIShader");
 }
 
-vec3 UIImage::getlocalPosition() const
+void UIImage::setAnimation(UIAnimation * newAnimation)
+{
+	_animator->addAnimation(newAnimation);
+}
+
+UIAnimator * UIImage::getAnimator()
+{
+	return _animator;
+}
+
+vec3 UIImage::getLocalPosition() const
 {
 	return _transform->getLocalPosition();
 }
 
-void UIImage::setlocalPosition(const vec3 & pos)
+void UIImage::setLocalPosition(const vec3 & pos)
 {
 	_transform->setLocalPosition(pos);
 }
@@ -71,16 +82,6 @@ void UIImage::setAlpha(const float alpha)
 	_alpha = alpha;
 }
 
-bool UIImage::getHover() const
-{
-	return _isHover;
-}
-
-void UIImage::setHover(const bool isHover)
-{
-	_isHover = isHover;
-}
-
 Texture * UIImage::getTexture() const
 {
 	return _texture;
@@ -90,9 +91,8 @@ void UIImage::setTexture(Texture * texture)
 {
 	_texture = texture;
 
-	float size = static_cast<float>((_texture->getSizeX() > _texture->getSizeY()) ? _texture->getSizeX() : _texture->getSizeY());
-	_transform->setLocalScale(vec3(size, size, 1.0f));
-	_transform->setLocalScale(vec3(10, 10, 1.0f));
+	//float size = static_cast<float>((_texture->getSizeX() > _texture->getSizeY()) ? _texture->getSizeX() : _texture->getSizeY());
+	_transform->setLocalScale(vec3(1.0f, 1.0f, 1.0f));
 }
 
 Mesh * UIImage::getMesh() const

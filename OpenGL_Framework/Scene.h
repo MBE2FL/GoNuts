@@ -12,9 +12,10 @@
 #include "TransformSystem.h"
 #include "MeshRendererSystem.h"
 #include "PhysicsSystem.h"
+#include "UISystem.h"
 //#include "GUIHelper.h"
 #include <sstream>
-#include "UISystem.h"
+
 
 
 #define WINDOW_WIDTH			1900
@@ -61,6 +62,7 @@ public:
 
 	void update(float deltaTime);
 	void draw();
+	void drawUI();
 	void imguiDraw();
 	string getName() const;
 	void setName(const string& name);

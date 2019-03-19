@@ -11,6 +11,9 @@ enum class TTag
 	Coin,
 	Acorn,
 	Spike,
+	Checkpoint,
+	VictoryPoint,
+	Generic,
 	TopPlatform
 };
 

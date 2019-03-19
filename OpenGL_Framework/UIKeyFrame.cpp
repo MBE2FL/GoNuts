@@ -1,6 +1,6 @@
 #include "UIKeyFrame.h"
 
-UIKeyFrame::UIKeyFrame(float _startTime, vec2 _pos, vec2 _scale, Quaternion _rot, float _alpha)
+UIKeyFrame::UIKeyFrame(float _startTime, vec3 _pos, vec3 _scale, Quaternion _rot, float _alpha)
 {
 	startTime = _startTime;
 	pos = _pos;
@@ -19,22 +19,22 @@ void UIKeyFrame::setStartTIme(float newTime)
 	startTime = newTime;
 }
 
-vec2 UIKeyFrame::getPos()
+vec3 UIKeyFrame::getPos()
 {
 	return pos;
 }
 
-void UIKeyFrame::setPos(vec2 newPos)
+void UIKeyFrame::setPos(vec3 newPos)
 {
 	pos = newPos;
 }
 
-vec2 UIKeyFrame::getScale()
+vec3 UIKeyFrame::getScale()
 {
 	return scale;
 }
 
-void UIKeyFrame::setscale(vec2 newScale)
+void UIKeyFrame::setscale(vec3 newScale)
 {
 	scale = newScale;
 }

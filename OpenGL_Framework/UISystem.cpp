@@ -53,6 +53,11 @@ Entity * UISystem::getCamera() const
 	return _camera;
 }
 
+void UISystem::checkClick(int x, int y)
+{
+
+}
+
 void UISystem::init(EntityManager * entityManager)
 {
 	// Create a new entity.
@@ -66,7 +71,7 @@ void UISystem::init(EntityManager * entityManager)
 
 	// Create camera component.
 	CameraComponent* camera = new CameraComponent();
-	camera->setOrthographic(-960.0f, 960.0f, -540.0f, 540.0f, 1.0f, 100.0f);
+	camera->setOrthographic(-8.0f, 8.0f, -4.5f, 4.5f, -10.0f, 100.0f);
 	camera->setCullingActive(false);
 
 	// Add the components to the entity.

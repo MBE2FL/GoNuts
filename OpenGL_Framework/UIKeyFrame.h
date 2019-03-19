@@ -4,16 +4,16 @@
 class UIKeyFrame
 {
 public:
-	UIKeyFrame(float _startTime, vec2 _pos, vec2 _scale, Quaternion _rot, float _alpha);
+	UIKeyFrame(float _startTime = 0.0f, vec3 _pos = vec3(0.0f, 0.0f, 0.0f), vec3 _scale = vec3(0.0f, 0.0f, 0.0f), Quaternion _rot = Quaternion::Identity, float _alpha =0.0f);
 
 	float getStartTime();
 	void setStartTIme(float newTime);
 
-	vec2 getPos();
-	void setPos(vec2 newPos);
+	vec3 getPos();
+	void setPos(vec3 newPos);
 
-	vec2 getScale();
-	void setscale(vec2 newScale);
+	vec3 getScale();
+	void setscale(vec3 newScale);
 
 	Quaternion getRot();
 	void setRot(Quaternion newRot);
@@ -23,8 +23,8 @@ public:
 
 private:
 	float startTime;
-	vec2 pos;
-	vec2 scale;
+	vec3 pos;
+	vec3 scale;
 	Quaternion rot;
 	float alpha;
 };

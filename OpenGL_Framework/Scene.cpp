@@ -26,6 +26,9 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
+	if (_uiSystem)
+		_uiSystem->update(deltaTime);
+
 	if (_entityFactory->getAcornCount() > 18)
 	{
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
@@ -35,11 +38,11 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
-	light->setPosition(vec3(_playerTransform->getLocalPosition().x - 2.0f, light->getPosition().y, light->getPosition().z));
+	light->setPosition(_playerTransform->getLocalPosition() + vec3(0.0f, -0.5f, 0.0f));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
-		_playerTransform->setWorldPosition(vec3(-3.0f, 8.0f, -5.0f));
+		_playerTransform->setWorldPosition(_playerTransform->getPlayerSpawnPosition());
 		_playerPhysicsBody->setVelocity(vec3(0.0f));
 		_playerTransform->setLocalScale(vec3(0.2f));
 	}
@@ -77,13 +80,15 @@ void Scene::update(float deltaTime)
 		skeletalMeshTestTwo->update(deltaTime);
 	}
 
-	//_uiSystem->update(deltaTime);
+
+	_uiSystem->update(deltaTime);
 }
 
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
-	//_uiSystem->draw();
+	_uiSystem->draw();
+
 
 #ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -131,6 +136,12 @@ void Scene::draw()
 	// Update imgui draw data
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
+}
+
+void Scene::drawUI()
+{
+	if (_uiSystem)
+	_uiSystem->draw();
 }
 
 void Scene::imguiDraw()
@@ -315,8 +326,8 @@ void Scene::loadOldFaithful()
 	entity = _entityFactory->createEmpty(vec3(0.0f, 0.8f, 0.0f), vec3(0.6f), nullptr, "SkeletonTwo");
 	skeletalMeshTestTwo = new SkeletalMesh();
 	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	string path = "./Assets/Test Exporter/Character Running/";
-	//string path = "./Assets/Test Exporter/Test/";
+	//string path = "./Assets/Test Exporter/Character Running/";
+	string path = "./Assets/Test Exporter/Test/";
 	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
 	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Jump.nutAnim");
 	skeletalMeshTestTwo->_isSkeletal = true;
@@ -328,19 +339,33 @@ void Scene::loadOldFaithful()
 	_entityManager->addComponent(meshRenderer, entity);
 
 
-	//UICanvas* testCanvas = new UICanvas();
+	UICanvas* testCanvas = new UICanvas();
 
-	//UIImage* testImage = new UIImage(vec3(2.0f, 1.0f, 0.0f));
-	//testImage->setTexture(ObjectLoader::getTexture("FullNut"));
+	UIImage* testImage = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
-	//testCanvas->addImage("Test", testImage);
 
-	//_uiSystem->addCanvas("TESTC", testCanvas);
+	testCanvas->addImage("Test", testImage);
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+
+	vector<UIKeyFrame*> testVec;
+	testVec.push_back(frame1);
+	testVec.push_back(frame2);
+	testVec.push_back(frame3);
+
+	UIAnimation* animu = new UIAnimation("test", testVec);
+
+	testImage->getAnimator()->addAnimation(animu);
+
+
+	_uiSystem->addCanvas("TESTC", testCanvas);
 
 
 
 	light = new Light();
-	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
 	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
 	light->setDiffuse(vec3(0.6f));
@@ -377,7 +402,7 @@ void Scene::loadScene()
 	EntityManager::setMainCamera(_mainCamera);
 
 	light = new Light();
-	light->setPosition(vec3(4.0f, 0.0f, 0.0f));
+	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
 	light->setAmbient(vec3(0.7f));
 	//light->setAmbient(vec3(0));
 	light->setDiffuse(vec3(0.6f));
@@ -564,6 +589,7 @@ void Scene::mouseClicked(int button, int state, int x, int y)
 		{
 		case GLUT_LEFT_BUTTON:
 			io.MouseDown[0] = true;
+			_uiSystem->checkClick(x, y);
 			break;
 		case GLUT_RIGHT_BUTTON:
 			io.MouseDown[1] = true;
