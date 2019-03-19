@@ -33,7 +33,7 @@ void Game::initializeGame()
 	frameBufferLUT.init(1900, 1000);
 
 	frameBufferShadow.addDepthTarget();
-	frameBufferShadow.init(2048, 2048);
+	frameBufferShadow.init(4096, 4096);
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
@@ -360,6 +360,25 @@ void Game::draw()
 	gbuffer.bind();
 	_currentScene->draw();
 	gbuffer.unbind();
+
+	frameBufferShadow.clear();
+	frameBufferShadow.setViewport();
+	frameBufferShadow.bind();
+	_currentScene->drawShadow();
+	frameBufferShadow.unbind();
+
+	mat4 biasMat4 = mat4(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.5f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f);
+
+	CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
+
+
+	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowCamera->getView() * shadowCamera->getView().getInverse();
+	shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
+	frameBufferShadow.bindDepthAsTexture(16);
 
 	
 	//shaderGbuffer.bind();

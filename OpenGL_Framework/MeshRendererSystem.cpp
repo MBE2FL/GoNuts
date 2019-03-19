@@ -3,8 +3,6 @@
 MeshRendererSystem::MeshRendererSystem(EntityManager * entityManager)
 	: System(entityManager)
 {
-	shadowFramebuffer.addDepthTarget();
-	shadowFramebuffer.init(2048, 2048);
 }
 
 MeshRendererSystem::~MeshRendererSystem()
@@ -18,12 +16,9 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 
 	// Retrieve the main camera.
 	Entity* mainCamera = EntityManager::getMainCamera();
-	Entity* shadowCamera = EntityManager::getShadowCamera();
 
 	// If no main camera was set, draw nothing.
 	if (!mainCamera)
-		return;
-	if (!shadowCamera)
 		return;
 
 	// Retrieve the necessary camera details.
@@ -31,14 +26,6 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 	_cameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
 	mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse();
-
-	// Retrieve the necessary camera details.
-	_shadowCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, shadowCamera);
-	_shadowCameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, shadowCamera);
-	//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
-	//mat4 shadowCameraInverse = _shadowCameraTrans->getLocalToWorldMatrix().getInverse();
-
-
 
 	// Sort the vector, so all the transparent meshes are at the back of the vector.
 	vector<MeshRendererComponent*>::iterator transIt = partition(meshRenderers.begin(), meshRenderers.end(), [](MeshRendererComponent* meshRenderer) -> bool
@@ -66,6 +53,54 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 	glEnable(GL_BLEND);
 	drawHelper(_transCullList, light, spotLight, cameraInverse);
 }
+
+void MeshRendererSystem::drawShadow(Light * light, Light * spotLight)
+{
+	// Retrieve all entities, possessing a mesh renderer.
+	vector<MeshRendererComponent*> meshRenderers = _entityManager->getAllMeshRenderers();
+
+	// Retrieve the main camera.
+	Entity* shadowCamera = EntityManager::getShadowCamera();
+
+	// If no main camera was set, draw nothing.
+	if (!shadowCamera)
+		return;
+
+	// Retrieve the necessary camera details.
+	_shadowCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, shadowCamera);
+	_shadowCameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, shadowCamera);
+
+	mat4 shadowCameraInverse = _shadowCameraTrans->getLocalToWorldMatrix().getInverse();
+
+
+
+	// Sort the vector, so all the transparent meshes are at the back of the vector.
+	vector<MeshRendererComponent*>::iterator transIt = partition(meshRenderers.begin(), meshRenderers.end(), [](MeshRendererComponent* meshRenderer) -> bool
+	{
+		// Make sure mesh renderer component exists.
+		if (!meshRenderer)
+			return false;
+
+		return !meshRenderer->getIsTransparent();
+	});
+
+	// Cull both the opaque and transparent objects. Sort the transparent objects afterwards.
+	_opaqueObjects.clear();
+	_transObjects.clear();
+	_opaqueObjects.assign(meshRenderers.begin(), transIt);
+	_transObjects.assign(transIt, meshRenderers.end());
+	cull(_opaqueCullList, _opaqueObjects);
+	cull(_transCullList, _transObjects);
+	sortMeshes(_transCullList);
+
+
+	// Draw both the culled opaque and transparent objects.
+	glDisable(GL_BLEND);
+	drawHelper(_opaqueCullList, light, spotLight, shadowCameraInverse);
+	glEnable(GL_BLEND);
+	drawHelper(_transCullList, light, spotLight, shadowCameraInverse);
+}
+
 
 void MeshRendererSystem::cull(vector<MeshRendererComponent*>& cullList, vector<MeshRendererComponent*>& objectList)
 {

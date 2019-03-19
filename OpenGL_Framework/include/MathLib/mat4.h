@@ -14,6 +14,10 @@ public:
 						0.0f, 0.0f, 1.0f, 0.0f,
 						0.0f, 0.0f, 0.0f, 1.0f };
 	mat4() {};
+	mat4(const float& other1, const float& other2, const float& other3, const float& other4, 
+		const float& other5, const float& other6, const float& other7, const float& other8, 
+		const float& other9, const float& other10, const float& other11, const float& other12, 
+		const float& other13, const float& other14, const float& other15, const float& other16);
 	mat4(const mat4& other);
 	mat4(const vec3& position, vec3& eulerAngles);
 	mat4(const vec3& position, Quaternion& rotation);
@@ -51,7 +55,7 @@ public:
 	static vec4 transform(const mat4& transMat, const vec4& position);
 
 	static mat4 PerspectiveProjection(float FOVy, float aspect, float zNear, float zFar);
-	static mat4 OrthographicProjection(float left, float right, float top, float bottom, float near, float far);
+	static mat4 OrthographicProjection(float left, float right, float bottom, float top, float near, float far);
 
 	vec3 getTranslation() const;
 	vec3 getForward() const;

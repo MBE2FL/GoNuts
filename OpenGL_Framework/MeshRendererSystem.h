@@ -20,6 +20,7 @@ public:
 	~MeshRendererSystem();
 
 	void draw(Light* light, Light* spotLight);
+	void drawShadow(Light * light, Light * spotLight);
 	void cull(vector<MeshRendererComponent*>& cullList, vector<MeshRendererComponent*>& objectList);
 	void sortMeshes(vector<MeshRendererComponent*>& cullList);
 
@@ -33,7 +34,6 @@ private:
 	vector<MeshRendererComponent*> _transObjects;
 	vector<MeshRendererComponent*> _transCullList;
 
-	Framebuffer shadowFramebuffer;
 
 	void drawHelper(const vector<MeshRendererComponent*>& drawList, Light* light, Light* spotLight, mat4& cameraInverse);
 };

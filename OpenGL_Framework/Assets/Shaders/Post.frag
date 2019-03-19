@@ -22,12 +22,14 @@ uniform float attenuationConstant;
 uniform float attenuationLinear;
 uniform float attenuationQuadratic;
 
+uniform mat4 uViewToShadow;
 
 
 layout(binding = 0) uniform sampler2D uSceneTex; 
 layout(binding = 1) uniform sampler2D uSceneNormal; 
 layout(binding = 2) uniform sampler2D uSceneDepth; 
 layout(binding = 5) uniform sampler2D uSceneToon; 
+layout (binding = 16) uniform sampler2D uTexShadowDepth;
 //layout(binding = 30) uniform sampler3D uLUTTex;
 layout(std140, binding = 4) uniform Resolution
 {
@@ -109,6 +111,17 @@ void main()
 	
 	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
 
+	vec4 shadowCoord = uViewToShadow * position;
+	float shadowDepth = texture(uTexShadowDepth, shadowCoord.xy).r;
+
+	vec3 shadowAmount = vec3(1.0);
+	//vec3 shadowAmount = texture(uTexLightColor, shadowCoord.xy).rgb;
+	// shadowAmount is multiplied into the diffuse and specular equations, meaning there will be no lighting if shadowAmount is 0!
+	if(shadowDepth < shadowCoord.z - 0.001)
+	{
+		shadowAmount = vec3(0.0);
+	}
+
 	//vec3 lightDir = normalize(POS.xyz - position.xyz);
 	vec3 lightDir = normalize(vec3(-1,2,2));
 	float diffuseLight = max(dot(normal, lightDir), 0.05);		
@@ -121,10 +134,10 @@ void main()
 	vec3 diffuse = vec3(0.35) * textureLookUp.r;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
-	outColor.rgb = ambient + diffuse;
+	outColor.rgb = ambient + diffuse * shadowAmount;
 	//outColor.rgb *= texColor.rgb;
 
 	//outColor.rgb = normal;
 	//outColor.rgb = textureLookUp.rgb;
-
+	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 }

@@ -20,6 +20,29 @@ std::ostream & operator<<(std::ostream & out, const mat4& source)
 	return out;
 }
 
+mat4::mat4(const float & other1, const float & other2, const float & other3, const float & other4, 
+	const float & other5, const float & other6, const float & other7, const float & other8, 
+	const float & other9, const float & other10, const float & other11, const float & other12, 
+	const float & other13, const float & other14, const float & other15, const float & other16)
+{
+	data[0] = other1;
+	data[1] = other2;
+	data[2] = other3;
+	data[3] = other4;
+	data[4] = other5;
+	data[5] = other6;
+	data[6] = other7;
+	data[7] = other8;
+	data[8] = other9;
+	data[9] = other10;
+	data[10] = other11;
+	data[11] = other12;
+	data[12] = other13;
+	data[13] = other14;
+	data[14] = other15;
+	data[15] = other16;
+}
+
 mat4::mat4(const mat4 & other)
 {
 	for (size_t i = 0; i < 16; i++)
@@ -616,26 +639,50 @@ mat4 mat4::PerspectiveProjection(float FOVy, float aspect, float zNear, float zF
 	return result;
 }
 
-mat4 mat4::OrthographicProjection(float left, float right, float top, float bottom, float near, float far)
+mat4 mat4::OrthographicProjection(float left, float right, float bottom, float top, float near, float far)
 {
 	mat4 result;
 	result.data[0] = 2.0f/(right - left);
 	result.data[1] = 0.f;
 	result.data[2] = 0.f;
-	result.data[3] = -((right + left)/ (right - left));
+	result.data[3] = (-(right + left)/ (right - left));
+	
 	result.data[4] = 0.f;
 	result.data[5] = 2.0f /(top - bottom);
 	result.data[6] = 0.f;
-	result.data[7] = -((top + bottom) / (top - bottom));
+	result.data[7] = (-(top + bottom) / (top - bottom));
+	
 	result.data[8] = 0.f;
 	result.data[9] = 0.f;
-	result.data[10] = -(-2.0f / (far - near));
-	result.data[11] = -((far + near) / (far - near));
+	result.data[10] = -2.0f / (far - near);
+	result.data[11] = (-(far + near) / (far - near));
+	
 	result.data[12] = 0.f;
 	result.data[13] = 0.f;
 	result.data[14] = 0.f;
 	result.data[15] = 1.0f;
+	result = result.getTranspose();
 
+	//mat4 result;
+	//result.data[0] = 2.0f / (right - left);
+	//result.data[1] = 0.f;
+	//result.data[2] = 0.f;
+	//result.data[3] = 0.f;
+	//
+	//result.data[4] = 0.f;
+	//result.data[5] = 2.0f / (top - bottom);
+	//result.data[6] = 0.f;
+	//result.data[7] = 0.f;
+	//
+	//result.data[8] = 0.f;
+	//result.data[9] = 0.f;
+	//result.data[10] = -2.0f / (far - near);
+	//result.data[11] = 0.f;
+	//
+	//result.data[12] = -(right + left)/(right - left);
+	//result.data[13] = -(top + bottom)/(top - bottom);
+	//result.data[14] = -(far + near) / (far - near);
+	//result.data[15] = 1.0f;
 	return result;
 }
 

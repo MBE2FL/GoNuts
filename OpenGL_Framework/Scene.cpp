@@ -135,6 +135,12 @@ void Scene::draw()
 #endif
 }
 
+void Scene::drawShadow()
+{
+	_meshRendererSystem->drawShadow(light, spotLight);
+	glUseProgram(GL_NONE);
+}
+
 void Scene::drawUI()
 {
 	if (_uiSystem)
@@ -260,14 +266,16 @@ void Scene::loadOldFaithful()
 	_guiHelper->update();
 #endif
 
-	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+	//float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
-	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
+	_mainCamera = _entityFactory->createOrthographicCamera(vec3(0), -8.0f, 8.0f, -4.5f, 4.5f, -10.0f, 100.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
-	_shadowCamera = _entityFactory->createOrthographicCamera(100, -100, 100, -100, 300, -300);
+	_shadowCamera = _entityFactory->createOrthographicCamera(200, -200, 200, -200, 300, -300);
 	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
+	//_shadowCameraTransform->setLocalRotation(vec3(-30, 45, 0));
+	_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
 	EntityManager::setShadowCamera(_shadowCamera);
 
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
@@ -280,7 +288,7 @@ void Scene::loadOldFaithful()
 
 
 
-	_entityFactory->createBackgrounds(20, vec3(100.0f, -5.0f, -20.0f), vec3(25.0f, 25.0f, 1.0f));
+	//_entityFactory->createBackgrounds(20, vec3(100.0f, -5.0f, -20.0f), vec3(25.0f, 25.0f, 1.0f));
 
 	_entityFactory->createPlatforms(15, vec3(14.0f, -2.0f, -5.0f));
 
@@ -482,6 +490,7 @@ void Scene::loadScene()
 
 	EntityManager::setPlayerTransform(_playerTransform);
 	EntityManager::setMainCamera(_mainCamera);
+	EntityManager::setShadowCamera(_shadowCamera);
 
 	light = new Light();
 	light->setPosition(vec3(4.0f, 3.0f, -4.0f));

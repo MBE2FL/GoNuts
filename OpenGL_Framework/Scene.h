@@ -62,6 +62,7 @@ public:
 
 	void update(float deltaTime);
 	void draw();
+	void drawShadow();
 	void drawUI();
 	void imguiDraw();
 	string getName() const;
