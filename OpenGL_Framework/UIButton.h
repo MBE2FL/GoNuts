@@ -10,8 +10,11 @@ public:
 	bool getHover() const;
 	void setHover(const bool isHover);
 
+	bool getIsClicked() const;
+	void setIsClicked(const bool isClicked);
+
 private:
 
-	bool isClicked = false;
+	bool _isClicked = false;
 	bool _isHover = false;
 };

@@ -17,3 +17,13 @@ void UIButton::setHover(const bool isHover)
 {
 	_isHover = isHover;
 }
+
+bool UIButton::getIsClicked() const
+{
+	return _isClicked;
+}
+
+void UIButton::setIsClicked(const bool isClicked)
+{
+	_isClicked = isClicked;
+}

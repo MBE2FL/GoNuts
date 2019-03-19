@@ -61,6 +61,19 @@ void SceneManager::loadOldFaithful(const string & name)
 	}
 }
 
+void SceneManager::loadMainMenu(const string & name)
+{
+	for (Scene* scene : _scenes)
+	{
+		if (scene->getName() == name)
+		{
+			_currentScene = scene;
+			scene->loadMainMenu();
+			return;
+		}
+	}
+}
+
 void SceneManager::saveScene()
 {
 	_currentScene->saveScene();

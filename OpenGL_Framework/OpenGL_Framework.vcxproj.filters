@@ -210,7 +210,6 @@
     <ClCompile Include="include\MathLib\ivec4.cpp">
       <Filter>Header Files\MathLib</Filter>
     </ClCompile>
-    <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="Animator.cpp">
       <Filter>Source Files\EntitySystem\Components\Animation\Skeleton</Filter>
     </ClCompile>
@@ -400,9 +399,6 @@
     <ClInclude Include="include\TinyXML\tinyxml2.h" />
     <ClInclude Include="include\MathLib\ivec4.h">
       <Filter>Header Files\MathLib</Filter>
-    </ClInclude>
-    <ClInclude Include="UIComponent.h">
-      <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="SkeletalMesh.h">
       <Filter>Header Files\EntitySystem\Components\Animation\Skeleton</Filter>

@@ -12,6 +12,8 @@ Copyright (C) 2015-2017 Stephen Thompson
 uniform sampler2D uSceneTex; 
 layout(binding = 30) uniform sampler3D uLUTTex;
 
+uniform bool lut = true;
+
 uniform float uAmount = 1.0f;
 in vec2 texcoord;
 out vec4 outColor;
@@ -29,8 +31,14 @@ void main()
 
 	vec3 applyLUT = texture(uLUTTex, scale * source.rgb + offset).rgb;
 
-	outColor.rgb = mix(source.rgb, applyLUT, uAmount);
-	//outColor.rgb = source.rgb;
+	if (lut)
+	{
+		outColor.rgb = mix(source.rgb, applyLUT, uAmount);
+	}
+	else
+	{
+		outColor.rgb = source.rgb;
+	}
 	outColor.a = 1.0;
 
 }
