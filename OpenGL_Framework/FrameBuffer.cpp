@@ -285,12 +285,11 @@ GBuffer::GBuffer()
 	addDepthTarget();
 	addColorTarget(GL_RGB8);
 	addColorTarget(GL_RGB8);
-	addColorTarget(GL_R11F_G11F_B10F);
 
 	textures.push_back(&_Depth._Tex);
 	textures.push_back(&_Color._Tex[0]);
 	textures.push_back(&_Color._Tex[1]);
-	textures.push_back(&_Color._Tex[2]);
+
 }
 
 void GBuffer::setDebugNames()

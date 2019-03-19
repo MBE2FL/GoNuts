@@ -72,6 +72,7 @@ public:
 	void saveScene();
 	Scene* saveSceneAs(const string& name);
 	void loadOldFaithful();
+	void loadMainMenu();
 	void loadScene();
 	void loadSceneFromFile(const string& path);
 	EntityManager* getEntityManager() const;
@@ -89,6 +90,7 @@ public:
 	TransformComponent* getMainCameraTransform() const;
 	void createTables(sqlite3 * db, char * errMsg);
 
+	TransformComponent* getPlayTrans() { return _playerTransform; }
 private:
 	string _name;
 	string _filename;

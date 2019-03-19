@@ -9,9 +9,36 @@ Copyright (C) 2015-2017 Stephen Thompson
 
 #version 420 //Version of OpenGL we're using. - 4.2
 
-uniform sampler2D uSceneTex; 
+uniform vec4 lightPosition;
+
+// Colour
+uniform vec3 lightAmbient;
+uniform vec3 lightDiffuse;
+uniform vec3 lightSpecular;
+
+// Scalars
+uniform float lightSpecularExponent;
+uniform float attenuationConstant;
+uniform float attenuationLinear;
+uniform float attenuationQuadratic;
+
+
+
+layout(binding = 0) uniform sampler2D uSceneTex; 
+layout(binding = 1) uniform sampler2D uSceneNormal; 
+layout(binding = 2) uniform sampler2D uSceneDepth; 
+layout(binding = 5) uniform sampler2D uSceneToon; 
 //layout(binding = 30) uniform sampler3D uLUTTex;
+layout(std140, binding = 4) uniform Resolution
+{
+	uniform vec2 uResolution;
+	uniform vec2 uPixelSize;
+};
+
+
 uniform bool outline;
+uniform mat4 uProjInverse;
+uniform vec4 POS;
 
 //uniform float uAmount = 1.0f;
 in vec2 texcoord;
@@ -47,7 +74,7 @@ void main()
 	);
 
 	//vec4 source = texture(uSceneTex, texcoord);
-	vec3 diffuse = texture(uSceneTex, texcoord).rgb;
+	vec3 texColor = texture(uSceneTex, texcoord).rgb;
 	if (outline)
 	{
 		mat3 I;
@@ -63,15 +90,41 @@ void main()
 		float gy = dot(sy[0], I[0]) + dot(sy[1], I[1]) + dot(sy[2], I[2]);
 		
 		float g = sqrt(pow(gx, 2.0)+pow(gy, 2.0));
-		outColor = vec4(diffuse - vec3(g), 1.0);
-	}
-	else
-	{
-		outColor.rgb = diffuse;
+		texColor = texColor - vec3(g);
 	}
 
-
-	//outColor.rgb = source.rgb;
+	//outColor.rgb = vec3(1,0,0);
 	outColor.a = 1.0;
+
+	// Calculate texture coordinate position on screen
+	vec2 texOffset = gl_FragCoord.xy * uPixelSize;
+	
+	float depth =  texture(uSceneDepth, texOffset).r;
+	if(depth == 1) discard;
+	vec4 position = uProjInverse * (vec4(texOffset, depth, 1.0) * 2 - 1);
+	position /= position.w;
+	
+	
+	outColor.rgb = vec3(0); 
+	
+	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
+
+	//vec3 lightDir = normalize(POS.xyz - position.xyz);
+	vec3 lightDir = normalize(vec3(-1,2,2));
+	float diffuseLight = max(dot(normal, lightDir), 0.05);		
+	
+	diffuseLight * 0.5 + 0.5;
+	diffuseLight = clamp(diffuseLight, 0.05, 0.95);
+	vec4 textureLookUp = texture(uSceneToon, vec2(diffuseLight, 0.5));
+
+	vec3 ambient = texColor.rgb*0.8;
+	vec3 diffuse = vec3(0.35) * textureLookUp.r;
+	
+	//outColor.rgb += texColor + vec3(0.5) * NdotL;
+	outColor.rgb = ambient + diffuse;
+	//outColor.rgb *= texColor.rgb;
+
+	//outColor.rgb = normal;
+	//outColor.rgb = textureLookUp.rgb;
 
 }
