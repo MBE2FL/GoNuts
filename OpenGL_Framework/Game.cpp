@@ -133,14 +133,21 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Clothesline", "./Assets/Textures/clothingline_texture.png");
 	ObjectLoader::loadTexture("Coin", "./Assets/Textures/coin_tex.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
+	ObjectLoader::loadTexture("Couch", "./Assets/Textures/couch texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
 	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
 	ObjectLoader::loadTexture("Flag", "./Assets/Textures/flag tex.png");
 	ObjectLoader::loadTexture("Garbage", "./Assets/Textures/garbage.png");
+	ObjectLoader::loadTexture("Garbage 2", "./Assets/Textures/garbage texture.png");
+	ObjectLoader::loadTexture("Lamp", "./Assets/Textures/lamp texture.png");
 	ObjectLoader::loadTexture("Lever", "./Assets/Textures/Lever_Texture1.png");
+	ObjectLoader::loadTexture("Planter", "./Assets/Textures/planter texture.png");
 	ObjectLoader::loadTexture("Raccoon", "./Assets/Textures/raccoon_texture.png");
+	ObjectLoader::loadTexture("Round Table", "./Assets/Textures/roundtable texture.png");
+	ObjectLoader::loadTexture("Small Plant", "./Assets/Textures/small plant texture.png");
 	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
+	ObjectLoader::loadTexture("Table", "./Assets/Textures/table texture.png");
 	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
