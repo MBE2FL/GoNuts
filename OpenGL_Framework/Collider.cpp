@@ -7,6 +7,7 @@ Collider::Collider()
 	_bounds = nullptr;
 	_contactOffset = vec3(0.0f);
 	_enabled = true;
+	_sound = SoundComponent::getInstance();
 }
 
 Collider::~Collider()
@@ -82,6 +83,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 
 		if (otherBody->getVelocity().y < 0.0f && otherCollider->getTag() == TTag::Player)
 		{
+			_sound->playSound("landingGrunt", _sound->getPlayerChannel(), false, 0.5f);
 			float ySpeed = otherBody->getVelocity().y;
 			otherBody->addImpluseForce(vec3(0.0f, -ySpeed, 0.0f));
 

@@ -2,7 +2,6 @@
 
 #include "GUIHelper.h"
 
-
 Scene::Scene(const string & name)
 {
 	_name = name;
@@ -11,6 +10,7 @@ Scene::Scene(const string & name)
 	_meshRendererSystem = new MeshRendererSystem(_entityManager);
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
 
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
@@ -50,13 +50,13 @@ void Scene::update(float deltaTime)
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
-	if (front /*&& !_playerPhysicsBody->getCanJump()*/)
+	if (front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -5.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
-	else if (!front /*&& !_playerPhysicsBody->getCanJump()*/)
+	else if (!front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
@@ -555,6 +555,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false);
 		}
 		break;
 	case 'c'://left control for sliding
@@ -582,43 +583,14 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	}
 
-	if (key == 'w' && !_playerPhysicsBody->getCanJump())
-	{
-		front = false;
-	}
 
-	if (key == 's' && !_playerPhysicsBody->getCanJump())
-	{
-		front = true;
-	}
-	if (key == 'i')//up
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, LP.y, --LP.z));
-	}
-	if (key == 'k')//down
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, LP.y, ++LP.z));
-	}
-	if (key == 'j')//left
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(--LP.x, LP.y, LP.z));
-	}
-	if (key == 'l')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(++LP.x, LP.y, LP.z));
-	}if (key == 'u')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, ++LP.y, LP.z));
-	}if (key == 'o')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, --LP.y, LP.z));
-	}
+	//if (key == 's' && !_playerPhysicsBody->getCanJump())
+	//{
+	//	if (!front)
+	//		front = false;
+	//	else if (front)
+	//		front = true;
+	//}
 }
 
 void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
@@ -655,6 +627,18 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 			_playerTransform->setLocalScale(vec3(0.2f));
 		}
 	}
+}
+
+void Scene::specialKeyDown(int key, int mouseX, int mouseY)
+{
+	switch (key)
+	{
+	case GLUT_KEY_SHIFT_L:
+		if (front && !_playerPhysicsBody->getCanJump())
+			front = false;
+		else if (!front && !_playerPhysicsBody->getCanJump())
+			front = true;
+	};
 }
 
 void Scene::mouseClicked(int button, int state, int x, int y)

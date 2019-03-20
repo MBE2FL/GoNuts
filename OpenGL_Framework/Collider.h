@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "SoundComponent.h"
 #include "PhysicsBodyComponent.h"
 
 enum class TTag
@@ -80,6 +81,8 @@ public:
 
 	bool beastMode = false;
 protected:
+	SoundComponent* _sound;
+
 	Bounds* _bounds;
 	vec3 _contactOffset;
 	bool _enabled;
