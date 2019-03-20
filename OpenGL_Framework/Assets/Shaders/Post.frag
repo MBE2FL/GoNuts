@@ -133,11 +133,11 @@ void main()
 	vec4 textureLookUp = texture(uSceneToon, vec2(diffuseLight, 0.5));
 
 	vec3 ambient = texColor.rgb*0.8;
-	vec3 diffuse = vec3(0.35) * textureLookUp.r;
+	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
 	outColor.rgb = ambient + diffuse * shadowAmount;
-	//outColor.rgb += texture(uTexUI, texcoord).rgb;
+
 	//outColor.rgb *= texColor.rgb;
 
 	//outColor.rgb = texture(uTexShadowDepth, texcoord.xy).rrr;
@@ -145,5 +145,5 @@ void main()
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
 	vec4 worldPos = uViewInverse * position;
-	//outColor.rgb = vec3(1,0,0);
+	//outColor.rgb = shadowCoord.xyz;
 }
