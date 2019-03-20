@@ -252,6 +252,7 @@
     <ClCompile Include="UIButton.cpp">
       <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
     </ClCompile>
+    <ClCompile Include="SoundComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -441,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="UIButton.h">
       <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundComponent.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

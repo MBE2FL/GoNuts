@@ -2,7 +2,6 @@
 
 #include "GUIHelper.h"
 
-
 Scene::Scene(const string & name)
 {
 	_name = name;
@@ -11,6 +10,7 @@ Scene::Scene(const string & name)
 	_meshRendererSystem = new MeshRendererSystem(_entityManager);
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
 
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
@@ -50,13 +50,13 @@ void Scene::update(float deltaTime)
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
-	if (front /*&& !_playerPhysicsBody->getCanJump()*/)
+	if (front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -5.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
-	else if (!front /*&& !_playerPhysicsBody->getCanJump()*/)
+	else if (!front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
@@ -555,6 +555,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false);
 		}
 		break;
 	case 'c'://left control for sliding
@@ -583,13 +584,13 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 
 
-	if (key == 's' && !_playerPhysicsBody->getCanJump())
-	{
-		if (!front)
-			front = false;
-		else if (front)
-			front = true;
-	}
+	//if (key == 's' && !_playerPhysicsBody->getCanJump())
+	//{
+	//	if (!front)
+	//		front = false;
+	//	else if (front)
+	//		front = true;
+	//}
 }
 
 void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)

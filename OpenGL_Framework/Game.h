@@ -23,7 +23,7 @@
 
 #include "SceneManager.h"
 
-#include "FmodWrapper.h"
+#include "SoundComponent.h"
 
 class Game
 {
@@ -56,22 +56,13 @@ private:
 
 	float t = 0.0f;
 
-	Sound sound;
-
-	FMOD::Channel* soundChannel = 0;
-	FMOD_VECTOR	pos;
-
+	SoundComponent* _sound;
 	//UI
 	//GameObject nutOmeter;
 	//GameObject time;
 
 	//GameObject* particleTrail;
 	//GameObject* jumpParticles;
-
-	bool collided = false;
-	bool sliding = false;
-	bool slideCheck = false;
-	bool reverse = false;
 
 	bool outline = true;
 

@@ -270,50 +270,18 @@ void Game::initializeGame()
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
 
-	int dummy = 0;
-	dummy++;
-
-
 	//SkeletalMesh testSkeleton;
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
 	//testSkeleton.loadFromFile("./Assets/ANIM_TEST.dae");
 	//testSkeleton._isSkeletal = true;
 
-
-
-	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-
-	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
-	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
-
-	mat4 testMat = testOne.getRotationMatrix();
-	testTwo.getRotationMatrix();
-
-	Quaternion testRotToQuat = Quaternion(testMat);
-
-	Quaternion testVector = Quaternion(0.0f, 10.0f, 0.0f, 0.0f);
-	testVector.rotate(90.0f, vec3(0.0f, 1.0f, 0.0f));
-
-	testOne * testTwo;
-
-	Quaternion::slerp(testOne, testTwo, 0.5f);
-
-
-
-
-	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-
-
-	//sound.Load("./Assets/Sounds/drumloop.wav", false);
-
-
-	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-
-
+	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
-	soundChannel = sound.Play(true);
-	Sound::SetLoop(soundChannel, true);
-	Sound::SetVolume(soundChannel, 0.05f);
+	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
+	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
+	
+	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
 	
 }
 
@@ -321,16 +289,7 @@ void Game::update()
 {
 	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
-	collided = false;
-	if (!reverse)
-		t += 0.01f;
-	if (reverse)
-		t -= 0.01f;
 
-	if (t >= 1)
-		reverse = true;
-	if (t <= 0)
-		reverse = false;
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 

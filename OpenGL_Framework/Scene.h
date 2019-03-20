@@ -13,11 +13,12 @@
 #include "TransformSystem.h"
 #include "MeshRendererSystem.h"
 #include "PhysicsSystem.h"
+#include "SoundComponent.h"
 #include "UISystem.h"
 //#include "GUIHelper.h"
 #include <sstream>
 
-
+#include "FmodWrapper.h"
 
 #define WINDOW_WIDTH			1900
 #define WINDOW_HEIGHT			1000
@@ -93,7 +94,9 @@ public:
 	void createTables(sqlite3 * db, char * errMsg);
 
 	TransformComponent* getPlayTrans() { return _playerTransform; }
+
 private:
+	SoundComponent* _sound;
 	string _name;
 	string _filename;
 	EntityManager* _entityManager;
