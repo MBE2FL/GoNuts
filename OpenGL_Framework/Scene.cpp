@@ -582,42 +582,13 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	}
 
-	if (key == 'w' && !_playerPhysicsBody->getCanJump())
-	{
-		front = false;
-	}
 
 	if (key == 's' && !_playerPhysicsBody->getCanJump())
 	{
-		front = true;
-	}
-	if (key == 'i')//up
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, LP.y, --LP.z));
-	}
-	if (key == 'k')//down
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, LP.y, ++LP.z));
-	}
-	if (key == 'j')//left
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(--LP.x, LP.y, LP.z));
-	}
-	if (key == 'l')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(++LP.x, LP.y, LP.z));
-	}if (key == 'u')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, ++LP.y, LP.z));
-	}if (key == 'o')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, --LP.y, LP.z));
+		if (!front)
+			front = false;
+		else if (front)
+			front = true;
 	}
 }
 
@@ -655,6 +626,18 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 			_playerTransform->setLocalScale(vec3(0.2f));
 		}
 	}
+}
+
+void Scene::specialKeyDown(int key, int mouseX, int mouseY)
+{
+	switch (key)
+	{
+	case GLUT_KEY_SHIFT_L:
+		if (front && !_playerPhysicsBody->getCanJump())
+			front = false;
+		else if (!front && !_playerPhysicsBody->getCanJump())
+			front = true;
+	};
 }
 
 void Scene::mouseClicked(int button, int state, int x, int y)

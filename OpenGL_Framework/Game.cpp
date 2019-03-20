@@ -503,6 +503,11 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	_currentScene->keyboardUp(key, mouseX, mouseY);
 }
 
+void Game::specialKeyDown(int key, int mouseX, int mouseY)
+{
+	_currentScene->specialKeyDown(key, mouseX, mouseY);
+}
+
 void Game::mouseClicked(int button, int state, int x, int y)
 {
 	_currentScene->mouseClicked(button, state, x, y);
