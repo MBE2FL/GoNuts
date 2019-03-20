@@ -89,6 +89,8 @@ private:
 
 	Framebuffer frameBufferShadow;
 
+	Framebuffer frameBufferUI;
+
 	ShaderProgram shaderGbuffer;
 	ShaderProgram shaderOutline;
 	ShaderProgram shaderLUT;

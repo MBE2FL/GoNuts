@@ -22,7 +22,6 @@ uniform float attenuationConstant;
 uniform float attenuationLinear;
 uniform float attenuationQuadratic;
 
-uniform mat4 uViewToShadow;
 
 
 layout(binding = 0) uniform sampler2D uSceneTex; 
@@ -30,6 +29,7 @@ layout(binding = 1) uniform sampler2D uSceneNormal;
 layout(binding = 2) uniform sampler2D uSceneDepth; 
 layout(binding = 5) uniform sampler2D uSceneToon; 
 layout (binding = 16) uniform sampler2D uTexShadowDepth;
+//layout (binding = 25) uniform sampler2D uTexUI;
 //layout(binding = 30) uniform sampler3D uLUTTex;
 layout(std140, binding = 4) uniform Resolution
 {
@@ -40,7 +40,9 @@ layout(std140, binding = 4) uniform Resolution
 
 uniform bool outline;
 uniform mat4 uProjInverse;
+uniform mat4 uViewInverse;
 uniform vec4 POS;
+uniform mat4 uViewToShadow;
 
 //uniform float uAmount = 1.0f;
 in vec2 texcoord;
@@ -117,7 +119,7 @@ void main()
 	vec3 shadowAmount = vec3(1.0);
 	//vec3 shadowAmount = texture(uTexLightColor, shadowCoord.xy).rgb;
 	// shadowAmount is multiplied into the diffuse and specular equations, meaning there will be no lighting if shadowAmount is 0!
-	if(shadowDepth < shadowCoord.z - 0.001)
+	if(shadowDepth < shadowCoord.z - 0.00)
 	{
 		shadowAmount = vec3(0.0);
 	}
@@ -135,9 +137,13 @@ void main()
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
 	outColor.rgb = ambient + diffuse * shadowAmount;
+	//outColor.rgb += texture(uTexUI, texcoord).rgb;
 	//outColor.rgb *= texColor.rgb;
 
-	//outColor.rgb = normal;
+	//outColor.rgb = texture(uTexShadowDepth, texcoord.xy).rrr;
 	//outColor.rgb = textureLookUp.rgb;
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
+
+	vec4 worldPos = uViewInverse * position;
+	//outColor.rgb = vec3(1,0,0);
 }

@@ -38,7 +38,7 @@ public:
 	void getColumns(vec3& col1, vec3& col2, vec3& col3);
 	vec3 getColumn(int i);
 	//Manipulators
-	void inverse();
+	static mat4 inverse(mat4 transRot);
 	//mat4 getInverse(const mat4& rot, const vec3& tran);
 	mat4 getInverse();
 	void transpose();

@@ -24,8 +24,9 @@ void UICanvas::update(float deltaTime)
 void UICanvas::draw(mat4 & camView, mat4 & camProj)
 {
 	// Draw all of this canvases images.
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
 	
+	glDisable(GL_BLEND);
 
 	for (auto const& imageKeyVal : _images)
 	{
@@ -60,7 +61,6 @@ void UICanvas::draw(mat4 & camView, mat4 & camProj)
 	}
 
 
-	glDisable(GL_BLEND);
 }
 
 void UICanvas::addImage(const string & name, UIImage * image)

@@ -144,7 +144,7 @@ void Scene::drawShadow()
 void Scene::drawUI()
 {
 	if (_uiSystem)
-	_uiSystem->draw();
+		_uiSystem->draw();
 }
 
 void Scene::imguiDraw()
@@ -266,16 +266,16 @@ void Scene::loadOldFaithful()
 	_guiHelper->update();
 #endif
 
-	//float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
-	_mainCamera = _entityFactory->createOrthographicCamera(vec3(0), -8.0f, 8.0f, -4.5f, 4.5f, -10.0f, 100.0f);
+	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f,5.0f,5.0f), 60.0f, aspect, 1.0f, 1000.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
-	_shadowCamera = _entityFactory->createOrthographicCamera(200, -200, 200, -200, 300, -300);
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -200, 200, -200, 200, -10, 600);
 	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
-	//_shadowCameraTransform->setLocalRotation(vec3(-30, 45, 0));
-	_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
+	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
+	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
 	EntityManager::setShadowCamera(_shadowCamera);
 
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
@@ -288,7 +288,7 @@ void Scene::loadOldFaithful()
 
 
 
-	//_entityFactory->createBackgrounds(20, vec3(100.0f, -5.0f, -20.0f), vec3(25.0f, 25.0f, 1.0f));
+	_entityFactory->createBackgrounds(20, vec3(100.0f, -5.0f, -20.0f), vec3(25.0f, 25.0f, 1.0f));
 
 	_entityFactory->createPlatforms(15, vec3(14.0f, -2.0f, -5.0f));
 
@@ -346,13 +346,14 @@ void Scene::loadOldFaithful()
 
 	UICanvas* testCanvas = new UICanvas();
 
-	UIImage* testImage = new UIImage(vec3(-2.0f, -2.0f, 0.0f));
+	UIImage* testImage = new UIImage(vec3(-2.0f, -2.0f, 4.0f));
+	testImage->setLocalRotation(vec3(0, 0, 0));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
 	testCanvas->addImage("Test", testImage);
-	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 4.0f), vec3::One, Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 4.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 4.0f), vec3::One, Quaternion::Identity, 1.0f);
 
 	vector<UIKeyFrame*> testVec;
 	testVec.push_back(frame1);
