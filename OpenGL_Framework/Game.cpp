@@ -390,12 +390,11 @@ void Game::draw()
 		0.5f, 0.5f, 0.5f, 1.0f);
 
 	CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
+
 	TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
 
-
-	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getLocalToWorldMatrix().getInverse() * shadowcameraTrans->getLocalToWorldMatrix();
-	shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
-	frameBufferShadow.bindDepthAsTexture(16);
+	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * shadowcameraTrans->getView().getInverse();
+	
 
 	
 	//shaderGbuffer.bind();
@@ -437,12 +436,13 @@ void Game::draw()
 	//frameBufferOutline.unbindTexture(0);//texture
 	//
 	//shaderOutline.unBind();
-	mat4 uProjInverse = camera->getProjection().getInverse();
-	mat4 uViewInverse = cameraTrans->getLocalToWorldMatrix().getInverse();
+	mat4 uProjInverse = camera->getProjection().getInverse() * -1;
+	mat4 uViewInverse = cameraTrans->getView().getInverse();
 
 	TransformComponent* playerTrans = _currentScene->getPlayTrans();
 
 	shaderOutline.bind();
+	shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
 	shaderOutline.sendUniform("outline", outline);
 	shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
 	shaderOutline.sendUniformMat4("uViewInverse", uViewInverse.data, false);
@@ -453,7 +453,7 @@ void Game::draw()
 	gbuffer.bindDepthAsTexture(2);
 
 	toonRamp->bind(5);
-	//frameBufferUI.bindColorAsTexture(0, 25);
+	frameBufferShadow.bindDepthAsTexture(16);
 
 	gbuffer.bindResolution();
 	glViewport(0, 0, 1900, 1000);

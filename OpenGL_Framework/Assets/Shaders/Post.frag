@@ -145,5 +145,5 @@ void main()
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
 	vec4 worldPos = uViewInverse * position;
-	//outColor.rgb = shadowCoord.xyz;
+	outColor.rgb = shadowCoord.xyz;
 }

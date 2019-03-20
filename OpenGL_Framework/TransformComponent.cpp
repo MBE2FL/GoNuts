@@ -169,6 +169,11 @@ mat4 TransformComponent::getLocalToWorldMatrix() const
 	return _localToWorldMatrix;
 }
 
+mat4 TransformComponent::getView() const
+{
+	return _localToWorldMatrix.getInverse();
+}
+
 vec3 TransformComponent::getWorldPosition() const
 {
 	if (_parent)

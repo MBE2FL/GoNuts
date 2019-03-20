@@ -272,7 +272,7 @@ void Scene::loadOldFaithful()
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
-	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -200, 200, -200, 200, -10, 600);
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600);
 	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
 	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
 	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
