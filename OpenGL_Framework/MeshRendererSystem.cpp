@@ -25,7 +25,7 @@ void MeshRendererSystem::draw(Light * light, Light * spotLight)
 	_cameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, mainCamera);
 	_cameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, mainCamera);
 	//mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse(_cameraTrans->getWorldRotation(), _cameraTrans->getWorldPosition());
-	mat4 cameraInverse = _cameraTrans->getLocalToWorldMatrix().getInverse();
+	mat4 cameraInverse = _cameraTrans->getView();
 
 	// Sort the vector, so all the transparent meshes are at the back of the vector.
 	vector<MeshRendererComponent*>::iterator transIt = partition(meshRenderers.begin(), meshRenderers.end(), [](MeshRendererComponent* meshRenderer) -> bool
@@ -67,10 +67,10 @@ void MeshRendererSystem::drawShadow(Light * light, Light * spotLight)
 		return;
 
 	// Retrieve the necessary camera details.
-	_shadowCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, shadowCamera);
+	_cameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, shadowCamera);
 	_shadowCameraTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, shadowCamera);
 
-	mat4 shadowCameraInverse = _shadowCameraTrans->getLocalToWorldMatrix().getInverse();
+	mat4 shadowCameraInverse = _shadowCameraTrans->getView();
 
 
 

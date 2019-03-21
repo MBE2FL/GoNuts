@@ -181,10 +181,6 @@ vec3 mat4::getColumn(int i)
 	return vec3();
 }
 
-void mat4::inverse()
-{
-}
-
 //mat4 mat4::getInverse(const mat4 & rot, const vec3 & tran)
 //{
 //	mat4 transRot;
@@ -202,7 +198,7 @@ void mat4::inverse()
 //	return transRot;
 //}
 
-mat4 mat4::getInverse()
+mat4 mat4::getInverse() const
 {
 	mat4 transRot;
 	//transRot.data[15] = 0.0f;

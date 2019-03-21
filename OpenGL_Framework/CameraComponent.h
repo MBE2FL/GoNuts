@@ -24,7 +24,6 @@ public:
 	void setPerspective(const float fovY, const float aspect, const float zNear, const float zFar);
 	void setOrthographic(const float left, const float right, const float bottom, const float top, const float zNear, const float zFar);
 
-	mat4 getView() const;
 	mat4 getProjection() const;
 	ProjectionType getProjType() const;
 	bool getCullingActive() const;
