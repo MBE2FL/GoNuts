@@ -393,9 +393,7 @@ void Game::draw()
 
 	TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
 
-	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * shadowcameraTrans->getView().getInverse();
-	
-
+	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
 	
 	//shaderGbuffer.bind();
 	//
@@ -436,7 +434,7 @@ void Game::draw()
 	//frameBufferOutline.unbindTexture(0);//texture
 	//
 	//shaderOutline.unBind();
-	mat4 uProjInverse = camera->getProjection().getInverse() * -1;
+	mat4 uProjInverse = camera->getProjection().getInverse();
 	mat4 uViewInverse = cameraTrans->getView().getInverse();
 
 	TransformComponent* playerTrans = _currentScene->getPlayTrans();
