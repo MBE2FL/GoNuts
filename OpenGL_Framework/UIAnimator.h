@@ -15,17 +15,22 @@ class UIImage;
 class UIAnimator
 {
 public:
-	UIAnimator(UIImage* _image);
+	UIAnimator(UIImage* image);
+	UIAnimator();
 
 	void addAnimation(UIAnimation* anim);
 	void update(float deltaTime);
+
+	UIAnimation* getCurrentAnimation() const;
+	void setCurrentAnimation(const string& name);
+	unordered_map<string, UIAnimation*> getAnimations() const;
 	
 
 private:
-	UIImage* image;
-	UIAnimation* currentAnimation;
-	float currentTime = 0.0f;
-	unordered_map<string, UIAnimation*> animations;
+	UIImage* _image;
+	UIAnimation* _currentAnimation;
+	float _currentTime = 0.0f;
+	unordered_map<string, UIAnimation*> _animations;
 
 	void getPrevNextFrames();
 };

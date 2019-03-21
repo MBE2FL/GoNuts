@@ -28,6 +28,8 @@ layout(binding = 0) uniform sampler2D uSceneTex;
 layout(binding = 1) uniform sampler2D uSceneNormal; 
 layout(binding = 2) uniform sampler2D uSceneDepth; 
 layout(binding = 5) uniform sampler2D uSceneToon; 
+layout (binding = 16) uniform sampler2D uTexShadowDepth;
+//layout (binding = 25) uniform sampler2D uTexUI;
 //layout(binding = 30) uniform sampler3D uLUTTex;
 layout(std140, binding = 4) uniform Resolution
 {
@@ -38,7 +40,9 @@ layout(std140, binding = 4) uniform Resolution
 
 uniform bool outline;
 uniform mat4 uProjInverse;
+uniform mat4 uViewInverse;
 uniform vec4 POS;
+uniform mat4 uViewToShadow;
 
 //uniform float uAmount = 1.0f;
 in vec2 texcoord;
@@ -95,9 +99,10 @@ void main()
 
 	//outColor.rgb = vec3(1,0,0);
 	outColor.a = 1.0;
-
+	
 	// Calculate texture coordinate position on screen
 	vec2 texOffset = gl_FragCoord.xy * uPixelSize;
+	//vec2 texOffset = texcoord;
 	
 	float depth =  texture(uSceneDepth, texOffset).r;
 	if(depth == 1) discard;
@@ -109,6 +114,17 @@ void main()
 	
 	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
 
+	vec4 shadowCoord = uViewToShadow * position;
+	float shadowDepth = texture(uTexShadowDepth, shadowCoord.xy).r;
+
+	vec3 shadowAmount = vec3(1.0);
+	//vec3 shadowAmount = texture(uTexLightColor, shadowCoord.xy).rgb;
+	// shadowAmount is multiplied into the diffuse and specular equations, meaning there will be no lighting if shadowAmount is 0!
+	if(shadowDepth < shadowCoord.z - 0.001)
+	{
+		shadowAmount = vec3(0.0);
+	}
+
 	//vec3 lightDir = normalize(POS.xyz - position.xyz);
 	vec3 lightDir = normalize(vec3(-1,2,2));
 	float diffuseLight = max(dot(normal, lightDir), 0.05);		
@@ -118,13 +134,25 @@ void main()
 	vec4 textureLookUp = texture(uSceneToon, vec2(diffuseLight, 0.5));
 
 	vec3 ambient = texColor.rgb*0.8;
-	vec3 diffuse = vec3(0.35) * textureLookUp.r;
+	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
 	outColor.rgb = ambient + diffuse;
+
 	//outColor.rgb *= texColor.rgb;
 
-	//outColor.rgb = normal;
+	//outColor.rgb = texture(uTexShadowDepth, texcoord.xy).rrr;
 	//outColor.rgb = textureLookUp.rgb;
+	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
+	vec4 worldPos = uViewInverse * position;
+	//if(worldPos == vec4(0)) discard;
+	
+	
+	
+	//outColor.rgb = shadowCoord.rgb;
+	//outColor.rg = fract(shadowCoord.rg);
+	//outColor.b = shadowCoord.b;
+	//outColor.rgb = fract(position.xyz);
+	//outColor.rgb = texture(uTexShadowDepth,texOffset).rgb;
 }

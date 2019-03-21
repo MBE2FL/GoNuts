@@ -4,7 +4,7 @@
 class UIButton: public UIImage
 {
 public:
-	UIButton();
+	UIButton(const string& name);
 	~UIButton();
 
 	bool getHover() const;

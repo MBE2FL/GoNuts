@@ -1,15 +1,17 @@
 #include "UIImage.h"
 
-UIImage::UIImage(const vec3 & pos, const vec3 & scale, const vec3 & localRotation, const float alpha)
+UIImage::UIImage(const string & name, const vec3 & pos, const vec3 & scale, const vec3 & localRotation, const float alpha)
 {
 	_animator = new UIAnimator(this);
 	_transform = new TransformComponent();
 	_transform->setLocalPosition(pos);
 	_transform->setLocalScale(scale);
 	_transform->setLocalRotation(localRotation);
+	_transform->setName(name);
 	_alpha = alpha;
 	_mesh = ObjectLoader::getMesh("UIQuad");
 	_shaderProgram = ObjectLoader::getShaderProgram("UIShader");
+	_name = name;
 }
 
 void UIImage::setAnimation(UIAnimation * newAnimation)
@@ -100,7 +102,22 @@ Mesh * UIImage::getMesh() const
 	return _mesh;
 }
 
+void UIImage::setMesh(Mesh * mesh)
+{
+	_mesh = mesh;
+}
+
 ShaderProgram * UIImage::getShaderProgram() const
 {
 	return _shaderProgram;
+}
+
+void UIImage::setShaderProgram(ShaderProgram * shaderProgram)
+{
+	_shaderProgram = shaderProgram;
+}
+
+string UIImage::getName() const
+{
+	return _name;
 }

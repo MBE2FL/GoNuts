@@ -55,6 +55,25 @@ struct TransformLoad
 	string parentName = "";
 };
 
+struct UIAnimatorLoad
+{
+	UIAnimator* animator = nullptr;
+	string imageName = "";
+};
+
+struct UIImageLoad
+{
+	UIImage* image = nullptr;
+	string animatorName = "";
+};
+
+struct UICanvasLoad
+{
+	UICanvas* canvas = nullptr;
+	vector<string> imageNames;
+	vector<string> buttonNames;
+};
+
 
 class Scene
 {
@@ -64,6 +83,7 @@ public:
 
 	void update(float deltaTime);
 	void draw();
+	void drawShadow();
 	void drawUI();
 	void imguiDraw();
 	string getName() const;
@@ -109,6 +129,7 @@ private:
 	PhysicsBodyComponent* _playerPhysicsBody;
 	TransformComponent* _mainCameraTransform;
 	TransformComponent* _shadowCameraTransform;
+	SkeletalMesh* _playerSkeleton = nullptr;
 	Entity* _mainCamera;
 	Entity* _shadowCamera;
 
@@ -135,6 +156,11 @@ private:
 	void savePhysicsBodies(sqlite3* db, char* errMsg);
 	void saveColliders(sqlite3* db, char* errMsg);
 	void saveEntities(sqlite3* db, char* errMsg);
+	void saveUISystem(sqlite3* db, char* errMsg);
+	void saveCanvases(sqlite3* db, char* errMsg);
+	void saveImages(sqlite3* db, char* errMsg);
+	void saveUITransforms(sqlite3* db, char* errMsg);
+	void saveUIAnimators(sqlite3* db, char* errMsg);
 
 	static int loadEntityCallback(void* data, int numRows, char** rowFields, char** colNames);
 	static int loadTransformCallback(void* data, int numRows, char** rowFields, char** colNames);
@@ -143,6 +169,13 @@ private:
 	static int loadPhysicsBodyCallback(void* data, int numRows, char** rowFields, char** colNames);
 	static int loadCollidersCallback(void* data, int numRows, char** rowFields, char** colNames);
 	void loadEntities(sqlite3* db, char* errMsg);
+
+	static int loadUIAnimatorCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadUITransformCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadUIImageCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadUICanvasCallback(void* data, int numRows, char** rowFields, char** colNames);
+	static int loadUISystemCallback(void* data, int numRows, char** rowFields, char** colNames);
+	void loadUI(sqlite3* db, char* errMsg);
 
 	vector<EntityLoad> _entityLoads;
 };
