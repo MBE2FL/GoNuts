@@ -19,6 +19,9 @@ void FreeType::Init(int width, int height)
 	// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+	shader.load("./Assets/Shaders/freetype.vert", "./Assets/Shaders/freetype.frag");
+	shader.setProgramName("freetype");
+
 	// Load first 128 characters of ASCII set
 	for (GLubyte c = 0; c < 128; c++)
 	{
@@ -77,9 +80,9 @@ void FreeType::Init(int width, int height)
 
 void FreeType::RenderText(string text, GLfloat x, GLfloat y, GLfloat scale, vec4 color)
 {
-	// Activate corresponding render state	
+	 //Activate corresponding render state	
 	//shader.Use();
-	//glUniform3f(glGetUniformLocation(shader.Program, "textColor"), color.x, color.y, color.z);
+	//glUniform3f(glGetUniformLocation(shader.getProgramName(), "textColor"), color.x, color.y, color.z);
 	//glActiveTexture(GL_TEXTURE0);
 	//glBindVertexArray(VAO);
 
