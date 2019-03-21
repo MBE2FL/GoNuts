@@ -181,24 +181,6 @@ vec3 mat4::getColumn(int i)
 	return vec3();
 }
 
-mat4 mat4::inverse(mat4 transRot)
-{
-	transRot.data[12] = 0.0f;
-	transRot.data[13] = 0.0f;
-	transRot.data[14] = 0.0f;
-	transRot.data[15] = 0.0f;
-	transRot.transpose(); // R^t
-
-	vec4 rT = -(transRot * vec4(transRot.getTranslation(), 1.0f)); // -R^t * T
-	transRot.data[12] = rT.x;
-	transRot.data[13] = rT.y;
-	transRot.data[14] = rT.z;
-	transRot.data[15] = 1.0f;
-
-
-	return transRot;
-}
-
 //mat4 mat4::getInverse(const mat4 & rot, const vec3 & tran)
 //{
 //	mat4 transRot;

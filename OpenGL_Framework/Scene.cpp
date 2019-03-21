@@ -311,6 +311,7 @@ void Scene::loadOldFaithful()
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
+
 	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -200, 200, -200, 200, -10, 600, "Shadow Camera");
 	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
 	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
@@ -2385,7 +2386,7 @@ int Scene::loadUICanvasCallback(void * data, int numRows, char ** rowFields, cha
 
 	string buttonNames = rowFields[2];
 	string buttonName;
-	istringstream stream(buttonNames);
+	stream = istringstream(buttonNames);
 
 	while (getline(stream, buttonName, '>'))
 	{

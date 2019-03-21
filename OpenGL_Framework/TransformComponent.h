@@ -52,6 +52,7 @@ public:
 	mat4 getLocalRotationMatrix() const;
 	mat4 getOrbitRotationMatrix() const;
 	mat4 getLocalToWorldMatrix() const;
+	mat4 getView() const;
 
 	vec3 getWorldPosition() const;
 	void setWorldPosition(const vec3& newPosition);

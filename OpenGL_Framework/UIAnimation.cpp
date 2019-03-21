@@ -56,5 +56,6 @@ UIAnimation * UIAnimation::getAnimation(const string & name)
 	{
 		cerr << "UI Animation with name: " << name << " could not be found!" << endl;
 		system("pause");
+		return nullptr;
 	}
 }
