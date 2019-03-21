@@ -10,7 +10,7 @@
 class UIImage
 {
 public:
-	UIImage(const vec3& pos = vec3::Zero, const vec3& scale = vec3::One, const vec3& localRotation = vec3::Zero, const float alpha = 1.0f);
+	UIImage(const string& name, const vec3& pos = vec3::Zero, const vec3& scale = vec3::One, const vec3& localRotation = vec3::Zero, const float alpha = 1.0f);
 
 	void setAnimation(UIAnimation*);
 	UIAnimator* getAnimator();
@@ -30,9 +30,13 @@ public:
 	Texture* getTexture() const;
 	void setTexture(Texture* texture);
 	Mesh* getMesh() const;
+	void setMesh(Mesh* mesh);
 	ShaderProgram* getShaderProgram() const;
+	void setShaderProgram(ShaderProgram* shaderProgram);
+	string getName() const;
 
 private:
+	string _name;
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	Texture* _texture;

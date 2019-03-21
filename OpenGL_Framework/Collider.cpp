@@ -22,7 +22,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### ACORN ###
 	case TTag::Acorn:
 	{
-		std::cout << "Acorn Collision Entered!" << std::endl;
+		//std::cout << "Acorn Collision Entered!" << std::endl;
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		
 
@@ -39,7 +39,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### COIN ###
 	case TTag::Coin:
 	{
-		std::cout << "Coin Collision Entered!" << std::endl;
+		//std::cout << "Coin Collision Entered!" << std::endl;
 		EntityFactory* entityFactory = EntityFactory::getInstance();
 		
 
@@ -61,7 +61,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### PLATFORM ###
 	case TTag::Platform:
 	{
-		std::cout << "Platform Collision Entered!" << std::endl;
+		//std::cout << "Platform Collision Entered!" << std::endl;
 
 		EntityManager* entityManager = EntityManager::getInstance();
 		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
@@ -101,7 +101,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### SPIKE ###
 	case TTag::Spike:
 	{
-		std::cout << "Spike Collision Entered!" << std::endl;
+		//std::cout << "Spike Collision Entered!" << std::endl;
 
 		EntityManager* entityManager = EntityManager::getInstance();
 
@@ -122,7 +122,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### CHECKPOINT ###
 	case TTag::Checkpoint:
 	{
-		std::cout << "Checkpoint Collision Entered!" << std::endl;
+		//std::cout << "Checkpoint Collision Entered!" << std::endl;
 
 		EntityManager* entityManager = EntityManager::getInstance();
 
@@ -140,20 +140,20 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### VictoryPoint
 	case TTag::VictoryPoint:
 	{
-		std::cout << "Victorypoint Collision Entered!" << std::endl;
+		//std::cout << "Victorypoint Collision Entered!" << std::endl;
 		//add things later on when more ui stuff is done to change to the scoreboard scene or which ever scene is next
 		break;
 	}
 		//### Generic ###
 	case TTag::Generic:
 	{
-		std::cout << "Generic Collision Entered!" << std::endl;
+		//std::cout << "Generic Collision Entered!" << std::endl;
 		break;
 	}
 		//### TOP PLATFORM ###
 	case TTag::TopPlatform:
 	{
-		std::cout << "topPlatform Collision Entered!" << std::endl;
+		//std::cout << "topPlatform Collision Entered!" << std::endl;
 
 		EntityManager* entityManager = EntityManager::getInstance();
 
@@ -222,7 +222,7 @@ void Collider::onCollisionExit(Entity * self, Entity * other)
 		break;
 	case TTag::Platform:
 	{
-		std::cout << "Platform Collision Exited!" << std::endl;
+		//std::cout << "Platform Collision Exited!" << std::endl;
 
 		EntityManager* entityManger = EntityManager::getInstance();
 		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);

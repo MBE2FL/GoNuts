@@ -42,10 +42,7 @@ void CameraComponent::setOrthographic(const float left, const float right, const
 	_far = zFar;
 }
 
-mat4 CameraComponent::getView() const
-{
-	return mat4();
-}
+
 
 mat4 CameraComponent::getProjection() const
 {

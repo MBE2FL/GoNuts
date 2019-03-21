@@ -11,14 +11,12 @@ layout(location = 2) in vec3 in_normal;
 out vec2 texcoord;
 out vec3 normal;
 out vec3 position;
-out vec2 coord;
 
 void main()
 {
 	texcoord = in_uv;
+	texcoord.y = 1 - texcoord.y;
 	
-	
-	coord = in_uv;
 	//normal = (uModel * vec4(in_normal, 0.0f)).xyz;
 	normal = mat3(uView) * mat3(uModel) * in_normal;
 

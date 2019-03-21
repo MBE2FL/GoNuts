@@ -32,6 +32,9 @@ void Game::initializeGame()
 	frameBufferLUT.addColorTarget(GL_RGB8);
 	frameBufferLUT.init(1900, 1000);
 
+	frameBufferUI.addColorTarget(GL_RGB8);
+	frameBufferUI.init(1900, 1000);
+
 	frameBufferShadow.addDepthTarget();
 	frameBufferShadow.init(2048, 2048);
 
@@ -41,7 +44,8 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
-	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/UI.frag");
+	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
+
 
 	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
@@ -95,11 +99,18 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 
-	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad2.obj");
+	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/background.obj");
 
 
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
+
+
+	// Skeletal load test
+	ObjectLoader::loadSkeletalMesh("SkeletalBoi", "./Assets/Test Exporter/Test/Armature.nut", "./Assets/Test Exporter/Test/Anims/ArmatureAction.nutAnim");
+	ObjectLoader::loadSkeletalMesh("SkeletalBoiTwo", "./Assets/Test Exporter/GOLDEN_FATBOI2/Armature.nut", "./Assets/Test Exporter/GOLDEN_FATBOI2/Anims/Run.nutAnim");
+
+
 
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 
@@ -272,10 +283,10 @@ void Game::initializeGame()
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
 
-	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
-	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
-	sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
 
 	//SkeletalMesh testSkeleton;
@@ -285,12 +296,13 @@ void Game::initializeGame()
 
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
+
 	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
 	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
-	
+
 	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
-	
+
 }
 
 void Game::update()
@@ -328,13 +340,35 @@ void Game::draw()
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+	TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
 
 	gbuffer.clear();
 	gbuffer.setViewport();
 	gbuffer.bind();
+
+	_currentScene->drawUI();
 	_currentScene->draw();
+
 	gbuffer.unbind();
 
+	frameBufferShadow.clear();
+	frameBufferShadow.setViewport();
+	frameBufferShadow.bind();
+	_currentScene->drawShadow();
+	frameBufferShadow.unbind();
+
+	mat4 biasMat4 = mat4(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.5f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f);
+
+	CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
+
+	TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
+
+	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
 	
 	//shaderGbuffer.bind();
 	//
@@ -375,14 +409,16 @@ void Game::draw()
 	//frameBufferOutline.unbindTexture(0);//texture
 	//
 	//shaderOutline.unBind();
-	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
 	mat4 uProjInverse = camera->getProjection().getInverse();
+	mat4 uViewInverse = cameraTrans->getView().getInverse();
 
 	TransformComponent* playerTrans = _currentScene->getPlayTrans();
 
 	shaderOutline.bind();
+	shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
 	shaderOutline.sendUniform("outline", outline);
 	shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+	shaderOutline.sendUniformMat4("uViewInverse", uViewInverse.data, false);
 	shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
 
 	gbuffer.bindColorAsTexture(0, 0);
@@ -390,6 +426,7 @@ void Game::draw()
 	gbuffer.bindDepthAsTexture(2);
 
 	toonRamp->bind(5);
+	frameBufferShadow.bindDepthAsTexture(16);
 
 	gbuffer.bindResolution();
 	glViewport(0, 0, 1900, 1000);
@@ -401,6 +438,7 @@ void Game::draw()
 	gbuffer.drawFSQ();
 	frameBufferLUT.unbind();
 
+	//frameBufferUI.unbind();
 	toonRamp->unBind();
 
 	gbuffer.unbindTexture(2);//texture
@@ -431,7 +469,10 @@ void Game::draw()
 	//shaderGbuffer.unBind();
 
 
+	//_currentScene->drawUI();
+	
 
+	
 	
 	shaderLUT.bind();
 
@@ -442,14 +483,16 @@ void Game::draw()
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	glViewport(0, 0, 1900, 1000);
 	Framebuffer::drawFSQ();
+	
 	frameBufferLUT.unbindTexture(0);
 	shaderLUT.unBind();
-
-	_currentScene->drawUI();
 
 	//glDisable(GL_DEPTH_TEST);
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
+
+	// Draw ImGui stuff
+	_currentScene->imguiDraw();
 
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
