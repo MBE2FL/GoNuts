@@ -1,7 +1,8 @@
 #include "UICanvas.h"
 
-UICanvas::UICanvas()
+UICanvas::UICanvas(const string & name)
 {
+	_name = name;
 }
 
 UICanvas::~UICanvas()
@@ -63,8 +64,10 @@ void UICanvas::draw(mat4 & camView, mat4 & camProj)
 
 }
 
-void UICanvas::addImage(const string & name, UIImage * image)
+void UICanvas::addImage(UIImage * image)
 {
+	string name = image->getName();
+
 	if (_images.find(name) != _images.end())
 	{
 		cout << "Image with name: " << name << "already exists!" << endl;
@@ -76,10 +79,33 @@ void UICanvas::addImage(const string & name, UIImage * image)
 
 void UICanvas::addButton(UIButton* button)
 {
-	buttons.push_back(button);
+	string name = button->getName();
+
+	if (_images.find(name) != _images.end())
+	{
+		cout << "Image with name: " << name << "already exists!" << endl;
+		system("pause");
+	}
+
+	_images[name] = button;
 }
 
 void UICanvas::deleteImage(const string & name)
 {
 	_images.erase(name);
+}
+
+string UICanvas::getName() const
+{
+	return _name;
+}
+
+unordered_map<string, UIImage*> UICanvas::getImages() const
+{
+	return _images;
+}
+
+unordered_map<string, UIButton*> UICanvas::getButtons() const
+{
+	return _buttons;
 }

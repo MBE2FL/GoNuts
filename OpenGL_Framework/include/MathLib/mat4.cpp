@@ -216,7 +216,7 @@ mat4 mat4::inverse(mat4 transRot)
 //	return transRot;
 //}
 
-mat4 mat4::getInverse()
+mat4 mat4::getInverse() const
 {
 	mat4 transRot;
 	//transRot.data[15] = 0.0f;

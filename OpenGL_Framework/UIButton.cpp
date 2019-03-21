@@ -1,6 +1,7 @@
 #include "UIButton.h"
 
-UIButton::UIButton()
+UIButton::UIButton(const string& name)
+	: UIImage(name)
 {
 }
 

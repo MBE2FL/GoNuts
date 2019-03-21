@@ -7,7 +7,7 @@ UISystem::UISystem(EntityManager* entityManager)
 
 UISystem::~UISystem()
 {
-	for (auto const& canvas : canvases)
+	for (auto const& canvas : _canvases)
 	{
 		delete canvas.second;
 	}
@@ -15,7 +15,7 @@ UISystem::~UISystem()
 
 void UISystem::update(float deltaTime)
 {
-	for (auto const& canvas : canvases)
+	for (auto const& canvas : _canvases)
 	{
 		canvas.second->update(deltaTime);
 	}
@@ -26,26 +26,28 @@ void UISystem::draw()
 	mat4 camView = _camTrans->getLocalToWorldMatrix().getInverse();
 	mat4 camProj = _camComp->getProjection();
 
-	for (auto const& canvas : canvases)
+	for (auto const& canvas : _canvases)
 	{
 		canvas.second->draw(camView, camProj);
 	}
 }
 
-void UISystem::addCanvas(const string & name, UICanvas * canvas)
+void UISystem::addCanvas(UICanvas * canvas)
 {
-	if (canvases.find(name) != canvases.end())
+	string name = canvas->getName();
+
+	if (_canvases.find(name) != _canvases.end())
 	{
 		cout << "Canvas with name: " << name << "already exists!" << endl;
 		system("pause");
 	}
 
-	canvases[name] = canvas;
+	_canvases[name] = canvas;
 }
 
 void UISystem::deleteCanvas(const string & name)
 {
-	canvases.erase(name);
+	_canvases.erase(name);
 }
 
 Entity * UISystem::getCamera() const
@@ -56,6 +58,11 @@ Entity * UISystem::getCamera() const
 void UISystem::checkClick(int x, int y)
 {
 	
+}
+
+unordered_map<string, UICanvas*> UISystem::getCanvases() const
+{
+	return _canvases;
 }
 
 void UISystem::init(EntityManager * entityManager)

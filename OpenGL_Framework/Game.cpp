@@ -518,6 +518,9 @@ void Game::draw()
 	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
 
+	// Draw ImGui stuff
+	_currentScene->imguiDraw();
+
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
 	drawTime = 0.0f;
