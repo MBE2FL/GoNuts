@@ -131,7 +131,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
 	ObjectLoader::loadTexture("Chimney", "./Assets/Textures/Chimney Texture.png");
 	ObjectLoader::loadTexture("Clothesline", "./Assets/Textures/clothingline_texture.png");
-	ObjectLoader::loadTexture("Coin", "./Assets/Textures/coin_tex.png");
+	ObjectLoader::loadTexture("Coin", "./Assets/Textures/Coin texture.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
 	ObjectLoader::loadTexture("Couch", "./Assets/Textures/couch texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
@@ -143,6 +143,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Lever", "./Assets/Textures/Lever_Texture1.png");
 	ObjectLoader::loadTexture("Planter", "./Assets/Textures/planter texture.png");
 	ObjectLoader::loadTexture("Raccoon", "./Assets/Textures/raccoon_texture.png");
+	ObjectLoader::loadTexture("Rooftop Door", "./Assets/Textures/roofdoor texture.png");
 	ObjectLoader::loadTexture("Round Table", "./Assets/Textures/roundtable texture.png");
 	ObjectLoader::loadTexture("Small Plant", "./Assets/Textures/small plant texture.png");
 	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
