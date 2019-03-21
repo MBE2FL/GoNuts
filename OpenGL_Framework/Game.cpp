@@ -36,7 +36,7 @@ void Game::initializeGame()
 	frameBufferUI.init(1900, 1000);
 
 	frameBufferShadow.addDepthTarget();
-	frameBufferShadow.init(8192, 8192);
+	frameBufferShadow.init(2048, 2048);
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");

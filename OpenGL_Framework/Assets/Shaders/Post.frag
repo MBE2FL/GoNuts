@@ -119,7 +119,7 @@ void main()
 	vec3 shadowAmount = vec3(1.0);
 	//vec3 shadowAmount = texture(uTexLightColor, shadowCoord.xy).rgb;
 	// shadowAmount is multiplied into the diffuse and specular equations, meaning there will be no lighting if shadowAmount is 0!
-	if(shadowDepth < shadowCoord.z - 0.00)
+	if(shadowDepth < shadowCoord.z - 0.001)
 	{
 		shadowAmount = vec3(0.0);
 	}
@@ -136,7 +136,7 @@ void main()
 	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
-	outColor.rgb = ambient + diffuse * shadowAmount;
+	outColor.rgb = (ambient + diffuse) * shadowAmount;
 
 	//outColor.rgb *= texColor.rgb;
 
@@ -145,5 +145,6 @@ void main()
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
 	vec4 worldPos = uViewInverse * position;
-	outColor.rgb = shadowCoord.xyz;
+	//outColor.rgb = shadowCoord.rgb;
+	//outColor.rgb = depth.rrr;
 }
