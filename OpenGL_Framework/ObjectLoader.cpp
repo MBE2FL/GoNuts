@@ -1,6 +1,7 @@
 #include "ObjectLoader.h"
 
 map<string, Mesh*> ObjectLoader::_meshes = map<string, Mesh*>();
+map<string, SkeletalMesh*> ObjectLoader::_skeletonMeshes = map<string, SkeletalMesh*>();
 map<string, ShaderProgram*> ObjectLoader::_shaderPrograms = map<string, ShaderProgram*>();
 map<string, Texture*> ObjectLoader::_textures = map<string, Texture*>();
 
@@ -74,6 +75,32 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file, const 
 		else
 			ObjectLoader::loadMesh(meshName + std::to_string(i), file + "0000" + std::to_string(i) + ".obj");
 	}
+}
+
+void ObjectLoader::loadSkeletalMesh(const string & meshName, const string & armaturePath, const string & animPath)
+{
+	// No mesh with meshName currently exists
+	if (_skeletonMeshes.count(meshName) == 0)
+	{
+		// Load mesh
+		SkeletalMesh* mesh = new SkeletalMesh();
+		mesh->setName(meshName);
+		if (!mesh->loadFromFileNUT(armaturePath, animPath))
+		{
+			cout << "Model failed to load." << endl;
+			system("pause");
+			exit(0);
+		}
+
+		// Store mesh for later use
+		_skeletonMeshes[meshName] = mesh;
+		return;
+	}
+
+	// Mesh already exists with meshName
+	cout << "Model with name, " << meshName << ", already exists." << endl;
+	system("pause");
+	exit(0);
 }
 
 void ObjectLoader::loadTexture(const string & texName, const string & file)
@@ -150,6 +177,11 @@ vector<Mesh*> ObjectLoader::getMeshes()
 	}
 
 	return meshes;
+}
+
+SkeletalMesh * ObjectLoader::getSkeletalMesh(const string & meshName)
+{
+	return _skeletonMeshes[meshName];
 }
 
 Texture * ObjectLoader::getTexture(const string & texName)
