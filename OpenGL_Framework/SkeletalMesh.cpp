@@ -2807,6 +2807,7 @@ void SkeletalMesh::loadTrianglesNUT(string & line, ifstream & file)
 	getNextLine(line, file); // Skip "Tri: #" line
 	getNextLine(line, file);
 
+
 	while (line != "end")
 	{
 		stringstream ss(line);
@@ -2851,6 +2852,8 @@ void SkeletalMesh::loadTrianglesNUT(string & line, ifstream & file)
 			{
 				vertex.z = stof(word);
 				dataVertex.push_back(vertex);
+
+				computeMinMax(vertex);
 
 				++wordIndex;
 			}
@@ -2993,6 +2996,11 @@ void SkeletalMesh::loadTrianglesNUT(string & line, ifstream & file)
 			getNextLine(line, file);
 	}
 
+
+	//Create the mesh bounding box for this mesh
+	vec3 size = maxPoint - minPoint;
+	vec3 centre = size * 0.5f;
+	_meshBounds = Bounds(centre, size);
 
 	// Send vertex, normal, texture, joint ids and joint weights to the GPU.
 	uploadToGPU();

@@ -105,6 +105,13 @@ void Game::initializeGame()
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
+
+	// Skeletal load test
+	ObjectLoader::loadSkeletalMesh("SkeletalBoi", "./Assets/Test Exporter/Test/Armature.nut", "./Assets/Test Exporter/Test/Anims/ArmatureAction.nutAnim");
+	ObjectLoader::loadSkeletalMesh("SkeletalBoiTwo", "./Assets/Test Exporter/GOLDEN_FATBOI2/Armature.nut", "./Assets/Test Exporter/GOLDEN_FATBOI2/Anims/Run.nutAnim");
+
+
+
 	ObjectLoader::loadTexture("Default", "./Assets/Textures/Default.png");
 
 	ObjectLoader::loadTexture("Acorn", "./Assets/Textures/Acorn_Texture.png");
@@ -268,10 +275,10 @@ void Game::initializeGame()
 	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
 	//sceneManager->saveScene();
 
-	sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
-	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
-	sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
 
 	int dummy = 0;

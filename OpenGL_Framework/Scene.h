@@ -72,11 +72,6 @@ struct UICanvasLoad
 	vector<string> buttonNames;
 };
 
-struct UISystemLoad
-{
-	vector<string> canvasNames;
-};
-
 
 class Scene
 {
@@ -129,6 +124,7 @@ private:
 	PhysicsBodyComponent* _playerPhysicsBody;
 	TransformComponent* _mainCameraTransform;
 	TransformComponent* _shadowCameraTransform;
+	SkeletalMesh* _playerSkeleton = nullptr;
 	Entity* _mainCamera;
 	Entity* _shadowCamera;
 

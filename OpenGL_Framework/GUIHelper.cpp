@@ -400,6 +400,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer, Collider 
 	// Meshes
 	// Select a mesh
 	vector<Mesh*> meshes = ObjectLoader::getMeshes();
+	meshes.push_back(ObjectLoader::getSkeletalMesh("SkeletalBoiTwo"));
 	string currentMesh = meshRenderer->getMesh()->getFilename();
 	if (ImGui::BeginCombo("Meshes", currentMesh.c_str()))
 	{

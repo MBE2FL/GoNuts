@@ -35,6 +35,7 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
 		_playerTransform->setLocalScale(vec3(1.5f));
+		_playerTransform->setLocalRotationAngleX(0.0f);
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
@@ -79,6 +80,8 @@ void Scene::update(float deltaTime)
 		//skeletalMeshTest->update(deltaTime);
 		skeletalMeshTestTwo->update(deltaTime);
 	}
+	if (_playerSkeleton)
+		_playerSkeleton->update(deltaTime);
 
 
 }
@@ -343,17 +346,17 @@ void Scene::loadOldFaithful()
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
 
-	entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
-	skeletalMeshTest = new SkeletalMesh();
-	//skeletalMeshTest->loadFromFile("./Assets/Better Collada Test/Character Running.dae");
-	//skeletalMeshTest->loadFromFile("./Assets/model.dae");
-	skeletalMeshTest->loadFromFileSMD("./Assets/Source Exports/Cube.smd", "./Assets/Source Exports/anims/ArmatureAction.smd", 24.0f);
-	skeletalMeshTest->_isSkeletal = true;
+	//entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
+	//skeletalMeshTest = new SkeletalMesh();
+	////skeletalMeshTest->loadFromFile("./Assets/Better Collada Test/Character Running.dae");
+	////skeletalMeshTest->loadFromFile("./Assets/model.dae");
+	//skeletalMeshTest->loadFromFileSMD("./Assets/Source Exports/Cube.smd", "./Assets/Source Exports/anims/ArmatureAction.smd", 24.0f);
+	//skeletalMeshTest->_isSkeletal = true;
 
-	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
-	vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
-	MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	_entityManager->addComponent(meshRenderer, entity);
+	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	//vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	//_entityManager->addComponent(meshRenderer, entity);
 
 	// ########## FBX MODEL
 	//entity = _entityFactory->createEmpty(vec3(1.0f, 2.6f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
@@ -368,20 +371,20 @@ void Scene::loadOldFaithful()
 	//_entityManager->addComponent(meshRenderer, entity);
 
 	_followPlayer = false;
-	entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
-	skeletalMeshTestTwo = new SkeletalMesh();
-	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//string path = "./Assets/Test Exporter/Character Running/";
-	string path = "./Assets/Test Exporter/Test/";
-	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
-	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
-	skeletalMeshTestTwo->_isSkeletal = true;
+	//entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
+	//skeletalMeshTestTwo = new SkeletalMesh();
+	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	////string path = "./Assets/Test Exporter/Character Running/";
+	//string path = "./Assets/Test Exporter/Test/";
+	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
+	////skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
+	//skeletalMeshTestTwo->_isSkeletal = true;
 
-	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
+	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
-	textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
-	meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	_entityManager->addComponent(meshRenderer, entity);
+	////textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	//meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	//_entityManager->addComponent(meshRenderer, entity);
 
 
 	UICanvas* testCanvas = new UICanvas("In Game UI");
@@ -550,6 +553,9 @@ void Scene::loadScene()
 	EntityManager::setPlayerTransform(_playerTransform);
 	EntityManager::setMainCamera(_mainCamera);
 	EntityManager::setShadowCamera(_shadowCamera);
+
+	_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
+
 
 	light = new Light();
 	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
@@ -901,7 +907,9 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		"[Shader Program] TEXT    NOT NULL,"\
 		"Transparent      BOOLEAN NOT NULL"\
 		" DEFAULT(FALSE),"\
-		"Textures         TEXT    NOT NULL"\
+		"Textures         TEXT    NOT NULL,"\
+		"IsSkeleton       BOOLEAN DEFAULT (FALSE)"\
+		" NOT NULL"\
 		");";
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
@@ -1329,12 +1337,16 @@ void Scene::saveMeshRenderers(sqlite3 * db, char * errMsg)
 		string shaderName = meshRenderer->getShaderProgram()->getProgramName();
 		bool isTrans = meshRenderer->getIsTransparent();
 		vector<Texture*> textures = meshRenderer->getTextures();
+		bool isSkeleton = meshRenderer->getMesh()->_isSkeletal;
 
 
 		sql = "INSERT INTO [Mesh Renderers] (ID, Mesh, [Shader Program], Transparent";
 
 		if (textures.size() > 0)
 			sql += ", Textures";
+
+		if (isSkeleton)
+			sql += ", IsSkeleton";
 
 		sql += ") VALUES (";
 
@@ -1353,6 +1365,9 @@ void Scene::saveMeshRenderers(sqlite3 * db, char * errMsg)
 			}
 			sql += "'";
 		}
+
+		if (isSkeleton)
+			sql += ", " + to_string(isSkeleton);
 
 		sql += ");";
 
@@ -2080,9 +2095,21 @@ int Scene::loadMeshRendererCallback(void * data, int numRows, char ** rowFields,
 {
 	MeshRendererComponent* meshRenderer = static_cast<MeshRendererComponent*>(data);
 
-	meshRenderer->setMesh(ObjectLoader::getMesh(rowFields[1]));
-	meshRenderer->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
-	meshRenderer->setIsTransparent(stoi(rowFields[3]));
+	bool isSkeletal = stoi(rowFields[5]);
+
+	if (isSkeletal)
+	{
+		meshRenderer->setMesh(ObjectLoader::getSkeletalMesh(rowFields[1]));
+		meshRenderer->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
+		meshRenderer->setIsTransparent(stoi(rowFields[3]));
+		meshRenderer->getMesh()->_isSkeletal = rowFields[5];
+	}
+	else
+	{
+		meshRenderer->setMesh(ObjectLoader::getMesh(rowFields[1]));
+		meshRenderer->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
+		meshRenderer->setIsTransparent(stoi(rowFields[3]));
+	}
 
 
 	string textureData = rowFields[4];
@@ -2400,19 +2427,7 @@ int Scene::loadUICanvasCallback(void * data, int numRows, char ** rowFields, cha
 int Scene::loadUISystemCallback(void * data, int numRows, char ** rowFields, char ** colNames)
 {
 	UICanvas* canvas = new UICanvas(rowFields[0]);
-
-	UICanvasLoad* canvasLoad = static_cast<UICanvasLoad*>(data);
-	canvasLoad->canvas = canvas;
-
-
-	string imageNames = rowFields[1];
-	string imageName;
-	istringstream stream(imageNames);
-
-	while (getline(stream, imageName, '>'))
-	{
-		canvasLoad->imageNames.push_back(imageName);
-	}
+	static_cast<vector<UICanvas*>*>(data)->push_back(canvas);
 
 
 	return 0;
@@ -2420,4 +2435,65 @@ int Scene::loadUISystemCallback(void * data, int numRows, char ** rowFields, cha
 
 void Scene::loadUI(sqlite3 * db, char * errMsg)
 {
+	string sql = "SELECT * FROM UISystem;";
+	int exit = 0;
+
+	vector<UICanvas*> canvases;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUISystemCallback, &canvases, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UISystem! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+	//for (string load : _entityLoads)
+	//{
+	//	// Create a new entity.
+	//	Entity* entity = _entityManager->createEntity();
+
+	//	// Load in transform component.
+	//	TransformLoad transformLoad;
+	//	TransformComponent* transform = nullptr;
+	//	sql = "SELECT * FROM Transforms WHERE ID = ";
+	//	sql += to_string(load.transformID) + ";";
+
+
+	//	exit = sqlite3_exec(db, sql.c_str(), loadTransformCallback, &transformLoad, &errMsg);
+
+	//	if (exit != SQLITE_OK)
+	//	{
+	//		cerr << "Failed to select rows from Transforms! " << errMsg << endl;
+	//		system("pause");
+	//		return;
+	//	}
+	//	else
+	//	{
+	//		transform = transformLoad.transform;
+	//		transformLoads[transform->getName()] = transformLoad;
+
+	//		// Add component to entity.
+	//		_entityManager->addComponent(transform, entity);
+
+	//		if (strstr(transform->getName().c_str(), "Player"))
+	//		{
+	//			_playerTransform = transform;
+	//		}
+	//	}
+	//}
+
+
+	//// Re-create transform hierarchy.
+	//unordered_map<string, TransformLoad>::iterator it;
+	//for (it = transformLoads.begin(); it != transformLoads.end(); ++it)
+	//{
+	//	TransformLoad load = it->second;
+	//	if (load.parentName != "")
+	//	{
+	//		TransformComponent* parent = transformLoads[load.parentName].transform;
+	//		load.transform->setParent(parent);
+	//	}
+	//}
 }
