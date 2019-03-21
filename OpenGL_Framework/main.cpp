@@ -37,6 +37,11 @@ void KeyboardUpCallbackFunction(unsigned char key, int x, int y)
 	theGame->keyboardUp(key, x, y);
 }
 
+void SpecialCallbackFunction(int key, int x, int y)
+{
+	theGame->specialKeyDown(key, x, y);
+}
+
 /* function TimerCallbackFunction(int value)
  * Description: 
  *  - this is called many times per second
@@ -196,6 +201,7 @@ int main(int argc, char **argv)
 	glutDisplayFunc(DisplayCallbackFunction);
 	glutKeyboardFunc(KeyboardCallbackFunction);
 	glutKeyboardUpFunc(KeyboardUpCallbackFunction);
+	glutSpecialFunc(SpecialCallbackFunction);
 	glutMouseFunc(MouseClickCallbackFunction);
 	glutMotionFunc(MouseMotionCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);

@@ -2,7 +2,6 @@
 
 
 #include "GL/glew.h"
-//#include <MiniMath/Core.h>
 #include "MathLib/MathLibCore.h"
 #include <string>
 #include <fstream>
