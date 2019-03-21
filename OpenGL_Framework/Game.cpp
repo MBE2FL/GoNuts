@@ -183,6 +183,11 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 
+	//REGAN TEXTURES
+	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back.png");
+	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/space.png");
+	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/shift.png");
+
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
 	//nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
@@ -276,6 +281,9 @@ void Game::initializeGame()
 	sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
+	//REGAN LEVEL
+	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut");
+
 
 
 	//SkeletalMesh testSkeleton;
