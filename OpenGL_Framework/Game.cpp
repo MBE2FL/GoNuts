@@ -175,6 +175,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Nut100", "./Assets/Textures/Nut_100.png");
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
+	ObjectLoader::loadTexture("UiBackdrop", "./Assets/Textures/Fade_background.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
@@ -193,6 +194,12 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
+
+	//REGAN TEXTURES
+	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back.png");
+	ObjectLoader::loadTexture("adambackground2", "./Assets//Textures/adam back2.png");
+	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/space.png");
+	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/shift.png");
 
 	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
 	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
@@ -286,7 +293,14 @@ void Game::initializeGame()
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
+
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
+	//REGAN LEVEL
+	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut");
+
+
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
+
 
 
 	//SkeletalMesh testSkeleton;
@@ -510,7 +524,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	if (key == 'v')
 		lut = !lut;
 	if (key == '1')
-		sceneManager->loadScene("sceney");
+		sceneManager->loadScene("tut");
 	//if (key == '1')
 	//	sceneManager->loadScene("");
 }
