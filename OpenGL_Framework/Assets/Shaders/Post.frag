@@ -137,7 +137,7 @@ void main()
 	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
-	outColor.rgb = ambient + diffuse * shadowAmount;
+	outColor.rgb = ambient + diffuse;
 
 	//outColor.rgb *= texColor.rgb;
 
@@ -146,7 +146,10 @@ void main()
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
 	vec4 worldPos = uViewInverse * position;
-	if(worldPos == vec4(0)) discard;
+	//if(worldPos == vec4(0)) discard;
+	
+	
+	
 	//outColor.rgb = shadowCoord.rgb;
 	//outColor.rg = fract(shadowCoord.rg);
 	//outColor.b = shadowCoord.b;

@@ -389,23 +389,45 @@ void Scene::loadOldFaithful()
 
 	UICanvas* testCanvas = new UICanvas("In Game UI");
 
-	UIImage* testImage = new UIImage("Nut Meter", vec3(-2.0f, -2.0f, 4.0f));
+	UIImage* testImage = new UIImage("Nut Meter", vec3(-7.0f, -3.0f, 4.0f));
+	testImage->setScale(vec3(0.5f));
 	testImage->setLocalRotation(vec3(0, 0, 0));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
+	UIImage* time = new UIImage("time", vec3(7.0f, 3.0f, 0.0f));
+	time->setScale(vec3(0.5f));
+	time->setLocalRotation(vec3(0, 0, 0));
+	time->setTexture(ObjectLoader::getTexture("Time"));
+
+
 	testCanvas->addImage(testImage);
-	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 4.0f), vec3::One, Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 4.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 4.0f), vec3::One, Quaternion::Identity, 1.0f);
+	testCanvas->addImage(time);
+
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.7f, 0.7f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
+
+	UIKeyFrame* frame4 = new UIKeyFrame(0.0f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame5 = new UIKeyFrame(0.8f, vec3(7.0f, 3.0f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame6 = new UIKeyFrame(1.6f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
 
 	vector<UIKeyFrame*> testVec;
 	testVec.push_back(frame1);
 	testVec.push_back(frame2);
 	testVec.push_back(frame3);
 
-	UIAnimation* animu = new UIAnimation("testOldFaithful", testVec);
+
+	vector<UIKeyFrame*> timevec;
+	timevec.push_back(frame4);
+	timevec.push_back(frame5);
+	timevec.push_back(frame6);
+
+	UIAnimation* animu = new UIAnimation("test", testVec);
+	UIAnimation* animu2 = new UIAnimation("time", timevec);
+
 
 	testImage->getAnimator()->addAnimation(animu);
+	time->getAnimator()->addAnimation(animu2);
 
 	_uiSystem->addCanvas(testCanvas);
 
@@ -449,6 +471,12 @@ void Scene::loadMainMenu()
 	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
+
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
+	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
+	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
+	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
+	EntityManager::setShadowCamera(_shadowCamera);
 
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
