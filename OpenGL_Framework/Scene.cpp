@@ -15,9 +15,7 @@ Scene::Scene(const string & name)
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
-#ifdef _DEBUG
 	_guiHelper = GUIHelper::getInstance();
-#endif
 }
 
 Scene::~Scene()
@@ -90,7 +88,6 @@ void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
 
-#ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
 	{
 		// Retrieve the main camera.
@@ -114,8 +111,6 @@ void Scene::draw()
 			collider->draw();
 		}
 	}
-#endif
-
 
 	glUseProgram(GL_NONE);
 
@@ -152,7 +147,7 @@ void Scene::drawUI()
 
 void Scene::imguiDraw()
 {
-#ifdef _DEBUG
+
 	// New imgui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplFreeGLUT_NewFrame();
@@ -165,7 +160,7 @@ void Scene::imguiDraw()
 
 	// Update imgui draw data
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif
+
 }
 
 string Scene::getName() const
@@ -303,10 +298,9 @@ void Scene::loadOldFaithful()
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-#ifdef _DEBUG
 
 	_guiHelper->update();
-#endif
+
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
@@ -461,10 +455,8 @@ void Scene::loadMainMenu()
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-#ifdef _DEBUG
-
 	_guiHelper->update();
-#endif
+
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
@@ -554,11 +546,7 @@ void Scene::loadScene()
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-#ifdef _DEBUG
-
 	_guiHelper->update();
-#endif
-
 
 	// Make sure both main and shadow cameras are initialized
 	if (!_mainCamera || !_mainCameraTransform)
@@ -641,8 +629,6 @@ UISystem * Scene::getUISystem() const
 
 void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
-#ifdef _DEBUG
-
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = true;
 
@@ -651,7 +637,6 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		io.AddInputCharacter(key);
 		return;
 	}
-#endif
 
 	switch (key)
 	{
@@ -700,15 +685,11 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
-#ifdef _DEBUG
-
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = false;
 
 	if (io.WantCaptureKeyboard)
 		return;
-#endif
-
 	switch (key)
 	{
 	case 32: // the space bar
@@ -719,9 +700,6 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
-#ifdef _DEBUG
-
-#endif
 	if (key == 'c')
 	{
 		if (sliding)
@@ -748,7 +726,6 @@ void Scene::specialKeyDown(int key, int mouseX, int mouseY)
 
 void Scene::mouseClicked(int button, int state, int x, int y)
 {
-#ifdef _DEBUG
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
@@ -785,23 +762,18 @@ void Scene::mouseClicked(int button, int state, int x, int y)
 			break;
 		}
 	}
-#endif
 }
 
 void Scene::mouseMoved(int x, int y)
 {
-#ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
-#endif
 }
 
 void Scene::mouseWheel(int wheel, int direction, int x, int y)
 {
-#ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 	io.MouseWheel = static_cast<float>(direction);
-#endif
 }
 
 TransformComponent * Scene::getMainCameraTransform() const

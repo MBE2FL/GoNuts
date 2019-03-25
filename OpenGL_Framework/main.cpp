@@ -213,13 +213,10 @@ int main(int argc, char **argv)
 	glutMouseWheelFunc(MouseWheelCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
-#ifdef _DEBUG
 	//InitOpenGLDebugCallback();
 
 	guiHelper = GUIHelper::getInstance();
 	guiHelper->init(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-#endif
 
 	/* init the game */
 	theGame = new Game();
