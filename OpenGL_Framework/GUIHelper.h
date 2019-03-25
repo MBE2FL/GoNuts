@@ -36,6 +36,7 @@ public:
 
 private:
 	static GUIHelper* _instance;
+
 	bool _showSceneEditor = false;
 	bool _showPropertyEditor = false;
 	bool _showShaderProgCreator = false;
@@ -44,10 +45,18 @@ private:
 	bool _showSceneSelector = false;
 	bool _showSceneSaveModal = false;
 	bool _showLightsMenu = false;
+	bool _showUIEditor = false;
+	bool _showSpawnUIElement = false;
+	bool _showUIPropertyEditor = false;
+	bool _showUIAnimationEditor = false;
+
 	TransformComponent* _currentTransform = nullptr;
+	UIImage* _currentUIImage = nullptr;
+	UICanvas* _currentUICanvas = nullptr;
 	EntityManager* _entityManager = nullptr;
 	EntityFactory* _entityFactory = nullptr;
 	SceneManager* _sceneManager = nullptr;
+	UISystem* _uiSystem = nullptr;
 
 	GUIHelper();
 	void drawMenuBar();
@@ -63,4 +72,13 @@ private:
 	void drawSceneEditor();
 	void drawTransforms();
 	void drawLights();
+	void drawUIEditor();
+	void SpawnUIElement();
+	void drawCanvases();
+	void drawUIHierarchy(UICanvas* canvas);
+	void drawUIHierarchyHelper(UIImage* image);
+	void propertyUIEditor(UIImage* image, bool* open);
+	void drawUIAnimator(UIAnimator* animator);
+	void drawUIAnimationEditor();
+	void propertyUIAnimationEditor(UIAnimation* anim, bool* open);
 };

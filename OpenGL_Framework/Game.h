@@ -43,6 +43,7 @@ public:
 	void specialKeyDown(int key, int mouseX, int mouseY);
 	void mouseClicked(int button, int state, int x, int y);
 	void mouseMoved(int x, int y);
+	void mouseWheel(int wheel, int direction, int x, int y);
 
 	/* Data Members */
 	Timer *updateTimer	= nullptr;

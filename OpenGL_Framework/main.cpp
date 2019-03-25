@@ -74,6 +74,12 @@ void MouseMotionCallbackFunction(int x, int y)
 	glutPostRedisplay();
 }
 
+void MouseWheelCallbackFunction(int wheel, int direction, int x, int y)
+{
+	theGame->mouseWheel(wheel, direction, x, y);
+	glutPostRedisplay();
+}
+
 
 
 void CALLBACK OpenGLDebugCallback(
@@ -204,6 +210,7 @@ int main(int argc, char **argv)
 	glutSpecialFunc(SpecialCallbackFunction);
 	glutMouseFunc(MouseClickCallbackFunction);
 	glutMotionFunc(MouseMotionCallbackFunction);
+	glutMouseWheelFunc(MouseWheelCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
 #ifdef _DEBUG

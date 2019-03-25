@@ -99,7 +99,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 
-	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/background.obj");
+	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad.obj");
 
 
 
@@ -271,6 +271,11 @@ void Game::initializeGame()
 	//UICamera.orthographic(-16, 16, 9, -9, -100, 100);
 	//UICamera.setWorldPosition(vec3::Zero);
 
+
+	// Load all UI animation files
+	UIAnimation::loadAllAnimsInFile("./Assets/UI Animations/");
+
+
 	Scene* testScene = new Scene("TEST SCENE");
 	//testScene->saveScene();
 
@@ -294,10 +299,11 @@ void Game::initializeGame()
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
 
+	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest");
+
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut");
-
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
@@ -555,4 +561,9 @@ void Game::mouseClicked(int button, int state, int x, int y)
 void Game::mouseMoved(int x, int y)
 {
 	_currentScene->mouseMoved(x, y);
+}
+
+void Game::mouseWheel(int wheel, int direction, int x, int y)
+{
+	_currentScene->mouseWheel(wheel, direction, x, y);
 }

@@ -47,7 +47,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\sqliteAmalgamation\;$(ProjectDir)include\;$(ProjectDir)include\TinyXML\;$(ProjectDir)include\FreeType\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\sqliteAmalgamation\;$(ProjectDir)include\;$(ProjectDir)include\TinyXML\;$(ProjectDir)include\Dirent\;$(ProjectDir)include\FreeType\</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4505</DisableSpecificWarnings>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
@@ -70,7 +70,7 @@ xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\sqliteAmalgamation\;$(ProjectDir)include\;$(ProjectDir)include\TinyXML\;$(ProjectDir)include\FreeType\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\sqliteAmalgamation\;$(ProjectDir)include\;$(ProjectDir)include\TinyXML\;$(ProjectDir)include\Dirent\;$(ProjectDir)include\FreeType\</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4505</DisableSpecificWarnings>
     </ClCompile>
