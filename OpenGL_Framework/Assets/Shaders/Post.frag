@@ -99,9 +99,10 @@ void main()
 
 	//outColor.rgb = vec3(1,0,0);
 	outColor.a = 1.0;
-
+	
 	// Calculate texture coordinate position on screen
 	vec2 texOffset = gl_FragCoord.xy * uPixelSize;
+	//vec2 texOffset = texcoord;
 	
 	float depth =  texture(uSceneDepth, texOffset).r;
 	if(depth == 1) discard;
@@ -136,7 +137,7 @@ void main()
 	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
-	outColor.rgb = (ambient + diffuse) * shadowAmount;
+	outColor.rgb = ambient + diffuse * shadowAmount;
 
 	//outColor.rgb *= texColor.rgb;
 
@@ -145,6 +146,10 @@ void main()
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
 	vec4 worldPos = uViewInverse * position;
+	if(worldPos == vec4(0)) discard;
 	//outColor.rgb = shadowCoord.rgb;
-	//outColor.rgb = depth.rrr;
+	//outColor.rg = fract(shadowCoord.rg);
+	//outColor.b = shadowCoord.b;
+	//outColor.rgb = fract(position.xyz);
+	//outColor.rgb = texture(uTexShadowDepth,texOffset).rgb;
 }

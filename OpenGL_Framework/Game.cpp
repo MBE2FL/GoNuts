@@ -142,16 +142,24 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Checkpoint Squirrel", "./Assets/Textures/squirrel checkpoint_tex.png");
 	ObjectLoader::loadTexture("Chimney", "./Assets/Textures/Chimney Texture.png");
 	ObjectLoader::loadTexture("Clothesline", "./Assets/Textures/clothingline_texture.png");
-	ObjectLoader::loadTexture("Coin", "./Assets/Textures/coin_tex.png");
+	ObjectLoader::loadTexture("Coin", "./Assets/Textures/Coin texture.png");
 	ObjectLoader::loadTexture("Cone", "./Assets/Textures/Cone_Texture.png");
+	ObjectLoader::loadTexture("Couch", "./Assets/Textures/couch texture.png");
 	ObjectLoader::loadTexture("Dust", "./Assets/Textures/Dust_Trail.png");
 	ObjectLoader::loadTexture("FatBoi", "./Assets/Textures/FatBoiTexture.png");
 	ObjectLoader::loadTexture("Flag", "./Assets/Textures/flag tex.png");
 	ObjectLoader::loadTexture("Garbage", "./Assets/Textures/garbage.png");
+	ObjectLoader::loadTexture("Garbage 2", "./Assets/Textures/garbage texture.png");
+	ObjectLoader::loadTexture("Lamp", "./Assets/Textures/lamp texture.png");
 	ObjectLoader::loadTexture("Lever", "./Assets/Textures/Lever_Texture1.png");
+	ObjectLoader::loadTexture("Planter", "./Assets/Textures/planter texture.png");
 	ObjectLoader::loadTexture("Raccoon", "./Assets/Textures/raccoon_texture.png");
+	ObjectLoader::loadTexture("Rooftop Door", "./Assets/Textures/roofdoor texture.png");
+	ObjectLoader::loadTexture("Round Table", "./Assets/Textures/roundtable texture.png");
+	ObjectLoader::loadTexture("Small Plant", "./Assets/Textures/small plant texture.png");
 	ObjectLoader::loadTexture("Spikes", "./Assets/Textures/Spike Texture.png");
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
+	ObjectLoader::loadTexture("Table", "./Assets/Textures/table texture.png");
 	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
@@ -287,50 +295,19 @@ void Game::initializeGame()
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
 
-	int dummy = 0;
-	dummy++;
-
-
 	//SkeletalMesh testSkeleton;
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
 	//testSkeleton.loadFromFile("./Assets/ANIM_TEST.dae");
 	//testSkeleton._isSkeletal = true;
 
-
-
-	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-
-	Quaternion testOne = Quaternion(90.0f, vec3(0.0f, 0.0f, 1.0f));
-	Quaternion testTwo = Quaternion(30.0f, vec3(0.0f, 1.0f, 0.0f));
-
-	mat4 testMat = testOne.getRotationMatrix();
-	testTwo.getRotationMatrix();
-
-	Quaternion testRotToQuat = Quaternion(testMat);
-
-	Quaternion testVector = Quaternion(0.0f, 10.0f, 0.0f, 0.0f);
-	testVector.rotate(90.0f, vec3(0.0f, 1.0f, 0.0f));
-
-	testOne * testTwo;
-
-	Quaternion::slerp(testOne, testTwo, 0.5f);
-
-
-
-
-	//sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-
-
-	//sound.Load("./Assets/Sounds/drumloop.wav", false);
-
-
-	sound.Load("./Assets/Sounds/SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
-
-
+	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
-	soundChannel = sound.Play(true);
-	Sound::SetLoop(soundChannel, true);
-	Sound::SetVolume(soundChannel, 0.05f);
+
+	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
+	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
+
+	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
 
 }
 
@@ -338,16 +315,7 @@ void Game::update()
 {
 	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
-	collided = false;
-	if (!reverse)
-		t += 0.01f;
-	if (reverse)
-		t -= 0.01f;
 
-	if (t >= 1)
-		reverse = true;
-	if (t <= 0)
-		reverse = false;
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
@@ -406,9 +374,7 @@ void Game::draw()
 
 	TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
 
-	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * shadowcameraTrans->getView().getInverse();
-	
-
+	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
 	
 	//shaderGbuffer.bind();
 	//
@@ -449,7 +415,7 @@ void Game::draw()
 	//frameBufferOutline.unbindTexture(0);//texture
 	//
 	//shaderOutline.unBind();
-	mat4 uProjInverse = camera->getProjection().getInverse() * -1;
+	mat4 uProjInverse = camera->getProjection().getInverse();
 	mat4 uViewInverse = cameraTrans->getView().getInverse();
 
 	TransformComponent* playerTrans = _currentScene->getPlayTrans();
@@ -558,6 +524,11 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
 	_currentScene->keyboardUp(key, mouseX, mouseY);
+}
+
+void Game::specialKeyDown(int key, int mouseX, int mouseY)
+{
+	_currentScene->specialKeyDown(key, mouseX, mouseY);
 }
 
 void Game::mouseClicked(int button, int state, int x, int y)
