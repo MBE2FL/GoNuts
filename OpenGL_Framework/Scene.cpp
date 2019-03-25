@@ -403,7 +403,7 @@ void Scene::loadOldFaithful()
 	testVec.push_back(frame2);
 	testVec.push_back(frame3);
 
-	UIAnimation* animu = new UIAnimation("test", testVec);
+	UIAnimation* animu = new UIAnimation("testOldFaithful", testVec);
 
 	testImage->getAnimator()->addAnimation(animu);
 
@@ -601,11 +601,17 @@ void Scene::loadSceneFromFile(const string & path)
 	//TO-DO
 
 	loadEntities(db, errMsg);
+	loadUI(db, errMsg);
 }
 
 EntityManager * Scene::getEntityManager() const
 {
 	return _entityManager;
+}
+
+UISystem * Scene::getUISystem() const
+{
+	return _uiSystem;
 }
 
 void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
@@ -778,6 +784,14 @@ void Scene::mouseMoved(int x, int y)
 #ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
+#endif
+}
+
+void Scene::mouseWheel(int wheel, int direction, int x, int y)
+{
+#ifdef _DEBUG
+	ImGuiIO& io = ImGui::GetIO();
+	io.MouseWheel = static_cast<float>(direction);
 #endif
 }
 
@@ -1670,7 +1684,7 @@ void Scene::saveCanvases(sqlite3 * db, char * errMsg)
 
 
 		// Canvas name
-		sql += "'" + canvas.first + ">'";
+		sql += "'" + canvas.first + "'";
 
 		// All images in current canvas
 		for (auto const& image : images)
@@ -2331,7 +2345,7 @@ int Scene::loadUIAnimatorCallback(void * data, int numRows, char ** rowFields, c
 {
 	UIAnimator* animator = new UIAnimator();
 
-	string animNames = rowFields[3];
+	string animNames = rowFields[2];
 	UIAnimation* anim = nullptr;
 	string animName;
 	istringstream stream(animNames);
@@ -2339,16 +2353,21 @@ int Scene::loadUIAnimatorCallback(void * data, int numRows, char ** rowFields, c
 	while (getline(stream, animName, '>'))
 	{
 		anim = UIAnimation::getAnimation(animName);
+		if (!anim)
+			continue;
+
 		animator->addAnimation(anim);
 	}
 
-	animator->setCurrentAnimation(rowFields[2]);
+	animator->setCurrentAnimation(rowFields[3]);
 
 
-	UIAnimatorLoad* animatorLoad = static_cast<UIAnimatorLoad*>(data);
+	UIAnimatorLoad* animatorLoad = new UIAnimatorLoad();
 	animatorLoad->animator = animator;
 	animatorLoad->imageName = rowFields[1];
 
+
+	(*static_cast<unordered_map<string, UIAnimatorLoad*>*>(data))[rowFields[0]] = animatorLoad;
 
 	return 0;
 }
@@ -2369,9 +2388,12 @@ int Scene::loadUITransformCallback(void * data, int numRows, char ** rowFields, 
 	transform->setOrbitRotation(orbRot);
 	transform->setLocalScale(scale);
 
-	TransformLoad* transformLoad = static_cast<TransformLoad*>(data);
+	TransformLoad* transformLoad = new TransformLoad();
 	transformLoad->transform = transform;
 	transformLoad->parentName = rowFields[13];
+
+
+	(*static_cast<unordered_map<string, TransformLoad*>*>(data))[rowFields[0]] = transformLoad;
 
 	return 0;
 }
@@ -2386,9 +2408,11 @@ int Scene::loadUIImageCallback(void * data, int numRows, char ** rowFields, char
 	image->setAlpha(stof(rowFields[5]));
 
 
-	UIImageLoad* imageLoad = static_cast<UIImageLoad*>(data);
+	UIImageLoad* imageLoad = new UIImageLoad();
 	imageLoad->image = image;
 	imageLoad->animatorName = rowFields[6];
+
+	(*static_cast<unordered_map<string, UIImageLoad*>*>(data))[rowFields[0]] = imageLoad;
 
 
 	return 0;
@@ -2398,7 +2422,7 @@ int Scene::loadUICanvasCallback(void * data, int numRows, char ** rowFields, cha
 {
 	UICanvas* canvas = new UICanvas(rowFields[0]);
 
-	UICanvasLoad* canvasLoad = static_cast<UICanvasLoad*>(data);
+	UICanvasLoad* canvasLoad = new UICanvasLoad();
 	canvasLoad->canvas = canvas;
 
 
@@ -2420,6 +2444,8 @@ int Scene::loadUICanvasCallback(void * data, int numRows, char ** rowFields, cha
 		canvasLoad->buttonNames.push_back(buttonName);
 	}
 
+	
+	static_cast<vector<UICanvasLoad*>*>(data)->push_back(canvasLoad);
 
 	return 0;
 }
@@ -2435,12 +2461,28 @@ int Scene::loadUISystemCallback(void * data, int numRows, char ** rowFields, cha
 
 void Scene::loadUI(sqlite3 * db, char * errMsg)
 {
-	string sql = "SELECT * FROM UISystem;";
+	//string sql = "SELECT * FROM UISystem;";
+	//int exit = 0;
+
+	//vector<UICanvas*> canvases;
+
+	//exit = sqlite3_exec(db, sql.c_str(), loadUISystemCallback, &canvases, &errMsg);
+
+	//if (exit != SQLITE_OK)
+	//{
+	//	cerr << "Failed to select rows from UISystem! " << errMsg << endl;
+	//	system("pause");
+	//	return;
+	//}
+
+
+	// Load in all canvases
+	string sql = "SELECT * FROM UICanvases;";
 	int exit = 0;
 
-	vector<UICanvas*> canvases;
+	vector<UICanvasLoad*> canvasLoads;
 
-	exit = sqlite3_exec(db, sql.c_str(), loadUISystemCallback, &canvases, &errMsg);
+	exit = sqlite3_exec(db, sql.c_str(), loadUICanvasCallback, &canvasLoads, &errMsg);
 
 	if (exit != SQLITE_OK)
 	{
@@ -2449,51 +2491,151 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 		return;
 	}
 
-	//for (string load : _entityLoads)
-	//{
-	//	// Create a new entity.
-	//	Entity* entity = _entityManager->createEntity();
 
-	//	// Load in transform component.
-	//	TransformLoad transformLoad;
-	//	TransformComponent* transform = nullptr;
-	//	sql = "SELECT * FROM Transforms WHERE ID = ";
-	//	sql += to_string(load.transformID) + ";";
+	// Load in all images
+	sql = "SELECT * FROM UIImages;";
+	exit = 0;
 
+	unordered_map<string, UIImageLoad*> imageLoads;
 
-	//	exit = sqlite3_exec(db, sql.c_str(), loadTransformCallback, &transformLoad, &errMsg);
+	exit = sqlite3_exec(db, sql.c_str(), loadUIImageCallback, &imageLoads, &errMsg);
 
-	//	if (exit != SQLITE_OK)
-	//	{
-	//		cerr << "Failed to select rows from Transforms! " << errMsg << endl;
-	//		system("pause");
-	//		return;
-	//	}
-	//	else
-	//	{
-	//		transform = transformLoad.transform;
-	//		transformLoads[transform->getName()] = transformLoad;
-
-	//		// Add component to entity.
-	//		_entityManager->addComponent(transform, entity);
-
-	//		if (strstr(transform->getName().c_str(), "Player"))
-	//		{
-	//			_playerTransform = transform;
-	//		}
-	//	}
-	//}
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UIImages! " << errMsg << endl;
+		system("pause");
+		return;
+	}
 
 
-	//// Re-create transform hierarchy.
-	//unordered_map<string, TransformLoad>::iterator it;
-	//for (it = transformLoads.begin(); it != transformLoads.end(); ++it)
-	//{
-	//	TransformLoad load = it->second;
-	//	if (load.parentName != "")
-	//	{
-	//		TransformComponent* parent = transformLoads[load.parentName].transform;
-	//		load.transform->setParent(parent);
-	//	}
-	//}
+	// Load in all transforms
+	sql = "SELECT * FROM UITransforms;";
+	exit = 0;
+
+	unordered_map<string, TransformLoad*> transformLoads;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUITransformCallback, &transformLoads, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UITransforms! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+
+	// Load in all Animators
+	sql = "SELECT * FROM UIAnimators;";
+	exit = 0;
+
+	unordered_map<string, UIAnimatorLoad*> animatorLoads;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUIAnimatorCallback, &animatorLoads, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UIAnimators! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+
+
+	// Give all images their respective animators, and transforms
+	UIAnimatorLoad* animatorLoad = nullptr;
+	UIAnimator* animator = nullptr;
+	TransformLoad* transformLoad = nullptr;
+	TransformComponent* transform = nullptr;
+	for (auto const& imageLoad : imageLoads)
+	{
+		// Retrieve animator with the same image name
+		if (animatorLoads.find(imageLoad.first) != animatorLoads.end())
+			animatorLoad = animatorLoads[imageLoad.first];
+		else
+		{
+			cerr << "Failed to match an UIImage with an UIAnimator! " << errMsg << endl;
+			system("pause");
+			return;
+		}
+
+		// Assign image with the the current animator, and vice versa
+		animator = animatorLoad->animator;
+		imageLoad.second->image->setAnimator(animator);
+
+
+
+		// Retrieve transform with the same image name
+		if (transformLoads.find(imageLoad.first) != transformLoads.end())
+			transformLoad = transformLoads[imageLoad.first];
+		else
+		{
+			cerr << "Failed to match an UIImage with an UITransform! " << errMsg << endl;
+			system("pause");
+			return;
+		}
+
+		// Assign image with the the transform, and vice versa
+		transform = transformLoad->transform;
+		imageLoad.second->image->setTransform(transform);
+	}
+
+
+	unordered_map<string, UICanvas*> canvases;
+	UICanvas* canvas = nullptr;
+	UIImage* image = nullptr;
+	for (UICanvasLoad* canvasLoad : canvasLoads)
+	{
+		// Retrieve canvas.
+		canvas = canvasLoad->canvas;
+
+		// Assign images to their respective canvases.
+		for (string imageName : canvasLoad->imageNames)
+		{
+			// Retrieve image with the same image name
+			if (imageLoads.find(imageName) != imageLoads.end())
+				image = imageLoads[imageName]->image;
+			else
+			{
+				cerr << "Failed to match an UIImage with an UICanvas! " << errMsg << endl;
+				system("pause");
+				continue;
+			}
+
+			canvas->addImage(image);
+		}
+
+		//// Assign buttons to their respective canvases.
+		//for (string imageName : canvasLoad->imageNames)
+		//{
+		//	// Retrieve button with the same button name
+		//	if (imageLoads.find(imageName) != imageLoads.end())
+		//		image = imageLoads[imageName]->image;
+		//	else
+		//	{
+		//		cerr << "Failed to match an UIButton with an UICanvas! " << errMsg << endl;
+		//		system("pause");
+		//		continue;
+		//	}
+
+		//	canvas->addImage(image);
+		//}
+
+
+		// Add current canvas to the UI system
+		_uiSystem->addCanvas(canvas);
+	}
+
+
+	// Re-create image transform hierarchy.
+	transformLoad = nullptr;
+	unordered_map<string, TransformLoad*>::iterator it;
+	for (it = transformLoads.begin(); it != transformLoads.end(); ++it)
+	{
+		transformLoad = it->second;
+		if (transformLoad->parentName != "")
+		{
+			TransformComponent* parent = transformLoads[transformLoad->parentName]->transform;
+			transformLoad->transform->setParent(parent);
+		}
+	}
 }
