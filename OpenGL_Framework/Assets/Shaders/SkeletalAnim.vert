@@ -32,7 +32,7 @@ void main()
 	vec4 totalNormal = vec4(0.0);
 
 	// Only allow MAX_WEIGHTS number of joints to influence this vertex.
-	for (unsigned int i = 0; i < MAX_WEIGHTS; ++i)
+	for (int i = 0; i < MAX_WEIGHTS; ++i)
 	{
 		mat4 jointTransform = jointTransforms[int(in_jointIndices[i])];
 

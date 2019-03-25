@@ -423,9 +423,9 @@ void Game::draw()
 	//frameBufferOutline.unbindTexture(0);//texture
 	//
 	//shaderOutline.unBind();
-	mat4 uProjInverse = camera->getProjection().getInverse();
-	mat4 uViewInverse = cameraTrans->getView().getInverse();
+	mat4 uProjInverse = camera->getProjection().getSlowInverse();
 
+	mat4 uViewInverse = cameraTrans->getView().getInverse();
 	TransformComponent* playerTrans = _currentScene->getPlayTrans();
 
 	shaderOutline.bind();

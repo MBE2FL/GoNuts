@@ -256,164 +256,164 @@ void mat4::transpose()
 	data[15] = temp.data[15];
 }
 
-//mat4 mat4::getInverse()
-//{
-//	float DetMOM[16];
-//	DetMOM[0] = data[5] * data[10] * data[15] + 
-//				data[6] * data[11] * data[13] +
-//				data[7] * data[9]  * data[14] -
-//				data[7] * data[10] * data[13] -
-//				data[6] * data[9]  * data[15] -
-//				data[5] * data[11] * data[14];
-//
-//	DetMOM[1] = data[4] * data[10] * data[15] +
-//				data[6] * data[11] * data[12] +
-//				data[7] * data[8]  * data[14] -
-//				data[7] * data[10] * data[12] -
-//				data[6] * data[8]  * data[15] -
-//				data[4] * data[11] * data[14];
-//
-//	DetMOM[2] = data[4] * data[9]  * data[15] +
-//				data[5] * data[11] * data[12] +
-//				data[7] * data[8]  * data[13] -
-//				data[7] * data[9]  * data[12] -
-//				data[5] * data[8]  * data[15] -
-//				data[4] * data[11] * data[13];
-//
-//	DetMOM[3] = data[4] * data[9]  * data[14] +
-//				data[5] * data[10] * data[12] +
-//				data[6] * data[8]  * data[13] -
-//				data[6] * data[9]  * data[12] -
-//				data[5] * data[8]  * data[14] -
-//				data[4] * data[10] * data[13];
-//
-//	DetMOM[4] = data[1] * data[10] * data[15] +
-//				data[2] * data[11] * data[13] +
-//				data[3] * data[9]  * data[14] -
-//				data[3] * data[10] * data[13] -
-//				data[2] * data[9]  * data[15] -
-//				data[1] * data[11] * data[14];
-//
-//	DetMOM[5] = data[0] * data[10] * data[15] +
-//				data[2] * data[11] * data[12] +
-//				data[3] * data[8]  * data[14] -
-//				data[3] * data[10] * data[12] -
-//				data[2] * data[8]  * data[15] -
-//				data[0] * data[11] * data[14];
-//
-//	DetMOM[6] = data[0] * data[9]  * data[15] +
-//				data[1] * data[11] * data[12] +
-//				data[3] * data[8]  * data[13] -
-//				data[3] * data[9]  * data[12] -
-//				data[1] * data[8]  * data[15] -
-//				data[0] * data[11] * data[13];
-//
-//	DetMOM[7] = data[0] * data[9]  * data[14] +
-//				data[1] * data[10] * data[12] +
-//				data[2] * data[8]  * data[13] -
-//				data[2] * data[9]  * data[12] -
-//				data[1] * data[8]  * data[14] -
-//				data[0] * data[10] * data[13];
-//
-//	DetMOM[8] = data[1] * data[6]  * data[15] +
-//				data[2] * data[7]  * data[13] +
-//				data[3] * data[5]  * data[14] -
-//				data[3] * data[6]  * data[13] -
-//				data[2] * data[5]  * data[15] -
-//				data[1] * data[7]  * data[14];
-//
-//	DetMOM[9] = data[0] * data[6]  * data[15] +
-//				data[2] * data[7]  * data[12] +
-//				data[3] * data[4]  * data[14] -
-//				data[3] * data[6]  * data[12] -
-//				data[2] * data[4]  * data[15] -
-//				data[0] * data[7]  * data[14];
-//
-//	DetMOM[10] = data[0] * data[5] * data[15] +
-//				data[1] * data[7]  * data[12] +
-//				data[3] * data[4]  * data[13] -
-//				data[3] * data[5]  * data[12] -
-//				data[1] * data[4]  * data[15] -
-//				data[0] * data[7]  * data[13];
-//
-//	DetMOM[11] = data[0] * data[5] * data[14] +
-//				data[1] * data[6]  * data[12] +
-//				data[2] * data[4]  * data[13] -
-//				data[2] * data[5]  * data[12] -
-//				data[1] * data[4]  * data[14] -
-//				data[0] * data[6]  * data[13];
-//
-//	DetMOM[12] = data[1] * data[6] * data[11] +
-//				data[2] * data[7]  * data[9]  +
-//				data[3] * data[5]  * data[10] -
-//				data[3] * data[6]  * data[9]  -
-//				data[2] * data[5]  * data[11] -
-//				data[1] * data[7]  * data[10];
-//
-//	DetMOM[13] = data[0] * data[6] * data[11] +
-//				data[2] * data[7]  * data[8]  +
-//				data[3] * data[4]  * data[10] -
-//				data[3] * data[6]  * data[8]  -
-//				data[2] * data[4]  * data[11] -
-//				data[0] * data[7]  * data[10];
-//
-//	DetMOM[14] = data[0] * data[5] * data[11] +
-//				data[1] * data[7]  * data[8]  +
-//				data[3] * data[4]  * data[9]  -
-//				data[3] * data[5]  * data[8]  -
-//				data[1] * data[4]  * data[11] -
-//				data[0] * data[7]  * data[9];
-//
-//	DetMOM[15] = data[0] * data[5] * data[10] +
-//				data[1] * data[6]  * data[8]  +
-//				data[2] * data[4]  * data[9]  -
-//				data[2] * data[5]  * data[8]  -
-//				data[1] * data[4]  * data[10] -
-//				data[0] * data[6]  * data[9];
-//				
-//	mat4 Adjugate;
-//	Adjugate.data[0]  = DetMOM[0];
-//	Adjugate.data[4]  = -DetMOM[1];
-//	Adjugate.data[8]  = DetMOM[2];
-//	Adjugate.data[12] = -DetMOM[3];
-//
-//	Adjugate.data[1]  = -DetMOM[4];
-//	Adjugate.data[5]  = DetMOM[5];
-//	Adjugate.data[9]  = -DetMOM[6];
-//	Adjugate.data[13] = DetMOM[7];
-//
-//	Adjugate.data[2]  = DetMOM[8];
-//	Adjugate.data[6]  = -DetMOM[9];
-//	Adjugate.data[10] = DetMOM[10];
-//	Adjugate.data[14] = -DetMOM[11];
-//
-//	Adjugate.data[3]  = -DetMOM[12];
-//	Adjugate.data[7]  = DetMOM[13];
-//	Adjugate.data[11] = -DetMOM[14];
-//	Adjugate.data[15] = DetMOM[15];
-//
-//	float Det = (data[0] * data[5] * data[10] * data[15]) + (data[0] * data[6] * data[11] * data[13]) + (data[0] * data[7] * data[9] * data[14])
-//
-//		- (data[0] * data[7] * data[10] * data[13]) - (data[0] * data[6] * data[9] * data[15]) - (data[0] * data[5] * data[11] * data[14])
-//
-//		- (data[1] * data[4] * data[10] * data[15]) - (data[2] * data[4] * data[11] * data[13]) - (data[3] * data[4] * data[9] * data[14])
-//
-//		+ (data[3] * data[4] * data[10] * data[13]) + (data[2] * data[4] * data[9] * data[15]) + (data[1] * data[4] * data[11] * data[14])
-//
-//		+ (data[1] * data[6] * data[8] * data[15]) + (data[2] * data[7] * data[8] * data[13]) + (data[3] * data[5] * data[8] * data[14])
-//
-//		- (data[3] * data[6] * data[8] * data[13]) - (data[2] * data[5] * data[8] * data[15]) - (data[1] * data[7] * data[8] * data[14])
-//
-//		- (data[1] * data[6] * data[11] * data[12]) - (data[2] * data[7] * data[9] * data[12]) - (data[3] * data[5] * data[10] * data[12])
-//
-//		+ (data[3] * data[6] * data[9] * data[12]) + (data[2] * data[5] * data[11] * data[12]) + (data[1] * data[7] * data[10] * data[12]);
-//				
-//	mat4 result;
-//
-//	result = Adjugate * (1 / Det);
-//
-//	return result;
-//}
+mat4 mat4::getSlowInverse() const
+{
+	float DetMOM[16];
+	DetMOM[0] = data[5] * data[10] * data[15] + 
+				data[6] * data[11] * data[13] +
+				data[7] * data[9]  * data[14] -
+				data[7] * data[10] * data[13] -
+				data[6] * data[9]  * data[15] -
+				data[5] * data[11] * data[14];
+
+	DetMOM[1] = data[4] * data[10] * data[15] +
+				data[6] * data[11] * data[12] +
+				data[7] * data[8]  * data[14] -
+				data[7] * data[10] * data[12] -
+				data[6] * data[8]  * data[15] -
+				data[4] * data[11] * data[14];
+
+	DetMOM[2] = data[4] * data[9]  * data[15] +
+				data[5] * data[11] * data[12] +
+				data[7] * data[8]  * data[13] -
+				data[7] * data[9]  * data[12] -
+				data[5] * data[8]  * data[15] -
+				data[4] * data[11] * data[13];
+
+	DetMOM[3] = data[4] * data[9]  * data[14] +
+				data[5] * data[10] * data[12] +
+				data[6] * data[8]  * data[13] -
+				data[6] * data[9]  * data[12] -
+				data[5] * data[8]  * data[14] -
+				data[4] * data[10] * data[13];
+
+	DetMOM[4] = data[1] * data[10] * data[15] +
+				data[2] * data[11] * data[13] +
+				data[3] * data[9]  * data[14] -
+				data[3] * data[10] * data[13] -
+				data[2] * data[9]  * data[15] -
+				data[1] * data[11] * data[14];
+
+	DetMOM[5] = data[0] * data[10] * data[15] +
+				data[2] * data[11] * data[12] +
+				data[3] * data[8]  * data[14] -
+				data[3] * data[10] * data[12] -
+				data[2] * data[8]  * data[15] -
+				data[0] * data[11] * data[14];
+
+	DetMOM[6] = data[0] * data[9]  * data[15] +
+				data[1] * data[11] * data[12] +
+				data[3] * data[8]  * data[13] -
+				data[3] * data[9]  * data[12] -
+				data[1] * data[8]  * data[15] -
+				data[0] * data[11] * data[13];
+
+	DetMOM[7] = data[0] * data[9]  * data[14] +
+				data[1] * data[10] * data[12] +
+				data[2] * data[8]  * data[13] -
+				data[2] * data[9]  * data[12] -
+				data[1] * data[8]  * data[14] -
+				data[0] * data[10] * data[13];
+
+	DetMOM[8] = data[1] * data[6]  * data[15] +
+				data[2] * data[7]  * data[13] +
+				data[3] * data[5]  * data[14] -
+				data[3] * data[6]  * data[13] -
+				data[2] * data[5]  * data[15] -
+				data[1] * data[7]  * data[14];
+
+	DetMOM[9] = data[0] * data[6]  * data[15] +
+				data[2] * data[7]  * data[12] +
+				data[3] * data[4]  * data[14] -
+				data[3] * data[6]  * data[12] -
+				data[2] * data[4]  * data[15] -
+				data[0] * data[7]  * data[14];
+
+	DetMOM[10] = data[0] * data[5] * data[15] +
+				data[1] * data[7]  * data[12] +
+				data[3] * data[4]  * data[13] -
+				data[3] * data[5]  * data[12] -
+				data[1] * data[4]  * data[15] -
+				data[0] * data[7]  * data[13];
+
+	DetMOM[11] = data[0] * data[5] * data[14] +
+				data[1] * data[6]  * data[12] +
+				data[2] * data[4]  * data[13] -
+				data[2] * data[5]  * data[12] -
+				data[1] * data[4]  * data[14] -
+				data[0] * data[6]  * data[13];
+
+	DetMOM[12] = data[1] * data[6] * data[11] +
+				data[2] * data[7]  * data[9]  +
+				data[3] * data[5]  * data[10] -
+				data[3] * data[6]  * data[9]  -
+				data[2] * data[5]  * data[11] -
+				data[1] * data[7]  * data[10];
+
+	DetMOM[13] = data[0] * data[6] * data[11] +
+				data[2] * data[7]  * data[8]  +
+				data[3] * data[4]  * data[10] -
+				data[3] * data[6]  * data[8]  -
+				data[2] * data[4]  * data[11] -
+				data[0] * data[7]  * data[10];
+
+	DetMOM[14] = data[0] * data[5] * data[11] +
+				data[1] * data[7]  * data[8]  +
+				data[3] * data[4]  * data[9]  -
+				data[3] * data[5]  * data[8]  -
+				data[1] * data[4]  * data[11] -
+				data[0] * data[7]  * data[9];
+
+	DetMOM[15] = data[0] * data[5] * data[10] +
+				data[1] * data[6]  * data[8]  +
+				data[2] * data[4]  * data[9]  -
+				data[2] * data[5]  * data[8]  -
+				data[1] * data[4]  * data[10] -
+				data[0] * data[6]  * data[9];
+				
+	mat4 Adjugate;
+	Adjugate.data[0]  = DetMOM[0];
+	Adjugate.data[4]  = -DetMOM[1];
+	Adjugate.data[8]  = DetMOM[2];
+	Adjugate.data[12] = -DetMOM[3];
+
+	Adjugate.data[1]  = -DetMOM[4];
+	Adjugate.data[5]  = DetMOM[5];
+	Adjugate.data[9]  = -DetMOM[6];
+	Adjugate.data[13] = DetMOM[7];
+
+	Adjugate.data[2]  = DetMOM[8];
+	Adjugate.data[6]  = -DetMOM[9];
+	Adjugate.data[10] = DetMOM[10];
+	Adjugate.data[14] = -DetMOM[11];
+
+	Adjugate.data[3]  = -DetMOM[12];
+	Adjugate.data[7]  = DetMOM[13];
+	Adjugate.data[11] = -DetMOM[14];
+	Adjugate.data[15] = DetMOM[15];
+
+	float Det = (data[0] * data[5] * data[10] * data[15]) + (data[0] * data[6] * data[11] * data[13]) + (data[0] * data[7] * data[9] * data[14])
+
+		- (data[0] * data[7] * data[10] * data[13]) - (data[0] * data[6] * data[9] * data[15]) - (data[0] * data[5] * data[11] * data[14])
+
+		- (data[1] * data[4] * data[10] * data[15]) - (data[2] * data[4] * data[11] * data[13]) - (data[3] * data[4] * data[9] * data[14])
+
+		+ (data[3] * data[4] * data[10] * data[13]) + (data[2] * data[4] * data[9] * data[15]) + (data[1] * data[4] * data[11] * data[14])
+
+		+ (data[1] * data[6] * data[8] * data[15]) + (data[2] * data[7] * data[8] * data[13]) + (data[3] * data[5] * data[8] * data[14])
+
+		- (data[3] * data[6] * data[8] * data[13]) - (data[2] * data[5] * data[8] * data[15]) - (data[1] * data[7] * data[8] * data[14])
+
+		- (data[1] * data[6] * data[11] * data[12]) - (data[2] * data[7] * data[9] * data[12]) - (data[3] * data[5] * data[10] * data[12])
+
+		+ (data[3] * data[6] * data[9] * data[12]) + (data[2] * data[5] * data[11] * data[12]) + (data[1] * data[7] * data[10] * data[12]);
+				
+	mat4 result;
+
+	result = Adjugate * (1 / Det);
+
+	return result;
+}
 
 mat4 mat4::getTranspose() const
 {

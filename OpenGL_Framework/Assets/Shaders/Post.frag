@@ -137,7 +137,7 @@ void main()
 	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	//outColor.rgb += texColor + vec3(0.5) * NdotL;
-	outColor.rgb = ambient + diffuse;
+	outColor.rgb = (ambient + diffuse) * shadowAmount;
 
 	//outColor.rgb *= texColor.rgb;
 
@@ -150,7 +150,7 @@ void main()
 	
 	
 	
-	//outColor.rgb = shadowCoord.rgb;
+	//outColor.rgb = fract(position.xyz * 10);
 	//outColor.rg = fract(shadowCoord.rg);
 	//outColor.b = shadowCoord.b;
 	//outColor.rgb = fract(position.xyz);

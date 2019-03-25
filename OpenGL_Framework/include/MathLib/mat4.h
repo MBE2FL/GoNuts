@@ -40,6 +40,7 @@ public:
 	//Manipulators
 	//mat4 getInverse(const mat4& rot, const vec3& tran);
 	mat4 getInverse() const;
+	mat4 getSlowInverse() const;
 	void transpose();
 	mat4 getTranspose() const;
 	void identity();
