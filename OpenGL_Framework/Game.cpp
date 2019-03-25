@@ -99,7 +99,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building Top 3", "./Assets/Models/Building_Top3.obj");
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 
-	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/background.obj");
+	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad.obj");
 
 
 
