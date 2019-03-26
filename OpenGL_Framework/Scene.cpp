@@ -1934,7 +1934,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 
 			UIAnimator* animator = image.second->getAnimator();
 
-			sql = "INSERT INTO UIAnimators (Name, Image, Animations, [Current Animation]) VALUES (";
+			sql = "INSERT INTO UIAnimators (Name, Image, Animations, [Current Animation], Anim Order) VALUES (";
 
 			// Animator name
 			sql += "'" + image.first + "'";
@@ -1944,17 +1944,46 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 
 			// Animations
 			unordered_map<string, UIAnimation*> animations = animator->getAnimations();
+			stack<UIAnimation*> animOrder = animator->getAnimOrder();
+
+			// The animator has some animations
 			if (animations.size() > 0)
 			{
+				// Save all of the animations
 				for (auto const& animation : animations)
 				{
 					sql += ", '" + animation.first + ">'";
 				}
 
-				sql += ", '" + animator->getCurrentAnimation()->getName() + "'";
+				// Save the current animation
+				if (animator->getCurrentAnimation())
+					sql += ", '" + animator->getCurrentAnimation()->getName() + "'";
+				else
+					sql += ", NULL";
+
+				// Save the animation order
+				// Only save the animations which are in both the animation stack, and the list of animations.
+				vector<UIAnimation*> reverseAnimOrder;
+				UIAnimation* currAnim = nullptr;
+				while (animOrder.size() > 0)
+				{
+					currAnim = animOrder.top();
+
+					if (animations.find(currAnim->getName()) != animations.end())
+						reverseAnimOrder.push_back(animOrder.top());
+
+					animOrder.pop();
+				}
+
+				// Save reverseAnimOrder in the reverse order, to bring it back to the right order of the original stack.
+				vector<UIAnimation*>::reverse_iterator revIt;
+				for (revIt = reverseAnimOrder.rbegin(); revIt != reverseAnimOrder.rend(); ++revIt)
+				{
+					sql += ", '" + (*revIt)->getName() + ">'";
+				}
 			}
 			else
-				sql += "NULL, NULL";
+				sql += ", NULL, NULL, NULL";
 
 
 
