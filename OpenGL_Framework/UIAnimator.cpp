@@ -110,6 +110,8 @@ void UIAnimator::setCurrentTime(const float time)
 
 void UIAnimator::play(const string & animName)
 {
+	_currentTime = 0.0f;
+
 	// Play the animation with animName, iff one exists
 	if (_animations.find(animName) != _animations.end())
 	{

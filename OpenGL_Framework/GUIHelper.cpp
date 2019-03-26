@@ -990,8 +990,17 @@ void GUIHelper::drawUIEditor()
 		_showSpawnUIElement = true;
 	}
 
+	// Open UI spawn canvas window
+	if (ImGui::Button("Spawn UI Canvas"))
+	{
+		_showSpawnUICanvas = true;
+	}
+
 	if (_showSpawnUIElement)
 		SpawnUIElement();
+
+	if (_showSpawnUICanvas)
+		SpawnUICanvas();
 
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -1103,6 +1112,29 @@ void GUIHelper::SpawnUIElement()
 	ImGui::End();
 }
 
+void GUIHelper::SpawnUICanvas()
+{
+	// Open UI spawn window
+	ImGui::Begin("UI Spawn Canvas", &_showSpawnUICanvas);
+
+
+	// Create an input field for name.
+	static char name[64] = "";
+	ImGui::InputText("Name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue);
+
+
+	// Add new canvas to the current UI system
+	if (ImGui::Button("Spawn Canvas"))
+	{
+		UICanvas* canvas = new UICanvas(name);
+
+		_uiSystem->addCanvas(canvas);
+	}
+
+
+	ImGui::End();
+}
+
 void GUIHelper::drawCanvases()
 {
 	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Canvases");
@@ -1115,6 +1147,8 @@ void GUIHelper::drawCanvases()
 	{
 		if (ImGui::CollapsingHeader(canvasKV.first.c_str()))
 		{
+			//_canvasShowImageProperty[canvasKV.second] = canvasKV.second;
+
 			_currentUICanvas = canvasKV.second;
 			drawUIHierarchy(canvasKV.second);
 		}
@@ -1158,17 +1192,18 @@ void GUIHelper::drawUIHierarchy(UICanvas * canvas)
 	// Display all the root UIImages.
 	for (UIImage* image : images)
 	{
-		drawUIHierarchyHelper(image);
+		drawUIHierarchyHelper(image, &_canvasShowImageProperty[canvas]);
 	}
 
 	// Open property editor for the current UIImage.
-	if (_showUIPropertyEditor)
-		propertyUIEditor(_currentUIImage, &_showUIPropertyEditor);
+	//if (_showUIPropertyEditor)
+	if (_canvasShowImageProperty[canvas])
+		propertyUIEditor(canvas->getName() + " UI Property Editor", _currentUIImage, &_canvasShowImageProperty[canvas]);
 
 	ImGui::PopStyleVar();
 }
 
-void GUIHelper::drawUIHierarchyHelper(UIImage * image)
+void GUIHelper::drawUIHierarchyHelper(UIImage * image, bool * showImageProperty)
 {
 	vector<UIImage*> children = image->getChildren();
 
@@ -1177,7 +1212,8 @@ void GUIHelper::drawUIHierarchyHelper(UIImage * image)
 		// Edit this image
 		if (ImGui::SmallButton("Edit"))
 		{
-			_showUIPropertyEditor = true;
+			//_showUIPropertyEditor = true;
+			*showImageProperty = true;
 			_currentUIImage = image;
 		}
 		// Delete this image
@@ -1201,15 +1237,15 @@ void GUIHelper::drawUIHierarchyHelper(UIImage * image)
 
 		// Recurse through all of this image's children
 		for (UIImage* child : children)
-			drawUIHierarchyHelper(child);
+			drawUIHierarchyHelper(child, showImageProperty);
 
 		ImGui::TreePop();
 	}
 }
 
-void GUIHelper::propertyUIEditor(UIImage * image, bool * open)
+void GUIHelper::propertyUIEditor(const string & canvasName, UIImage * image, bool * open)
 {
-	if (!ImGui::Begin("UI Property Editor", open) || !_currentUIImage)
+	if (!ImGui::Begin(canvasName.c_str(), open) || !_currentUIImage)
 	{
 		ImGui::End();
 		return;
