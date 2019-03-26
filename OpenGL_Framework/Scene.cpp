@@ -368,16 +368,7 @@ void Scene::loadOldFaithful()
 	//_entityManager->addComponent(meshRenderer, entity);
 
 	_followPlayer = false;
-<<<<<<< HEAD
-	entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
-	skeletalMeshTestTwo = new SkeletalMesh();
-	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//string path = "./Assets/Test Exporter/Character Running/";
-	string path = "./Assets/Test Exporter/Test/";
-	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
-	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
-	skeletalMeshTestTwo->_isSkeletal = true;
-=======
+
 	//entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
 	//skeletalMeshTestTwo = new SkeletalMesh();
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
@@ -386,7 +377,7 @@ void Scene::loadOldFaithful()
 	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
 	////skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
 	//skeletalMeshTestTwo->_isSkeletal = true;
->>>>>>> 48013732ce424a441c8b395bbc43601a79f74d2a
+
 
 	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
@@ -402,13 +393,6 @@ void Scene::loadOldFaithful()
 	testImage->setLocalRotation(vec3(0, 0, 0));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
-<<<<<<< HEAD
-
-	testCanvas->addImage("Test", testImage);
-	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-=======
 	UIImage* time = new UIImage("time", vec3(7.0f, 3.0f, 0.0f));
 	time->setScale(vec3(0.5f));
 	time->setLocalRotation(vec3(0, 0, 0));
@@ -425,7 +409,7 @@ void Scene::loadOldFaithful()
 	UIKeyFrame* frame4 = new UIKeyFrame(0.0f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame5 = new UIKeyFrame(0.8f, vec3(7.0f, 3.0f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame6 = new UIKeyFrame(1.6f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
->>>>>>> 48013732ce424a441c8b395bbc43601a79f74d2a
+
 
 	vector<UIKeyFrame*> testVec;
 	testVec.push_back(frame1);
@@ -445,12 +429,9 @@ void Scene::loadOldFaithful()
 	testImage->getAnimator()->addAnimation(animu);
 	time->getAnimator()->addAnimation(animu2);
 
-<<<<<<< HEAD
 
-	_uiSystem->addCanvas("TESTC", testCanvas);
-=======
 	_uiSystem->addCanvas(testCanvas);
->>>>>>> 48013732ce424a441c8b395bbc43601a79f74d2a
+
 
 
 
