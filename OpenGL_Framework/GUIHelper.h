@@ -47,7 +47,7 @@ private:
 	bool _showLightsMenu = false;
 	bool _showUIEditor = false;
 	bool _showSpawnUIElement = false;
-	bool _showUIPropertyEditor = false;
+	bool _showSpawnUICanvas = false;
 	bool _showUIAnimationEditor = false;
 
 	TransformComponent* _currentTransform = nullptr;
@@ -74,11 +74,14 @@ private:
 	void drawLights();
 	void drawUIEditor();
 	void SpawnUIElement();
+	void SpawnUICanvas();
 	void drawCanvases();
 	void drawUIHierarchy(UICanvas* canvas);
-	void drawUIHierarchyHelper(UIImage* image);
-	void propertyUIEditor(UIImage* image, bool* open);
+	void drawUIHierarchyHelper(UIImage* image, bool* showImageProperty);
+	void propertyUIEditor(const string& canvasName, UIImage* image, bool* open);
 	void drawUIAnimator(UIAnimator* animator);
 	void drawUIAnimationEditor();
 	void propertyUIAnimationEditor(UIAnimation* anim, bool* open);
+
+	unordered_map<UICanvas*, bool> _canvasShowImageProperty;
 };

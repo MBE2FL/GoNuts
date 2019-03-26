@@ -82,11 +82,14 @@ void Scene::update(float deltaTime)
 		_playerSkeleton->update(deltaTime);
 
 
+	_uiSystem->update(deltaTime);
 }
 
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
+	_uiSystem->draw();
+
 
 	if (_guiHelper->getPhysicsDebugEnabled())
 	{
@@ -365,6 +368,7 @@ void Scene::loadOldFaithful()
 	//_entityManager->addComponent(meshRenderer, entity);
 
 	_followPlayer = false;
+
 	//entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
 	//skeletalMeshTestTwo = new SkeletalMesh();
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
@@ -373,6 +377,7 @@ void Scene::loadOldFaithful()
 	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
 	////skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
 	//skeletalMeshTestTwo->_isSkeletal = true;
+
 
 	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
@@ -405,6 +410,7 @@ void Scene::loadOldFaithful()
 	UIKeyFrame* frame5 = new UIKeyFrame(0.8f, vec3(7.0f, 3.0f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame6 = new UIKeyFrame(1.6f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
 
+
 	vector<UIKeyFrame*> testVec;
 	testVec.push_back(frame1);
 	testVec.push_back(frame2);
@@ -423,7 +429,9 @@ void Scene::loadOldFaithful()
 	testImage->getAnimator()->addAnimation(animu);
 	time->getAnimator()->addAnimation(animu2);
 
+
 	_uiSystem->addCanvas(testCanvas);
+
 
 
 
