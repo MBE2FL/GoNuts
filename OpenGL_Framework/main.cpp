@@ -37,6 +37,11 @@ void KeyboardUpCallbackFunction(unsigned char key, int x, int y)
 	theGame->keyboardUp(key, x, y);
 }
 
+void SpecialCallbackFunction(int key, int x, int y)
+{
+	theGame->specialKeyDown(key, x, y);
+}
+
 /* function TimerCallbackFunction(int value)
  * Description: 
  *  - this is called many times per second
@@ -66,6 +71,12 @@ void MouseClickCallbackFunction(int button, int state, int x, int y)
 void MouseMotionCallbackFunction(int x, int y)
 {
 	theGame->mouseMoved(x, y);
+	glutPostRedisplay();
+}
+
+void MouseWheelCallbackFunction(int wheel, int direction, int x, int y)
+{
+	theGame->mouseWheel(wheel, direction, x, y);
 	glutPostRedisplay();
 }
 
@@ -196,17 +207,16 @@ int main(int argc, char **argv)
 	glutDisplayFunc(DisplayCallbackFunction);
 	glutKeyboardFunc(KeyboardCallbackFunction);
 	glutKeyboardUpFunc(KeyboardUpCallbackFunction);
+	glutSpecialFunc(SpecialCallbackFunction);
 	glutMouseFunc(MouseClickCallbackFunction);
 	glutMotionFunc(MouseMotionCallbackFunction);
+	glutMouseWheelFunc(MouseWheelCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
-#ifdef _DEBUG
 	//InitOpenGLDebugCallback();
 
 	guiHelper = GUIHelper::getInstance();
 	guiHelper->init(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-#endif
 
 	/* init the game */
 	theGame = new Game();

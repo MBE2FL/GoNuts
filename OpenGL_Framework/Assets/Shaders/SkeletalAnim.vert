@@ -24,22 +24,17 @@ layout(location = 0) out vData o;
 void main()
 {
 	o.texcoord = in_uv;
-	//normal = mat3(uView) * mat3(uModel) * in_normal;
+	o.texcoord.y = 1.0 - o.texcoord.y;
+
 
 	vec4 totalLocalPos = vec4(0.0, 0.0, 0.0, 0.0);
+	totalLocalPos = vec4(0.0);
 	vec4 totalNormal = vec4(0.0);
 
-	//if (in_weights[0] == 0.0)
-	//{
-		//totalLocalPos = vec4(in_vert, 1.0);
-		//totalNormal = vec4(in_normal, 0.0);
-	//}
-
 	// Only allow MAX_WEIGHTS number of joints to influence this vertex.
-	for (unsigned int i = 0; i < MAX_WEIGHTS; ++i)
+	for (int i = 0; i < MAX_WEIGHTS; ++i)
 	{
 		mat4 jointTransform = jointTransforms[int(in_jointIndices[i])];
-		//mat4 jointTransform = jointTransforms[15];
 
 		// Calculate position and normal based on the positions and weights of each joint
 		// affecting this vertex.
@@ -52,9 +47,7 @@ void main()
 
 	o.norm = mat3(uView) * mat3(uModel) * totalNormal.xyz;
 
-	//totalLocalPos = jointTransforms[6] * vec4(in_vert, 1.0);
 
-	//vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f);
 	vec4 viewSpace = uView * uModel * totalLocalPos;
 
 	gl_Position = uProj * viewSpace;

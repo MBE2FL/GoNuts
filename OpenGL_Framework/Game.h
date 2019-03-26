@@ -23,7 +23,7 @@
 
 #include "SceneManager.h"
 
-#include "FmodWrapper.h"
+#include "SoundComponent.h"
 
 class Game
 {
@@ -40,8 +40,10 @@ public:
 	/* input callback functions */
 	void keyboardDown(unsigned char key, int mouseX, int mouseY);
 	void keyboardUp(unsigned char key, int mouseX, int mouseY);
+	void specialKeyDown(int key, int mouseX, int mouseY);
 	void mouseClicked(int button, int state, int x, int y);
 	void mouseMoved(int x, int y);
+	void mouseWheel(int wheel, int direction, int x, int y);
 
 	/* Data Members */
 	Timer *updateTimer	= nullptr;
@@ -55,22 +57,13 @@ private:
 
 	float t = 0.0f;
 
-	Sound sound;
-
-	FMOD::Channel* soundChannel = 0;
-	FMOD_VECTOR	pos;
-
+	SoundComponent* _sound;
 	//UI
 	//GameObject nutOmeter;
 	//GameObject time;
 
 	//GameObject* particleTrail;
 	//GameObject* jumpParticles;
-
-	bool collided = false;
-	bool sliding = false;
-	bool slideCheck = false;
-	bool reverse = false;
 
 	bool outline = true;
 
@@ -88,6 +81,8 @@ private:
 	GBuffer gbuffer;
 
 	Framebuffer frameBufferShadow;
+
+	Framebuffer frameBufferUI;
 
 	ShaderProgram shaderGbuffer;
 	ShaderProgram shaderOutline;

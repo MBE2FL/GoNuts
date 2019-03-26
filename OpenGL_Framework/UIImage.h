@@ -10,10 +10,11 @@
 class UIImage
 {
 public:
-	UIImage(const vec3& pos = vec3::Zero, const vec3& scale = vec3::One, const vec3& localRotation = vec3::Zero, const float alpha = 1.0f);
+	UIImage(const string& name, const vec3& pos = vec3::Zero, const vec3& scale = vec3::One, const vec3& localRotation = vec3::Zero, const float alpha = 1.0f);
 
 	void setAnimation(UIAnimation*);
 	UIAnimator* getAnimator();
+	void setAnimator(UIAnimator* animator);
 
 	vec3 getLocalPosition() const;
 	void setLocalPosition(const vec3& pos);
@@ -25,18 +26,32 @@ public:
 	void setLocalRotationY(const float rotation);
 	void setLocalRotationZ(const float rotation);
 	TransformComponent* getTransform() const;
+	void setTransform(TransformComponent* transform);
 	float getAlpha() const;
 	void setAlpha(const float alpha);
 	Texture* getTexture() const;
 	void setTexture(Texture* texture);
 	Mesh* getMesh() const;
+	void setMesh(Mesh* mesh);
 	ShaderProgram* getShaderProgram() const;
+	void setShaderProgram(ShaderProgram* shaderProgram);
+	string getName() const;
+
+	void addChild(UIImage* child);
+	void removeChild(UIImage* child);
+	void setParent(UIImage* parent);
+	UIImage* getParent() const;
+	vector<UIImage*> getChildren() const;
 
 private:
+	string _name;
 	Mesh* _mesh;
 	ShaderProgram* _shaderProgram;
 	Texture* _texture;
 	TransformComponent* _transform;
 	float _alpha;
 	UIAnimator* _animator = nullptr;
+
+	UIImage* _parent = nullptr;
+	vector<UIImage*> _children;
 };

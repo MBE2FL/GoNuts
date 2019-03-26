@@ -89,6 +89,22 @@ void GUIHelper::drawMenuBar()
 			ImGui::EndMenu();
 		}
 
+		// UI menu options.
+		if (ImGui::BeginMenu("UI"))
+		{
+			if (ImGui::MenuItem("UI Editor"))
+			{
+				_showUIEditor = !_showUIEditor;
+			}
+
+			if (ImGui::MenuItem("UI Animation Editor"))
+			{
+				_showUIAnimationEditor = !_showUIAnimationEditor;
+			}
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::Text("				%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::EndMainMenuBar();
@@ -127,12 +143,19 @@ void GUIHelper::drawMenuBar()
 
 	if (_showSceneEditor)
 		drawSceneEditor();
+
+	if (_showUIEditor)
+		drawUIEditor();	
+
+	if (_showUIAnimationEditor)
+		drawUIAnimationEditor();
 }
 
 void GUIHelper::update()
 {
 	_entityManager = EntityManager::getInstance();
 	_entityFactory = EntityFactory::getInstance();
+	_uiSystem = _sceneManager->getCurrentScene()->getUISystem();
 }
 
 bool GUIHelper::getPhysicsDebugEnabled() const
@@ -400,6 +423,7 @@ void GUIHelper::drawMeshRenderer(MeshRendererComponent * meshRenderer, Collider 
 	// Meshes
 	// Select a mesh
 	vector<Mesh*> meshes = ObjectLoader::getMeshes();
+	meshes.push_back(ObjectLoader::getSkeletalMesh("SkeletalBoiTwo"));
 	string currentMesh = meshRenderer->getMesh()->getFilename();
 	if (ImGui::BeginCombo("Meshes", currentMesh.c_str()))
 	{
@@ -951,6 +975,569 @@ void GUIHelper::drawLights()
 	float attenuationQuadratic = light->getAttenuationQuadratic();
 	ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
 	light->setAttenuationQuadratic(attenuationQuadratic);
+
+	ImGui::End();
+}
+
+void GUIHelper::drawUIEditor()
+{
+	// Open UI editor window
+	ImGui::Begin("UI Editor", &_showUIEditor);
+
+	// Open UI spawn menu window
+	if (ImGui::Button("Spawn UI Element"))
+	{
+		_showSpawnUIElement = true;
+	}
+
+	if (_showSpawnUIElement)
+		SpawnUIElement();
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+
+	drawCanvases();
+
+
+	ImGui::End();
+}
+
+void GUIHelper::SpawnUIElement()
+{
+	// Open UI spawn window
+	ImGui::Begin("UI Spawn", &_showSpawnUIElement);
+
+
+	// Create an input field for name.
+	static char name[64] = "";
+	ImGui::InputText("Name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue);
+
+	// Create an input field for position.
+	static vec3 position = vec3(0.0f, 2.0f, -5.0f);
+	ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
+
+	// Create an input field for rotation.
+	static float rot = 0.0f;
+	ImGui::InputFloat("Z Rotation", &rot, 0.0f, 0.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue);
+
+	// Create an input field for scale.
+	static vec3 scale = vec3(1.0f);
+	ImGui::InputFloat3("Scale", &scale.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
+
+	// Create an input field for alpha.
+	static float alpha = 1.0f;
+	ImGui::InputFloat("Alpha", &alpha, 0.0f, 0.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue);
+
+
+	// Textures
+	vector<Texture*> textures = ObjectLoader::getTextures();
+	static string currentTexName = "";
+	static Texture* texture = nullptr;
+	if (ImGui::BeginCombo("Textures", currentTexName.c_str()))
+	{
+		vector<Texture*>::iterator it;
+		for (it = textures.begin(); it != textures.end(); it++)
+		{
+			string texName = (*it)->filename;
+
+			bool isSelected = (currentTexName == texName);
+
+			if (ImGui::Selectable(texName.c_str(), isSelected))
+			{
+				currentTexName = texName;
+				texture = *it;
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+	// Canvases
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+	static string currentCanvasName = "";
+	static UICanvas* canvas = nullptr;
+	if (ImGui::BeginCombo("Canvases", currentCanvasName.c_str()))
+	{
+		for (auto const& canvasKV : canvases)
+		{
+			string canvasName = canvasKV.first;
+
+			bool isSelected = (currentCanvasName == canvasName);
+
+			if (ImGui::Selectable(canvasName.c_str(), isSelected))
+			{
+				currentCanvasName = canvasName;
+				canvas = canvasKV.second;
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+	// Spawn image
+	if (ImGui::Button("Spawn UIImage") && texture && canvas)
+	{
+		UIImage* image = new UIImage(name, position, scale, vec3(0.0f, 0.0f, rot), alpha);
+		image->setTexture(texture);
+
+		canvas->addImage(image);
+
+
+		currentTexName = "";
+		texture = nullptr;
+
+		currentCanvasName = "";
+		canvas = nullptr;
+	}
+
+
+	ImGui::End();
+}
+
+void GUIHelper::drawCanvases()
+{
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Canvases");
+	ImGui::Spacing();
+
+	// Draw each canvases' UI hierarchy
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+
+	for (auto const& canvasKV : canvases)
+	{
+		if (ImGui::CollapsingHeader(canvasKV.first.c_str()))
+		{
+			_currentUICanvas = canvasKV.second;
+			drawUIHierarchy(canvasKV.second);
+		}
+	}
+
+	ImGui::Separator();
+}
+
+void GUIHelper::drawUIHierarchy(UICanvas * canvas)
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3.0f);
+
+	//ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	// Get all images in the canvas.
+	unordered_map<string, UIImage*> imagesMap = canvas->getImages();
+	vector<UIImage*> images;
+
+	// Convert map to vector.
+	for (auto const& imageKV : imagesMap)
+	{
+		images.push_back(imageKV.second);
+	}
+
+	// Sort the vector, so all the root transform are in the front of the vector.
+	// Erase all the non-root transforms from the vector.
+	vector<UIImage*>::iterator it;
+	it = partition(images.begin(), images.end(), [](UIImage* image) -> bool
+	{
+		TransformComponent* transform = image->getTransform();
+
+		// Make sure transform component exists.
+		if (!transform)
+			return false;
+
+		return transform->isRoot();
+	});
+
+	images.erase(it, images.end());
+
+	// Display all the root UIImages.
+	for (UIImage* image : images)
+	{
+		drawUIHierarchyHelper(image);
+	}
+
+	// Open property editor for the current UIImage.
+	if (_showUIPropertyEditor)
+		propertyUIEditor(_currentUIImage, &_showUIPropertyEditor);
+
+	ImGui::PopStyleVar();
+}
+
+void GUIHelper::drawUIHierarchyHelper(UIImage * image)
+{
+	vector<UIImage*> children = image->getChildren();
+
+	if (ImGui::TreeNode(image->getName().c_str()))
+	{
+		// Edit this image
+		if (ImGui::SmallButton("Edit"))
+		{
+			_showUIPropertyEditor = true;
+			_currentUIImage = image;
+		}
+		// Delete this image
+		if (ImGui::SmallButton("Delete"))
+		{
+			// Remove this image from all of it's children
+			for (UIImage* child : children)
+			{
+				child->setParent(nullptr);
+			}
+
+			// Remove this image from it's parent
+			if (image->getParent())
+				image->getParent()->removeChild(image);
+
+			// Remove the image from it's canvas
+			_currentUICanvas->deleteImage(image->getName());
+			ImGui::TreePop();
+			return;
+		}
+
+		// Recurse through all of this image's children
+		for (UIImage* child : children)
+			drawUIHierarchyHelper(child);
+
+		ImGui::TreePop();
+	}
+}
+
+void GUIHelper::propertyUIEditor(UIImage * image, bool * open)
+{
+	if (!ImGui::Begin("UI Property Editor", open) || !_currentUIImage)
+	{
+		ImGui::End();
+		return;
+	}
+
+	TransformComponent* transform = image->getTransform();
+
+	// Display transform properties
+	if (ImGui::CollapsingHeader("Transform"))
+	{
+		ImGui::Text("Transform:");
+		// Position property
+		vec3 temp = transform->getLocalPosition();
+		ImGui::DragFloat3("Position: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalPosition(temp);
+
+		// Rotation property
+		temp = transform->getLocalRotation();
+		ImGui::DragFloat3("Spin Rotation: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalRotation(temp);
+
+		// Scale property
+		temp = transform->getLocalScale();
+		ImGui::DragFloat3("Scale: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setLocalScale(temp);
+
+		// Orbit property
+		temp = transform->getOrbitRotation();
+		ImGui::DragFloat3("Orbit Rotation: ", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		transform->setOrbitRotation(temp);
+	}
+
+
+	// Display animator properties
+	if (ImGui::CollapsingHeader("UIAnimator"))
+	{
+		UIAnimator* animator = image->getAnimator();
+		drawUIAnimator(animator);
+	}
+
+
+	ImGui::End();
+}
+
+void GUIHelper::drawUIAnimator(UIAnimator * animator)
+{
+
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+	
+	// Current time property
+	UIAnimation* currAnim = animator->getCurrentAnimation();
+	if (currAnim)
+	{
+		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Current Time: ");
+		float temp = animator->getCurrentTime();
+		ImGui::DragFloat("", &temp, 0.05f, 0.0f, currAnim->getDuration(), "%.3f", 1.0f);
+		animator->setCurrentTime(temp);
+	}
+
+
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+	// Display all the animations, which are loaded into this animator
+	unordered_map<string, UIAnimation*> animations = UIAnimation::getAllAnimations();
+	static string currentAnimName = "";
+	static UIAnimation* anim = nullptr;
+
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Add And Remove Animations");
+	if (ImGui::BeginCombo("All Animations In System", currentAnimName.c_str()))
+	{
+		for (auto const& animKV : animations)
+		{
+			string animName = animKV.first;
+
+			bool isSelected = (currentAnimName == animName);
+
+			// Check if animName was selected this frame. Skip if it was already selected in a previous frame.
+			if (ImGui::Selectable(animName.c_str(), isSelected))
+			{
+				currentAnimName = animName;
+				anim = animKV.second;
+			}
+			// Highlight the currently selected animName
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+	// Add an animation
+	if (ImGui::Button("Add Animation") && anim)
+	{
+		animator->addAnimation(anim);
+
+		currentAnimName = "";
+		anim = nullptr;
+	}
+
+	// Select an animation
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_HorizontalScrollbar;
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+	ImGui::BeginChild("Animations", ImVec2(0.0f, 90.0f), true, windowFlags);
+
+	animations = animator->getAnimations();
+	static string currAnimName = animations.size() > 0 ? animations.begin()->first : "";
+	static UIAnimation* animSelected = nullptr;
+
+	for (auto const& animKV : animations)
+	{
+		string animName = animKV.first;
+		bool isSelected = (currAnimName == animName);
+
+		if (ImGui::Selectable(animName.c_str(), isSelected))
+		{
+			currAnimName = animName;
+			animSelected = animKV.second;
+		}
+		if (isSelected)
+			ImGui::SetItemDefaultFocus();
+	}
+
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
+
+	// Remove an animation
+	if (ImGui::Button("Remove Animation") && animSelected)
+	{
+		animator->removeAnimation(animSelected->getName());
+		animSelected = nullptr;
+	}
+
+
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+
+
+
+	// Animation Order
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Animation Order");
+
+	animations = animator->getAnimations();
+	static string currentAnimOrderName = "";
+	static UIAnimation* animInOrder = nullptr;
+
+	if (ImGui::BeginCombo("All Animations In Animator", currentAnimOrderName.c_str()))
+	{
+		for (auto const& animKV : animations)
+		{
+			string animName = animKV.first;
+
+			bool isSelected = (currentAnimOrderName == animName);
+
+			// Check if animName was selected this frame. Skip if it was already selected in a previous frame.
+			if (ImGui::Selectable(animName.c_str(), isSelected))
+			{
+				currentAnimOrderName = animName;
+				animInOrder = animKV.second;
+			}
+			// Highlight the currently selected animName
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+	// Push an animation to the stack
+	if (ImGui::Button("Push Animation") && animInOrder)
+	{
+		animator->play(animInOrder->getName());
+
+		currentAnimOrderName = "";
+		animInOrder = nullptr;
+	}
+
+	// Display all animations in the stack
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+	ImGui::BeginChild("Animation Order", ImVec2(0.0f, 90.0f), true, windowFlags);
+
+	stack<UIAnimation*> animOrder = animator->getAnimOrder();
+
+	// Print the names of all the animations in the animation order
+	while (!animOrder.empty())
+	{
+		string animName = animOrder.top()->getName();
+		ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), animName.c_str());
+
+		animOrder.pop();
+
+	}
+
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
+
+	// Pop an animation
+	if (ImGui::Button("Pop Animation"))
+	{
+		animator->stopCurrent();
+	}
+
+	// Pop all animations
+	if (ImGui::Button("Pop All Animations"))
+	{
+		animator->stopAll();
+	}
+}
+
+void GUIHelper::drawUIAnimationEditor()
+{
+	// Open UI editor window
+	ImGui::Begin("UI Animation Editor", &_showUIAnimationEditor);
+
+	// Display all the animations, which are loaded into this animator
+	unordered_map<string, UIAnimation*> animations = UIAnimation::getAllAnimations();
+	static string currentAnimName = "";
+	static UIAnimation* anim = nullptr;
+	static bool showUIAnimationPropertyEditor = false;
+
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Edit Animations");
+
+	for (auto const& animKV : animations)
+	{
+		if (ImGui::TreeNode(animKV.first.c_str()))
+		{
+			// Edit this image
+			if (ImGui::SmallButton("Edit"))
+			{
+				showUIAnimationPropertyEditor = true;
+				anim = animKV.second;
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+
+	// If user selected an animation
+	if (showUIAnimationPropertyEditor && anim)
+	{
+		propertyUIAnimationEditor(anim, &showUIAnimationPropertyEditor);
+	}
+
+
+	ImGui::End();
+}
+
+void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
+{
+	ImGui::Begin("UI Animation Property Editor", open);
+
+	// Display duration
+	ImGui::Text("Duration");
+	float duration = anim->getDuration();
+	ImGui::Text(to_string(duration).c_str());
+
+	// Loop property
+	bool loop = anim->getLoop();
+	ImGui::Checkbox("Loop", &loop);
+	anim->setLoop(loop);
+
+	// Key Frames Property
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_HorizontalScrollbar || ImGuiWindowFlags_AlwaysAutoResize || ImGuiWindowFlags_AlwaysHorizontalScrollbar;
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+
+	vector<UIKeyFrame*> keyFrames = anim->getKeyFrames();
+	static float currKeyTime = 0.0f;
+	static UIKeyFrame* keyFrame = nullptr;
+
+	ImGui::BeginChild("UI Key Frames", ImVec2(0.0f, 0.0f), true, windowFlags);
+
+	// Select a key frame to edit
+	vector<UIKeyFrame*>::iterator it;
+	for (it = keyFrames.begin(); it != keyFrames.end(); ++it)
+	{
+		float keyTime = (*it)->getStartTime();
+
+		bool isSelected = (currKeyTime == keyTime);
+
+		// Check if animName was selected this frame. Skip if it was already selected in a previous frame.
+		if (ImGui::Selectable(to_string(keyTime).c_str(), isSelected))
+		{
+			currKeyTime = keyTime;
+			keyFrame = *it;
+		}
+		// Highlight the currently selected animName
+		if (isSelected)
+			ImGui::SetItemDefaultFocus();
+	}
+
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
+
+	
+
+	// If the user has a key frame selected
+	if (keyFrame)
+	{
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+
+		ImGui::BeginChild("UI Key Frames", ImVec2(0.0f, 0.0f), true, windowFlags);
+
+		// Position Property
+		vec3 pos = keyFrame->getPos();
+		ImGui::DragFloat3("Position", &pos.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		keyFrame->setPos(pos);
+
+		// Scale Property
+		vec3 scale = keyFrame->getScale();
+		ImGui::DragFloat3("Scale", &scale.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+		keyFrame->setscale(scale);
+
+
+		ImGui::EndChild();
+		ImGui::PopStyleVar();
+	}
+
+
 
 	ImGui::End();
 }

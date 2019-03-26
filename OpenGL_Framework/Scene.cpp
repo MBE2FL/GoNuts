@@ -2,7 +2,6 @@
 
 #include "GUIHelper.h"
 
-
 Scene::Scene(const string & name)
 {
 	_name = name;
@@ -11,13 +10,12 @@ Scene::Scene(const string & name)
 	_meshRendererSystem = new MeshRendererSystem(_entityManager);
 	_physicsSystem = new PhysicsSystem(_entityManager);
 	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
 
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
-#ifdef _DEBUG
 	_guiHelper = GUIHelper::getInstance();
-#endif
 }
 
 Scene::~Scene()
@@ -35,6 +33,7 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
 		_playerTransform->setLocalScale(vec3(1.5f));
+		_playerTransform->setLocalRotationAngleX(0.0f);
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
@@ -50,13 +49,13 @@ void Scene::update(float deltaTime)
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
-	if (front /*&& !_playerPhysicsBody->getCanJump()*/)
+	if (front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -5.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
-	else if (!front /*&& !_playerPhysicsBody->getCanJump()*/)
+	else if (!front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
@@ -79,6 +78,8 @@ void Scene::update(float deltaTime)
 		//skeletalMeshTest->update(deltaTime);
 		skeletalMeshTestTwo->update(deltaTime);
 	}
+	if (_playerSkeleton)
+		_playerSkeleton->update(deltaTime);
 
 
 	_uiSystem->update(deltaTime);
@@ -90,7 +91,6 @@ void Scene::draw()
 	_uiSystem->draw();
 
 
-#ifdef _DEBUG
 	if (_guiHelper->getPhysicsDebugEnabled())
 	{
 		// Retrieve the main camera.
@@ -114,39 +114,56 @@ void Scene::draw()
 			collider->draw();
 		}
 	}
-#endif
-
 
 	glUseProgram(GL_NONE);
 
 
-#ifdef _DEBUG
-	// New imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplFreeGLUT_NewFrame();
+	//#ifdef _DEBUG
+	//	// New imgui frame
+	//	ImGui_ImplOpenGL3_NewFrame();
+	//	ImGui_ImplFreeGLUT_NewFrame();
+	//
+	//	// Update imgui widgets
+	//	imguiDraw();
+	//
+	//	// Render imgui
+	//	ImGui::Render();
+	//#endif
+	//
+	//#ifdef _DEBUG
+	//	// Update imgui draw data
+	//	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	//#endif
+}
 
-	// Update imgui widgets
-	imguiDraw();
-
-	// Render imgui
-	ImGui::Render();
-#endif
-
-#ifdef _DEBUG
-	// Update imgui draw data
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif
+void Scene::drawShadow()
+{
+	_meshRendererSystem->drawShadow(light, spotLight);
+	glUseProgram(GL_NONE);
 }
 
 void Scene::drawUI()
 {
 	if (_uiSystem)
-	_uiSystem->draw();
+		_uiSystem->draw();
 }
 
 void Scene::imguiDraw()
 {
+
+	// New imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplFreeGLUT_NewFrame();
+
+	// Update imgui widgets
 	_guiHelper->draw();
+
+	// Render imgui
+	ImGui::Render();
+
+	// Update imgui draw data
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }
 
 string Scene::getName() const
@@ -192,6 +209,9 @@ void Scene::saveScene()
 
 	cout << "Opened scenes database successfully." << endl;
 
+	// Create tables to store the entities, and their components. (Will not overwrite existing tables).
+	createTables(db, errMsg);
+
 	// Save all transforms.
 	saveTransforms(db, errMsg);
 	// Save all cameras.
@@ -204,6 +224,17 @@ void Scene::saveScene()
 	saveColliders(db, errMsg);
 	// Save all entities.
 	saveEntities(db, errMsg);
+
+	// Save UISystem
+	saveUISystem(db, errMsg);
+	// Save Canvases
+	saveCanvases(db, errMsg);
+	// Save Images
+	saveImages(db, errMsg);
+	// Save UITransforms
+	saveUITransforms(db, errMsg);
+	// Save UIAnimators
+	saveUIAnimators(db, errMsg);
 
 	sqlite3_close(db);
 }
@@ -243,6 +274,18 @@ Scene* Scene::saveSceneAs(const string & name)
 	// Save all entities.
 	saveEntities(db, errMsg);
 
+	// Save UISystem
+	saveUISystem(db, errMsg);
+	// Save Canvases
+	saveCanvases(db, errMsg);
+	// Save Images
+	saveImages(db, errMsg);
+	// Save UITransforms
+	saveUITransforms(db, errMsg);
+	// Save UIAnimators
+	saveUIAnimators(db, errMsg);
+
+
 	// Load save into new scene.
 	//newScene->loadSceneFromFile(path);
 	newScene->loadEntities(db, errMsg);
@@ -258,19 +301,21 @@ void Scene::loadOldFaithful()
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-#ifdef _DEBUG
 
 	_guiHelper->update();
-#endif
+
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
-	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
+	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 5.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f, "Main Camera");
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
-	_shadowCamera = _entityFactory->createOrthographicCamera(100, -100, 100, -100, 300, -300);
+
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
 	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
+	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
+	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
 	EntityManager::setShadowCamera(_shadowCamera);
 
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
@@ -298,17 +343,17 @@ void Scene::loadOldFaithful()
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
 
-	entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
-	skeletalMeshTest = new SkeletalMesh();
-	//skeletalMeshTest->loadFromFile("./Assets/Better Collada Test/Character Running.dae");
-	//skeletalMeshTest->loadFromFile("./Assets/model.dae");
-	skeletalMeshTest->loadFromFileSMD("./Assets/Source Exports/Cube.smd", "./Assets/Source Exports/anims/ArmatureAction.smd", 24.0f);
-	skeletalMeshTest->_isSkeletal = true;
-	
-	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
-	vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
-	MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	_entityManager->addComponent(meshRenderer, entity);
+	//entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
+	//skeletalMeshTest = new SkeletalMesh();
+	////skeletalMeshTest->loadFromFile("./Assets/Better Collada Test/Character Running.dae");
+	////skeletalMeshTest->loadFromFile("./Assets/model.dae");
+	//skeletalMeshTest->loadFromFileSMD("./Assets/Source Exports/Cube.smd", "./Assets/Source Exports/anims/ArmatureAction.smd", 24.0f);
+	//skeletalMeshTest->_isSkeletal = true;
+
+	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	//vector<Texture*> textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTest, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	//_entityManager->addComponent(meshRenderer, entity);
 
 	// ########## FBX MODEL
 	//entity = _entityFactory->createEmpty(vec3(1.0f, 2.6f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
@@ -323,6 +368,7 @@ void Scene::loadOldFaithful()
 	//_entityManager->addComponent(meshRenderer, entity);
 
 	_followPlayer = false;
+<<<<<<< HEAD
 	entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
 	skeletalMeshTestTwo = new SkeletalMesh();
 	//testSkeleton.loadFromFile("./Assets/FatBoi.dae");
@@ -331,36 +377,80 @@ void Scene::loadOldFaithful()
 	skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
 	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
 	skeletalMeshTestTwo->_isSkeletal = true;
+=======
+	//entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
+	//skeletalMeshTestTwo = new SkeletalMesh();
+	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
+	////string path = "./Assets/Test Exporter/Character Running/";
+	//string path = "./Assets/Test Exporter/Test/";
+	//skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/ArmatureAction.nutAnim");
+	////skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
+	//skeletalMeshTestTwo->_isSkeletal = true;
+>>>>>>> 48013732ce424a441c8b395bbc43601a79f74d2a
 
-	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
+	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	//textures = { ObjectLoader::getTexture("FatBoi"), ObjectLoader::getTexture("Toon") };
-	textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
-	meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	_entityManager->addComponent(meshRenderer, entity);
+	////textures = { ObjectLoader::getTexture("Anim Test Tex"), ObjectLoader::getTexture("Toon") };
+	//meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	//_entityManager->addComponent(meshRenderer, entity);
 
 
-	UICanvas* testCanvas = new UICanvas();
+	UICanvas* testCanvas = new UICanvas("In Game UI");
 
-	UIImage* testImage = new UIImage(vec3(-2.0f, -2.0f, 0.0f));
+	UIImage* testImage = new UIImage("Nut Meter", vec3(-7.0f, -3.0f, 4.0f));
+	testImage->setScale(vec3(0.5f));
+	testImage->setLocalRotation(vec3(0, 0, 0));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
+<<<<<<< HEAD
 
 	testCanvas->addImage("Test", testImage);
 	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
+=======
+	UIImage* time = new UIImage("time", vec3(7.0f, 3.0f, 0.0f));
+	time->setScale(vec3(0.5f));
+	time->setLocalRotation(vec3(0, 0, 0));
+	time->setTexture(ObjectLoader::getTexture("Time"));
+
+
+	testCanvas->addImage(testImage);
+	testCanvas->addImage(time);
+
+	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.7f, 0.7f, 1.0f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
+
+	UIKeyFrame* frame4 = new UIKeyFrame(0.0f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame5 = new UIKeyFrame(0.8f, vec3(7.0f, 3.0f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
+	UIKeyFrame* frame6 = new UIKeyFrame(1.6f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
+>>>>>>> 48013732ce424a441c8b395bbc43601a79f74d2a
 
 	vector<UIKeyFrame*> testVec;
 	testVec.push_back(frame1);
 	testVec.push_back(frame2);
 	testVec.push_back(frame3);
 
+
+	vector<UIKeyFrame*> timevec;
+	timevec.push_back(frame4);
+	timevec.push_back(frame5);
+	timevec.push_back(frame6);
+
 	UIAnimation* animu = new UIAnimation("test", testVec);
+	UIAnimation* animu2 = new UIAnimation("time", timevec);
+
 
 	testImage->getAnimator()->addAnimation(animu);
+	time->getAnimator()->addAnimation(animu2);
 
+<<<<<<< HEAD
 
 	_uiSystem->addCanvas("TESTC", testCanvas);
+=======
+	_uiSystem->addCanvas(testCanvas);
+>>>>>>> 48013732ce424a441c8b395bbc43601a79f74d2a
 
 
 
@@ -392,10 +482,8 @@ void Scene::loadMainMenu()
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-#ifdef _DEBUG
-
 	_guiHelper->update();
-#endif
+
 
 	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 
@@ -403,37 +491,43 @@ void Scene::loadMainMenu()
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
+	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
+	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
+	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
+	EntityManager::setShadowCamera(_shadowCamera);
+
 	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
 	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
 	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
 	EntityManager::setPlayerTransform(_playerTransform);
 
-	UICanvas* MainMenuCanvas = new UICanvas();
+	UICanvas* MainMenuCanvas = new UICanvas("Main Menu");
 
-	UIImage* background = new UIImage(vec3(0.0f, 0.0f, 1.0f), vec3(1.5f, 0.8f, 1.0f));
+	UIImage* background = new UIImage("Background", vec3(0.0f, 0.0f, 1.0f), vec3(1.5f, 0.8f, 1.0f));
 	background->setTexture(ObjectLoader::getTexture("Menu Picture"));
-	MainMenuCanvas->addImage("background", background);
+	MainMenuCanvas->addImage(background);
 
-	UIImage*  blackVertBar = new UIImage(vec3(-5.0f, 10.0f, 0.0f), vec3(7.0f, 5.0f, 1.0f));
+	UIImage*  blackVertBar = new UIImage("BlackVertBar", vec3(-5.0f, 10.0f, 0.0f), vec3(7.0f, 5.0f, 1.0f));
 	blackVertBar->setTexture(ObjectLoader::getTexture("Vert black bar"));
-	MainMenuCanvas->addImage("blackVertBar", blackVertBar);
+	MainMenuCanvas->addImage(blackVertBar);
 
-	UIImage* start = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	UIImage* start = new UIImage("Start", vec3(2.0f, 1.0f, 0.0f));
 	start->setTexture(ObjectLoader::getTexture("start button"));
-	MainMenuCanvas->addImage("start", start);
+	MainMenuCanvas->addImage(start);
 
-	UIImage* levelSelect = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	UIImage* levelSelect = new UIImage("LevelSelect", vec3(2.0f, 1.0f, 0.0f));
 	levelSelect->setTexture(ObjectLoader::getTexture("level select button"));
-	MainMenuCanvas->addImage("levelSelect", levelSelect);
+	MainMenuCanvas->addImage(levelSelect);
 
-	UIImage* extras = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	UIImage* extras = new UIImage("Extras", vec3(2.0f, 1.0f, 0.0f));
 	extras->setTexture(ObjectLoader::getTexture("extras button"));
-	MainMenuCanvas->addImage("extras", extras);
+	MainMenuCanvas->addImage(extras);
 
-	UIImage* exit = new UIImage(vec3(2.0f, 1.0f, 0.0f));
+	UIImage* exit = new UIImage("Exit", vec3(2.0f, 1.0f, 0.0f));
 	exit->setTexture(ObjectLoader::getTexture("exit button"));
-	MainMenuCanvas->addImage("exit", extras);
-	
+	MainMenuCanvas->addImage(extras);
+
 	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
 	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
@@ -447,7 +541,7 @@ void Scene::loadMainMenu()
 
 	//testImage->getAnimator()->addAnimation(animu);
 
-	_uiSystem->addCanvas("TESTC", MainMenuCanvas);
+	_uiSystem->addCanvas(MainMenuCanvas);
 
 
 
@@ -479,14 +573,29 @@ void Scene::loadScene()
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-#ifdef _DEBUG
-
 	_guiHelper->update();
-#endif
+
+	// Make sure both main and shadow cameras are initialized
+	if (!_mainCamera || !_mainCameraTransform)
+	{
+		float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+
+		_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 5.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f, "Main Camera");
+		_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
+		EntityManager::setMainCamera(_mainCamera);
+	}
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
+	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
+	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
+	EntityManager::setShadowCamera(_shadowCamera);
 
 
 	EntityManager::setPlayerTransform(_playerTransform);
 	EntityManager::setMainCamera(_mainCamera);
+	EntityManager::setShadowCamera(_shadowCamera);
+
+	_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
+
 
 	light = new Light();
 	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
@@ -532,6 +641,7 @@ void Scene::loadSceneFromFile(const string & path)
 	//TO-DO
 
 	loadEntities(db, errMsg);
+	loadUI(db, errMsg);
 }
 
 EntityManager * Scene::getEntityManager() const
@@ -539,10 +649,13 @@ EntityManager * Scene::getEntityManager() const
 	return _entityManager;
 }
 
+UISystem * Scene::getUISystem() const
+{
+	return _uiSystem;
+}
+
 void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
-#ifdef _DEBUG
-
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = true;
 
@@ -551,7 +664,6 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		io.AddInputCharacter(key);
 		return;
 	}
-#endif
 
 	switch (key)
 	{
@@ -560,6 +672,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false);
 		}
 		break;
 	case 'c'://left control for sliding
@@ -587,56 +700,23 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	}
 
-	if (key == 'w' && !_playerPhysicsBody->getCanJump())
-	{
-		front = false;
-	}
 
-	if (key == 's' && !_playerPhysicsBody->getCanJump())
-	{
-		front = true;
-	}
-	if (key == 'i')//up
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, LP.y, --LP.z));
-	}
-	if (key == 'k')//down
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, LP.y, ++LP.z));
-	}
-	if (key == 'j')//left
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(--LP.x, LP.y, LP.z));
-	}
-	if (key == 'l')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(++LP.x, LP.y, LP.z));
-	}if (key == 'u')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, ++LP.y, LP.z));
-	}if (key == 'o')//right
-	{
-		vec3 LP = spotLight->getPosition();
-		spotLight->setPosition(vec3(LP.x, --LP.y, LP.z));
-	}
+	//if (key == 's' && !_playerPhysicsBody->getCanJump())
+	//{
+	//	if (!front)
+	//		front = false;
+	//	else if (front)
+	//		front = true;
+	//}
 }
 
 void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
-#ifdef _DEBUG
-
 	ImGuiIO& io = ImGui::GetIO();
 	io.KeysDown[key] = false;
 
 	if (io.WantCaptureKeyboard)
 		return;
-#endif
-
 	switch (key)
 	{
 	case 32: // the space bar
@@ -647,9 +727,6 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 		exit(1);
 		break;
 	}
-#ifdef _DEBUG
-
-#endif
 	if (key == 'c')
 	{
 		if (sliding)
@@ -662,9 +739,20 @@ void Scene::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	}
 }
 
+void Scene::specialKeyDown(int key, int mouseX, int mouseY)
+{
+	switch (key)
+	{
+	case GLUT_KEY_SHIFT_L:
+		if (front && !_playerPhysicsBody->getCanJump())
+			front = false;
+		else if (!front && !_playerPhysicsBody->getCanJump())
+			front = true;
+	};
+}
+
 void Scene::mouseClicked(int button, int state, int x, int y)
 {
-#ifdef _DEBUG
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
@@ -701,15 +789,18 @@ void Scene::mouseClicked(int button, int state, int x, int y)
 			break;
 		}
 	}
-#endif
 }
 
 void Scene::mouseMoved(int x, int y)
 {
-#ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2((float)x, (float)y);
-#endif
+}
+
+void Scene::mouseWheel(int wheel, int direction, int x, int y)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	io.MouseWheel = static_cast<float>(direction);
 }
 
 TransformComponent * Scene::getMainCameraTransform() const
@@ -724,83 +815,89 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 
 	sql = "CREATE TABLE Entities ("\
 		"ID              INT  PRIMARY KEY"\
-								" NOT NULL,"\
+		" NOT NULL,"\
 		"Name            TEXT NOT NULL"\
-								" DEFAULT ''"\
-								" UNIQUE,"\
+		" DEFAULT ''"\
+		" UNIQUE,"\
 		"Transform       INT  REFERENCES Transforms(ID) ON DELETE SET NULL"\
-								" NOT NULL ON CONFLICT ABORT,"\
+		" NOT NULL ON CONFLICT ABORT,"\
 		"[Mesh Renderer] INT  REFERENCES[Mesh Renderers](ID) ON DELETE SET NULL"\
-								" DEFAULT NULL,"\
+		" DEFAULT NULL,"\
 		"[Physics Body]  INT  REFERENCES[Physics Bodies](ID) ON DELETE SET NULL"\
-								" DEFAULT NULL,"\
+		" DEFAULT NULL,"\
 		"Camera          INT  REFERENCES Cameras(ID) ON DELETE SET NULL"\
-								" DEFAULT NULL,"\
+		" DEFAULT NULL,"\
 		"Collider        INT  REFERENCES Colliders(ID) ON DELETE SET NULL"\
-								" DEFAULT NULL"\
+		" DEFAULT NULL"\
 		"); """;
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 	if (exit != SQLITE_OK)
-		cout << "Could not create Entity table!. " << errMsg << endl;
+	{
+		cerr << "Could not create Entities table!. " << errMsg << endl;
+		system("pause");
+	}
 	else
-		cout << "Successfully created Entity table." << endl;
+		cout << "Successfully created Entities table." << endl;
 
 
 
 	sql = "CREATE TABLE Transforms("\
 		"ID         INT  PRIMARY KEY"\
-						" NOT NULL,"\
+		" NOT NULL,"\
 		"Name       TEXT NOT NULL"\
-						" DEFAULT ''"\
-						" UNIQUE,"\
+		" DEFAULT ''"\
+		" UNIQUE,"\
 		"[Pos.X]    REAL DEFAULT(0.0)"\
-						" NOT NULL,"\
+		" NOT NULL,"\
 		"[Pos.Y]    REAL DEFAULT(0.0)"\
-						" NOT NULL,"\
+		" NOT NULL,"\
 		"[Pos.Z]    REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Rot.X]    REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Rot.Y]    REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Rot.Z]    REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[OrbRot.X] REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[OrbRot.Y] REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[OrbRot.Z] REAL NOT NULL"\
-						" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Scale.X]  REAL NOT NULL"\
-						" DEFAULT(1.0),"\
+		" DEFAULT(1.0),"\
 		"[Scale.Y]  REAL NOT NULL"\
-						" DEFAULT(1.0),"\
+		" DEFAULT(1.0),"\
 		"[Scale.Z]  REAL NOT NULL"\
-						" DEFAULT(1.0),"\
+		" DEFAULT(1.0),"\
 		"Parent     TEXT DEFAULT ''"\
-						" NOT NULL,"\
+		" NOT NULL,"\
 		"Children   TEXT DEFAULT ''"\
-						" NOT NULL"\
+		" NOT NULL"\
 		");";
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 
 	if (exit != SQLITE_OK)
-		cout << "Could not create Transforms table!. " << errMsg << endl;
+	{
+		cerr << "Could not create Transforms table!. " << errMsg << endl;
+		system("pause");
+	}
 	else
 		cout << "Successfully created Transforms table." << endl;
 
 
 	sql = "CREATE TABLE Cameras("\
 		"ID             INT     PRIMARY KEY"\
-								" NOT NULL,"\
+		" NOT NULL,"\
 		"[Proj Type]    TEXT    NOT NULL"\
-								" DEFAULT Perspective,"\
+		" DEFAULT Perspective,"\
 		"Cull           BOOLEAN NOT NULL"\
-								" DEFAULT(FALSE),"\
+		" DEFAULT(FALSE),"\
 		"[Ortho Size.L] REAL    NOT NULL,"\
 		"[Ortho Size.R] REAL    NOT NULL,"\
 		"[Ortho Size.T] REAL    NOT NULL,"\
@@ -816,7 +913,10 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 
 
 	if (exit != SQLITE_OK)
-		cout << "Could not create Cameras table!. " << errMsg << endl;
+	{
+		cerr << "Could not create Cameras table!. " << errMsg << endl;
+		system("pause");
+	}
 	else
 		cout << "Successfully created Cameras table." << endl;
 
@@ -824,19 +924,24 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 
 	sql = "CREATE TABLE[Mesh Renderers]("\
 		"ID               INT     PRIMARY KEY"\
-									" NOT NULL,"\
+		" NOT NULL,"\
 		"Mesh             TEXT    NOT NULL,"\
 		"[Shader Program] TEXT    NOT NULL,"\
 		"Transparent      BOOLEAN NOT NULL"\
-									" DEFAULT(FALSE),"\
-		"Textures         TEXT    NOT NULL"\
+		" DEFAULT(FALSE),"\
+		"Textures         TEXT    NOT NULL,"\
+		"IsSkeleton       BOOLEAN DEFAULT (FALSE)"\
+		" NOT NULL"\
 		");";
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 
 	if (exit != SQLITE_OK)
-		cout << "Could not create Mesh Renderers table!. " << errMsg << endl;
+	{
+		cerr << "Could not create Mesh Renderers table!. " << errMsg << endl;
+		system("pause");
+	}
 	else
 		cout << "Successfully created Mesh Renderers table." << endl;
 
@@ -844,32 +949,35 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 
 	sql = "CREATE TABLE[Physics Bodies]("\
 		"ID               INT     PRIMARY KEY"\
-									" NOT NULL,"\
+		" NOT NULL,"\
 		"Mass             REAL    NOT NULL"\
-									" DEFAULT(1.0),"\
+		" DEFAULT(1.0),"\
 		"[Use Gravity]    BOOLEAN NOT NULL"\
-									" DEFAULT(FALSE),"\
+		" DEFAULT(FALSE),"\
 		"[Can Jump]       BOOLEAN NOT NULL"\
-									" DEFAULT(FALSE),"\
+		" DEFAULT(FALSE),"\
 		"[Velocity.X]     REAL    NOT NULL"\
-									" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Velocity.Y]     REAL    NOT NULL"\
-									" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Velocity.Z]     REAL    NOT NULL"\
-									" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Max Velocity.X] REAL    NOT NULL"\
-									" DEFAULT(5.0),"\
+		" DEFAULT(5.0),"\
 		"[Max Velocity.Y] REAL    NOT NULL"\
-									" DEFAULT(8.0),"\
+		" DEFAULT(8.0),"\
 		"[Max Velocity.Z] REAL    NOT NULL"\
-									" DEFAULT(0.0)"\
+		" DEFAULT(0.0)"\
 		");";
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 
 	if (exit != SQLITE_OK)
-		cout << "Could not create Physics Bodies table!. " << errMsg << endl;
+	{
+		cerr << "Could not create Physics Bodies table!. " << errMsg << endl;
+		system("pause");
+	}
 	else
 		cout << "Successfully created Physics Bodies table." << endl;
 
@@ -877,40 +985,183 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 
 	sql = "CREATE TABLE Colliders("\
 		"ID          INT     PRIMARY KEY"\
-								" NOT NULL,"\
+		" NOT NULL,"\
 		"[Centre.X]  REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Centre.Y]  REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Centre.Z]  REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Size.X]    REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Size.Y]    REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Size.Z]    REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Offset.X]  REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Offset.Y]  REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"[Offset.Z]  REAL    NOT NULL"\
-								" DEFAULT(0.0),"\
+		" DEFAULT(0.0),"\
 		"Enabled     BOOLEAN NOT NULL"\
-								" DEFAULT(TRUE),"\
+		" DEFAULT(TRUE),"\
 		"PhysicsBody INT     REFERENCES[Physics Bodies](ID) ON DELETE SET NULL"\
-								" DEFAULT NULL,"\
+		" DEFAULT NULL,"\
 		"Tag         TEXT    NOT NULL"\
-								" DEFAULT 'Platform'"\
+		" DEFAULT 'Platform'"\
 		");";
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 
 	if (exit != SQLITE_OK)
-		cout << "Could not create Colliders table!. " << errMsg << endl;
+	{
+		cerr << "Could not create Colliders table!. " << errMsg << endl;
+		system("pause");
+	}
 	else
 		cout << "Successfully created Colliders table." << endl;
+
+
+	// ###### UI System ######
+	sql = "CREATE TABLE UISystem ("\
+		"Canvases TEXT NOT NULL"\
+		" REFERENCES Canvases(Name) ON DELETE SET NULL"\
+		"); ";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not create UISystem table!. " << errMsg << endl;
+		system("pause");
+	}
+	else
+		cout << "Successfully created UISystem table." << endl;
+	// ###### UI System ######
+
+
+	// ###### UI Canvases ######
+	sql = "CREATE TABLE UICanvases ("\
+		"Name    TEXT	NOT NULL"\
+		" PRIMARY KEY,"\
+		"Images  TEXT	NOT NULL"\
+		" DEFAULT '',"\
+		"Buttons TEXT	NOT NULL"\
+		" DEFAULT ''"\
+		"); ";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not create UICanvases table!. " << errMsg << endl;
+		system("pause");
+	}
+	else
+		cout << "Successfully created UICanvases table." << endl;
+	// ###### UI Canvases ######
+
+
+	// ###### UIImages ######
+	sql = "CREATE TABLE UIImages ("\
+		"Name             TEXT NOT NULL"\
+		" PRIMARY KEY,"\
+		"Mesh             TEXT NOT NULL,"\
+		"[Shader Program] TEXT NOT NULL,"\
+		"Texture          TEXT NOT NULL,"\
+		"Transform        TEXT  REFERENCES UITransforms(Name) ON DELETE SET NULL"\
+		" NOT NULL,"\
+		"Alpha            REAL NOT NULL"\
+		" DEFAULT(1.0),"\
+		"Animator         TEXT  REFERENCES UIAnimators(Name) ON DELETE SET NULL"\
+		" NOT NULL"\
+		"); ";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not create UIImages table!. " << errMsg << endl;
+		system("pause");
+	}
+	else
+		cout << "Successfully created UIImages table." << endl;
+	// ###### UIImages ######
+
+
+	// ###### UITransforms ######
+	sql = "CREATE TABLE UITransforms("\
+		"Name       TEXT NOT NULL"\
+		" PRIMARY KEY,"\
+		"[Pos.X]    REAL DEFAULT(0.0)"\
+		" NOT NULL,"\
+		"[Pos.Y]    REAL DEFAULT(0.0)"\
+		" NOT NULL,"\
+		"[Pos.Z]    REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[Rot.X]    REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[Rot.Y]    REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[Rot.Z]    REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[OrbRot.X] REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[OrbRot.Y] REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[OrbRot.Z] REAL NOT NULL"\
+		" DEFAULT(0.0),"\
+		"[Scale.X]  REAL NOT NULL"\
+		" DEFAULT(1.0),"\
+		"[Scale.Y]  REAL NOT NULL"\
+		" DEFAULT(1.0),"\
+		"[Scale.Z]  REAL NOT NULL"\
+		" DEFAULT(1.0),"\
+		"Parent     TEXT DEFAULT ''"\
+		" NOT NULL,"\
+		"Children   TEXT DEFAULT ''"\
+		" NOT NULL"\
+		");";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not create UITransforms table!. " << errMsg << endl;
+		system("pause");
+	}
+	else
+		cout << "Successfully created UITransforms table." << endl;
+	// ###### UITransforms ######
+
+
+	// ###### UIAnimators ######
+	sql = "CREATE TABLE UIAnimators ("\
+		"Name       Text  PRIMARY KEY"\
+		" NOT NULL,"\
+		"Image      INT  REFERENCES UIImages(Name) ON DELETE SET NULL"\
+		" NOT NULL,"\
+		"Animations TEXT DEFAULT NULL,"\
+		"[Current Animation] TEXT DEFAULT NULL"\
+		"); ";
+
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not create UIAnimators table!. " << errMsg << endl;
+		system("pause");
+	}
+	else
+		cout << "Successfully created UIAnimators table." << endl;
+	// ###### UIAnimators ######
 }
 
 void Scene::errorCheck(char* success, char* failure, char * errMsg)
@@ -948,6 +1199,9 @@ void Scene::saveTransforms(sqlite3 * db, char * errMsg)
 	for (TransformComponent* transform : transforms)
 	{
 		string name = transform->getName();
+		// Skip UI Camera
+		if (name.find("UICamera") != string::npos)
+			continue;
 		vec3 position = transform->getLocalPosition();
 		vec3 rotation = transform->getLocalRotation();
 		vec3 orbRot = transform->getOrbitRotation();
@@ -998,9 +1252,10 @@ void Scene::saveTransforms(sqlite3 * db, char * errMsg)
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 		if (exit != SQLITE_OK)
-			cout << "Could not insert element into Transforms!. " << errMsg << endl;
-		else
-			cout << "Successfully inserted element into Transforms." << endl;
+		{
+			cerr << "Could not insert element into Transforms!. " << errMsg << endl;
+			system("pause");
+		}
 	}
 }
 
@@ -1030,6 +1285,12 @@ void Scene::saveCameras(sqlite3 * db, char * errMsg)
 	// Save new data.
 	for (CameraComponent* camera : cameras)
 	{
+		// Skip UI Camera
+		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, camera->getEntity());
+		if (transform->getName().find("UICamera") != string::npos)
+			continue;
+
+
 		string projType = GUIHelper::projToChar(camera->getProjType());
 		bool cull = camera->getCullingActive();
 		vec4 orthoSize = camera->getOrthoSize();
@@ -1055,9 +1316,10 @@ void Scene::saveCameras(sqlite3 * db, char * errMsg)
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 		if (exit != SQLITE_OK)
-			cout << "Could not insert element into Cameras!. " << errMsg << endl;
-		else
-			cout << "Successfully inserted element into Cameras." << endl;
+		{
+			cerr << "Could not insert element into Cameras!. " << errMsg << endl;
+			system("pause");
+		}
 	}
 }
 
@@ -1097,12 +1359,16 @@ void Scene::saveMeshRenderers(sqlite3 * db, char * errMsg)
 		string shaderName = meshRenderer->getShaderProgram()->getProgramName();
 		bool isTrans = meshRenderer->getIsTransparent();
 		vector<Texture*> textures = meshRenderer->getTextures();
+		bool isSkeleton = meshRenderer->getMesh()->_isSkeletal;
 
 
 		sql = "INSERT INTO [Mesh Renderers] (ID, Mesh, [Shader Program], Transparent";
 
 		if (textures.size() > 0)
 			sql += ", Textures";
+
+		if (isSkeleton)
+			sql += ", IsSkeleton";
 
 		sql += ") VALUES (";
 
@@ -1122,15 +1388,19 @@ void Scene::saveMeshRenderers(sqlite3 * db, char * errMsg)
 			sql += "'";
 		}
 
+		if (isSkeleton)
+			sql += ", " + to_string(isSkeleton);
+
 		sql += ");";
 
 
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 		if (exit != SQLITE_OK)
-			cout << "Could not insert element into Mesh Renderers!. " << errMsg << endl;
-		else
-			cout << "Successfully inserted element into Mesh Renderers." << endl;
+		{
+			cerr << "Could not insert element into Mesh Renderers!. " << errMsg << endl;
+			system("pause");
+		}
 	}
 }
 
@@ -1181,9 +1451,10 @@ void Scene::savePhysicsBodies(sqlite3 * db, char * errMsg)
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 		if (exit != SQLITE_OK)
-			cout << "Could not insert element into Physics Bodies!. " << errMsg << endl;
-		else
-			cout << "Successfully inserted element into Physics Bodies." << endl;
+		{
+			cerr << "Could not insert element into Physics Bodies!. " << errMsg << endl;
+			system("pause");
+		}
 	}
 }
 
@@ -1236,9 +1507,10 @@ void Scene::saveColliders(sqlite3 * db, char * errMsg)
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 		if (exit != SQLITE_OK)
-			cout << "Could not insert element into Colliders!. " << errMsg << endl;
-		else
-			cout << "Successfully inserted element into Colliders." << endl;
+		{
+			cerr << "Could not insert element into Colliders!. " << errMsg << endl;
+			system("pause");
+		}
 	}
 }
 
@@ -1271,6 +1543,10 @@ void Scene::saveEntities(sqlite3 * db, char * errMsg)
 		// Get all components for the current entity.
 		TransformComponent* transform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity);
 		if (!transform)
+			continue;
+
+		// Skip UI Camera
+		if (transform->getName().find("UICamera") != string::npos)
 			continue;
 
 		MeshRendererComponent* meshRenderer = _entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, entity);
@@ -1310,18 +1586,412 @@ void Scene::saveEntities(sqlite3 * db, char * errMsg)
 		else
 			sql += ", NULL";
 
-		
+
 		sql += ");";
 
 
 		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
 
 		if (exit != SQLITE_OK)
-			cout << "Could not insert element into Entities!. " << errMsg << endl;
-		else
-			cout << "Successfully inserted element into Entities." << endl;
+		{
+			cerr << "Could not insert element into Entities!. " << errMsg << endl;
+			system("pause");
+		}
 	}
 }
+
+void Scene::saveUISystem(sqlite3 * db, char * errMsg)
+{
+	int exit = 0;
+
+	// Clear old save data.
+	string sql = "DELETE FROM UISystem;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not delete UISystem!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	sql = "VACUUM;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not Vacuum!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	// Save new data.
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+	for (auto const& canvas : canvases)
+	{
+		// Insert all the information.
+		sql = "INSERT INTO UISystem (Canvases) VALUES (";
+
+		sql += "'" + canvas.first + "');";
+
+
+		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+		if (exit != SQLITE_OK)
+		{
+			cerr << "Could not insert element into UISystem!. " << errMsg << endl;
+			system("pause");
+		}
+	}
+}
+
+void Scene::saveCanvases(sqlite3 * db, char * errMsg)
+{
+	int exit = 0;
+
+	// Clear old save data.
+	string sql = "DELETE FROM UICanvases;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not delete UICanvases!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	sql = "VACUUM;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not Vacuum!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	// Save new data.
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+	unordered_map<string, UIImage*> images;
+	unordered_map<string, UIButton*> buttons;
+	for (auto const& canvas : canvases)
+	{
+		images = canvas.second->getImages();
+		buttons = canvas.second->getButtons();
+
+		// Insert all the information.
+		sql = "INSERT INTO UICanvases (Name";
+
+		if (images.size() > 0)
+			sql += ", Images";
+
+		if (buttons.size() > 0)
+			sql += ", Buttons";
+
+		sql += ") VALUES (";
+
+
+		// Canvas name
+		sql += "'" + canvas.first + "'";
+
+		// All images in current canvas
+		for (auto const& image : images)
+		{
+			sql += ", '" + image.first + ">'";
+		}
+
+		// All buttons in current canvas
+		for (auto const& button : buttons)
+		{
+			sql += ", '" + button.first + "'";
+		}
+
+		sql += ");";
+
+
+		exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+		if (exit != SQLITE_OK)
+		{
+			cerr << "Could not insert element into UICanvases!. " << errMsg << endl;
+			system("pause");
+		}
+	}
+}
+
+void Scene::saveImages(sqlite3 * db, char * errMsg)
+{
+	int exit = 0;
+
+	// Clear old save data.
+	string sql = "DELETE FROM UIImages;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not delete UIImages!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	sql = "VACUUM;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not Vacuum!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	// Save new data.
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+	unordered_map<string, UIImage*> images;
+
+	if (canvases.size() <= 0)
+		return;
+
+	for (auto const& canvas : canvases)
+	{
+		images = canvas.second->getImages();
+
+		if (images.size() <= 0)
+			continue;
+
+
+		// Insert all the images.
+		sql = "INSERT INTO UIImages (Name, Mesh, [Shader Program], Texture, Transform, Alpha, Animator) VALUES (";
+
+		// All images in current canvas
+		for (auto const& image : images)
+		{
+			// Image name
+			sql += "'" + image.first + "'";
+
+			// Image mesh
+			sql += ", '" + image.second->getMesh()->getName() + "'";
+
+			// Shader Program
+			sql += ", '" + image.second->getShaderProgram()->getProgramName() + "'";
+
+			// Texture
+			sql += ", '" + image.second->getTexture()->getName() + "'";
+
+			// Transform
+			sql += ", '" + image.first + "'";
+
+			// Alpha
+			sql += ", " + to_string(image.second->getAlpha());
+
+			// Animator
+			sql += ", '" + image.first + "'";
+
+
+			sql += ");";
+
+
+			exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+			if (exit != SQLITE_OK)
+			{
+				cerr << "Could not insert element into UIImages!. " << errMsg << endl;
+				system("pause");
+			}
+		}
+	}
+}
+
+void Scene::saveUITransforms(sqlite3 * db, char * errMsg)
+{
+	int exit = 0;
+
+	// Clear old save data.
+	string sql = "DELETE FROM UITransforms;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not delete UITransforms!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	sql = "VACUUM;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not Vacuum!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	// Save new data.
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+	unordered_map<string, UIImage*> images;
+
+	if (canvases.size() <= 0)
+		return;
+
+	for (auto const& canvas : canvases)
+	{
+		images = canvas.second->getImages();
+
+		if (images.size() <= 0)
+			continue;
+
+
+		// Insert all image transforms.
+
+		// All images in current canvas
+		for (auto const& image : images)
+		{
+			TransformComponent* transform = image.second->getTransform();
+
+			string name = transform->getName();
+			vec3 position = transform->getLocalPosition();
+			vec3 rotation = transform->getLocalRotation();
+			vec3 orbRot = transform->getOrbitRotation();
+			vec3 scale = transform->getLocalScale();
+			TransformComponent* parent = transform->getParent();
+			vector<TransformComponent*> children = transform->getChildren();
+
+
+			sql = "INSERT INTO UITransforms (Name, [Pos.X], [Pos.Y], [Pos.Z], [Rot.X], "
+				"[Rot.Y], [Rot.Z], [OrbRot.X], [OrbRot.Y], [OrbRot.Z], [Scale.X], [Scale.Y], [Scale.Z]";
+
+			if (parent)
+				sql += ", Parent";
+
+			if (children.size() > 0)
+				sql += ", Children";
+
+			sql += ") VALUES (";
+
+			sql += "'" + name + "'" + ", ";
+			sql += to_string(position.x) + ", " + to_string(position.y) + ", " + to_string(position.z) + ", ";
+			sql += to_string(rotation.x) + ", " + to_string(rotation.y) + ", " + to_string(rotation.z) + ", ";
+			sql += to_string(orbRot.x) + ", " + to_string(orbRot.y) + ", " + to_string(orbRot.z) + ", ";
+			sql += to_string(scale.x) + ", " + to_string(scale.y) + ", " + to_string(scale.z);
+
+			if (parent)
+			{
+				sql += ", ";
+				sql += "'" + parent->getName() + "'";
+			}
+
+			if (children.size() > 0)
+			{
+				sql += ", '";
+
+				for (TransformComponent* child : children)
+				{
+					sql += "<" + child->getName() + ">";
+				}
+
+				sql += "'";
+			}
+
+			sql += ");";
+
+
+			exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+			if (exit != SQLITE_OK)
+			{
+				cerr << "Could not insert element into UITransforms!. " << errMsg << endl;
+				system("pause");
+			}
+		}
+	}
+}
+
+void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
+{
+	int exit = 0;
+
+	// Clear old save data.
+	string sql = "DELETE FROM UIAnimators;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not delete UIAnimators!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	sql = "VACUUM;";
+	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Could not Vacuum!. " << errMsg << endl;
+		system("pause");
+	}
+
+
+	// Save new data.
+	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
+	unordered_map<string, UIImage*> images;
+
+	if (canvases.size() <= 0)
+		return;
+
+	for (auto const& canvas : canvases)
+	{
+		images = canvas.second->getImages();
+
+		if (images.size() <= 0)
+			continue;
+
+
+
+		// All images in current canvas
+		for (auto const& image : images)
+		{
+
+			UIAnimator* animator = image.second->getAnimator();
+
+			sql = "INSERT INTO UIAnimators (Name, Image, Animations, [Current Animation]) VALUES (";
+
+			// Animator name
+			sql += "'" + image.first + "'";
+
+			// Image name
+			sql += ", '" + image.first + "'";
+
+			// Animations
+			unordered_map<string, UIAnimation*> animations = animator->getAnimations();
+			if (animations.size() > 0)
+			{
+				for (auto const& animation : animations)
+				{
+					sql += ", '" + animation.first + ">'";
+				}
+
+				sql += ", '" + animator->getCurrentAnimation()->getName() + "'";
+			}
+			else
+				sql += "NULL, NULL";
+
+
+
+
+			sql += ");";
+
+
+			exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
+
+			if (exit != SQLITE_OK)
+			{
+				cerr << "Could not insert element into UIAnimators!. " << errMsg << endl;
+				system("pause");
+			}
+		}
+	}
+}
+
 
 int Scene::loadEntityCallback(void * data, int numCols, char ** rowFields, char ** colNames)
 {
@@ -1373,7 +2043,7 @@ int Scene::loadEntityCallback(void * data, int numCols, char ** rowFields, char 
 
 	//if (name == "Camera")
 	//	entityFactory->createPerspectiveCamera();
-	
+
 
 
 	return 0;
@@ -1431,7 +2101,7 @@ int Scene::loadCameraCallback(void * data, int numRows, char ** rowFields, char 
 	{
 	case ProjectionType::Perspective:
 		camera->setPerspective(fov.y, aspectRatio, camNear, camFar);
-			break;
+		break;
 	case ProjectionType::Orthographic:
 		camera->setOrthographic(orthoSize.x, orthoSize.y, orthoSize.z, orthoSize.w, camNear, camFar);
 		break;
@@ -1447,9 +2117,21 @@ int Scene::loadMeshRendererCallback(void * data, int numRows, char ** rowFields,
 {
 	MeshRendererComponent* meshRenderer = static_cast<MeshRendererComponent*>(data);
 
-	meshRenderer->setMesh(ObjectLoader::getMesh(rowFields[1]));
-	meshRenderer->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
-	meshRenderer->setIsTransparent(stoi(rowFields[3]));
+	bool isSkeletal = stoi(rowFields[5]);
+
+	if (isSkeletal)
+	{
+		meshRenderer->setMesh(ObjectLoader::getSkeletalMesh(rowFields[1]));
+		meshRenderer->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
+		meshRenderer->setIsTransparent(stoi(rowFields[3]));
+		meshRenderer->getMesh()->_isSkeletal = rowFields[5];
+	}
+	else
+	{
+		meshRenderer->setMesh(ObjectLoader::getMesh(rowFields[1]));
+		meshRenderer->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
+		meshRenderer->setIsTransparent(stoi(rowFields[3]));
+	}
 
 
 	string textureData = rowFields[4];
@@ -1524,11 +2206,10 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 
 	if (exit != SQLITE_OK)
 	{
-		cout << "Failed to select rows from Entities! " << errMsg << endl;
+		cerr << "Failed to select rows from Entities! " << errMsg << endl;
+		system("pause");
 		return;
 	}
-	else
-		cout << "Successfully selected rows from Entities." << endl;
 
 	for (EntityLoad load : _entityLoads)
 	{
@@ -1546,16 +2227,15 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 
 		if (exit != SQLITE_OK)
 		{
-			cout << "Failed to select rows from Transforms! " << errMsg << endl;
+			cerr << "Failed to select rows from Transforms! " << errMsg << endl;
+			system("pause");
 			return;
 		}
 		else
 		{
-			cout << "Successfully selected rows from Transforms." << endl;
-
 			transform = transformLoad.transform;
 			transformLoads[transform->getName()] = transformLoad;
-			
+
 			// Add component to entity.
 			_entityManager->addComponent(transform, entity);
 
@@ -1576,8 +2256,30 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 
 			// Add component to entity.
 			_entityManager->addComponent(camera, entity);
-			_mainCamera = entity; // TO DO Only works with one camera.
-			_mainCameraTransform = transform;
+
+			// Main camera
+			if (transform->getName().find("Main Camera") != string::npos)
+			{
+				_mainCamera = entity;
+				_mainCameraTransform = transform;
+			}
+			// UI camera
+			else if (transform->getName().find("UI Camera") != string::npos)
+			{
+				// No reason to actually load. UI System initializes it's own camera anyways.
+			}
+			// Shadow camera
+			else if (transform->getName().find("Shadow Camera") != string::npos)
+			{
+				_shadowCamera = entity; // TO DO Only works with one camera.
+				_shadowCameraTransform = transform;
+			}
+			// Unknown camera
+			else
+			{
+				cerr << "Unkown camera tried to load!" << endl;
+				system("pause");
+			}
 		}
 
 		// Load in mesh renderer component.
@@ -1642,6 +2344,306 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 		{
 			TransformComponent* parent = transformLoads[load.parentName].transform;
 			load.transform->setParent(parent);
+		}
+	}
+}
+
+
+int Scene::loadUIAnimatorCallback(void * data, int numRows, char ** rowFields, char ** colNames)
+{
+	UIAnimator* animator = new UIAnimator();
+
+	string animNames = rowFields[2];
+	UIAnimation* anim = nullptr;
+	string animName;
+	istringstream stream(animNames);
+
+	while (getline(stream, animName, '>'))
+	{
+		anim = UIAnimation::getAnimation(animName);
+		if (!anim)
+			continue;
+
+		animator->addAnimation(anim);
+	}
+
+	animator->setCurrentAnimation(rowFields[3]);
+
+
+	UIAnimatorLoad* animatorLoad = new UIAnimatorLoad();
+	animatorLoad->animator = animator;
+	animatorLoad->imageName = rowFields[1];
+
+
+	(*static_cast<unordered_map<string, UIAnimatorLoad*>*>(data))[rowFields[0]] = animatorLoad;
+
+	return 0;
+}
+
+int Scene::loadUITransformCallback(void * data, int numRows, char ** rowFields, char ** colNames)
+{
+	TransformComponent* transform = new TransformComponent();
+	char* name = rowFields[0];
+	vec3 pos = vec3(stof(rowFields[1]), stof(rowFields[2]), stof(rowFields[3]));
+	vec3 rot = vec3(stof(rowFields[4]), stof(rowFields[5]), stof(rowFields[6]));
+	vec3 orbRot = vec3(stof(rowFields[7]), stof(rowFields[8]), stof(rowFields[9]));
+	vec3 scale = vec3(stof(rowFields[10]), stof(rowFields[11]), stof(rowFields[12]));
+
+
+	transform->setName(name);
+	transform->setLocalPosition(pos);
+	transform->setLocalRotation(rot);
+	transform->setOrbitRotation(orbRot);
+	transform->setLocalScale(scale);
+
+	TransformLoad* transformLoad = new TransformLoad();
+	transformLoad->transform = transform;
+	transformLoad->parentName = rowFields[13];
+
+
+	(*static_cast<unordered_map<string, TransformLoad*>*>(data))[rowFields[0]] = transformLoad;
+
+	return 0;
+}
+
+int Scene::loadUIImageCallback(void * data, int numRows, char ** rowFields, char ** colNames)
+{
+	UIImage* image = new UIImage(rowFields[0]);
+
+	image->setMesh(ObjectLoader::getMesh(rowFields[1]));
+	image->setShaderProgram(ObjectLoader::getShaderProgram(rowFields[2]));
+	image->setTexture(ObjectLoader::getTexture(rowFields[3]));
+	image->setAlpha(stof(rowFields[5]));
+
+
+	UIImageLoad* imageLoad = new UIImageLoad();
+	imageLoad->image = image;
+	imageLoad->animatorName = rowFields[6];
+
+	(*static_cast<unordered_map<string, UIImageLoad*>*>(data))[rowFields[0]] = imageLoad;
+
+
+	return 0;
+}
+
+int Scene::loadUICanvasCallback(void * data, int numRows, char ** rowFields, char ** colNames)
+{
+	UICanvas* canvas = new UICanvas(rowFields[0]);
+
+	UICanvasLoad* canvasLoad = new UICanvasLoad();
+	canvasLoad->canvas = canvas;
+
+
+	string imageNames = rowFields[1];
+	string imageName;
+	istringstream stream(imageNames);
+
+	while (getline(stream, imageName, '>'))
+	{
+		canvasLoad->imageNames.push_back(imageName);
+	}
+
+	string buttonNames = rowFields[2];
+	string buttonName;
+	stream = istringstream(buttonNames);
+
+	while (getline(stream, buttonName, '>'))
+	{
+		canvasLoad->buttonNames.push_back(buttonName);
+	}
+
+	
+	static_cast<vector<UICanvasLoad*>*>(data)->push_back(canvasLoad);
+
+	return 0;
+}
+
+int Scene::loadUISystemCallback(void * data, int numRows, char ** rowFields, char ** colNames)
+{
+	UICanvas* canvas = new UICanvas(rowFields[0]);
+	static_cast<vector<UICanvas*>*>(data)->push_back(canvas);
+
+
+	return 0;
+}
+
+void Scene::loadUI(sqlite3 * db, char * errMsg)
+{
+	//string sql = "SELECT * FROM UISystem;";
+	//int exit = 0;
+
+	//vector<UICanvas*> canvases;
+
+	//exit = sqlite3_exec(db, sql.c_str(), loadUISystemCallback, &canvases, &errMsg);
+
+	//if (exit != SQLITE_OK)
+	//{
+	//	cerr << "Failed to select rows from UISystem! " << errMsg << endl;
+	//	system("pause");
+	//	return;
+	//}
+
+
+	// Load in all canvases
+	string sql = "SELECT * FROM UICanvases;";
+	int exit = 0;
+
+	vector<UICanvasLoad*> canvasLoads;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUICanvasCallback, &canvasLoads, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UISystem! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+
+	// Load in all images
+	sql = "SELECT * FROM UIImages;";
+	exit = 0;
+
+	unordered_map<string, UIImageLoad*> imageLoads;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUIImageCallback, &imageLoads, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UIImages! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+
+	// Load in all transforms
+	sql = "SELECT * FROM UITransforms;";
+	exit = 0;
+
+	unordered_map<string, TransformLoad*> transformLoads;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUITransformCallback, &transformLoads, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UITransforms! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+
+	// Load in all Animators
+	sql = "SELECT * FROM UIAnimators;";
+	exit = 0;
+
+	unordered_map<string, UIAnimatorLoad*> animatorLoads;
+
+	exit = sqlite3_exec(db, sql.c_str(), loadUIAnimatorCallback, &animatorLoads, &errMsg);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Failed to select rows from UIAnimators! " << errMsg << endl;
+		system("pause");
+		return;
+	}
+
+
+
+	// Give all images their respective animators, and transforms
+	UIAnimatorLoad* animatorLoad = nullptr;
+	UIAnimator* animator = nullptr;
+	TransformLoad* transformLoad = nullptr;
+	TransformComponent* transform = nullptr;
+	for (auto const& imageLoad : imageLoads)
+	{
+		// Retrieve animator with the same image name
+		if (animatorLoads.find(imageLoad.first) != animatorLoads.end())
+			animatorLoad = animatorLoads[imageLoad.first];
+		else
+		{
+			cerr << "Failed to match an UIImage with an UIAnimator! " << errMsg << endl;
+			system("pause");
+			return;
+		}
+
+		// Assign image with the the current animator, and vice versa
+		animator = animatorLoad->animator;
+		imageLoad.second->image->setAnimator(animator);
+
+
+
+		// Retrieve transform with the same image name
+		if (transformLoads.find(imageLoad.first) != transformLoads.end())
+			transformLoad = transformLoads[imageLoad.first];
+		else
+		{
+			cerr << "Failed to match an UIImage with an UITransform! " << errMsg << endl;
+			system("pause");
+			return;
+		}
+
+		// Assign image with the the transform, and vice versa
+		transform = transformLoad->transform;
+		imageLoad.second->image->setTransform(transform);
+	}
+
+
+	unordered_map<string, UICanvas*> canvases;
+	UICanvas* canvas = nullptr;
+	UIImage* image = nullptr;
+	for (UICanvasLoad* canvasLoad : canvasLoads)
+	{
+		// Retrieve canvas.
+		canvas = canvasLoad->canvas;
+
+		// Assign images to their respective canvases.
+		for (string imageName : canvasLoad->imageNames)
+		{
+			// Retrieve image with the same image name
+			if (imageLoads.find(imageName) != imageLoads.end())
+				image = imageLoads[imageName]->image;
+			else
+			{
+				cerr << "Failed to match an UIImage with an UICanvas! " << errMsg << endl;
+				system("pause");
+				continue;
+			}
+
+			canvas->addImage(image);
+		}
+
+		//// Assign buttons to their respective canvases.
+		//for (string imageName : canvasLoad->imageNames)
+		//{
+		//	// Retrieve button with the same button name
+		//	if (imageLoads.find(imageName) != imageLoads.end())
+		//		image = imageLoads[imageName]->image;
+		//	else
+		//	{
+		//		cerr << "Failed to match an UIButton with an UICanvas! " << errMsg << endl;
+		//		system("pause");
+		//		continue;
+		//	}
+
+		//	canvas->addImage(image);
+		//}
+
+
+		// Add current canvas to the UI system
+		_uiSystem->addCanvas(canvas);
+	}
+
+
+	// Re-create image transform hierarchy.
+	transformLoad = nullptr;
+	unordered_map<string, TransformLoad*>::iterator it;
+	for (it = transformLoads.begin(); it != transformLoads.end(); ++it)
+	{
+		transformLoad = it->second;
+		if (transformLoad->parentName != "")
+		{
+			TransformComponent* parent = transformLoads[transformLoad->parentName]->transform;
+			transformLoad->transform->setParent(parent);
 		}
 	}
 }

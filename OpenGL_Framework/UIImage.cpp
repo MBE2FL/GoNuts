@@ -1,15 +1,17 @@
 #include "UIImage.h"
 
-UIImage::UIImage(const vec3 & pos, const vec3 & scale, const vec3 & localRotation, const float alpha)
+UIImage::UIImage(const string & name, const vec3 & pos, const vec3 & scale, const vec3 & localRotation, const float alpha)
 {
 	_animator = new UIAnimator(this);
 	_transform = new TransformComponent();
 	_transform->setLocalPosition(pos);
 	_transform->setLocalScale(scale);
 	_transform->setLocalRotation(localRotation);
+	_transform->setName(name);
 	_alpha = alpha;
 	_mesh = ObjectLoader::getMesh("UIQuad");
 	_shaderProgram = ObjectLoader::getShaderProgram("UIShader");
+	_name = name;
 }
 
 void UIImage::setAnimation(UIAnimation * newAnimation)
@@ -20,6 +22,12 @@ void UIImage::setAnimation(UIAnimation * newAnimation)
 UIAnimator * UIImage::getAnimator()
 {
 	return _animator;
+}
+
+void UIImage::setAnimator(UIAnimator * animator)
+{
+	_animator = animator;
+	_animator->setImage(this);
 }
 
 vec3 UIImage::getLocalPosition() const
@@ -72,6 +80,12 @@ TransformComponent * UIImage::getTransform() const
 	return _transform;
 }
 
+void UIImage::setTransform(TransformComponent * transform)
+{
+	_transform = transform;
+	_transform->setName(_name);
+}
+
 float UIImage::getAlpha() const
 {
 	return _alpha;
@@ -100,7 +114,61 @@ Mesh * UIImage::getMesh() const
 	return _mesh;
 }
 
+void UIImage::setMesh(Mesh * mesh)
+{
+	_mesh = mesh;
+}
+
 ShaderProgram * UIImage::getShaderProgram() const
 {
 	return _shaderProgram;
+}
+
+void UIImage::setShaderProgram(ShaderProgram * shaderProgram)
+{
+	_shaderProgram = shaderProgram;
+}
+
+string UIImage::getName() const
+{
+	return _name;
+}
+
+void UIImage::addChild(UIImage * child)
+{
+	child->_parent = this;
+	_children.push_back(child);
+
+	_transform->addChild(child->getTransform());
+}
+
+void UIImage::removeChild(UIImage * child)
+{
+	child->setParent(nullptr);
+
+	vector<UIImage*>::iterator position = std::find(_children.begin(), _children.end(), child);
+
+	if (position != _children.end())
+		_children.erase(position);
+
+
+	_transform->removeChild(child->getTransform());
+}
+
+void UIImage::setParent(UIImage * parent)
+{
+	if (parent)
+		parent->addChild(this);
+	else
+		_parent = nullptr;
+}
+
+UIImage * UIImage::getParent() const
+{
+	return _parent;
+}
+
+vector<UIImage*> UIImage::getChildren() const
+{
+	return _children;
 }
