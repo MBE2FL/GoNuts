@@ -565,9 +565,9 @@ void Scene::loadScene()
 		_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
 		EntityManager::setMainCamera(_mainCamera);
 	}
-	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
+	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 20, -5), -20, 20, -20, 80, -10, 600, "Shadow Camera");
 	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
-	_shadowCameraTransform->setLocalRotation(vec3(0, -86.0f, -22.4f));
+	_shadowCameraTransform->setLocalRotation(vec3(0, -86.0f, -20.0f));
 	EntityManager::setShadowCamera(_shadowCamera);
 
 
