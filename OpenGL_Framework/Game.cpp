@@ -320,6 +320,9 @@ void Game::initializeGame()
 	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
 	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
 	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
+	_sound->loadSound("shift", "shift.wav", false);
+	_sound->loadSound("acorn", "acorn collect.wav", false);
+	_sound->loadSound("coin", "coin collect.wav", false);
 
 	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
 

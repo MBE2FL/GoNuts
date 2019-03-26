@@ -726,9 +726,15 @@ void Scene::specialKeyDown(int key, int mouseX, int mouseY)
 	{
 	case GLUT_KEY_SHIFT_L:
 		if (front && !_playerPhysicsBody->getCanJump())
+		{
 			front = false;
+			_sound->playSound("shift", _sound->getActionChannel(), false);
+		}
 		else if (!front && !_playerPhysicsBody->getCanJump())
+		{
 			front = true;
+			_sound->playSound("shift", _sound->getActionChannel(), false);
+		}
 	};
 }
 

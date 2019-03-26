@@ -50,3 +50,8 @@ FMOD::Channel * SoundComponent::getPlayerChannel()
 {
 	return playerChannel;
 }
+
+FMOD::Channel * SoundComponent::getActionChannel()
+{
+	return actionChannel;
+}

@@ -21,6 +21,7 @@ public:
 
 	FMOD::Channel* getBGChannel();
 	FMOD::Channel* getPlayerChannel();
+	FMOD::Channel* getActionChannel();
 
 private:
 	SoundComponent() {};
@@ -28,7 +29,8 @@ private:
 
 	unordered_map<string, Sound*> _sounds;
 
-	FMOD::Channel* backGroundChannel;
-	FMOD::Channel* playerChannel;
+	FMOD::Channel* backGroundChannel;//background music
+	FMOD::Channel* playerChannel;// for the sounds player makes directly (grunts)
+	FMOD::Channel* actionChannel;//shifting between z axis
 
 };
