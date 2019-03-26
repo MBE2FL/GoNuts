@@ -22,7 +22,5 @@ void main()
 	
 	outColor = albedoColor.rgb;
 
-	// Fix length after rasterizer interpolates
 	outNormal = normalize(o.norm) * 0.5 + 0.5;
-	//outNormal.rgb = vec3(1,0,0);
 }
