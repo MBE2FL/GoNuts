@@ -1130,6 +1130,9 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		" NOT NULL,"\
 		"Animations TEXT DEFAULT NULL,"\
 		"[Current Animation] TEXT DEFAULT NULL"\
+		"[Anim Order]        TEXT DEFAULT NULL"\
+		"Active              BOOLEAN NOT NULL"\
+		" DEFAULT(FALSE)"\
 		"); ";
 
 	exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &errMsg);
@@ -1676,15 +1679,29 @@ void Scene::saveCanvases(sqlite3 * db, char * errMsg)
 		sql += "'" + canvas.first + "'";
 
 		// All images in current canvas
-		for (auto const& image : images)
+		if (images.size() > 0)
 		{
-			sql += ", '" + image.first + ">'";
+			sql += ", '";
+
+			for (auto const& image : images)
+			{
+				sql += image.first + ">";
+			}
+
+			sql += "'";
 		}
 
 		// All buttons in current canvas
-		for (auto const& button : buttons)
+		if (buttons.size() > 0)
 		{
-			sql += ", '" + button.first + "'";
+			sql += ", ";
+
+			for (auto const& button : buttons)
+			{
+				sql += button.first + ">";
+			}
+
+			sql += "'";
 		}
 
 		sql += ");";
@@ -1741,11 +1758,11 @@ void Scene::saveImages(sqlite3 * db, char * errMsg)
 
 
 		// Insert all the images.
-		sql = "INSERT INTO UIImages (Name, Mesh, [Shader Program], Texture, Transform, Alpha, Animator) VALUES (";
-
 		// All images in current canvas
 		for (auto const& image : images)
 		{
+			sql = "INSERT INTO UIImages (Name, Mesh, [Shader Program], Texture, Transform, Alpha, Animator) VALUES (";
+
 			// Image name
 			sql += "'" + image.first + "'";
 
@@ -1934,7 +1951,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 
 			UIAnimator* animator = image.second->getAnimator();
 
-			sql = "INSERT INTO UIAnimators (Name, Image, Animations, [Current Animation], Anim Order) VALUES (";
+			sql = "INSERT INTO UIAnimators (Name, Image, Animations, [Current Animation], [Anim Order], Active) VALUES (";
 
 			// Animator name
 			sql += "'" + image.first + "'";
@@ -1949,11 +1966,15 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 			// The animator has some animations
 			if (animations.size() > 0)
 			{
+				sql += ", '";
+
 				// Save all of the animations
 				for (auto const& animation : animations)
 				{
-					sql += ", '" + animation.first + ">'";
+					sql += animation.first + ">";
 				}
+
+				sql += "'";
 
 				// Save the current animation
 				if (animator->getCurrentAnimation())
@@ -1963,30 +1984,39 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 
 				// Save the animation order
 				// Only save the animations which are in both the animation stack, and the list of animations.
-				vector<UIAnimation*> reverseAnimOrder;
-				UIAnimation* currAnim = nullptr;
-				while (animOrder.size() > 0)
+				if (animOrder.size() > 0)
 				{
-					currAnim = animOrder.top();
+					vector<UIAnimation*> reverseAnimOrder;
+					UIAnimation* currAnim = nullptr;
+					while (animOrder.size() > 0)
+					{
+						currAnim = animOrder.top();
 
-					if (animations.find(currAnim->getName()) != animations.end())
-						reverseAnimOrder.push_back(animOrder.top());
+						if (animations.find(currAnim->getName()) != animations.end())
+							reverseAnimOrder.push_back(animOrder.top());
 
-					animOrder.pop();
+						animOrder.pop();
+					}
+
+					// Save reverseAnimOrder in the reverse order, to bring it back to the right order of the original stack.
+					sql += ", '";
+					vector<UIAnimation*>::reverse_iterator revIt;
+					for (revIt = reverseAnimOrder.rbegin(); revIt != reverseAnimOrder.rend(); ++revIt)
+					{
+						sql += (*revIt)->getName() + ">";
+					}
+
+					sql += "'";
 				}
-
-				// Save reverseAnimOrder in the reverse order, to bring it back to the right order of the original stack.
-				vector<UIAnimation*>::reverse_iterator revIt;
-				for (revIt = reverseAnimOrder.rbegin(); revIt != reverseAnimOrder.rend(); ++revIt)
-				{
-					sql += ", '" + (*revIt)->getName() + ">'";
-				}
+				else
+					sql += ", NULL";
 			}
 			else
 				sql += ", NULL, NULL, NULL";
 
 
-
+			// Save whether or not the animator is active
+			sql += ", " + to_string(animator->getActive());
 
 			sql += ");";
 
@@ -2368,6 +2398,7 @@ int Scene::loadUIAnimatorCallback(void * data, int numRows, char ** rowFields, c
 	string animName;
 	istringstream stream(animNames);
 
+	// Load all the animations
 	while (getline(stream, animName, '>'))
 	{
 		anim = UIAnimation::getAnimation(animName);
@@ -2377,9 +2408,25 @@ int Scene::loadUIAnimatorCallback(void * data, int numRows, char ** rowFields, c
 		animator->addAnimation(anim);
 	}
 
+	// Set the current animation
 	animator->setCurrentAnimation(rowFields[3]);
 
+	// Load the animation order
+	animNames = rowFields[4];
+	animName = "";
+	stream = istringstream(animNames);
 
+	while (getline(stream, animName, '>'))
+	{
+		animator->play(animName);
+	}
+
+
+	// Load whether or not the animator is active or not
+	animator->setActive(stoi(rowFields[5]));
+
+
+	// Load the remaining data to set later
 	UIAnimatorLoad* animatorLoad = new UIAnimatorLoad();
 	animatorLoad->animator = animator;
 	animatorLoad->imageName = rowFields[1];
@@ -2614,7 +2661,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 				image = imageLoads[imageName]->image;
 			else
 			{
-				cerr << "Failed to match an UIImage with an UICanvas! " << errMsg << endl;
+				cerr << "Failed to match an UIImage with an UICanvas! " << endl;
 				system("pause");
 				continue;
 			}

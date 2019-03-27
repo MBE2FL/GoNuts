@@ -42,32 +42,34 @@ void UIAnimator::removeAnimation(const string & name)
 
 void UIAnimator::update(float deltaTime)
 {
-	// Only play animation set as the currentAnimation
-	if (!_currentAnimation)
-		return;
-
-	// Increment animator time, and use to compute the current frame of the currentAnimation
-	_currentTime += deltaTime;
-
-	if (_currentTime > _currentAnimation->getDuration())
+	if (_active)
 	{
-		// Re-play the animation, iff it is set to loop
-		if (_currentAnimation->getLoop())
-		{
-			//currentTime -= currentAnimation->getDuration();
-			//_currentTime = 0.0f;
-			play();
-		}
-		// Stop the current animation
-		else
-		{
-			stopCurrent();
+		// Only play animation set as the currentAnimation
+		if (!_currentAnimation)
 			return;
+
+		// Increment animator time, and use to compute the current frame of the currentAnimation
+		_currentTime += deltaTime;
+
+		if (_currentTime > _currentAnimation->getDuration())
+		{
+			// Re-play the animation, iff it is set to loop
+			if (_currentAnimation->getLoop())
+			{
+				//currentTime -= currentAnimation->getDuration();
+				//_currentTime = 0.0f;
+				play();
+			}
+			// Stop the current animation
+			else
+			{
+				stopCurrent();
+				return;
+			}
 		}
+
+		getPrevNextFrames();
 	}
-
-	getPrevNextFrames();
-
 }
 
 UIAnimation * UIAnimator::getCurrentAnimation() const
@@ -176,6 +178,16 @@ void UIAnimator::stopAll()
 stack<UIAnimation*> UIAnimator::getAnimOrder() const
 {
 	return _animOrder;
+}
+
+bool UIAnimator::getActive() const
+{
+	return _active;
+}
+
+void UIAnimator::setActive(const bool active)
+{
+	_active = active;
 }
 
 void UIAnimator::getPrevNextFrames()

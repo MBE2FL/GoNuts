@@ -38,6 +38,9 @@ public:
 	void stopAll();
 
 	stack<UIAnimation*> getAnimOrder() const;
+
+	bool getActive() const;
+	void setActive(const bool active);
 	
 
 private:
@@ -46,6 +49,7 @@ private:
 	float _currentTime = 0.0f;
 	unordered_map<string, UIAnimation*> _animations;
 	stack<UIAnimation*> _animOrder;
+	bool _active = false;
 
 	void getPrevNextFrames();
 };
