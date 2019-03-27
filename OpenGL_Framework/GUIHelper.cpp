@@ -1297,6 +1297,11 @@ void GUIHelper::drawUIAnimator(UIAnimator * animator)
 	ImGui::Spacing();
 
 	
+	// Active property
+	bool active = animator->getActive();
+	ImGui::Checkbox("Active", &active);
+	animator->setActive(active);
+
 	// Current time property
 	UIAnimation* currAnim = animator->getCurrentAnimation();
 	if (currAnim)
