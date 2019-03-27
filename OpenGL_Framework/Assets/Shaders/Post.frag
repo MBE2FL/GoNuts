@@ -125,7 +125,6 @@ void main()
 		shadowAmount = vec3(0.0);
 	}
 
-	//vec3 lightDir = normalize(POS.xyz - position.xyz);
 	vec3 lightDir = normalize(vec3(-1,2,2));
 	float diffuseLight = max(dot(normal, lightDir), 0.05);		
 	
@@ -136,8 +135,7 @@ void main()
 	vec3 ambient = texColor.rgb*0.8;
 	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
-	//outColor.rgb += texColor + vec3(0.5) * NdotL;
-	outColor.rgb = (ambient + diffuse) * shadowAmount;
+	outColor.rgb = ambient + diffuse * shadowAmount;
 
 	//outColor.rgb *= texColor.rgb;
 

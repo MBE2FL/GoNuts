@@ -74,9 +74,9 @@ void Animator::getPrevNextFrames()
 
 		// Blend between the previous and next frame of animation.
 		float interValue = invLerp(_currentTime, prevFrame->getStartTime(), nextFrame->getStartTime());
-		prevFrame = allFrames[frameNum];
-		nextFrame = allFrames[frameNum];
-		interValue = 0.0f;
+		//prevFrame = allFrames[frameNum];
+		//nextFrame = allFrames[frameNum];
+		//interValue = 0.0f;
 		blendPoses(prevFrame, nextFrame, interValue, jointName);
 	}
 }
