@@ -200,7 +200,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 
 	//REGAN TEXTURES
-	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back.png");
+	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
 	ObjectLoader::loadTexture("adambackground2", "./Assets//Textures/adam back2.png");
 	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/space.png");
 	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/shift.png");
