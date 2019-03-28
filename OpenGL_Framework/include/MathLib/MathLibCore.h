@@ -55,8 +55,12 @@ inline T MathUtils::lerp(const T & begin, const T & end, float interValue)
 template<typename T>
 inline T MathUtils::invLerp(const T &v, const T &v0, const T &v1)
 {
-	return ((v - v0) / (v1 - v0));
+	if (v0 == v1)
+		return 0.0f;
+	else
+		return ((v - v0) / (v1 - v0));
 }
+
 template<typename T>
 inline T MathUtils::catmull(const T p0, const T p1, const T p2, const T p3, float t)
 {

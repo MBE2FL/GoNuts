@@ -21,8 +21,9 @@ UIAnimation::UIAnimation(const string & name)
 	}
 	else
 	{
-		cerr << "UI Animation with name: " << name << " could not be found!" << endl;
-		system("pause");
+		//cerr << "UI Animation with name: " << name << " could not be found!" << endl;
+		_name = name;
+		_duration = 0.0f;
 	}
 }
 
@@ -46,22 +47,67 @@ void UIAnimation::setKeyframes(const vector<UIKeyFrame*>& keyFrames)
 	_keyFrames = keyFrames;
 }
 
-void UIAnimation::loadAllAnimsInFile(const string & path)
+void UIAnimation::addKeyFrame(UIKeyFrame * keyFrame)
+{
+	_keyFrames.push_back(keyFrame);
+
+	// Increase duration, if necessary.
+	if (keyFrame->getStartTime() > _duration)
+		_duration = keyFrame->getStartTime();
+
+	// Sort the key frames, according to start times (Ascending order).
+	sort(_keyFrames.begin(), _keyFrames.end(), [](UIKeyFrame* a, UIKeyFrame* b) -> bool
+	{
+		return a->getStartTime() < b->getStartTime();
+	});
+}
+
+void UIAnimation::removeKeyFrames()
+{
+	_duration = 0.0f;
+	_keyFrames.clear();
+}
+
+void UIAnimation::removeKeyFrame(UIKeyFrame * keyFrame)
+{
+	// Check if the key frame exists in this animation
+	vector<UIKeyFrame*>::iterator it = find(_keyFrames.begin(), _keyFrames.end(), keyFrame);
+	if (it != _keyFrames.end())
+	{
+		// Remove the key frame from this animation
+		_keyFrames.erase(it);
+
+		// The key frame was the last frame in this animation
+		if (keyFrame->getStartTime() == _duration)
+		{
+			// There is still at least one key frame in this animation
+			// Set the new last key frame start time as this animations duration
+			if (_keyFrames.size() > 0)
+			{
+				_duration = _keyFrames.back()->getStartTime();
+			}
+		}
+	}
+	else
+		cerr << "Key frame with time: " << keyFrame->getStartTime() << " does not exist in animation with name : " << _name << "!" << endl;
+}
+
+void UIAnimation::loadAllAnimsInFile()
 {
 	// Get list of all animation files in the specified path
 	// Open the animation directory
-	DIR* dir = opendir(path.c_str());
+	DIR* dir = opendir(UI_ANIM_DIR);
 	struct dirent *entry;
 
 	// Make sure the animation directory exists
 	if (!dir)
 	{
-		cerr << "UI Animation path: <" << path << "> does not exist!" << endl;
+		cerr << "UI Animation path: <" << UI_ANIM_DIR << "> does not exist!" << endl;
 		system("pause");
 		return;
 	}
 
-	
+
 	// Open each animation file inside the animation directory
 	while ((entry = readdir(dir)) != nullptr)
 	{
@@ -71,7 +117,7 @@ void UIAnimation::loadAllAnimsInFile(const string & path)
 
 		// Load in UI animation file.
 		ifstream file;
-		file.open(path + entry->d_name);
+		file.open(UI_ANIM_DIR + string(entry->d_name));
 
 		if (!file.is_open())
 		{
@@ -273,6 +319,68 @@ void UIAnimation::loadAllAnimsInFile(const string & path)
 
 	// Close the animation directory
 	closedir(dir);
+}
+
+void UIAnimation::saveAnim(UIAnimation * anim)
+{
+	// Create/Open an UI animation file.
+	ofstream file;
+	file.open(UI_ANIM_DIR + anim->getName() + ".UINut", std::ios::out | std::ios::trunc);
+
+	if (!file.is_open())
+	{
+		cerr << "Could not create/open UI animation file with name: <" << anim->getName() << ">!" << endl;
+		return;
+	}
+
+	stringstream stream;
+
+	// Name section
+	stream << "Name\n";
+	stream << anim->getName() + "\n";
+	stream << "end\n";
+
+	// Loop section
+	stream << "Loop\n";
+	stream << to_string(anim->getLoop()) + "\n";
+	stream << "end\n";
+
+	// Key frame section
+	stream << "KeyFrames\n";
+
+	vector<UIKeyFrame*> keyFrames = anim->getKeyFrames();
+	vec3 pos;
+	vec3 scale;
+	Quaternion rot;
+	for (UIKeyFrame* keyFrame : keyFrames)
+	{
+		pos = keyFrame->getPos();
+		scale = keyFrame->getScale();
+		rot = keyFrame->getRot();
+
+		stream << fixed << setprecision(3) << keyFrame->getStartTime() << "  ";
+
+		stream << fixed << setprecision(3) << pos.x << " ";
+		stream << fixed << setprecision(3) << pos.y << " ";
+		stream << fixed << setprecision(3) << pos.z << "  ";
+
+		stream << fixed << setprecision(3) << scale.x << " ";
+		stream << fixed << setprecision(3) << scale.y << " ";
+		stream << fixed << setprecision(3) << scale.z << "  ";
+
+		stream << fixed << setprecision(3) << rot.getW() << " ";
+		stream << fixed << setprecision(3) << rot.getX() << " ";
+		stream << fixed << setprecision(3) << rot.getY() << " ";
+		stream << fixed << setprecision(3) << rot.getZ() << "  ";
+
+		stream << fixed << setprecision(3) << keyFrame->getAlpha() << "\n";
+	}
+	stream << "end\n" << "eof\n";
+
+
+	file << stream.rdbuf();
+
+	file.close();
 }
 
 UIAnimation * UIAnimation::getAnimation(const string & name)

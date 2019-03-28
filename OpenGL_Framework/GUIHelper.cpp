@@ -1498,6 +1498,22 @@ void GUIHelper::drawUIAnimationEditor()
 		propertyUIAnimationEditor(anim, &showUIAnimationPropertyEditor);
 	}
 
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Create A New Animation");
+
+	// Create an input field for name.
+	static char name[64] = "";
+	ImGui::InputText("Name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue);
+
+	// Create a new animation
+	if (ImGui::Button("Create Animation"))
+	{
+		UIAnimation* newAnim = new UIAnimation(name);
+		UIAnimation::addAnimation(newAnim);
+	}
 
 	ImGui::End();
 }
@@ -1517,14 +1533,14 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 	anim->setLoop(loop);
 
 	// Key Frames Property
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_HorizontalScrollbar || ImGuiWindowFlags_AlwaysAutoResize || ImGuiWindowFlags_AlwaysHorizontalScrollbar;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 
 	vector<UIKeyFrame*> keyFrames = anim->getKeyFrames();
 	static float currKeyTime = 0.0f;
 	static UIKeyFrame* keyFrame = nullptr;
 
-	ImGui::BeginChild("UI Key Frames", ImVec2(0.0f, 0.0f), true, windowFlags);
+	ImGui::BeginChild("UI Key Frames", ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_AlwaysAutoResize);
 
 	// Select a key frame to edit
 	vector<UIKeyFrame*>::iterator it;
@@ -1578,6 +1594,67 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 		ImGui::PopStyleVar();
 	}
 
+
+	// Add key frames
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Add Key Frames");
+
+	// Start Time Property
+	static float startTime = 0.0f;
+	ImGui::DragFloat("Start Time", &startTime, 0.05f, 0.0f, 0.0f, "%.3f", 1.0f);
+
+	// Position Property
+	static vec3 pos;
+	ImGui::DragFloat3("Position", &pos.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+
+	// Scale Property
+	static vec3 scale = vec3::One;
+	ImGui::DragFloat3("Scale", &scale.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+
+	// Add a key frame to the currently selected animation
+	if (ImGui::Button("Add Key Frame"))
+	{
+		UIKeyFrame* newFrame = new UIKeyFrame(startTime, pos, scale);
+		anim->addKeyFrame(newFrame);
+	}
+
+
+	// Remove key frames
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Remove Key Frames");
+
+	// Remove currently selected key frame
+	if (ImGui::Button("Remove A Key Frame") && keyFrame)
+	{
+		anim->removeKeyFrame(keyFrame);
+		keyFrame = nullptr;
+	}
+
+	// Remove all key frames
+	if (ImGui::Button("Remove All Key Frames"))
+	{
+		anim->removeKeyFrames();
+		keyFrame = nullptr;
+	}
+
+
+	// Save currently selected animation
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Save Current Animation");
+
+	if (ImGui::Button("Save"))
+	{
+		UIAnimation::saveAnim(anim);
+	}
 
 
 	ImGui::End();

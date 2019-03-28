@@ -4,7 +4,7 @@
 class UIKeyFrame
 {
 public:
-	UIKeyFrame(float _startTime = 0.0f, vec3 _pos = vec3(0.0f, 0.0f, 0.0f), vec3 _scale = vec3(0.0f, 0.0f, 0.0f), Quaternion _rot = Quaternion::Identity, float _alpha =0.0f);
+	UIKeyFrame(float _startTime = 0.0f, vec3 _pos = vec3::Zero, vec3 _scale = vec3::One, Quaternion _rot = Quaternion::Identity, float _alpha = 1.0f);
 
 	float getStartTime();
 	void setStartTIme(float newTime);

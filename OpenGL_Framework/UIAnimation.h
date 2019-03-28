@@ -8,6 +8,8 @@
 #include <sstream>
 #include "dirent.h"
 #include <sys/types.h>
+#include <algorithm>
+#include <iomanip>
 
 
 using std::vector;
@@ -15,8 +17,15 @@ using std::unordered_map;
 using std::cerr;
 using std::endl;
 using std::ifstream;
+using std::ofstream;
 using std::stringstream;
+using std::sort;
+using std::find;
+using std::fixed;
+using std::setprecision;
 
+
+#define UI_ANIM_DIR "./Assets/UI Animations/"
 
 
 class UIAnimation
@@ -30,8 +39,12 @@ public:
 
 	vector<UIKeyFrame*> getKeyFrames() const;
 	void setKeyframes(const vector<UIKeyFrame*>& keyFrames);
+	void addKeyFrame(UIKeyFrame* keyFrame);
+	void removeKeyFrames();
+	void removeKeyFrame(UIKeyFrame* keyFrame);
 
-	static void loadAllAnimsInFile(const string& path);
+	static void loadAllAnimsInFile();
+	static void saveAnim(UIAnimation* anim);
 	static UIAnimation* getAnimation(const string& name);
 	static unordered_map<string, UIAnimation*> getAllAnimations();
 	static void addAnimation(UIAnimation* animation);
