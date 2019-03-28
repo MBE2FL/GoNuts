@@ -79,6 +79,7 @@ struct UICanvasLoad
 class Scene
 {
 public:
+	Scene(const string& name, bool inGameUi);
 	Scene(const string& name);
 	~Scene();
 
@@ -100,7 +101,7 @@ public:
 	void loadOldFaithful();
 	void loadMainMenu();
 	void loadScene();
-	void loadSceneFromFile(const string& path, bool inGameUi);
+	void loadSceneFromFile(const string& path);
 	EntityManager* getEntityManager() const;
 	UISystem* getUISystem() const;
 
