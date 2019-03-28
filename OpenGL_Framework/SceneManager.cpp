@@ -26,12 +26,12 @@ void SceneManager::addScene(Scene * scene)
 	}
 }
 
-void SceneManager::loadSceneFromFile(const string & path, const string & name)
+void SceneManager::loadSceneFromFile(const string & path, const string & name, bool inGameUi)
 {
 	Scene* scene = new Scene(name);
 	//EntityManager::setInstance(scene->getEntityManager());
 	//EntityFactory::getInstance()->setEntityManager();
-	scene->loadSceneFromFile(path);
+	scene->loadSceneFromFile(path, inGameUi);
 	_scenes.push_back(scene);
 }
 

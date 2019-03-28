@@ -8,7 +8,7 @@ public:
 	~SceneManager();
 
 	void addScene(Scene* scene);
-	void loadSceneFromFile(const string& path, const string& name);
+	void loadSceneFromFile(const string& path, const string& name, bool inGameUi);
 	void loadScene(const string& name);
 	void loadOldFaithful(const string& name);
 	void loadMainMenu(const string& name);

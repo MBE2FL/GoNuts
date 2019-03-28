@@ -252,9 +252,6 @@
     <ClCompile Include="UIButton.cpp">
       <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
     </ClCompile>
-    <ClCompile Include="FreeType.cpp">
-      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
-    </ClCompile>
     <ClCompile Include="SoundComponent.cpp">
       <Filter>Source Files\EntitySystem\Components</Filter>
     </ClCompile>
@@ -453,9 +450,6 @@
     </ClInclude>
     <ClInclude Include="SoundComponent.h">
       <Filter>Header Files\EntitySystem\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeType.h">
-      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>

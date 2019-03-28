@@ -16,10 +16,33 @@ Scene::Scene(const string & name)
 	_uiCamera = _uiSystem->getCamera();
 
 	_guiHelper = GUIHelper::getInstance();
+
+	if(_inGameUi)
+	init();
 }
 
 Scene::~Scene()
 {
+}
+
+void Scene::init()
+{
+	fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
+
+	_timeText = new TextRenderer();
+	_timeText->fontface = fontTTF;
+	_timeText->text = std::string("TIME: " + to_string(_entityFactory->getCoinCount()));
+	_timeText->color = vec4(vec4::One);
+	_timeText->origin = vec3(1530.0f, 980.0f, 0.0f);
+
+	_coinText = new TextRenderer();
+	_coinText->fontface = fontTTF;
+	_coinText->text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
+	_coinText->color = vec4(vec4::One);
+	_coinText->origin = vec3(10.0f, 980.0f, 0.0f);
+
+	_timeText->init();
+	_coinText->init();
 }
 
 void Scene::update(float deltaTime)
@@ -86,10 +109,13 @@ void Scene::update(float deltaTime)
 	//Freetype stuff
 	//float rainbowSpeed = 2.5f;
 	//float rainbowFrequency = -0.01f;
-	_timeText.update(deltaTime);
-	_coinText.update(deltaTime);
-	_coinText.text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
-	_timeText.text = std::string("TIME: " + to_string(totalGameTime));
+	if (_timeText && _coinText)
+	{
+		_timeText->update(deltaTime);
+		_coinText->update(deltaTime);
+		_coinText->text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
+		_timeText->text = std::string("TIME: " + to_string(totalGameTime));
+	}
 	//for (size_t i = 0; i < _timeText.data.size(); ++i)
 	//{
 	//	float offsetAmount = (_timeText.data[i].pos.x + _timeText.data[i].pos.y) * rainbowFrequency + totalGameTime * rainbowSpeed;
@@ -170,13 +196,16 @@ void Scene::drawUI()
 
 void Scene::drawText()
 {
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_timeText.draw();
-	_coinText.draw();
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	if (_timeText && _coinText)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		_timeText->draw();
+		_coinText->draw();
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 void Scene::imguiDraw()
@@ -372,25 +401,6 @@ void Scene::loadOldFaithful()
 	_entityFactory->createSpikes(2, vec3(14.0f, 2.8f, -5.0f), vec3(1.0f), 28.0f);
 	_entityFactory->createVents(2, vec3(15.0f, 2.95f, -5.0f), vec3(1.0f), 98.0f);
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
-
-
-	//---------------------------------------------------- freetype stuff
-
-	fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
-
-	_timeText.fontface = fontTTF;
-	_timeText.text = std::string("TIME: " + to_string(_entityFactory->getCoinCount()));
-	_timeText.color = vec4(vec4::One);
-	_timeText.origin = vec3(1530.0f, 980.0f, 0.0f);
-
-	_coinText.fontface = fontTTF;
-	_coinText.text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
-	_coinText.color = vec4(vec4::One);
-	_coinText.origin = vec3(10.0f, 980.0f, 0.0f);
-
-	_timeText.init();
-	_coinText.init();
-	//----------------------------------------------------ends
 
 	//entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
 	//skeletalMeshTest = new SkeletalMesh();
@@ -651,8 +661,9 @@ void Scene::loadScene()
 	spotLight->setAttenuationQuadratic(0.01f);
 }
 
-void Scene::loadSceneFromFile(const string & path)
+void Scene::loadSceneFromFile(const string & path, bool inGameUi)
 {
+	_inGameUi = inGameUi;
 	sqlite3* db;
 	char* errMsg = 0;
 	int exit = 0;

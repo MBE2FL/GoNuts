@@ -82,6 +82,8 @@ public:
 	Scene(const string& name);
 	~Scene();
 
+	void init();
+
 	void update(float deltaTime);
 	void draw();
 	void drawShadow();
@@ -98,7 +100,7 @@ public:
 	void loadOldFaithful();
 	void loadMainMenu();
 	void loadScene();
-	void loadSceneFromFile(const string& path);
+	void loadSceneFromFile(const string& path, bool inGameUi);
 	EntityManager* getEntityManager() const;
 	UISystem* getUISystem() const;
 
@@ -121,9 +123,10 @@ public:
 
 private:
 	FontFace* fontTTF;
-	TextRenderer _timeText;
-	TextRenderer _coinText;
+	TextRenderer* _timeText;
+	TextRenderer* _coinText;
 	float totalGameTime = 0.0f;
+	bool _inGameUi = false;
 	SoundComponent* _sound;
 	string _name;
 	string _filename;

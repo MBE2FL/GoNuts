@@ -301,13 +301,13 @@ void Game::initializeGame()
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
-	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney");
+	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney", true);
 
-	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest");
+	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
-	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut");
+	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
