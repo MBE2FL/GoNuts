@@ -405,8 +405,8 @@ void Scene::loadOldFaithful()
 	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
 	EntityManager::setPlayerTransform(_playerTransform);
 
-	Entity* entity = _entityFactory->createCoin(vec3(2.0f, 4.0f, -5.0f), vec3(1.0f));
-	_entityFactory->createCoin(vec3(2.0f, 0.0f, 0.0f), vec3(1.0f), entity);
+	Entity* entity;// = //_entityFactory->createCoin(vec3(2.0f, 4.0f, -5.0f), vec3(1.0f));
+	//_entityFactory->createCoin(vec3(2.0f, 0.0f, 0.0f), vec3(1.0f), entity);
 
 
 
@@ -414,8 +414,8 @@ void Scene::loadOldFaithful()
 
 	_entityFactory->createPlatforms(15, vec3(14.0f, -2.0f, -5.0f));
 
-	_entityFactory->createCoins(1, vec3(35.0f, 4.0f, -5.0f), vec3(1.0f), 0);
-	_entityFactory->createCoins(2, vec3(42.0f, 4.5f, -5.0f), vec3(1.0f), 35.0f);
+	//_entityFactory->createCoins(1, vec3(35.0f, 4.0f, -5.0f), vec3(1.0f), 0);
+	//_entityFactory->createCoins(2, vec3(42.0f, 4.5f, -5.0f), vec3(1.0f), 35.0f);
 	_entityFactory->createAcorns(3, vec3(2.0f, 4.0f, -5.0f), vec3(1.0f), 12.0f);
 	_entityFactory->createAcorns(3, vec3(2.0f, 4.0f, -5.0f), vec3(1.0f), 54.0f);
 
