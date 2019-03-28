@@ -17,7 +17,7 @@ void UICanvas::update(float deltaTime)
 {
 	for (auto const& imageKeyVal : _images)
 	{
-		imageKeyVal.second->getTransform()->update(deltaTime);
+		imageKeyVal.second->getTransform()->UIUpdate(deltaTime, imageKeyVal.second->getAnimator());
 		imageKeyVal.second->getAnimator()->update(deltaTime);
 	}
 }

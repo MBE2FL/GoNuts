@@ -1589,6 +1589,17 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 		ImGui::DragFloat3("Scale", &scale.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 		keyFrame->setscale(scale);
 
+		// Rotation Property
+		Quaternion quat = keyFrame->getRot();
+		float* quatRot = quat.getWRef();
+		//float* rot = quat.getZRef();
+		//float degRot = toDegrees(*rot) * 2.0f;
+		//ImGui::DragFloat("Rotation", &degRot, 0.2f, 0.0f, 0.0f, "%.2f", 1.0f);
+		ImGui::DragFloat4("Rotation Quat", quatRot, 0.2f, 0.0f, 0.0f, "%.2f", 1.0f);
+		//*rot = toRadians(degRot) * 0.5f;
+		//keyFrame->setRot(quat);
+		keyFrame->setRot(quat);
+
 
 		ImGui::EndChild();
 		ImGui::PopStyleVar();
@@ -1614,10 +1625,20 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 	static vec3 scale = vec3::One;
 	ImGui::DragFloat3("Scale", &scale.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 
+	// Rotation Property
+	static float zRot = 0.0f;
+	ImGui::DragFloat("zRot", &zRot, 0.05f, 0.0f, 0.0f, "%.1f", 1.0f);
+
+	// Alpha Property
+	static float alpha = 0.0f;
+	ImGui::DragFloat("Alpha", &alpha, 0.05f, 0.0f, 1.0f, "%.3f", 1.0f);
+
 	// Add a key frame to the currently selected animation
 	if (ImGui::Button("Add Key Frame"))
 	{
-		UIKeyFrame* newFrame = new UIKeyFrame(startTime, pos, scale);
+		Quaternion rot = Quaternion(0.0f, 0.0f, toRadians(zRot));
+
+		UIKeyFrame* newFrame = new UIKeyFrame(startTime, pos, scale, rot, alpha);
 		anim->addKeyFrame(newFrame);
 	}
 

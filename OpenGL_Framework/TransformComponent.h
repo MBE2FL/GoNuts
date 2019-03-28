@@ -4,6 +4,7 @@
 #include "MathLib/MathLibCore.h"
 #include <vector>
 #include <string>
+#include "UIAnimator.h"
 
 using std::vector;
 using std::string;
@@ -65,6 +66,7 @@ public:
 
 	void update(float deltaTime);
 	void quatUpdate(float deltaTime);
+	void UIUpdate(float deltaTime, UIAnimator* animator);
 
 	void addChild(TransformComponent* child);
 	void removeChild(TransformComponent* child);
