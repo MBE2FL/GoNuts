@@ -295,6 +295,58 @@ void TransformComponent::update(float deltaTime)
 		child->update(deltaTime);
 }
 
+void TransformComponent::quatUpdate(float deltaTime)
+{
+	// Create quaternions
+	Quaternion rx;
+	Quaternion ry;
+	Quaternion rz;
+
+	// XYZ order
+	rx = Quaternion(toRadians(_localRotation.x), 0.0f, 0.0f);
+	ry = Quaternion(0.0f, toRadians(_localRotation.y), 0.0f);
+	rz = Quaternion(0.0f, 0.0f, toRadians(_localRotation.z));
+
+	//_localRotationMatrix = rz * ry * rx;
+	Quaternion localRot = rz * ry * rx;
+	_localRotationMatrix = localRot.getRotationMatrix();
+
+
+	// Create translation matrix
+	mat4 tran;
+	tran.translate(_localPosition);
+
+
+	// Create scale matrix
+	mat4 scale;
+	scale.scale(_scale);
+
+
+	rx = Quaternion(toRadians(_orbitRotation.x), 0.0f, 0.0f);
+	ry = Quaternion(0.0f, toRadians(_orbitRotation.y), 0.0f);
+	rz = Quaternion(0.0f, 0.0f, toRadians(_orbitRotation.z));
+	//_orbitRotationMatrix = rz * ry* rx;
+	Quaternion orbitRot = rz * ry * rx;
+	_orbitRotationMatrix = orbitRot.getRotationMatrix();
+
+
+	// Combine all above transforms into a single matrix
+	_localTransformMatrix = _orbitRotationMatrix * tran * _localRotationMatrix * scale;
+
+	if (_parent)
+	{
+		//_parent->update(dt);
+		_localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
+	}
+	else
+		_localToWorldMatrix = _localTransformMatrix;
+
+
+	// Update children
+	for (TransformComponent* child : _children)
+		child->quatUpdate(deltaTime);
+}
+
 void TransformComponent::addChild(TransformComponent * child)
 {
 	child->_parent = this;

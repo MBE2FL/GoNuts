@@ -111,7 +111,7 @@ void Game::initializeGame()
 	//ObjectLoader::loadSkeletalMesh("SkeletalBoi", "./Assets/Test Exporter/Test/Armature.nut", "./Assets/Test Exporter/Test/Anims/ArmatureAction.nutAnim");
 	ObjectLoader::loadSkeletalMesh("SkeletalBoiTwo", "./Assets/Test Exporter/GOLDEN_FATBOI2/Armature.nut", "./Assets/Test Exporter/GOLDEN_FATBOI2/Anims/Run.nutAnim");
 	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/BM_-_Run_2/Armature.nut", "./Assets/Test Exporter/BM_-_Run_2/Anims/ArmatureAction.nutAnim");
-	ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/Fat_Boi_-_Review_2_/Armature.nut", "./Assets/Test Exporter/Fat_Boi_-_Review_2_/Anims/ArmatureAction.nutAnim");
+	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/Fat_Boi_-_Review_2_/Armature.nut", "./Assets/Test Exporter/Fat_Boi_-_Review_2_/Anims/ArmatureAction.nutAnim");
 	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/TEST_BM/Armature.nut", "./Assets/Test Exporter/TEST_BM/Anims/Action.nutAnim");
 
 
@@ -311,7 +311,8 @@ void Game::initializeGame()
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 
-
+	//Quaternion test = Quaternion(0.0f, 0.0f, toRadians(90.0f));
+	//test.getZ();
 
 	//SkeletalMesh testSkeleton;
 	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");

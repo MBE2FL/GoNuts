@@ -64,6 +64,7 @@ public:
 	void setWorldRotationAngleZ(const float newAngle);
 
 	void update(float deltaTime);
+	void quatUpdate(float deltaTime);
 
 	void addChild(TransformComponent* child);
 	void removeChild(TransformComponent* child);

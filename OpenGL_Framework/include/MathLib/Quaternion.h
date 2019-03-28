@@ -11,7 +11,7 @@ public:
 	Quaternion(const float angle, vec3 axis);
 	Quaternion(const Quaternion& other);
 	Quaternion(const mat4& rot);
-	Quaternion(const float eulerX, const float eulerY, const float eulerZ);
+	Quaternion(const float pitch, const float yaw, const float roll);
 	~Quaternion();
 
 	void conjugate();

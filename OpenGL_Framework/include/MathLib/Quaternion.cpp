@@ -94,26 +94,39 @@ Quaternion::Quaternion(const mat4 & rot)
 	normalize();
 }
 
-Quaternion::Quaternion(const float eulerX, const float eulerY, const float eulerZ)
+Quaternion::Quaternion(const float pitch, const float yaw, const float roll)
 {
 	//vec3 xAxis = vec3(1.0f, 0.0f, 0.0f);
 	//vec3 yAxis = vec3(0.0f, 1.0f, 0.0f);
 	//vec3 zAxis = vec3(0.0f, 0.0f, 1.0f);
 
-	//Quaternion xQuat = Quaternion(eulerX, xAxis);
-	//Quaternion yQuat = Quaternion(eulerY, yAxis);
-	//Quaternion zQuat = Quaternion(eulerZ, zAxis);
-
+	//Quaternion xQuat = Quaternion(pitch, xAxis);
+	//Quaternion yQuat = Quaternion(yaw, yAxis);
+	//Quaternion zQuat = Quaternion(roll, zAxis);
+	
 	//*this = Quaternion((xQuat * yQuat) * zQuat);
 
-	const float sinPitch = sin(eulerX * 0.5f);
-	const float cosPitch = cos(eulerX * 0.5f);
 
-	const float sinYaw = sin(eulerY * 0.5f);
-	const float cosYaw = cos(eulerY * 0.5f);
+	// Note: Roll (X-Axis) -> Pitch (Y-Axis) -> Yaw (Z-Axis)
+	//   TO: Pitch (X-Axis) -> Yaw (Y-Axis) -> Roll (Z-Axis)
 
-	const float sinRoll = sin(eulerZ * 0.5f);
-	const float cosRoll = cos(eulerZ * 0.5f);
+	//const float sinPitch = sin(pitch * 0.5f);
+	//const float cosPitch = cos(pitch * 0.5f);
+
+	//const float sinYaw = sin(yaw * 0.5f);
+	//const float cosYaw = cos(yaw * 0.5f);
+
+	//const float sinRoll = sin(roll * 0.5f);
+	//const float cosRoll = cos(roll * 0.5f);
+
+	const float sinPitch = sin(yaw * 0.5f);
+	const float cosPitch = cos(yaw * 0.5f);
+
+	const float sinYaw = sin(roll * 0.5f);
+	const float cosYaw = cos(roll * 0.5f);
+
+	const float sinRoll = sin(pitch * 0.5f);
+	const float cosRoll = cos(pitch * 0.5f);
 
 	const float cosPitchCosYaw = cosPitch * cosYaw;
 	const float sinPitchSinYaw = sinPitch * sinYaw;
@@ -122,6 +135,13 @@ Quaternion::Quaternion(const float eulerX, const float eulerY, const float euler
 	_y = (cosRoll * sinPitch * cosYaw) + (sinRoll * cosPitch * sinYaw);
 	_z = (cosRoll * cosPitch * sinYaw) - (sinRoll * sinPitch * cosYaw);
 	_w = (cosRoll * cosPitchCosYaw) + (sinRoll * sinPitchSinYaw);
+
+
+
+	//_x = (sinPitchSinYaw * cosRoll) + (cosPitchCosYaw * sinRoll);
+	//_y = (cosRoll * sinPitch * cosYaw) + (sinRoll * cosPitch * sinYaw);
+	//_z = (cosRoll * cosPitch * sinYaw) - (sinRoll * sinPitch * cosYaw);
+	//_w = (cosRoll * cosPitchCosYaw) - (sinRoll * sinPitchSinYaw);
 
 	normalize();
 }
