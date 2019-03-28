@@ -233,6 +233,26 @@ Quaternion Quaternion::getNormalized() const
 	return normQuat;
 }
 
+float Quaternion::getW() const
+{
+	return _w;
+}
+
+float Quaternion::getX() const
+{
+	return _x;
+}
+
+float Quaternion::getY() const
+{
+	return _y;
+}
+
+float Quaternion::getZ() const
+{
+	return _z;
+}
+
 void Quaternion::setW(const float w)
 {
 	_w = w;
@@ -330,6 +350,11 @@ Quaternion Quaternion::slerp(const Quaternion & begin, const Quaternion & end, f
 
 Quaternion Quaternion::nslerp(const Quaternion & begin, const Quaternion & end, float interValue)
 {
+	if (interValue < 0)
+		interValue = 0;
+	if (interValue > 1)
+		interValue = 1;
+
 	Quaternion result = Quaternion();
 
 	float dot = begin._w * end._w + begin._x * end._x + begin._y * end._y + begin._z * end._z;

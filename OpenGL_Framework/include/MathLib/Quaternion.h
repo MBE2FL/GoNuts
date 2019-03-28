@@ -21,6 +21,11 @@ public:
 	void normalize();
 	Quaternion getNormalized() const;
 
+	float getW() const;
+	float getX() const;
+	float getY() const;
+	float getZ() const;
+
 	void setW(const float w);
 	void setX(const float x);
 	void setY(const float y);

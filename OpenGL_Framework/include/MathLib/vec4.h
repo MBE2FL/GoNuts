@@ -32,6 +32,21 @@ public:
 		///vec1 * 5
 		return vec4((x * scalar), (y * scalar), (z * scalar), (w * scalar));
 	}
+	vec4 operator*(const vec4 vector) const
+	{
+		///vec1 * vec2
+		return vec4((x * vector.x), (y * vector.y), (z * vector.z), (w * vector.w));
+	}
+	vec4 operator+=(const vec4 vector) const
+	{
+		///vec1 * vec2
+		return vec4((x + vector.x), (y + vector.y), (z + vector.z), (w + vector.w));
+	}
+	vec4 operator*=(const vec4 vector) const
+	{
+		///vec1 * vec2
+		return vec4((x * vector.x), (y * vector.y), (z * vector.z), (w * vector.w));
+	}
 	vec4 operator/(const float divisor) const
 	{
 		///vec1 * 5
