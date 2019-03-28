@@ -258,6 +258,9 @@
     <ClCompile Include="Font.cpp">
       <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Score.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -453,6 +456,9 @@
     </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

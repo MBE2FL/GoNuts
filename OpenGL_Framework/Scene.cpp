@@ -16,6 +16,8 @@ Scene::Scene(const string & name, bool inGameUi)
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
+	_score = new ScoreCounter;
+
 	_guiHelper = GUIHelper::getInstance();
 
 	if (_inGameUi)
@@ -51,13 +53,13 @@ void Scene::init()
 
 	_timeText = new TextRenderer();
 	_timeText->fontface = fontTTF;
-	_timeText->text = std::string("TIME: " + to_string(_entityFactory->getCoinCount()));
+	_timeText->text = std::string("TIME: " + to_string(_score->getCoinCount()));
 	_timeText->color = vec4(vec4::One);
 	_timeText->origin = vec3(1530.0f, 980.0f, 0.0f);
 
 	_coinText = new TextRenderer();
 	_coinText->fontface = fontTTF;
-	_coinText->text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
+	_coinText->text = std::string("COINS: " + to_string(_score->getCoinCount()));
 	_coinText->color = vec4(vec4::One);
 	_coinText->origin = vec3(10.0f, 980.0f, 0.0f);
 
@@ -67,12 +69,12 @@ void Scene::init()
 
 void Scene::update(float deltaTime)
 {
-	totalGameTime+= deltaTime;
+	_score->setTotalGameTime(deltaTime);
 
 	if (_uiSystem)
 		_uiSystem->update(deltaTime);
 
-	if (_entityFactory->getAcornCount() > 18)
+	if (_score->getAcornCount() > 18)
 	{
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
@@ -133,8 +135,8 @@ void Scene::update(float deltaTime)
 	{
 		_timeText->update(deltaTime);
 		_coinText->update(deltaTime);
-		_coinText->text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
-		_timeText->text = std::string("TIME: " + to_string(totalGameTime));
+		_coinText->text = std::string("COINS: " + to_string(_score->getCoinCount()));
+		_timeText->text = std::string("TIME: " + to_string(_score->getTotalGameTime()));
 	}
 	//for (size_t i = 0; i < _timeText.data.size(); ++i)
 	//{
@@ -604,6 +606,10 @@ void Scene::loadMainMenu()
 
 void Scene::loadScene()
 {
+	_score->voidAcorn();
+	_score->voidCoin();
+	_score->voidTotalGameTime();
+
 	EntityManager::setInstance(_entityManager);
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 

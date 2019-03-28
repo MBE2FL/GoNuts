@@ -8,6 +8,7 @@ Collider::Collider()
 	_contactOffset = vec3(0.0f);
 	_enabled = true;
 	_sound = SoundComponent::getInstance();
+	_score = new ScoreCounter;
 }
 
 Collider::~Collider()
@@ -23,7 +24,6 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 	case TTag::Acorn:
 	{
 		//std::cout << "Acorn Collision Entered!" << std::endl;
-		EntityFactory* entityFactory = EntityFactory::getInstance();
 		
 
 		EntityManager* entityManager = EntityManager::getInstance();
@@ -32,7 +32,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			_sound->playSound("acorn", _sound->getActionChannel(), false);
 			_physicsBody->setUseGravity(true);
-			entityFactory->plusAcorn();
+			_score->plusAcorn();
 		}
 
 		break;
@@ -41,7 +41,6 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 	case TTag::Coin:
 	{
 		//std::cout << "Coin Collision Entered!" << std::endl;
-		EntityFactory* entityFactory = EntityFactory::getInstance();
 		
 
 		EntityManager* entityManager = EntityManager::getInstance();
@@ -50,7 +49,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			_sound->playSound("coin", _sound->getActionChannel(), false);
 			_physicsBody->setUseGravity(true);
-			entityFactory->plusCoin();
+			_score->plusCoin();
 		}
 
 		break;

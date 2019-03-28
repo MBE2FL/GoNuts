@@ -15,7 +15,7 @@
 #include "PhysicsSystem.h"
 #include "SoundComponent.h"
 #include "UISystem.h"
-//#include "GUIHelper.h"
+#include "Score.h"
 #include <sstream>
 
 #include "FmodWrapper.h"
@@ -126,7 +126,6 @@ private:
 	FontFace* fontTTF;
 	TextRenderer* _timeText;
 	TextRenderer* _coinText;
-	float totalGameTime = 0.0f;
 	bool _inGameUi = false;
 	SoundComponent* _sound;
 	string _name;
@@ -144,7 +143,7 @@ private:
 	SkeletalMesh* _playerSkeleton = nullptr;
 	Entity* _mainCamera;
 	Entity* _shadowCamera;
-
+	ScoreCounter* _score;
 	//Light* light;
 	//Light* spotLight;
 

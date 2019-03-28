@@ -39,20 +39,11 @@ public:
 	void createAcorns(const unsigned int amount, const vec3& position = vec3(0.0f), const vec3& scale = vec3(1.0f), const float offset = 70.0f);
 	void createBackgrounds(const unsigned int amount, const vec3& position = vec3(0.0f), const vec3& scale = vec3(1.0f, 1.0f, 0.5f));
 
-	int getCoinCount() { return coinCount; }
-	void plusCoin() { coinCount++; }
-
-	int getAcornCount() { return acornCount; }
-	void plusAcorn() { acornCount++; }
-
 	void setEntityManager();
 
 private:
 	EntityManager* _entityManager;
 	static EntityFactory* _instance;
-
-	int coinCount = 0;
-	int acornCount = 0;
 
 	EntityFactory();
 };

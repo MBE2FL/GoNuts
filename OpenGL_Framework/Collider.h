@@ -3,6 +3,9 @@
 #include "Component.h"
 #include "SoundComponent.h"
 #include "PhysicsBodyComponent.h"
+#include "Score.h"
+
+class Scene;
 
 enum class TTag
 {
@@ -88,4 +91,5 @@ protected:
 	bool _enabled;
 	PhysicsBodyComponent* _physicsBody = nullptr;
 	TTag _tag;
+	ScoreCounter* _score;
 };
