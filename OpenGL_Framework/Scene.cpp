@@ -438,46 +438,19 @@ void Scene::loadOldFaithful()
 
 	UICanvas* testCanvas = new UICanvas("In Game UI");
 
-	UIImage* testImage = new UIImage("Nut Meter", vec3(-7.0f, -3.0f, 4.0f));
-	testImage->setScale(vec3(0.5f));
+	UIImage* testImage = new UIImage("Nut Meter", vec3(100.0f, 100.0f, 4.0f));
+	testImage->setScale(vec3(100.0f));
 	testImage->setLocalRotation(vec3(0, 0, 0));
 	testImage->setTexture(ObjectLoader::getTexture("FullNut"));
 
-	UIImage* time = new UIImage("time", vec3(7.0f, 3.0f, 0.0f));
-	time->setScale(vec3(0.5f));
+	UIImage* time = new UIImage("time", vec3(1800.0f, 800.0f, 0.0f));
+	time->setScale(vec3(100.0f));
 	time->setLocalRotation(vec3(0, 0, 0));
 	time->setTexture(ObjectLoader::getTexture("Time"));
 
 
 	testCanvas->addImage(testImage);
 	testCanvas->addImage(time);
-
-	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.7f, 0.7f, 1.0f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(-6.5f, -3.5f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
-
-	UIKeyFrame* frame4 = new UIKeyFrame(0.0f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame5 = new UIKeyFrame(0.8f, vec3(7.0f, 3.0f, 4.0f), vec3(0.5f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame6 = new UIKeyFrame(1.6f, vec3(6.0f, 3.0f, 4.0f), vec3(0.2f, 0.5f, 0.5f), Quaternion::Identity, 1.0f);
-
-
-	vector<UIKeyFrame*> testVec;
-	testVec.push_back(frame1);
-	testVec.push_back(frame2);
-	testVec.push_back(frame3);
-
-
-	vector<UIKeyFrame*> timevec;
-	timevec.push_back(frame4);
-	timevec.push_back(frame5);
-	timevec.push_back(frame6);
-
-	UIAnimation* animu = new UIAnimation("test", testVec);
-	UIAnimation* animu2 = new UIAnimation("time", timevec);
-
-
-	testImage->getAnimator()->addAnimation(animu);
-	time->getAnimator()->addAnimation(animu2);
 
 
 	_uiSystem->addCanvas(testCanvas);
@@ -1185,8 +1158,8 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		"Image      INT  REFERENCES UIImages(Name) ON DELETE SET NULL"\
 		" NOT NULL,"\
 		"Animations TEXT DEFAULT NULL,"\
-		"[Current Animation] TEXT DEFAULT NULL"\
-		"[Anim Order]        TEXT DEFAULT NULL"\
+		"[Current Animation] TEXT DEFAULT NULL,"\
+		"[Anim Order]        TEXT DEFAULT NULL,"\
 		"Active              BOOLEAN NOT NULL"\
 		" DEFAULT(FALSE)"\
 		"); ";
