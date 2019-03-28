@@ -4,6 +4,7 @@
 #include <string>
 #include "CameraComponent.h"
 #include "EntityManager.h"
+#include "Font.h"
 
 using std::string;
 
@@ -26,6 +27,7 @@ private:
 	Entity* _camera;
 	TransformComponent* _camTrans;
 	CameraComponent* _camComp;
+	FontManager _fontManager;
 
 	void init(EntityManager* entityManager);
 };

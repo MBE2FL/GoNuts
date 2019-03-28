@@ -19,6 +19,7 @@
 #include <sstream>
 
 #include "FmodWrapper.h"
+#include "Font.h"
 
 #define WINDOW_WIDTH			1900
 #define WINDOW_HEIGHT			1000
@@ -85,6 +86,7 @@ public:
 	void draw();
 	void drawShadow();
 	void drawUI();
+	void drawText();
 	void imguiDraw();
 	string getName() const;
 	void setName(const string& name);
@@ -118,6 +120,10 @@ public:
 	TransformComponent* getPlayTrans() { return _playerTransform; }
 
 private:
+	FontFace* fontTTF;
+	TextRenderer _timeText;
+	TextRenderer _coinText;
+	float totalGameTime = 0.0f;
 	SoundComponent* _sound;
 	string _name;
 	string _filename;
