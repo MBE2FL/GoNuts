@@ -37,7 +37,6 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
-	light->setPosition(_playerTransform->getLocalPosition() + vec3(0.0f, -0.5f, 0.0f));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
 		front = true;
@@ -433,29 +432,6 @@ void Scene::loadOldFaithful()
 	_uiSystem->addCanvas(testCanvas);
 
 
-
-
-	light = new Light();
-	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
-	light->setAmbient(vec3(0.7f));
-	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(0.6f));
-	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.5f));
-	light->setSpecularExp(100.0f);
-	light->setAttenuationConstant(1.0f);
-	light->setAttenuationLinear(0.1f);
-	light->setAttenuationQuadratic(0.01f);
-
-	spotLight = new Light();
-	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
-	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(vec3(1));
-	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
-	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(0.1f);
-	spotLight->setAttenuationLinear(0.01f);
-	spotLight->setAttenuationQuadratic(0.01f);
 }
 
 void Scene::loadMainMenu()
@@ -524,29 +500,6 @@ void Scene::loadMainMenu()
 
 	_uiSystem->addCanvas(MainMenuCanvas);
 
-
-
-	light = new Light();
-	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
-	light->setAmbient(vec3(0.7f));
-	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(0.6f));
-	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.5f));
-	light->setSpecularExp(100.0f);
-	light->setAttenuationConstant(1.0f);
-	light->setAttenuationLinear(0.1f);
-	light->setAttenuationQuadratic(0.01f);
-
-	spotLight = new Light();
-	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
-	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(vec3(1));
-	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
-	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(0.1f);
-	spotLight->setAttenuationLinear(0.01f);
-	spotLight->setAttenuationQuadratic(0.01f);
 }
 
 void Scene::loadScene()
@@ -578,27 +531,6 @@ void Scene::loadScene()
 	_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
 
 
-	light = new Light();
-	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
-	light->setAmbient(vec3(0.7f));
-	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(0.6f));
-	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.5f));
-	light->setSpecularExp(100.0f);
-	light->setAttenuationConstant(1.0f);
-	light->setAttenuationLinear(0.1f);
-	light->setAttenuationQuadratic(0.01f);
-
-	spotLight = new Light();
-	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
-	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(vec3(1));
-	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
-	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(0.1f);
-	spotLight->setAttenuationLinear(0.01f);
-	spotLight->setAttenuationQuadratic(0.01f);
 }
 
 void Scene::loadSceneFromFile(const string & path)

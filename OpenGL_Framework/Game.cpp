@@ -38,6 +38,18 @@ void Game::initializeGame()
 	frameBufferShadow.addDepthTarget();
 	frameBufferShadow.init(8192, 8192);
 
+	lights.reserve(64);
+	for (int i = 0; i < 64; ++i)
+	{
+		lights.push_back(Light());
+		lights[i].init();
+		lights[i].color = vec4(1.f, 0.8f, 0.3f, 1.0f);
+		lights[i].constantAtten = 0.1f;
+		lights[i].linearAtten = 0.05f;
+		lights[i].quadAtten = 0.025f;
+
+	}
+
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("Player", "./Assets/Shaders/Morph.vert", "./Assets/Shaders/PassThrough.frag");
@@ -50,6 +62,7 @@ void Game::initializeGame()
 	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
+	shaderDeferred.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/deferred.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
 	//LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
@@ -356,6 +369,15 @@ void Game::update()
 	//camera.setWorldPosition(MathLibCore::lerp(camera.getWorldPosition(), playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
 	//camera.update(deltaTime);
 	//UICamera.update(deltaTime);
+
+	for (int i = 0; i < (int)lights.size(); ++i)
+	{
+		/*lights[i].m_pLocalPosition = vec3(
+			sin(i + TotalGameTime) * 0.1f + ((i / 4) % 4),
+			sin(TotalGameTime) * 0.1f + (i / 16),
+			cos(i + TotalGameTime) * 0.1f + (i % 4)) * vec3(60,40,-20) - vec3(30,25,0);*/
+		lights[i].setLocalPosition(vec3(sinf(TotalGameTime) * 4, 4.9f, -5.f));
+	}
 }
 
 void Game::draw()
@@ -455,10 +477,28 @@ void Game::draw()
 	glViewport(0, 0, 1900, 1000);
 
 	frameBufferLUT.clear();
-	frameBufferLUT.bind();
 
 	//frameBufferOutline.renderToFSQ();
-	gbuffer.drawFSQ();
+	frameBufferLUT.renderToFSQ();
+	
+	shaderDeferred.bind();
+	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+
+	for (int i = 0; i < (int)lights.size(); ++i)
+	{
+		lights[i].bind();
+		lights[i].position = cameraTrans->getView() * vec4(lights[i].getLocalPosition(), 1.0f);
+		lights[i].update(0.0f);
+
+		shaderDeferred.sendUniform("uLightColor", lights[i].color);
+		shaderDeferred.sendUniform("uLightPosition", lights[i].position);
+		shaderDeferred.sendUniform("uLightDirection", lights[i].direction);
+		shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i].constantAtten, lights[i].linearAtten, lights[i].quadAtten, lights[i].radius));
+
+		frameBufferLUT.renderToFSQ();
+	}
+	
+	//gbuffer.drawFSQ();
 	frameBufferLUT.unbind();
 
 	//frameBufferUI.unbind();

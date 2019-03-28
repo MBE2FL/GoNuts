@@ -2,7 +2,6 @@
 #include <iostream>
 
 Transform::Transform()
-	: color(vec4(1.0f))
 {
 }
 

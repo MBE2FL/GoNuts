@@ -940,42 +940,42 @@ void GUIHelper::drawLights()
 	ImGui::Begin("Light Settings", &_showLightsMenu);
 
 	// Light settings
-	Scene* _currentScene = _sceneManager->getCurrentScene();
-	Light* light = _currentScene->light;
+//	Scene* _currentScene = _sceneManager->getCurrentScene();
+//	Light* light = _currentScene->light;
 
 	// Position settings
-	vec3 position = light->getPosition();
-	ImGui::DragFloat3("Light Position: ", &position.x, 0.5f);
-	light->setPosition(position);
-	// Ambient settings
-	vec3 ambient = light->getAmbient();
-	ImGui::ColorEdit3("Ambient Colour: ", &ambient.x);
-	light->setAmbient(ambient);
-	// Diffuse settings
-	vec3 diffuse = light->getDiffuse();
-	ImGui::ColorEdit3("Diffuse Colour: ", &diffuse.x);
-	light->setDiffuse(diffuse);
-	// Specular settings
-	vec3 specular = light->getSpecular();
-	ImGui::ColorEdit3("Specular Colour: ", &specular.x);
-	light->setSpecular(specular);
-	// Specular exponent settings
-	float specularExp = light->getSpecularExp();
-	ImGui::SliderFloat("Specular Exp: ", &specularExp, 0.0f, 250.0f);
-	light->setSpecularExp(specularExp);
-	// Attenuation constant settings
-	float attenuationConstant = light->getAttenuationConstant();
-	ImGui::SliderFloat("Attenuation Constant: ", &attenuationConstant, 0.0f, 20.0f);
-	light->setAttenuationConstant(attenuationConstant);
-	// Attenuation linear settings
-	float attenuationLinear = light->getAttenuationLinear();
-	ImGui::SliderFloat("Attenuation Linear: ", &attenuationLinear, 0.0f, 5.0f);
-	light->setAttenuationLinear(attenuationLinear);
-	// Attenuation quadratic settings
-	float attenuationQuadratic = light->getAttenuationQuadratic();
-	ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
-	light->setAttenuationQuadratic(attenuationQuadratic);
-
+//	vec3 position = light->getPosition();
+//	ImGui::DragFloat3("Light Position: ", &position.x, 0.5f);
+//	light->setPosition(position);
+//	// Ambient settings
+//	vec3 ambient = light->getAmbient();
+//	ImGui::ColorEdit3("Ambient Colour: ", &ambient.x);
+//	light->setAmbient(ambient);
+//	// Diffuse settings
+//	vec3 diffuse = light->getDiffuse();
+//	ImGui::ColorEdit3("Diffuse Colour: ", &diffuse.x);
+//	light->setDiffuse(diffuse);
+//	// Specular settings
+//	vec3 specular = light->getSpecular();
+//	ImGui::ColorEdit3("Specular Colour: ", &specular.x);
+//	light->setSpecular(specular);
+//	// Specular exponent settings
+//	float specularExp = light->getSpecularExp();
+//	ImGui::SliderFloat("Specular Exp: ", &specularExp, 0.0f, 250.0f);
+//	light->setSpecularExp(specularExp);
+//	// Attenuation constant settings
+//	float attenuationConstant = light->getAttenuationConstant();
+//	ImGui::SliderFloat("Attenuation Constant: ", &attenuationConstant, 0.0f, 20.0f);
+//	light->setAttenuationConstant(attenuationConstant);
+//	// Attenuation linear settings
+//	float attenuationLinear = light->getAttenuationLinear();
+//	ImGui::SliderFloat("Attenuation Linear: ", &attenuationLinear, 0.0f, 5.0f);
+//	light->setAttenuationLinear(attenuationLinear);
+//	// Attenuation quadratic settings
+//	float attenuationQuadratic = light->getAttenuationQuadratic();
+//	ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
+//	light->setAttenuationQuadratic(attenuationQuadratic);
+//
 	ImGui::End();
 }
 
