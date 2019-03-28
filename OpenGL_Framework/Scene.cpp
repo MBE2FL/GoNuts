@@ -2,6 +2,26 @@
 
 #include "GUIHelper.h"
 
+Scene::Scene(const string & name, bool inGameUi)
+{
+	_name = name;
+	_inGameUi = inGameUi;
+	_entityManager = new EntityManager();
+	_transformSystem = new TransformSystem(_entityManager);
+	_meshRendererSystem = new MeshRendererSystem(_entityManager);
+	_physicsSystem = new PhysicsSystem(_entityManager);
+	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
+
+	_uiSystem = new UISystem(_entityManager);
+	_uiCamera = _uiSystem->getCamera();
+
+	_guiHelper = GUIHelper::getInstance();
+
+	if (_inGameUi)
+		init();
+}
+
 Scene::Scene(const string & name)
 {
 	_name = name;
@@ -17,8 +37,8 @@ Scene::Scene(const string & name)
 
 	_guiHelper = GUIHelper::getInstance();
 
-	if(_inGameUi)
-	init();
+	if (_inGameUi)
+		init();
 }
 
 Scene::~Scene()
@@ -634,9 +654,8 @@ void Scene::loadScene()
 	spotLight->setAttenuationQuadratic(0.01f);
 }
 
-void Scene::loadSceneFromFile(const string & path, bool inGameUi)
+void Scene::loadSceneFromFile(const string & path)
 {
-	_inGameUi = inGameUi;
 	sqlite3* db;
 	char* errMsg = 0;
 	int exit = 0;

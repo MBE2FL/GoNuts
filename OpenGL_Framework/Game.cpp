@@ -280,7 +280,7 @@ void Game::initializeGame()
 	UIAnimation::loadAllAnimsInFile();
 
 
-	Scene* testScene = new Scene("TEST SCENE");
+	Scene* testScene = new Scene("TEST SCENE", true);
 	//testScene->saveScene();
 
 	sceneManager = SceneManager::getInstance();
