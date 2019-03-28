@@ -1540,7 +1540,7 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 	static float currKeyTime = 0.0f;
 	static UIKeyFrame* keyFrame = nullptr;
 
-	ImGui::BeginChild("UI Key Frames", ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::BeginChild("UI Key Frames", ImVec2(0.0f, 125.0f), true, windowFlags);
 
 	// Select a key frame to edit
 	vector<UIKeyFrame*>::iterator it;
