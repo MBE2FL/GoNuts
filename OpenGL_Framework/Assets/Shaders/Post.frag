@@ -22,14 +22,6 @@ uniform float attenuationConstant;
 uniform float attenuationLinear;
 uniform float attenuationQuadratic;
 
-layout(std140, binding = 3) uniform Light
-{
-	uniform vec3 uLightColor;
-	uniform vec3 uLightPosition;
-	uniform vec3 uLightDirection;
-	uniform vec4 uLightAttenuation; 
-};
-
 
 
 layout(binding = 0) uniform sampler2D uSceneTex; 
@@ -140,7 +132,7 @@ void main()
 	diffuseLight = clamp(diffuseLight, 0.05, 0.95);
 	vec4 textureLookUp = texture(uSceneToon, vec2(diffuseLight, 0.5));
 
-	vec3 ambient = texColor.rgb*0.3;
+	vec3 ambient = texColor.rgb*0.8;
 	vec3 diffuse = vec3(0.35) * textureLookUp.r * texColor.rgb;
 	
 	outColor.rgb = ambient + diffuse * shadowAmount;

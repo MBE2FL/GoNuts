@@ -87,15 +87,12 @@ private:
 	ShaderProgram shaderGbuffer;
 	ShaderProgram shaderOutline;
 	ShaderProgram shaderLUT;
-	ShaderProgram shaderDeferred;
 
 	Texture* LUTTex;
 	Texture* LUTTexVal;
 	Texture* toonRamp;
 
 	SceneManager* sceneManager;
-
-	vector<Light> lights;
 
 	bool lut = true;
 };

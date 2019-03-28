@@ -1,40 +1,89 @@
 #include "Light.h"
-#include "Framebuffer.h"
-#include "MathLib/MathLibCore.h"
 
 Light::Light()
 {
-	color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	position = vec4(0.0f);
-	constantAtten = 1.0f;
-	linearAtten = 0.01f;
-	quadAtten = 0.001f;
 }
 
-void Light::init()
+Light::~Light()
 {
-	// Initialized as a point light
-	_UBO.allocateMemory(sizeof(vec4) * 3 + sizeof(float) * 4);
-	_UBO.setName("Light");
-	type = LightType::Point;
 }
 
-void Light::bind()
+vec3 Light::getPosition() const
 {
-	_UBO.bind(3);
+	return _position;
 }
 
-void Light::update(float dt)
+void Light::setPosition(const vec3 & position)
 {
-	Transform::update(dt);
-	calculateRadius();
-	_UBO.sendData(&color, sizeof(vec4) * 3 + sizeof(float) * 4, 0);
+	_position = position;
 }
 
-float Light::calculateRadius()
+vec3 Light::getAmbient() const
 {
-	float luminance = vec3::dot((vec3(color)/color.w), vec3(0.3f, 0.59f, 0.11f));
-	float luminanceMin = 0.05f;
-	radius = (-linearAtten + sqrtf(linearAtten * linearAtten - 4.0f * quadAtten * (constantAtten - luminance / luminanceMin))) / (2.0f * quadAtten);
-	return radius;
+	return _ambient;
+}
+
+void Light::setAmbient(const vec3 & ambient)
+{
+	_ambient = ambient;
+}
+
+vec3 Light::getDiffuse() const
+{
+	return _diffuse;
+}
+
+void Light::setDiffuse(const vec3 & diffuse)
+{
+	_diffuse = diffuse;
+}
+
+vec3 Light::getSpecular() const
+{
+	return _specular;
+}
+
+void Light::setSpecular(const vec3 & specular)
+{
+	_specular = specular;
+}
+
+float Light::getSpecularExp() const
+{
+	return _specularExp;
+}
+
+void Light::setSpecularExp(const float specularExp)
+{
+	_specularExp = specularExp;
+}
+
+float Light::getAttenuationConstant() const
+{
+	return _attenuationConstant;
+}
+
+void Light::setAttenuationConstant(const float attenuationConstant)
+{
+	_attenuationConstant = attenuationConstant;
+}
+
+float Light::getAttenuationLinear() const
+{
+	return _attenuationLinear;
+}
+
+void Light::setAttenuationLinear(const float attenuationLinear)
+{
+	_attenuationLinear = attenuationLinear;
+}
+
+float Light::getAttenuationQuadratic() const
+{
+	return _attenuationQuadratic;
+}
+
+void Light::setAttenuationQuadratic(const float attenuationQuadratic)
+{
+	_attenuationQuadratic = attenuationQuadratic;
 }

@@ -55,7 +55,7 @@ public:
 private:
 	// Other Properties
 	std::string name;
-	//vec4 color;
+	vec4 color;
 
 	vec3 m_pScale = vec3(1.0f);
 	float m_pRotX = 0.0f;

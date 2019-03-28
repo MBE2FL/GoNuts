@@ -316,6 +316,24 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 			}
 		}*/
 
+		shaderProgram->sendUniform("lightPosition", cameraInverse * vec4(light->getPosition(), 1.0f));
+		shaderProgram->sendUniform("lightAmbient", light->getAmbient());
+		shaderProgram->sendUniform("lightDiffuse", light->getDiffuse());
+		shaderProgram->sendUniform("lightSpecular", light->getSpecular());
+		shaderProgram->sendUniform("lightSpecularExponent", light->getSpecularExp());
+		shaderProgram->sendUniform("attenuationConstant", light->getAttenuationConstant());
+		shaderProgram->sendUniform("attenuationLinear", light->getAttenuationLinear());
+		shaderProgram->sendUniform("attenuationQuadratic", light->getAttenuationQuadratic());
+
+		shaderProgram->sendUniform("spotLightPosition", cameraInverse * vec4(spotLight->getPosition(), 1.0f));
+		shaderProgram->sendUniform("spotLightDirection", vec3(1, 0, 0));
+		shaderProgram->sendUniform("spotLightAmbient", spotLight->getAmbient());
+		shaderProgram->sendUniform("spotLightDiffuse", spotLight->getDiffuse());
+		shaderProgram->sendUniform("spotLightSpecular", spotLight->getSpecular());
+		shaderProgram->sendUniform("spotLightSpecularExponent", spotLight->getSpecularExp());
+		shaderProgram->sendUniform("spotLightattenuationConstant", spotLight->getAttenuationConstant());
+		shaderProgram->sendUniform("spotLightattenuationLinear", spotLight->getAttenuationLinear());
+		shaderProgram->sendUniform("spotLightattenuationQuadratic", spotLight->getAttenuationQuadratic());
 
 		// Bind all the textures.
 		vector<Texture*>::iterator it;
