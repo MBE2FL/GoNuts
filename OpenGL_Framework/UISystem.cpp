@@ -78,7 +78,7 @@ void UISystem::init(EntityManager * entityManager)
 
 	// Create camera component.
 	CameraComponent* camera = new CameraComponent();
-	camera->setOrthographic(-8.0f, 8.0f, -4.5f, 4.5f, -100.0f, 100.0f);
+	camera->setOrthographic(0.0f, 1920.0f, 0.0f, 1080.5f, -10.0f, 10.0f);
 	camera->setCullingActive(false);
 
 	// Add the components to the entity.
@@ -88,4 +88,6 @@ void UISystem::init(EntityManager * entityManager)
 	_camera = entity;
 	_camTrans = transform;
 	_camComp = camera;
+
+	FontManager::init(transform, camera);
 }

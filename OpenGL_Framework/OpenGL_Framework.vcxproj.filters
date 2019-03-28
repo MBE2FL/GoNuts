@@ -258,6 +258,9 @@
     <ClCompile Include="SoundComponent.cpp">
       <Filter>Source Files\EntitySystem\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Source Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -452,6 +455,9 @@
       <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="FreeType.h">
+      <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
       <Filter>Header Files\EntitySystem\Components\Animation\UI</Filter>
     </ClInclude>
   </ItemGroup>

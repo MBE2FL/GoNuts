@@ -24,6 +24,8 @@ Scene::~Scene()
 
 void Scene::update(float deltaTime)
 {
+	totalGameTime+= deltaTime;
+
 	if (_uiSystem)
 		_uiSystem->update(deltaTime);
 
@@ -81,6 +83,25 @@ void Scene::update(float deltaTime)
 	if (_playerSkeleton)
 		_playerSkeleton->update(deltaTime);
 
+	//Freetype stuff
+	//float rainbowSpeed = 2.5f;
+	//float rainbowFrequency = -0.01f;
+	_timeText.update(deltaTime);
+	_coinText.update(deltaTime);
+	_coinText.text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
+	_timeText.text = std::string("TIME: " + to_string(totalGameTime));
+	//for (size_t i = 0; i < _timeText.data.size(); ++i)
+	//{
+	//	float offsetAmount = (_timeText.data[i].pos.x + _timeText.data[i].pos.y) * rainbowFrequency + totalGameTime * rainbowSpeed;
+	//	_timeText.data[i].color = vec4(
+	//		sinf(offsetAmount),
+	//		sinf(offsetAmount + PI / 3.0f * 2.0f),
+	//		sinf(offsetAmount + PI / 3.0f * 4.0f),
+	//		1.0f);
+	//	_timeText.data[i].color += vec4(1.0f);
+	//	_timeText.data[i].color *= 0.5f;
+	//}
+	//ends
 
 	_uiSystem->update(deltaTime);
 }
@@ -89,7 +110,6 @@ void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
 	_uiSystem->draw();
-
 
 	if (_guiHelper->getPhysicsDebugEnabled())
 	{
@@ -146,6 +166,17 @@ void Scene::drawUI()
 {
 	if (_uiSystem)
 		_uiSystem->draw();
+}
+
+void Scene::drawText()
+{
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	_timeText.draw();
+	_coinText.draw();
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void Scene::imguiDraw()
@@ -342,6 +373,24 @@ void Scene::loadOldFaithful()
 	_entityFactory->createVents(2, vec3(15.0f, 2.95f, -5.0f), vec3(1.0f), 98.0f);
 	_entityFactory->createTopPlatforms(5, vec3(14.0f, 4.2f, -5.0f), vec3(0.4f, 1, 1), 125.0f);
 
+
+	//---------------------------------------------------- freetype stuff
+
+	fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
+
+	_timeText.fontface = fontTTF;
+	_timeText.text = std::string("TIME: " + to_string(_entityFactory->getCoinCount()));
+	_timeText.color = vec4(vec4::One);
+	_timeText.origin = vec3(1530.0f, 980.0f, 0.0f);
+
+	_coinText.fontface = fontTTF;
+	_coinText.text = std::string("COINS: " + to_string(_entityFactory->getCoinCount()));
+	_coinText.color = vec4(vec4::One);
+	_coinText.origin = vec3(10.0f, 980.0f, 0.0f);
+
+	_timeText.init();
+	_coinText.init();
+	//----------------------------------------------------ends
 
 	//entity = _entityFactory->createEmpty(vec3(1.0f, -2.0f, -3.4f), vec3(0.4f), nullptr, "Skeleton");
 	//skeletalMeshTest = new SkeletalMesh();
@@ -653,7 +702,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
-			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false);
+			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, 0.5f);
 		}
 		break;
 	case 'c'://left control for sliding

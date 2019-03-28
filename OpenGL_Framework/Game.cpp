@@ -45,6 +45,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
+	ObjectLoader::loadShaderProgram("FreeType", "./Assets/Shaders/font.vert", "./Assets/Shaders/font.frag");
 
 
 	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
@@ -515,8 +516,10 @@ void Game::draw()
 	//time.draw(UICamera, light, spotLight, uiCameraInverse);
 
 	// Draw ImGui stuff
-	_currentScene->imguiDraw();
+	
 
+	_currentScene->drawText();
+	_currentScene->imguiDraw();
 	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	glutSwapBuffers();
 	drawTime = 0.0f;
@@ -532,8 +535,8 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		shaderOutline.reload();
 	if (key == 'v')
 		lut = !lut;
-	if (key == '1')
-		sceneManager->loadScene("tut");
+	//if (key == '1')
+		//sceneManager->loadScene("tut");
 	//if (key == '1')
 	//	sceneManager->loadScene("");
 }
