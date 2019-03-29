@@ -30,6 +30,11 @@ void UIImage::setAnimator(UIAnimator * animator)
 	_animator->setImage(this);
 }
 
+vec3 UIImage::getWorldPosition() const
+{
+	return _transform->getWorldPosition();
+}
+
 vec3 UIImage::getLocalPosition() const
 {
 	return _transform->getLocalPosition();
@@ -171,4 +176,14 @@ UIImage * UIImage::getParent() const
 vector<UIImage*> UIImage::getChildren() const
 {
 	return _children;
+}
+
+bool UIImage::clicked() const
+{
+	return _clicked;
+}
+
+void UIImage::setClicked(const bool clicked)
+{
+	_clicked = clicked;
 }
