@@ -32,9 +32,13 @@ void Light::update(float dt)
 }
 
 float Light::calculateRadius()
-{
-	float luminance = vec3::dot((vec3(color)/color.w), vec3(0.3f, 0.59f, 0.11f));
-	float luminanceMin = 0.05f;
-	radius = (-linearAtten + sqrtf(linearAtten * linearAtten - 4.0f * quadAtten * (constantAtten - luminance / luminanceMin))) / (2.0f * quadAtten);
+{	//
+	//float luminance = vec3::dot((vec3(color)/color.w), vec3(0.3f, 0.59f, 0.11f));
+	//float luminanceMin = 0.05f;
+	//radius = (-linearAtten + sqrtf(linearAtten * linearAtten - 4.0f * quadAtten * (constantAtten - (256.0f / 5.0f) * lightMax)))/ (2.0f * quadAtten);
+	//return radius;
+	float lightMax = fmaxf(fmaxf(color.x, color.y), color.z);
+	radius = (-linearAtten + sqrtf(linearAtten * linearAtten - 4.0f * quadAtten * (constantAtten - (256.0f / 5.0f) * lightMax)))
+		/ (2.0f * quadAtten);
 	return radius;
 }

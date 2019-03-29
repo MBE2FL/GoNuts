@@ -1,18 +1,5 @@
 #version 420
 
-//layout(std140, binding = 3) uniform Light
-//{
-//	uniform vec3 uLightColor;
-//	uniform vec3 uLightPosition;
-//	uniform vec3 uLightDirection;
-//	uniform vec4 uLightAttenuation; 
-//};
-//
-//#define uLightConstantAttenuation uLightAttenuation.x
-//#define uLightLinearAttenuation uLightAttenuation.y
-//#define uLightQuadAttenuation uLightAttenuation.z
-//#define uLightRadius uLightAttenuation.w
-//
 layout(std140, binding = 4) uniform Resolution
 {
 	uniform vec2 uResolution;
@@ -26,18 +13,19 @@ layout(binding = 5) uniform sampler2D uSceneToon;
 
 
 uniform mat4 uProjInverse;
-uniform vec3 uLightColor;
-uniform vec3 uLightPosition;
-uniform vec3 uLightDirection;
+
+uniform int numLights;
+uniform vec4 uLightColor;
+uniform vec4 uLightPosition;
 uniform vec4 uLightAttenuation;
-#define uLightConstantAttenuation uLightAttenuation.x
-#define uLightLinearAttenuation uLightAttenuation.y
-#define uLightQuadAttenuation uLightAttenuation.z
-#define uLightRadius uLightAttenuation.w
 
-
-//uniform float uAmount = 1.0f;
-in vec2 texcoord;
+struct vData
+{
+	vec2 texcoord;
+	vec3 norm;
+	vec3 pos;
+};
+layout(location = 0) in vData o;
 out vec4 outColor;
 
 void main()
@@ -50,11 +38,13 @@ void main()
 	position.xyz /= position.w;
 
 	vec4 albedoColor = texture(uSceneTex, texOffset);
-	outColor.rgb = vec3(0); 
+	outColor.rgb = albedoColor.rgb; 
 
 	vec3 normal = normalize(texture(uSceneNormal, texOffset).rgb * 2 - 1);
 
-	vec3 lightVec = uLightPosition - position.xyz;
+	
+	vec3 lightVec = uLightPosition.xyz - position.xyz;
+	
 	float dist = length(lightVec);
 	vec3 lightDir = lightVec / dist;
 
@@ -67,11 +57,15 @@ void main()
 	
 	// Calculate attenuation (falloff)
 	// Add a small number to avoid divide by zero.
-	float attenuation = 1.0 / (uLightConstantAttenuation + dist * uLightLinearAttenuation + dist * dist * uLightQuadAttenuation);
+	float attenuation = 1.0 /(uLightAttenuation.x + dist * uLightAttenuation.y + dist * dist * uLightAttenuation.z);
 
 	NdotL = NdotL * 0.5 + 0.5;
 	// Calculate the diffuse contribution, substituting the NdotL into a color ramp
-	outColor.rgb += albedoColor.rgb * uLightColor * texture(uSceneToon, vec2(NdotL, 0.5)).rgb * attenuation;
-	//outColor.rgb = lightVec;
+	outColor.rgb += uLightColor.xyz * texture(uSceneToon, vec2(NdotL, 0.5)).rgb * attenuation;
+	//outColor .rgb = fract(lightVec);
+	
+
+	//outColor.rgb = uLightColor.xyz; 
+	outColor.a = 1.0;
 	//outColor.rgb += texture(uTexEmissive, texOffset).rgb;
 }

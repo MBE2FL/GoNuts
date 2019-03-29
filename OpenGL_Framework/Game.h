@@ -95,7 +95,14 @@ private:
 
 	SceneManager* sceneManager;
 
-	vector<Light> lights;
+	vector<Light*> lights;
+	Mesh* sphere;
+
+	vec4* color = new vec4[2000];
+	vec4* position = new vec4[2000];
+	vec4* dir = new vec4[2000];
+	vec4* attenuation = new vec4[2000];
 
 	bool lut = true;
+	bool deferred = false;
 };

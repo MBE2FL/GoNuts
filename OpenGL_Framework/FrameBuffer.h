@@ -5,6 +5,8 @@
 #include "UniformBuffer.h"
 #include "Texture.h"
 #include <iostream>
+#include "Mesh.h"
+#include "Light.h"
 using std::cout;
 using std::endl;
 /*
@@ -65,6 +67,7 @@ public:
 	void bind() const;
 	void unbind() const;
 	void renderToFSQ() const;
+	void renderSphere() const;
 	void bindResolution();
 	
 	void bindColorAsTexture(unsigned colorBuffer, int textureSlot) const;
@@ -97,6 +100,7 @@ protected:
 	static int _MaxColorAttachments;
 	static bool _IsInitFrameBuffers;
 	static VertexArrayObject FullScreenQuad;
+	static Mesh Sphere;
 };
 
 class GBuffer : public Framebuffer

@@ -38,15 +38,17 @@ void Game::initializeGame()
 	frameBufferShadow.addDepthTarget();
 	frameBufferShadow.init(8192, 8192);
 
-	lights.reserve(64);
-	for (int i = 0; i < 64; ++i)
+	
+
+	lights.reserve(1000);
+	for (int i = 0; i < 1000; ++i)
 	{
-		lights.push_back(Light());
-		lights[i].init();
-		lights[i].color = vec4(1.f, 0.8f, 0.3f, 1.0f);
-		lights[i].constantAtten = 0.1f;
-		lights[i].linearAtten = 0.05f;
-		lights[i].quadAtten = 0.025f;
+		lights.push_back(new Light());
+		lights[i]->init();
+		lights[i]->color = vec4(1.f);//vec4(1.f, 0.8f, 0.3f, 1.0f);
+		lights[i]->constantAtten = 1.0f;
+		lights[i]->linearAtten = 0.7f;
+		lights[i]->quadAtten = 1.8f;
 
 	}
 
@@ -62,7 +64,7 @@ void Game::initializeGame()
 	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
-	shaderDeferred.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/deferred.frag");
+	shaderDeferred.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/deferred.frag");
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
 	//LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
@@ -376,8 +378,13 @@ void Game::update()
 			sin(i + TotalGameTime) * 0.1f + ((i / 4) % 4),
 			sin(TotalGameTime) * 0.1f + (i / 16),
 			cos(i + TotalGameTime) * 0.1f + (i % 4)) * vec3(60,40,-20) - vec3(30,25,0);*/
-		lights[i].setLocalPosition(vec3(sinf(TotalGameTime) * 4, 4.9f, -5.f));
+		lights[i]->setLocalPosition(vec3(
+			sin(i + TotalGameTime) * 0.1f + ((i / 4) % 4),
+			sin(TotalGameTime) * 0.1f + (i / 16),
+			cos(i + TotalGameTime) * 0.1f + (i % 4)) * vec3(60, 40, -20) - vec3(30, 25, 0));
+		//lights[i]->setLocalPosition(vec3(0, 5, -5));
 	}
+	lights[lights.size() - 1]->setLocalPosition(vec3(0, 5, -5)); 
 }
 
 void Game::draw()
@@ -477,29 +484,39 @@ void Game::draw()
 	glViewport(0, 0, 1900, 1000);
 
 	frameBufferLUT.clear();
-
+	frameBufferLUT.bind();
 	//frameBufferOutline.renderToFSQ();
 	frameBufferLUT.renderToFSQ();
-	
+	frameBufferLUT.unbind();
+
 	shaderDeferred.bind();
 	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-
-	for (int i = 0; i < (int)lights.size(); ++i)
+	frameBufferLUT.bindColorAsTexture(0, 0);
+	if (deferred)
 	{
-		lights[i].bind();
-		lights[i].position = cameraTrans->getView() * vec4(lights[i].getLocalPosition(), 1.0f);
-		lights[i].update(0.0f);
+		for (int i = 0; i < (int)lights.size(); ++i)
+		{
+			lights[i]->bind();
+			lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
+			lights[i]->update(0.0f);
 
-		shaderDeferred.sendUniform("uLightColor", lights[i].color);
-		shaderDeferred.sendUniform("uLightPosition", lights[i].position);
-		shaderDeferred.sendUniform("uLightDirection", lights[i].direction);
-		shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i].constantAtten, lights[i].linearAtten, lights[i].quadAtten, lights[i].radius));
+			TransformComponent transform;
+			transform.setLocalPosition(lights[i]->getLocalPosition());
+			transform.setLocalScale(lights[i]->radius);
+			transform.update(updateTimer->getElapsedTimeSeconds());
+			shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
+			shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
+			shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
+			shaderDeferred.sendUniform("uLightColor", lights[i]->color);
+			shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
+			shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
+			shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
 
-		frameBufferLUT.renderToFSQ();
+			frameBufferLUT.renderSphere();
+		}
 	}
 	
 	//gbuffer.drawFSQ();
-	frameBufferLUT.unbind();
 
 	//frameBufferUI.unbind();
 	toonRamp->unBind();
@@ -574,6 +591,8 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		lut = !lut;
 	if (key == '1')
 		sceneManager->loadScene("tut");
+	if (key == 'd')
+		deferred = !deferred;
 	//if (key == '1')
 	//	sceneManager->loadScene("");
 }
