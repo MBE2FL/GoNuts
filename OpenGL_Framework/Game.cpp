@@ -44,7 +44,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
-	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
+	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/UI.frag");
 	ObjectLoader::loadShaderProgram("FreeType", "./Assets/Shaders/font.vert", "./Assets/Shaders/font.frag");
 
 
@@ -375,7 +375,7 @@ void Game::draw()
 	gbuffer.setViewport();
 	gbuffer.bind();
 
-	_currentScene->drawUI();
+	//_currentScene->drawUI();
 	_currentScene->draw();
 
 	gbuffer.unbind();
@@ -497,7 +497,7 @@ void Game::draw()
 	//shaderGbuffer.unBind();
 
 
-	//_currentScene->drawUI();
+	_currentScene->drawUI();
 	
 
 	

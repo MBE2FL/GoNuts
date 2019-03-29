@@ -1601,6 +1601,12 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 		keyFrame->setRot(quat);
 
 
+		// Alpha Property
+		float alpha = keyFrame->getAlpha();
+		ImGui::DragFloat("Alpha", &alpha, 0.05f, 0.0f, 1.0f, "%.1f", 1.0f);
+		keyFrame->setAlpha(alpha);
+
+
 		ImGui::EndChild();
 		ImGui::PopStyleVar();
 	}

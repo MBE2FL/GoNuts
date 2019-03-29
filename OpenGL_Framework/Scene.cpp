@@ -213,7 +213,16 @@ void Scene::drawShadow()
 void Scene::drawUI()
 {
 	if (_uiSystem)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		_uiSystem->draw();
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 void Scene::drawText()

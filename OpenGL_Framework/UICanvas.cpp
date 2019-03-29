@@ -25,10 +25,6 @@ void UICanvas::update(float deltaTime)
 void UICanvas::draw(mat4 & camView, mat4 & camProj)
 {
 	// Draw all of this canvases images.
-	//glEnable(GL_BLEND);
-	
-	glDisable(GL_BLEND);
-
 	for (auto const& imageKeyVal : _images)
 	{
 		UIImage* image = imageKeyVal.second;
@@ -45,6 +41,7 @@ void UICanvas::draw(mat4 & camView, mat4 & camProj)
 		shaderProgram->sendUniformMat4("uModel", transform->getLocalToWorldMatrix().data, false);
 		shaderProgram->sendUniformMat4("uView", camView.data, false);
 		shaderProgram->sendUniformMat4("uProj", camProj.data, false);
+		shaderProgram->sendUniform("uAlpha", image->getAlpha());
 
 
 		// Bind the texture.
