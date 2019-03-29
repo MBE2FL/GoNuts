@@ -3,6 +3,7 @@
 
 bool Framebuffer::_IsInitFrameBuffers = false;
 VertexArrayObject Framebuffer::FullScreenQuad;
+Mesh Framebuffer::Sphere;
 int Framebuffer::_MaxColorAttachments = 0;
 
 DepthTarget::~DepthTarget()
@@ -173,6 +174,15 @@ void Framebuffer::renderToFSQ() const
 	unbind();
 }
 
+void Framebuffer::renderSphere() const
+{
+	setViewport();
+	bind();
+	//Sphere.
+	Sphere.vao.draw();
+	unbind();
+}
+
 void Framebuffer::bindResolution()
 {
 	_ResolutionUBO.bind(4U);
@@ -267,6 +277,8 @@ void Framebuffer::initFrameBuffers()
 	FullScreenQuad.addVBO(vertexData);
 	FullScreenQuad.addVBO(uvData);
 	FullScreenQuad.createVAO();
+
+	Sphere.loadFromFile("./Assets/Models/sphere.obj");
 
 	_IsInitFrameBuffers = true;
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_MaxColorAttachments);

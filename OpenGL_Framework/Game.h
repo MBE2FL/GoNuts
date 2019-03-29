@@ -87,6 +87,7 @@ private:
 	ShaderProgram shaderGbuffer;
 	ShaderProgram shaderOutline;
 	ShaderProgram shaderLUT;
+	ShaderProgram shaderDeferred;
 
 	Texture* LUTTex;
 	Texture* LUTTexVal;
@@ -94,5 +95,16 @@ private:
 
 	SceneManager* sceneManager;
 
+
+	vector<Light*> lights;
+	Mesh* sphere;
+
+	vec4* color = new vec4[2000];
+	vec4* position = new vec4[2000];
+	vec4* dir = new vec4[2000];
+	vec4* attenuation = new vec4[2000];
+
+
 	bool lut = true;
+	bool deferred = false;
 };

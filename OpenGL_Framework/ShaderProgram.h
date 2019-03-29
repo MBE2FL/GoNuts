@@ -48,7 +48,9 @@ public:
 	void sendUniform(const string& name, float scalar);
 	void sendUniform(const string& name, const vec2& vector);
 	void sendUniform(const string& name, const vec3& vector);
+	void sendUniformVec3Array(const string& name, const unsigned int count, const float* vector);
 	void sendUniform(const string& name, const vec4& vector);
+	void sendUniformVec4Array(const string& name, const unsigned int count, const float* vector);
 	void sendUniformMat3(const string& name, float* matrix, bool transpose);
 	void sendUniformMat4(const string& name, float* matrix, bool transpose);
 	void sendUniformMat4Array(const string& name, const unsigned int numOfMat, float* matrix, bool transpose);
