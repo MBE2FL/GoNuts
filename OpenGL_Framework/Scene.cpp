@@ -1202,9 +1202,9 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		" NOT NULL,"\
 		"Image      INT  REFERENCES UIImages(Name) ON DELETE SET NULL"\
 		" NOT NULL,"\
-		"Animations TEXT DEFAULT "" NOT NULL,"\
-		"[Current Animation] TEXT DEFAULT "" NOT NULL,"\
-		"[Anim Order]        TEXT DEFAULT "" NOT NULL,"\
+		"Animations TEXT DEFAULT '' NOT NULL,"\
+		"[Current Animation] TEXT DEFAULT '' NOT NULL,"\
+		"[Anim Order]        TEXT DEFAULT '' NOT NULL,"\
 		"Active              BOOLEAN NOT NULL"\
 		" DEFAULT(FALSE)"\
 		"); ";
