@@ -26,6 +26,11 @@ public:
 	float getY() const;
 	float getZ() const;
 
+	float* getWRef();
+	float* getXRef();
+	float* getYRef();
+	float* getZRef();
+
 	void setW(const float w);
 	void setX(const float x);
 	void setY(const float y);

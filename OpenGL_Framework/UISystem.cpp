@@ -57,7 +57,10 @@ Entity * UISystem::getCamera() const
 
 void UISystem::checkClick(int x, int y)
 {
-	
+	for (auto const& canvasKV : _canvases)
+	{
+		canvasKV.second->checkClick(x, y);
+	}
 }
 
 unordered_map<string, UICanvas*> UISystem::getCanvases() const

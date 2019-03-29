@@ -20,6 +20,8 @@ public:
 	string getName() const;
 	unordered_map<string, UIImage*> getImages() const;
 	unordered_map<string, UIButton*> getButtons() const;
+	void applyCanvasAnim(const string& animName);
+	void checkClick(int x, int y);
 
 private:
 	string _name;

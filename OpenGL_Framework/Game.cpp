@@ -16,6 +16,7 @@ Game::~Game()
 
 void Game::initializeGame()
 {
+	srand(0);
 	// OpenGL will not draw triangles hidden behind other geometry
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -44,7 +45,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("Water", "./Assets/Shaders/waterShader.vert", "./Assets/Shaders/waterShader.frag");
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
-	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
+	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/UI.frag");
 	ObjectLoader::loadShaderProgram("FreeType", "./Assets/Shaders/font.vert", "./Assets/Shaders/font.frag");
 
 
@@ -304,6 +305,7 @@ void Game::initializeGame()
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney", true);
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
+	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "ScoreBoard", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
@@ -375,7 +377,7 @@ void Game::draw()
 	gbuffer.setViewport();
 	gbuffer.bind();
 
-	_currentScene->drawUI();
+	//_currentScene->drawUI();
 	_currentScene->draw();
 
 	gbuffer.unbind();
@@ -497,7 +499,7 @@ void Game::draw()
 	//shaderGbuffer.unBind();
 
 
-	//_currentScene->drawUI();
+	_currentScene->drawUI();
 	
 
 	

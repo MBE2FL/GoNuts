@@ -213,7 +213,16 @@ void Scene::drawShadow()
 void Scene::drawUI()
 {
 	if (_uiSystem)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		_uiSystem->draw();
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 void Scene::drawText()
@@ -712,7 +721,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
-			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, 0.5f);
+			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, -2000.0f, 7000.0f, 0.5f);
 		}
 		break;
 	case 'c'://left control for sliding
@@ -1193,9 +1202,9 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		" NOT NULL,"\
 		"Image      INT  REFERENCES UIImages(Name) ON DELETE SET NULL"\
 		" NOT NULL,"\
-		"Animations TEXT DEFAULT NULL,"\
-		"[Current Animation] TEXT DEFAULT NULL,"\
-		"[Anim Order]        TEXT DEFAULT NULL,"\
+		"Animations TEXT DEFAULT '' NOT NULL,"\
+		"[Current Animation] TEXT DEFAULT '' NOT NULL,"\
+		"[Anim Order]        TEXT DEFAULT '' NOT NULL,"\
 		"Active              BOOLEAN NOT NULL"\
 		" DEFAULT(FALSE)"\
 		"); ";
@@ -2045,7 +2054,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 				if (animator->getCurrentAnimation())
 					sql += ", '" + animator->getCurrentAnimation()->getName() + "'";
 				else
-					sql += ", NULL";
+					sql += ", ''";
 
 				// Save the animation order
 				// Only save the animations which are in both the animation stack, and the list of animations.
@@ -2074,10 +2083,10 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 					sql += "'";
 				}
 				else
-					sql += ", NULL";
+					sql += ", ''";
 			}
 			else
-				sql += ", NULL, NULL, NULL";
+				sql += ", '', '', ''";
 
 
 			// Save whether or not the animator is active

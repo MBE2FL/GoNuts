@@ -233,6 +233,9 @@ mat4 Quaternion::getRotationMatrix()
 
 void Quaternion::normalize()
 {
+	if ((_w + _x + _y + _z) == 0.0f)
+		return;
+
 	float sqrW = pow(_w, 2.0f);
 	float sqrX = pow(_x, 2.0f);
 	float sqrY = pow(_y, 2.0f);
@@ -271,6 +274,26 @@ float Quaternion::getY() const
 float Quaternion::getZ() const
 {
 	return _z;
+}
+
+float * Quaternion::getWRef()
+{
+	return &_w;
+}
+
+float * Quaternion::getXRef()
+{
+	return &_x;
+}
+
+float * Quaternion::getYRef()
+{
+	return &_y;
+}
+
+float * Quaternion::getZRef()
+{
+	return &_z;
 }
 
 void Quaternion::setW(const float w)

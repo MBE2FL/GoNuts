@@ -17,7 +17,7 @@ void UIAnimator::addAnimation(UIAnimation * anim)
 	if (_animations.find(name) != _animations.end())
 	{
 		cout << "Animation with name: " << name << " already exists!" << endl;
-		system("pause");
+		//system("pause");
 	}
 	_animations[name] = anim;
 }
@@ -190,6 +190,11 @@ void UIAnimator::setActive(const bool active)
 	_active = active;
 }
 
+AddTRS UIAnimator::getCurrTRS() const
+{
+	return _addTRS;
+}
+
 void UIAnimator::getPrevNextFrames()
 {
 	// Find the previous and next Keyframe of animation.
@@ -216,8 +221,13 @@ void UIAnimator::getPrevNextFrames()
 	// Blend between the previous and next frame of animation.
 	float interValue = invLerp(_currentTime, prevFrame->getStartTime(), nextFrame->getStartTime());
 
-	_image->setLocalPosition(lerp(prevFrame->getPos(), nextFrame->getPos(), interValue));
-	_image->setScale(lerp(prevFrame->getScale(), nextFrame->getScale(), interValue));
+	//_image->setLocalPosition(lerp(prevFrame->getPos(), nextFrame->getPos(), interValue));
+	//_image->setScale(lerp(prevFrame->getScale(), nextFrame->getScale(), interValue));
 	//image->setLocalRotation(lerp(prevFrame->getRot(), nextFrame->getRot(), interValue));
 	_image->setAlpha(lerp(prevFrame->getAlpha(), nextFrame->getAlpha(), interValue));
+
+	// Set the current TRS to add to the image's current TRS
+	_addTRS.pos = lerp(prevFrame->getPos(), nextFrame->getPos(), interValue);
+	_addTRS.scale = lerp(prevFrame->getScale(), nextFrame->getScale(), interValue);
+	_addTRS.rot = Quaternion::nslerp(prevFrame->getRot(), nextFrame->getRot(), interValue);
 }

@@ -14,6 +14,13 @@ using std::stack;
 
 class UIImage;
 
+struct AddTRS
+{
+	vec3 pos = vec3::Zero;
+	vec3 scale = vec3::Zero;
+	Quaternion rot = Quaternion::Identity;
+};
+
 class UIAnimator
 {
 public:
@@ -41,6 +48,8 @@ public:
 
 	bool getActive() const;
 	void setActive(const bool active);
+
+	AddTRS getCurrTRS() const;
 	
 
 private:
@@ -50,6 +59,7 @@ private:
 	unordered_map<string, UIAnimation*> _animations;
 	stack<UIAnimation*> _animOrder;
 	bool _active = false;
+	AddTRS _addTRS;
 
 	void getPrevNextFrames();
 };

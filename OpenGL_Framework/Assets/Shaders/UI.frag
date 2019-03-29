@@ -12,14 +12,17 @@ layout(location = 0) in vData o;
 
 out vec4 outColour;
 
+uniform float uAlpha = 1.0;
 
 void main()
 {
 	vec2 textureCoord = o.texcoord;
 
 	vec4 textureColour = texture(uTex, textureCoord);
+
+	if (textureColour.a == 0)
+		discard;
 	
-	outColour.a = textureColour.a;
+	outColour.a = uAlpha;
 	outColour.rgb = textureColour.rgb;
-	outColour.rgb = vec3(1,0,0);
 }
