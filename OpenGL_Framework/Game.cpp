@@ -305,7 +305,7 @@ void Game::initializeGame()
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney", true);
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
-	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "ScoreBoard", false);
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
