@@ -1,39 +1,38 @@
 #pragma once
 
 #include "MathLib/MathLibCore.h"
+#include "Transform.h"
+#include "UniformBuffer.h"
+#include "Mesh.h"
 
-
-class Light
+class Light : public Transform
 {
 public:
+	enum LightType
+	{
+		Directional,
+		Point,
+		Spotlight
+	};
+
+	vec4 color;
+	vec4 position;
+	vec4 direction;
+
+	float constantAtten;
+	float linearAtten;
+	float quadAtten;
+	float radius;
+
+	LightType type;
+	Mesh* m_LightVolume;
+
 	Light();
-	~Light();
+	void init();
 
-	vec3 getPosition() const;
-	void setPosition(const vec3& position);
-	vec3 getAmbient() const;
-	void setAmbient(const vec3& ambient);
-	vec3 getDiffuse() const;
-	void setDiffuse(const vec3& diffuse);
-	vec3 getSpecular() const;
-	void setSpecular(const vec3& specular);
-	float getSpecularExp() const;
-	void setSpecularExp(const float specularExp);
-	float getAttenuationConstant() const;
-	void setAttenuationConstant(const float attenuationConstant);
-	float getAttenuationLinear() const;
-	void setAttenuationLinear(const float attenuationLinear);
-	float getAttenuationQuadratic() const;
-	void setAttenuationQuadratic(const float attenuationQuadratic);
+	void bind(); // Binds the Uniform Buffer Object
+	void update(float dt);
+	float calculateRadius();
 
-private:
-	vec3 _position;
-	vec3 _ambient;
-	vec3 _diffuse;
-	vec3 _specular;
-	float _specularExp;
-	float _attenuationConstant;
-	float _attenuationLinear;
-	float _attenuationQuadratic;
-
+	UniformBuffer _UBO;
 };

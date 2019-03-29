@@ -171,10 +171,22 @@ void ShaderProgram::sendUniform(const string & name, const vec3 & vector)
 	glUniform3f(location, vector.x, vector.y, vector.z);
 }
 
+void ShaderProgram::sendUniformVec3Array(const string & name, const unsigned int count, const float * vector)
+{
+	GLint location = getUniformLocation(name);
+	glUniform3fv(location, count, vector);
+}
+
 void ShaderProgram::sendUniform(const string & name, const vec4 & vector)
 {
 	GLint location = getUniformLocation(name);
 	glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+}
+
+void ShaderProgram::sendUniformVec4Array(const string & name, const unsigned int count, const float* vector)
+{
+	GLint location = getUniformLocation(name);
+	glUniform4fv(location, count, vector);
 }
 
 void ShaderProgram::sendUniformMat3(const string & name, float * matrix, bool transpose)
