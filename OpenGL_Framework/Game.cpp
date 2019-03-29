@@ -16,6 +16,7 @@ Game::~Game()
 
 void Game::initializeGame()
 {
+	srand(0);
 	// OpenGL will not draw triangles hidden behind other geometry
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);

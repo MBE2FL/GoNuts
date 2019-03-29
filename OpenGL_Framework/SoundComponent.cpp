@@ -41,6 +41,28 @@ void SoundComponent::playSound(string soundName, FMOD::Channel * channel, bool l
 	Sound::SetVolume(channel, volume);
 }
 
+void SoundComponent::playSound(string soundName, FMOD::Channel * channel, bool loops, float freqMin, float freqMax, float volume)
+{
+	Sound* temp = getSound(soundName);
+	channel = temp->Play(loops);
+	setFrequencyRange(channel, freqMin, freqMax);
+	Sound::SetVolume(channel, volume);
+}
+
+void SoundComponent::setFrequencyRange(FMOD::Channel * channel, float freqMin, float freqMax)
+{
+	float frequency = 0.0f;
+	channel->getFrequency(&frequency);
+	frequency += (float(rand()) / float(RAND_MAX))*(freqMax - freqMin) + freqMin;
+	cout << frequency << endl;
+	channel->setFrequency(frequency);
+}
+
+void SoundComponent::setFrequency(FMOD::Channel * channel, float frequency)
+{
+	channel->setFrequency(frequency);
+}
+
 FMOD::Channel * SoundComponent::getBGChannel()
 {
 	return backGroundChannel;

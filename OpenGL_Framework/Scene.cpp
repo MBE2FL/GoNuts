@@ -712,7 +712,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
-			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, 0.5f);
+			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, -2000.0f, 7000.0f, 0.5f);
 		}
 		break;
 	case 'c'://left control for sliding
