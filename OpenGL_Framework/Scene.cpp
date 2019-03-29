@@ -1202,9 +1202,9 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		" NOT NULL,"\
 		"Image      INT  REFERENCES UIImages(Name) ON DELETE SET NULL"\
 		" NOT NULL,"\
-		"Animations TEXT DEFAULT NULL,"\
-		"[Current Animation] TEXT DEFAULT NULL,"\
-		"[Anim Order]        TEXT DEFAULT NULL,"\
+		"Animations TEXT DEFAULT "" NOT NULL,"\
+		"[Current Animation] TEXT DEFAULT "" NOT NULL,"\
+		"[Anim Order]        TEXT DEFAULT "" NOT NULL,"\
 		"Active              BOOLEAN NOT NULL"\
 		" DEFAULT(FALSE)"\
 		"); ";
@@ -2054,7 +2054,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 				if (animator->getCurrentAnimation())
 					sql += ", '" + animator->getCurrentAnimation()->getName() + "'";
 				else
-					sql += ", NULL";
+					sql += ", ''";
 
 				// Save the animation order
 				// Only save the animations which are in both the animation stack, and the list of animations.
@@ -2083,10 +2083,10 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 					sql += "'";
 				}
 				else
-					sql += ", NULL";
+					sql += ", ''";
 			}
 			else
-				sql += ", NULL, NULL, NULL";
+				sql += ", '', '', ''";
 
 
 			// Save whether or not the animator is active
