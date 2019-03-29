@@ -379,8 +379,8 @@ void Game::update()
 			sin(TotalGameTime) * 0.1f + (i / 16),
 			cos(i + TotalGameTime) * 0.1f + (i % 4)) * vec3(60,40,-20) - vec3(30,25,0);*/
 		lights[i]->setLocalPosition(vec3(
-			sin(i + TotalGameTime) * 0.1f + ((i / 4) % 4),
-			sin(TotalGameTime) * 0.1f + (i / 16),
+			sin(i + TotalGameTime) * 0.1f + ((i /64)),
+			sin(TotalGameTime) * 0.1f + (i / 64),
 			cos(i + TotalGameTime) * 0.1f + (i % 4)) * vec3(60, 40, -20) - vec3(30, 25, 0));
 		//lights[i]->setLocalPosition(vec3(0, 5, -5));
 	}
@@ -491,7 +491,7 @@ void Game::draw()
 
 	shaderDeferred.bind();
 	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-	frameBufferLUT.bindColorAsTexture(0, 0);
+	 frameBufferLUT.bindColorAsTexture(0, 0);
 	if (deferred)
 	{
 		for (int i = 0; i < (int)lights.size(); ++i)
@@ -586,7 +586,10 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	if (key == 'o')
 		outline = !outline;
 	if (key == 'r')
+	{
 		shaderOutline.reload();
+		shaderDeferred.reload();
+	}
 	if (key == 'v')
 		lut = !lut;
 	if (key == '1')

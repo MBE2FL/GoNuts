@@ -61,7 +61,7 @@ void main()
 
 	NdotL = NdotL * 0.5 + 0.5;
 	// Calculate the diffuse contribution, substituting the NdotL into a color ramp
-	outColor.rgb += uLightColor.xyz * texture(uSceneToon, vec2(NdotL, 0.5)).rgb * attenuation;
+	outColor.rgb += albedoColor.rgb * uLightColor.xyz * texture(uSceneToon, vec2(NdotL, 0.5)).rgb * attenuation;
 	//outColor .rgb = fract(lightVec);
 	
 
