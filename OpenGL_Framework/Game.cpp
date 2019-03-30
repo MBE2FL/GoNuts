@@ -400,6 +400,7 @@ void Game::draw()
 	shaderLUT.bind();
 
 	shaderLUT.sendUniform("lut", lut);
+	shaderLUT.sendUniform("totalGameTime", TotalGameTime);
 	LUTTex->bind(30);
 	
 
