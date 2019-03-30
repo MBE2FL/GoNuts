@@ -80,10 +80,12 @@ class Scene
 {
 public:
 	Scene(const string& name, bool inGameUi);
+	Scene(const string& name, bool ScoreboardUi, int forScoreboard);
 	Scene(const string& name);
 	~Scene();
 
-	void init();
+	void initInGameUi();
+	void initScoreboardUi();
 
 	void update(float deltaTime);
 	void draw();
@@ -123,10 +125,19 @@ public:
 	TransformComponent* getPlayTrans() { return _playerTransform; }
 
 private:
-	FontFace* fontTTF;
+
+	FontFace* fontTTF;//for the font
+	//for the ingame ui
+	bool _inGameUi = false;
 	TextRenderer* _timeText;
 	TextRenderer* _coinText;
-	bool _inGameUi = false;
+
+	//for the scoreboard
+	bool _scoreboardUi = false;
+	TextRenderer* _levelName;
+	vector <TextRenderer*> _nameScore;
+	vector <TextRenderer*> _timeScore;
+
 	SoundComponent* _sound;
 	string _name;
 	string _filename;

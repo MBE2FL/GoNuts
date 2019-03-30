@@ -228,6 +228,7 @@ void Game::initializeGame()
 
 	//ui textures
 	ObjectLoader::loadTexture("Menu Picture", "./Assets//Textures/Menu Picture.png");
+	ObjectLoader::loadTexture("Scoreboard", "./Assets//Textures/Scoreboard.png");
 	ObjectLoader::loadTexture("Vert black bar", "./Assets/Textures/Vertical black bar.png");
 	ObjectLoader::loadTexture("start button", "./Assets/Textures/START button.png");
 	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
@@ -253,7 +254,6 @@ void Game::initializeGame()
 	
 	sceneManager->addScene(testScene);
 	sceneManager->loadOldFaithful(testScene->getName());
-	//sceneManager->loadMainMenu(testScene->getName());
 	_currentScene = sceneManager->getCurrentScene();
 
 
@@ -261,7 +261,9 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
-	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", false);
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", true, 1);
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
