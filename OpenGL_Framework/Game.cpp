@@ -234,6 +234,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
+	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
@@ -451,13 +452,10 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	if (key == 'v')
 		lut = !lut;
 
-	if (key == '1')
-		sceneManager->loadScene("tut");
+	//if (key == '1')
+	//	sceneManager->loadScene("tut");
 	if (key == 'd')
 		deferred = !deferred;
-
-	//if (key == '1')
-	//	sceneManager->loadScene("");
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
