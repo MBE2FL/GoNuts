@@ -134,7 +134,8 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setPlayerSpawnPosition(otherTrans->getWorldPosition());
+			otherTrans->setPlayerSpawnPosition(vec3(otherTrans->getWorldPosition().x, 
+				otherTrans->getWorldPosition().y + 2, otherTrans->getWorldPosition().z));
 		}
 		break;
 	}

@@ -119,7 +119,15 @@ void Game::initializeGame()
 
 	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad.obj");
 
-
+	//Road stuff things
+	ObjectLoader::loadMesh("Awning", "./Assets/Models/Awning.obj");
+	ObjectLoader::loadMesh("Bench", "./Assets/Models/Bench.obj");
+	ObjectLoader::loadMesh("Fire Hydrant", "./Assets/Models/Fire Hydrant.obj");
+	ObjectLoader::loadMesh("Road", "./Assets/Models/Road.obj");
+	ObjectLoader::loadMesh("Stop Sign", "./Assets/Models/Stop Sign.obj");
+	ObjectLoader::loadMesh("Street Light", "./Assets/Models/Street Light.obj");
+	ObjectLoader::loadMesh("Traffic Obstacle 1", "./Assets/Models/Traffic Obstacle 1.obj");
+	ObjectLoader::loadMesh("Traffic Obstacle 2", "./Assets/Models/Traffic Obstacle 2.obj");
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
@@ -182,6 +190,16 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
 	ObjectLoader::loadTexture("Table", "./Assets/Textures/table texture.png");
 	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
+
+	//Some Road Textures
+	ObjectLoader::loadTexture("Awning", "./Assets/Textures/Awning.png");
+	ObjectLoader::loadTexture("Bench", "./Assets/Textures/Bench.png");
+	ObjectLoader::loadTexture("Fire Hydrant", "./Assets/Textures/Fire Hydrant.png");
+	ObjectLoader::loadTexture("Road", "./Assets/Textures/Road.png");
+	ObjectLoader::loadTexture("Stop Sign", "./Assets/Textures/Stop Sign.png");
+	ObjectLoader::loadTexture("Street Light", "./Assets/Textures/Street Light.png");
+	ObjectLoader::loadTexture("Traffic Obstacle", "./Assets/Textures/Traffic Obstacle.png");
+
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
 	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");
@@ -210,6 +228,7 @@ void Game::initializeGame()
 
 	//ui textures
 	ObjectLoader::loadTexture("Menu Picture", "./Assets//Textures/Menu Picture.png");
+	ObjectLoader::loadTexture("Scoreboard", "./Assets//Textures/Scoreboard.png");
 	ObjectLoader::loadTexture("Vert black bar", "./Assets/Textures/Vertical black bar.png");
 	ObjectLoader::loadTexture("start button", "./Assets/Textures/START button.png");
 	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
@@ -235,7 +254,6 @@ void Game::initializeGame()
 	
 	sceneManager->addScene(testScene);
 	sceneManager->loadOldFaithful(testScene->getName());
-	//sceneManager->loadMainMenu(testScene->getName());
 	_currentScene = sceneManager->getCurrentScene();
 
 
@@ -243,7 +261,9 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
-	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", false);
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", true, 1);
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL

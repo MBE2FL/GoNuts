@@ -21,7 +21,29 @@ Scene::Scene(const string & name, bool inGameUi)
 	_guiHelper = GUIHelper::getInstance();
 
 	if (_inGameUi)
-		init();
+		initInGameUi();
+}
+
+Scene::Scene(const string & name, bool ScoreboardUi, int forScoreboard)
+{
+	_name = name;
+	_scoreboardUi = ScoreboardUi;
+	_entityManager = new EntityManager();
+	_transformSystem = new TransformSystem(_entityManager);
+	_meshRendererSystem = new MeshRendererSystem(_entityManager);
+	_physicsSystem = new PhysicsSystem(_entityManager);
+	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
+
+	_uiSystem = new UISystem(_entityManager);
+	_uiCamera = _uiSystem->getCamera();
+
+	_score = new ScoreCounter;
+
+	_guiHelper = GUIHelper::getInstance();
+
+	if (_scoreboardUi)
+		initScoreboardUi();
 }
 
 Scene::Scene(const string & name)
@@ -38,16 +60,13 @@ Scene::Scene(const string & name)
 	_uiCamera = _uiSystem->getCamera();
 
 	_guiHelper = GUIHelper::getInstance();
-
-	if (_inGameUi)
-		init();
 }
 
 Scene::~Scene()
 {
 }
 
-void Scene::init()
+void Scene::initInGameUi()
 {
 	fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
 
@@ -65,6 +84,42 @@ void Scene::init()
 
 	_timeText->init();
 	_coinText->init();
+}
+
+void Scene::initScoreboardUi()
+{
+	fontTTF = FontManager::initNewFont("BADABB__.ttf", 65);
+
+	_levelName = new TextRenderer();
+	_levelName->fontface = fontTTF;
+	_levelName->text = std::string("level #");
+	_levelName->color = vec4(vec3::Zero, 1.0f);
+	_levelName->origin = vec3(800.0f, 800.0f, 2.0f);
+	_levelName->init();
+
+	for (int i = 0; i < 5; i++)
+	{
+		int a = 10000;
+		TextRenderer* temp = new TextRenderer();
+		temp->fontface = fontTTF;
+		temp->text = std::string("NAME: " + to_string(a));
+		temp->color = vec4(vec3::Zero, 1.0f);
+		temp->origin = vec3(370.0f, 750.0f - (i * 90), 2.0f);
+		_nameScore.push_back(temp);
+		_nameScore[i]->init();
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		int a = 10000;
+		TextRenderer* temp = new TextRenderer();
+		temp->fontface = fontTTF;
+		temp->text = std::string("TIME: " + to_string(a));
+		temp->color = vec4(vec3::Zero, 1.0f);
+		temp->origin = vec3(1050.0f, 750.0f - (i * 90), 2.0f);
+		_timeScore.push_back(temp);
+		_timeScore[i]->init();
+	}
 }
 
 void Scene::update(float deltaTime)
@@ -127,28 +182,23 @@ void Scene::update(float deltaTime)
 	if (_playerSkeleton)
 		_playerSkeleton->update(deltaTime);
 
-	//Freetype stuff
-	//float rainbowSpeed = 2.5f;
-	//float rainbowFrequency = -0.01f;
-	if (_timeText && _coinText)
+
+	if (_inGameUi)
 	{
 		_timeText->update(deltaTime);
 		_coinText->update(deltaTime);
 		_coinText->text = std::string("COINS: " + to_string(_score->getCoinCount()));
 		_timeText->text = std::string("TIME: " + to_string(_score->getTotalGameTime()));
 	}
-	//for (size_t i = 0; i < _timeText.data.size(); ++i)
-	//{
-	//	float offsetAmount = (_timeText.data[i].pos.x + _timeText.data[i].pos.y) * rainbowFrequency + totalGameTime * rainbowSpeed;
-	//	_timeText.data[i].color = vec4(
-	//		sinf(offsetAmount),
-	//		sinf(offsetAmount + PI / 3.0f * 2.0f),
-	//		sinf(offsetAmount + PI / 3.0f * 4.0f),
-	//		1.0f);
-	//	_timeText.data[i].color += vec4(1.0f);
-	//	_timeText.data[i].color *= 0.5f;
-	//}
-	//ends
+
+	if (_scoreboardUi)
+	{
+		_levelName->update(deltaTime);
+		for (unsigned int i = 0; i < _nameScore.size(); i++)
+			_nameScore[i]->update(deltaTime);
+		for (unsigned int i = 0; i < _timeScore.size(); i++)
+			_timeScore[i]->update(deltaTime);
+	}
 
 	_uiSystem->update(deltaTime);
 }
@@ -226,13 +276,27 @@ void Scene::drawUI()
 
 void Scene::drawText()
 {
-	if (_timeText && _coinText)
+	if (_inGameUi)
 	{
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		_timeText->draw();
 		_coinText->draw();
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	if (_scoreboardUi)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		_levelName->draw();
+		for(unsigned int i = 0; i < _nameScore.size(); i++)
+			_nameScore[i]->draw();
+		for (unsigned int i = 0; i < _timeScore.size(); i++)
+			_timeScore[i]->draw();
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
