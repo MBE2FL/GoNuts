@@ -429,6 +429,7 @@ void Game::draw()
 
 	shaderLUT.sendUniform("lut", lut);
 	shaderLUT.sendUniform("totalGameTime", TotalGameTime);
+	shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
 	LUTTex->bind(30);
 	
 

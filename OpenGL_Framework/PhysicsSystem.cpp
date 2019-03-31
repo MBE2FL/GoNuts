@@ -55,7 +55,7 @@ void PhysicsSystem::update(float deltaTime)
 				collision->entityTwo = colliderTwo->getEntity();
 				collision->colOne = colliderOne;
 				collision->colTwo = colliderTwo;
-				addCollision(collision);
+				addCollision(collision, deltaTime);
 			}
 
 			++nextIt;
@@ -67,7 +67,7 @@ void PhysicsSystem::update(float deltaTime)
 	verifyCollisions();
 }
 
-void PhysicsSystem::addCollision(Collision * collision)
+void PhysicsSystem::addCollision(Collision * collision, float deltaTime)
 {
 	// Check if the collision is already registered with the system
 	for (Collision* currCol : _collisions)
@@ -76,8 +76,8 @@ void PhysicsSystem::addCollision(Collision * collision)
 		{
 			currCol->stillColliding = true;
 			// TO-DO call onCollisionStay()
-			collision->colOne->onCollisionStay(collision->entityOne, collision->entityTwo);
-			collision->colTwo->onCollisionStay(collision->entityTwo, collision->entityOne);
+			collision->colOne->onCollisionStay(collision->entityOne, collision->entityTwo, deltaTime);
+			collision->colTwo->onCollisionStay(collision->entityTwo, collision->entityOne, deltaTime);
 			return;
 		}
 	}

@@ -30,7 +30,7 @@ public:
 private:
 	vector<Collision*> _collisions;
 
-	void addCollision(Collision* collision);
+	void addCollision(Collision* collision, float deltaTime);
 	bool checkAABBCollision(Collider* colliderOne, Collider* colliderTwo);
 	bool checkSATCollision(Collider* colliderOne, Collider* colliderTwo);
 	void verifyCollisions();
