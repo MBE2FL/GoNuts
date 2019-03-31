@@ -215,6 +215,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 	ObjectLoader::loadTexture("UiBackdrop", "./Assets/Textures/Fade_background.png");
+	ObjectLoader::loadTexture("Back", "./Assets/Textures/back.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
@@ -235,7 +236,13 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
-
+	ObjectLoader::loadTexture("Title Screen", "./Assets/Textures/title screen.png");
+	ObjectLoader::loadTexture("Press Any Button", "./Assets/Textures/press any button.png");
+	ObjectLoader::loadTexture("Exit Button Hover", "./Assets/Textures/EXIT Button Hover.png");
+	ObjectLoader::loadTexture("EXTRAS button Hover", "./Assets/Textures/EXTRAS button Hover.png");
+	ObjectLoader::loadTexture("LEVEL SELECT button Hover", "./Assets/Textures/LEVEL SELECT button Hover.png");
+	ObjectLoader::loadTexture("START button Hover", "./Assets/Textures/START button Hover.png");
+	
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
 	ObjectLoader::loadTexture("adambackground2", "./Assets//Textures/adam back2.png");
