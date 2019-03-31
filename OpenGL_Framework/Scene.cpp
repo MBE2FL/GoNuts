@@ -141,7 +141,7 @@ void Scene::update(float deltaTime)
 
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
-		front = true;
+		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = true;
 		_playerTransform->setWorldPosition(_playerTransform->getPlayerSpawnPosition());
 		_playerPhysicsBody->setVelocity(vec3(0.0f));
 		_playerTransform->setLocalScale(vec3(0.2f));
@@ -150,13 +150,13 @@ void Scene::update(float deltaTime)
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
-	if (front)
+	if (_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -5.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
-	else if (!front)
+	else if (!_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
@@ -723,14 +723,14 @@ void Scene::specialKeyDown(int key, int mouseX, int mouseY)
 	switch (key)
 	{
 	case GLUT_KEY_SHIFT_L:
-		if (front && !_playerPhysicsBody->getCanJump())
+		if (_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
-			front = false;
+			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = false;
 			_sound->playSound("shift", _sound->getActionChannel(), false);
 		}
-		else if (!front && !_playerPhysicsBody->getCanJump())
+		else if (!_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
-			front = true;
+			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = true;
 			_sound->playSound("shift", _sound->getActionChannel(), false);
 		}
 	};

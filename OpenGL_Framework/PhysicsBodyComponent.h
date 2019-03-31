@@ -5,7 +5,7 @@
 #include "Entity.h"
 
 //#define GRAVITY -16.2f
-#define EGRAVITY -15.81f
+#define EGRAVITY -16.81f
 
 //struct Collision
 //{
