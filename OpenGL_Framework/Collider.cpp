@@ -196,7 +196,7 @@ void Collider::onCollisionStay(Entity * self, Entity * other)
 		if (otherCol->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			otherBody->addForce(vec3(2.2f, 0.0f, 0.0f));
+			otherBody->addForce(vec3(3.2f, 0.0f, 0.0f));
 		}
 
 		break;

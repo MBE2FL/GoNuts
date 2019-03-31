@@ -562,70 +562,6 @@ void Scene::loadOldFaithful()
 
 void Scene::loadMainMenu()
 {
-	EntityManager::setInstance(_entityManager);
-	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
-
-	_guiHelper->update();
-
-
-	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-
-	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
-	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
-	EntityManager::setMainCamera(_mainCamera);
-
-	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
-	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
-	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
-	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
-	EntityManager::setShadowCamera(_shadowCamera);
-
-	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
-	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
-	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
-	EntityManager::setPlayerTransform(_playerTransform);
-
-	UICanvas* MainMenuCanvas = new UICanvas("Main Menu");
-
-	UIImage* background = new UIImage("Background", vec3(0.0f, 0.0f, 1.0f), vec3(1.5f, 0.8f, 1.0f));
-	background->setTexture(ObjectLoader::getTexture("Menu Picture"));
-	MainMenuCanvas->addImage(background);
-
-	UIImage*  blackVertBar = new UIImage("BlackVertBar", vec3(-5.0f, 10.0f, 0.0f), vec3(7.0f, 5.0f, 1.0f));
-	blackVertBar->setTexture(ObjectLoader::getTexture("Vert black bar"));
-	MainMenuCanvas->addImage(blackVertBar);
-
-	UIImage* start = new UIImage("Start", vec3(2.0f, 1.0f, 0.0f));
-	start->setTexture(ObjectLoader::getTexture("start button"));
-	MainMenuCanvas->addImage(start);
-
-	UIImage* levelSelect = new UIImage("LevelSelect", vec3(2.0f, 1.0f, 0.0f));
-	levelSelect->setTexture(ObjectLoader::getTexture("level select button"));
-	MainMenuCanvas->addImage(levelSelect);
-
-	UIImage* extras = new UIImage("Extras", vec3(2.0f, 1.0f, 0.0f));
-	extras->setTexture(ObjectLoader::getTexture("extras button"));
-	MainMenuCanvas->addImage(extras);
-
-	UIImage* exit = new UIImage("Exit", vec3(2.0f, 1.0f, 0.0f));
-	exit->setTexture(ObjectLoader::getTexture("exit button"));
-	MainMenuCanvas->addImage(extras);
-
-	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-
-	vector<UIKeyFrame*> testVec;
-	testVec.push_back(frame1);
-	testVec.push_back(frame2);
-	testVec.push_back(frame3);
-
-	//UIAnimation* animu = new UIAnimation("test", testVec);
-
-	//testImage->getAnimator()->addAnimation(animu);
-
-	_uiSystem->addCanvas(MainMenuCanvas);
-
 
 }
 
@@ -714,7 +650,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
-			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+			_playerPhysicsBody->addForce(vec3(0, 450.0f, 0.0f));
 			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, -2000.0f, 7000.0f, 0.5f);
 		}
 		break;
