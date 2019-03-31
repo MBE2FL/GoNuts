@@ -278,6 +278,10 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 
+	sceneManager->loadScene("UITest");
+	_currentScene = sceneManager->getCurrentScene();
+
+
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
 
@@ -296,6 +300,20 @@ void Game::update()
 {
 	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
+	if (_currentScene->getName() == "UITest")
+	{
+		outline = false;
+		if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Start")->clicked())
+		{
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			outline = true;
+		}
+		else if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Exit")->clicked())
+		{
+			exit(0);
+		}
+	}
 
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();

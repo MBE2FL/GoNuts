@@ -221,12 +221,13 @@ void Collider::onCollisionStay(Entity * self, Entity * other, float deltaTime)
 				otherCol->shakeTimer += deltaTime;
 			}
 
-			if (otherCol->shakeTimer > 0.15f)
+			if (otherCol->beastMode && otherCol->shakeTimer > 0.15f)
 			{
 				otherCol->screenShake = false;
 				otherCol->shakeTimer = 0.0f;
 
 			}
+			
 		}
 
 		break;
