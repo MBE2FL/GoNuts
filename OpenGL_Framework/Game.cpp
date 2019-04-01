@@ -25,16 +25,16 @@ void Game::initializeGame()
 	glEnable(GL_MULTISAMPLE);
 
 	Framebuffer::initFrameBuffers();
-	gbuffer.init(1900, 1000);
+	gbuffer.init(windowWidth, windowHeight);
 	//frameBufferOutline.addDepthTarget();
 	frameBufferOutline.addColorTarget(GL_RGB8);
-	frameBufferOutline.init(1900, 1000);
+	frameBufferOutline.init(windowWidth, windowHeight);
 
 	frameBufferLUT.addColorTarget(GL_RGB8);
-	frameBufferLUT.init(1900, 1000);
+	frameBufferLUT.init(windowWidth, windowHeight);
 
 	frameBufferUI.addColorTarget(GL_RGB8);
-	frameBufferUI.init(1900, 1000);
+	frameBufferUI.init(windowWidth, windowHeight);
 
 	frameBufferShadow.addDepthTarget();
 	frameBufferShadow.init(8192, 8192);
@@ -412,7 +412,7 @@ void Game::draw()
 	frameBufferShadow.bindDepthAsTexture(16);
 
 	gbuffer.bindResolution();
-	glViewport(0, 0, 1900, 1000);
+	glViewport(0, 0, windowWidth, windowHeight);
 
 	frameBufferLUT.clear();
 
@@ -470,7 +470,7 @@ void Game::draw()
 	
 
 	frameBufferLUT.bindColorAsTexture(0, 0);
-	glViewport(0, 0, 1900, 1000);
+	glViewport(0, 0, windowWidth, windowHeight);
 	Framebuffer::drawFSQ();
 	
 	frameBufferLUT.unbindTexture(0);
@@ -534,4 +534,21 @@ void Game::mouseMoved(int x, int y)
 void Game::mouseWheel(int wheel, int direction, int x, int y)
 {
 	_currentScene->mouseWheel(wheel, direction, x, y);
+}
+
+void Game::reshapeWindow(int w, int h)
+{
+	windowWidth = w;
+	windowHeight = h;
+
+	float aspect = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+
+	camera->setPerspective(60.0f, aspect, 1.0f, 1000.0f);
+	glViewport(0, 0, w, h);
+	
+	frameBufferOutline.reshape(w, h);
+	frameBufferLUT.reshape(w, h);
+	gbuffer.reshape(w, h);
+	frameBufferUI.reshape(w, h);	
 }
