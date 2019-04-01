@@ -74,6 +74,11 @@ void Scene::update(float deltaTime)
 	if (_uiSystem)
 		_uiSystem->update(deltaTime);
 
+	if (_particleEffect)
+	{
+		_particleEffect->update(deltaTime);
+	}
+
 	if (_score->getAcornCount() > 18)
 	{
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
@@ -158,6 +163,15 @@ void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
 	_uiSystem->draw();
+
+	if (_particleEffect)
+	{
+		CameraComponent* cam = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, _uiCamera);
+		TransformComponent* camTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _uiCamera);
+		mat4 camView = camTrans->getView();
+		mat4 camProj = cam->getProjection();
+		_particleEffect->draw(camView, camProj);
+	}
 
 	if (_guiHelper->getPhysicsDebugEnabled())
 	{
@@ -468,13 +482,14 @@ void Scene::loadOldFaithful()
 	////skeletalMeshTestTwo->loadFromFileNUT(path + "Armature.nut", path + "Anims/Run.nutAnim");
 	//skeletalMeshTestTwo->_isSkeletal = true;
 
-	//entity = _entityFactory->createEmpty(vec3(-2.0f, 0.8f, 0.0f), vec3(0.2f), nullptr, "SkeletonTwo");
-	//skeletalMeshTestTwo = ObjectLoader::getSkeletalMesh("SkeletalBeast");
-	//skeletalMeshTestTwo->_isSkeletal = true;
-	//_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
-	//vector<Texture*> textures = { ObjectLoader::getTexture("Beast Mode"), ObjectLoader::getTexture("Toon") };
-	//MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
-	//_entityManager->addComponent(meshRenderer, entity);
+	Entity* entity = _entityFactory->createEmpty(vec3(-2.0f, 7.0f, -4.5f), vec3(1.2f), nullptr, "SkeletonTwo");
+	skeletalMeshTestTwo = ObjectLoader::getSkeletalMesh("SkeletalBeast");
+	skeletalMeshTestTwo->_isSkeletal = true;
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	vector<Texture*> textures = { ObjectLoader::getTexture("Beast Mode") };
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(skeletalMeshTestTwo, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
 
 
 	UICanvas* testCanvas = new UICanvas("In Game UI");
@@ -496,6 +511,8 @@ void Scene::loadOldFaithful()
 
 	_uiSystem->addCanvas(testCanvas);
 
+
+	_particleEffect = new ParticleEffect(60);
 
 
 

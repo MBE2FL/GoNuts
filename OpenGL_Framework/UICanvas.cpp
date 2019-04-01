@@ -97,6 +97,16 @@ string UICanvas::getName() const
 	return _name;
 }
 
+UIImage * UICanvas::getImage(const string & name) const
+{
+	if (_images.find(name) != _images.end())
+	{
+		return _images.at(name);
+	}
+
+	return nullptr;
+}
+
 unordered_map<string, UIImage*> UICanvas::getImages() const
 {
 	return _images;

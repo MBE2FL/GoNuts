@@ -113,7 +113,8 @@ void Game::initializeGame()
 	ObjectLoader::loadSkeletalMesh("SkeletalBoiTwo", "./Assets/Test Exporter/GOLDEN_FATBOI2/Armature.nut", "./Assets/Test Exporter/GOLDEN_FATBOI2/Anims/Run.nutAnim");
 	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/BM_-_Run_2/Armature.nut", "./Assets/Test Exporter/BM_-_Run_2/Anims/ArmatureAction.nutAnim");
 	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/Fat_Boi_-_Review_2_/Armature.nut", "./Assets/Test Exporter/Fat_Boi_-_Review_2_/Anims/ArmatureAction.nutAnim");
-	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/TEST_BM/Armature.nut", "./Assets/Test Exporter/TEST_BM/Anims/Action.nutAnim");
+	ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/TEST_BM/Armature.nut", "./Assets/Test Exporter/TEST_BM/Anims/Action.nutAnim");
+	//ObjectLoader::loadSkeletalMesh("SkeletalBeast", "./Assets/Test Exporter/TEST_BB/Armature.nut", "./Assets/Test Exporter/TEST_BB/Anims/Action.nutAnim");
 
 
 

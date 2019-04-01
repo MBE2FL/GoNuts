@@ -18,6 +18,7 @@ public:
 	void addButton(UIButton* button);
 	void deleteImage(const string& name);
 	string getName() const;
+	UIImage* getImage(const string& name) const;
 	unordered_map<string, UIImage*> getImages() const;
 	unordered_map<string, UIButton*> getButtons() const;
 
