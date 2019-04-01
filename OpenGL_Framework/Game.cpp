@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "imgui/imgui.h"
+#include "UIImage.h"
 
 #include <string>
 
@@ -331,8 +333,10 @@ void Game::update()
 	if (_currentScene->getName() == "UITest")
 	{
 		outline = false;
-		if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Start")->clicked())
+		UIImage* image = _currentScene->getUISystem()->getCanvas("Canvui")->getImage("Start");
+		if (image->clicked())
 		{
+			image->setClicked(false);
 			sceneManager->loadScene("tut");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
@@ -560,5 +564,8 @@ void Game::reshapeWindow(int w, int h)
 	frameBufferOutline.reshape(w, h);
 	frameBufferLUT.reshape(w, h);
 	gbuffer.reshape(w, h);
-	frameBufferUI.reshape(w, h);	
+	frameBufferUI.reshape(w, h);
+	ImGuiIO& io = ImGui::GetIO();
+	io.DisplaySize.x = static_cast<float>(windowWidth);
+	io.DisplaySize.y = static_cast<float>(windowHeight);
 }
