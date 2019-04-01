@@ -1,5 +1,6 @@
 #include "Collider.h"
 #include "EntityFactory.h"
+#include "SceneManager.h"
 
 Collider::Collider()
 {
@@ -8,6 +9,7 @@ Collider::Collider()
 	_contactOffset = vec3(0.0f);
 	_enabled = true;
 	_sound = SoundComponent::getInstance();
+	sceneManager = SceneManager::getInstance();
 	_score = new ScoreCounter;
 }
 
@@ -66,12 +68,9 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 
 		EntityManager* entityManager = EntityManager::getInstance();
 		PhysicsBodyComponent* otherBody = entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
-		//TransformComponent* otherTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
-		//TransformComponent* thisTransform = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, self);
 		Collider* thisCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, self);
 		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
-		//float thisHeight = (abs(thisCollider->_max.y) + abs(thisCollider->_min.y)) / 2.0f;
-		//float otherHeight = (abs(otherCollider->_max.y) + abs(otherCollider->_min.y)) / 2.0f;
+
 		if (otherCollider->_min.y < thisCollider->_max.y - 0.2f
 			&& otherCollider->getTag() == TTag::Player)
 		{
@@ -160,8 +159,19 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		//### VictoryPoint
 	case TTag::VictoryPoint:
 	{
-		//std::cout << "Victorypoint Collision Entered!" << std::endl;
+		EntityManager* entityManager = EntityManager::getInstance();
 		//add things later on when more ui stuff is done to change to the scoreboard scene or which ever scene is next
+		Collider* otherCol = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
+
+		_currentScene = SceneManager::getInstance()->getCurrentScene();
+ 		if (otherCol->getTag() == TTag::Player)
+		{
+			if (_currentScene->getName() == "tut")
+			{
+				//sceneManager->loadScene("Scoreboard");
+				//_currentScene = sceneManager->getCurrentScene();
+			}
+		}
 		break;
 	}
 		//### Generic ###
@@ -211,23 +221,26 @@ void Collider::onCollisionStay(Entity * self, Entity * other, float deltaTime)
 		PhysicsBodyComponent* otherBody = entityManger->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, other);
 		Collider* otherCol = entityManger->getComponent<Collider*>(ComponentType::Collider, other);
 
-		if (otherCol->getTag() == TTag::Player)
+		if (otherBody != nullptr && otherCol != nullptr)
 		{
-			//std::cout << "Platform Collision Stayed!" << std::endl;
-			otherBody->addForce(vec3(3.2f, 0.0f, 0.0f));
-
-			if (otherCol->beastMode && otherCol->screenShake)
+			if (otherCol->getTag() == TTag::Player)
 			{
-				otherCol->shakeTimer += deltaTime;
-			}
+				//std::cout << "Platform Collision Stayed!" << std::endl;
+				otherBody->addForce(vec3(3.2f, 0.0f, 0.0f));
 
-			if (otherCol->beastMode && otherCol->shakeTimer > 0.15f)
-			{
-				otherCol->screenShake = false;
-				otherCol->shakeTimer = 0.0f;
+				if (otherCol->beastMode && otherCol->screenShake)
+				{
+					otherCol->shakeTimer += deltaTime;
+				}
+
+				if (otherCol->beastMode && otherCol->shakeTimer > 0.15f)
+				{
+					otherCol->screenShake = false;
+					otherCol->shakeTimer = 0.0f;
+
+				}
 
 			}
-			
 		}
 
 		break;
