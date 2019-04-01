@@ -16,6 +16,7 @@ public:
 	UIAnimator* getAnimator();
 	void setAnimator(UIAnimator* animator);
 
+	vec3 getWorldPosition() const;
 	vec3 getLocalPosition() const;
 	void setLocalPosition(const vec3& pos);
 	vec3 getScale() const;
@@ -43,6 +44,9 @@ public:
 	UIImage* getParent() const;
 	vector<UIImage*> getChildren() const;
 
+	bool clicked() const;
+	void setClicked(const bool clicked);
+
 private:
 	string _name;
 	Mesh* _mesh;
@@ -51,6 +55,7 @@ private:
 	TransformComponent* _transform;
 	float _alpha;
 	UIAnimator* _animator = nullptr;
+	bool _clicked = false;
 
 	UIImage* _parent = nullptr;
 	vector<UIImage*> _children;

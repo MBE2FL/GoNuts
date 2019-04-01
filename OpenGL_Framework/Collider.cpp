@@ -79,6 +79,18 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 			otherBody->addImpluseForce(vec3(-xSpeed*1.2f, 0.0f, 0.0f));
 			_sound->playSound("landingGrunt", _sound->getPlayerChannel(), false, 0.5f);
 		}
+		if (otherCollider->_min.y < thisCollider->_max.y - 0.2f
+			&& otherCollider->_min.z < thisCollider->_max.y
+			&& otherCollider->getTag() == TTag::Player)
+		{
+			otherCollider->front = true;
+			_sound->playSound("landingGrunt", _sound->getPlayerChannel(), false, 0.5f);
+		}
+
+		if (otherCollider->getTag() == TTag::Player && otherCollider->beastMode)
+		{
+			otherCollider->screenShake = true;
+		}
 
 		otherBody->setUseGravity(false);
 		//otherBody->setVelocity(vec3(0.0f));
@@ -118,6 +130,12 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 			otherBody->setVelocity(vec3(0.0f));
 			otherTrans->setLocalScale(vec3(0.2f));
 		}
+		else if (otherCol->getTag() == TTag::Player && otherCol->beastMode)
+		{
+			TransformComponent* trans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, self);
+			trans->setLocalScale(0);
+			otherCol->screenShake = true;
+		}
 		break;
 	}
 		//### CHECKPOINT ###
@@ -134,7 +152,8 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			TransformComponent* otherTrans = entityManager->getComponent<TransformComponent*>(ComponentType::Transform, other);
 
-			otherTrans->setPlayerSpawnPosition(otherTrans->getWorldPosition());
+			otherTrans->setPlayerSpawnPosition(vec3(otherTrans->getWorldPosition().x, 
+				otherTrans->getWorldPosition().y + 2, otherTrans->getWorldPosition().z));
 		}
 		break;
 	}
@@ -176,7 +195,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 	}
 }
 
-void Collider::onCollisionStay(Entity * self, Entity * other)
+void Collider::onCollisionStay(Entity * self, Entity * other, float deltaTime)
 {
 	switch (_tag)
 	{
@@ -195,7 +214,20 @@ void Collider::onCollisionStay(Entity * self, Entity * other)
 		if (otherCol->getTag() == TTag::Player)
 		{
 			//std::cout << "Platform Collision Stayed!" << std::endl;
-			otherBody->addForce(vec3(2.2f, 0.0f, 0.0f));
+			otherBody->addForce(vec3(3.2f, 0.0f, 0.0f));
+
+			if (otherCol->beastMode && otherCol->screenShake)
+			{
+				otherCol->shakeTimer += deltaTime;
+			}
+
+			if (otherCol->beastMode && otherCol->shakeTimer > 0.15f)
+			{
+				otherCol->screenShake = false;
+				otherCol->shakeTimer = 0.0f;
+
+			}
+			
 		}
 
 		break;
@@ -233,6 +265,8 @@ void Collider::onCollisionExit(Entity * self, Entity * other)
 		{
 			otherBody->setUseGravity(true);
 			otherBody->setCanJump(false);
+			otherCol->screenShake = false;
+			otherCol->shakeTimer = 0.0f;
 		}
 
 		break;

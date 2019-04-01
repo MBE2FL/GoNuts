@@ -392,7 +392,7 @@ UIAnimation * UIAnimation::getAnimation(const string & name)
 	else
 	{
 		cerr << "UI Animation with name: " << name << " could not be found!" << endl;
-		system("pause");
+		//system("pause");
 		return nullptr;
 	}
 }

@@ -17,7 +17,7 @@ void UIAnimator::addAnimation(UIAnimation * anim)
 	if (_animations.find(name) != _animations.end())
 	{
 		cout << "Animation with name: " << name << " already exists!" << endl;
-		system("pause");
+		//system("pause");
 	}
 	_animations[name] = anim;
 }

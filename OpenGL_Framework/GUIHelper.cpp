@@ -743,7 +743,7 @@ TTag GUIHelper::charToTag(char* tag)
 		return TTag::Spike;
 	else if (strcmp(tag, "Checkpoint") == 0)
 		return TTag::Checkpoint;
-	else if (strcmp(tag, "Victorypoint") == 0)
+	else if (strcmp(tag, "VictoryPoint") == 0)
 		return TTag::VictoryPoint;
 	else if (strcmp(tag, "Generic") == 0)
 		return TTag::Generic;
@@ -939,42 +939,7 @@ void GUIHelper::drawLights()
 {
 	ImGui::Begin("Light Settings", &_showLightsMenu);
 
-	// Light settings
-	Scene* _currentScene = _sceneManager->getCurrentScene();
-	Light* light = _currentScene->light;
-
-	// Position settings
-	vec3 position = light->getPosition();
-	ImGui::DragFloat3("Light Position: ", &position.x, 0.5f);
-	light->setPosition(position);
-	// Ambient settings
-	vec3 ambient = light->getAmbient();
-	ImGui::ColorEdit3("Ambient Colour: ", &ambient.x);
-	light->setAmbient(ambient);
-	// Diffuse settings
-	vec3 diffuse = light->getDiffuse();
-	ImGui::ColorEdit3("Diffuse Colour: ", &diffuse.x);
-	light->setDiffuse(diffuse);
-	// Specular settings
-	vec3 specular = light->getSpecular();
-	ImGui::ColorEdit3("Specular Colour: ", &specular.x);
-	light->setSpecular(specular);
-	// Specular exponent settings
-	float specularExp = light->getSpecularExp();
-	ImGui::SliderFloat("Specular Exp: ", &specularExp, 0.0f, 250.0f);
-	light->setSpecularExp(specularExp);
-	// Attenuation constant settings
-	float attenuationConstant = light->getAttenuationConstant();
-	ImGui::SliderFloat("Attenuation Constant: ", &attenuationConstant, 0.0f, 20.0f);
-	light->setAttenuationConstant(attenuationConstant);
-	// Attenuation linear settings
-	float attenuationLinear = light->getAttenuationLinear();
-	ImGui::SliderFloat("Attenuation Linear: ", &attenuationLinear, 0.0f, 5.0f);
-	light->setAttenuationLinear(attenuationLinear);
-	// Attenuation quadratic settings
-	float attenuationQuadratic = light->getAttenuationQuadratic();
-	ImGui::SliderFloat("Attenuation Quadratic: ", &attenuationQuadratic, 0.0f, 5.0f);
-	light->setAttenuationQuadratic(attenuationQuadratic);
+	
 
 	ImGui::End();
 }
@@ -1024,7 +989,7 @@ void GUIHelper::SpawnUIElement()
 	ImGui::InputText("Name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue);
 
 	// Create an input field for position.
-	static vec3 position = vec3(0.0f, 2.0f, -5.0f);
+	static vec3 position = vec3(0.0f, 0.0f, 0.0f);
 	ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
 
 	// Create an input field for rotation.
@@ -1032,7 +997,7 @@ void GUIHelper::SpawnUIElement()
 	ImGui::InputFloat("Z Rotation", &rot, 0.0f, 0.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue);
 
 	// Create an input field for scale.
-	static vec3 scale = vec3(1.0f);
+	static vec3 scale = vec3(100.0f, 100.0f, 1.0f);
 	ImGui::InputFloat3("Scale", &scale.x, 2, ImGuiInputTextFlags_EnterReturnsTrue);
 
 	// Create an input field for alpha.
@@ -1284,6 +1249,43 @@ void GUIHelper::propertyUIEditor(const string & canvasName, UIImage * image, boo
 	{
 		UIAnimator* animator = image->getAnimator();
 		drawUIAnimator(animator);
+	}
+
+
+	if (ImGui::CollapsingHeader("UIImage"))
+	{
+		float alpha = image->getAlpha();
+		ImGui::DragFloat("Alpha", &alpha, 0.005f, 0.0f, 1.0f, "%.3f", 1.0f);
+		image->setAlpha(alpha);
+
+
+		// Textures
+		vector<Texture*> textures = ObjectLoader::getTextures();
+		string currentTexName = image->getTexture()->getName();
+		Texture* texture = image->getTexture();
+		if (ImGui::BeginCombo("Textures", currentTexName.c_str()))
+		{
+			vector<Texture*>::iterator it;
+			for (it = textures.begin(); it != textures.end(); it++)
+			{
+				string texName = (*it)->filename;
+
+				bool isSelected = (currentTexName == texName);
+
+				if (ImGui::Selectable(texName.c_str(), isSelected))
+				{
+					currentTexName = texName;
+					texture = *it;
+				}
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		if (texture)
+			image->setTexture(texture);
 	}
 
 
@@ -1603,7 +1605,7 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 
 		// Alpha Property
 		float alpha = keyFrame->getAlpha();
-		ImGui::DragFloat("Alpha", &alpha, 0.05f, 0.0f, 1.0f, "%.1f", 1.0f);
+		ImGui::DragFloat("Alpha", &alpha, 0.005f, 0.0f, 1.0f, "%.1f", 1.0f);
 		keyFrame->setAlpha(alpha);
 
 
@@ -1628,23 +1630,23 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 	ImGui::DragFloat3("Position", &pos.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 
 	// Scale Property
-	static vec3 scale = vec3::One;
+	static vec3 scale;
 	ImGui::DragFloat3("Scale", &scale.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 
 	// Rotation Property
-	static float zRot = 0.0f;
-	ImGui::DragFloat("zRot", &zRot, 0.05f, 0.0f, 0.0f, "%.1f", 1.0f);
+	static vec3 rot;
+	ImGui::DragFloat3("Rot", &rot.x, 0.05f, NULL, NULL, "%.1f", 1.0f);
 
 	// Alpha Property
-	static float alpha = 0.0f;
-	ImGui::DragFloat("Alpha", &alpha, 0.05f, 0.0f, 1.0f, "%.3f", 1.0f);
+	static float alpha = 1.0f;
+	ImGui::DragFloat("Alpha", &alpha, 0.005f, 0.0f, 1.0f, "%.3f", 1.0f);
 
 	// Add a key frame to the currently selected animation
 	if (ImGui::Button("Add Key Frame"))
 	{
-		Quaternion rot = Quaternion(0.0f, 0.0f, toRadians(zRot));
+		Quaternion quat = Quaternion(toRadians(rot.x), toRadians(rot.y), toRadians(rot.z));
 
-		UIKeyFrame* newFrame = new UIKeyFrame(startTime, pos, scale, rot, alpha);
+		UIKeyFrame* newFrame = new UIKeyFrame(startTime, pos, scale, quat, alpha);
 		anim->addKeyFrame(newFrame);
 	}
 

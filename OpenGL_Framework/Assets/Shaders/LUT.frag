@@ -1,26 +1,24 @@
-/*
-===========================================================================
-
-SpeedStorm Shader Source Code
-Copyright (C) 2015-2017 Stephen Thompson
-
-===========================================================================
-*/
-
 #version 420 //Version of OpenGL we're using. - 4.2
 
 uniform sampler2D uSceneTex; 
 layout(binding = 30) uniform sampler3D uLUTTex;
 
 uniform bool lut = true;
+uniform bool screenShake = false;
 
+uniform float totalGameTime;
 uniform float uAmount = 1.0f;
 in vec2 texcoord;
 out vec4 outColor;
 
 void main()
 {
-	vec4 source = texture(uSceneTex, texcoord);
+	vec2 texOffest = texcoord;
+	if (screenShake)
+	{
+		texOffest.y = texOffest.y + sin(totalGameTime * 50) * 0.01;
+	}
+	vec4 source = texture(uSceneTex, texOffest);
 	
 	//float luminance = 0.2989 * source.r + 0.5874 * source.g + 0.1137 * source.b;
 	//outColor.rgb = mix(source.rgb, vec3(luminance), uAmount);

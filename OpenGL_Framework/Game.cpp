@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "imgui/imgui.h"
+#include "UIImage.h"
 
 #include <string>
 
@@ -25,19 +27,32 @@ void Game::initializeGame()
 	glEnable(GL_MULTISAMPLE);
 
 	Framebuffer::initFrameBuffers();
-	gbuffer.init(1900, 1000);
+	gbuffer.init(windowWidth, windowHeight);
 	//frameBufferOutline.addDepthTarget();
 	frameBufferOutline.addColorTarget(GL_RGB8);
-	frameBufferOutline.init(1900, 1000);
+	frameBufferOutline.init(windowWidth, windowHeight);
 
 	frameBufferLUT.addColorTarget(GL_RGB8);
-	frameBufferLUT.init(1900, 1000);
+	frameBufferLUT.init(windowWidth, windowHeight);
 
 	frameBufferUI.addColorTarget(GL_RGB8);
-	frameBufferUI.init(1900, 1000);
+	frameBufferUI.init(windowWidth, windowHeight);
 
 	frameBufferShadow.addDepthTarget();
 	frameBufferShadow.init(8192, 8192);
+
+
+	lights.reserve(1000);
+	for (int i = 0; i < 1000; ++i)
+	{
+		lights.push_back(new Light());
+		lights[i]->init();
+		lights[i]->color = vec4(1.f,1.f,0,1.f);//vec4(1.f, 0.8f, 0.3f, 1.0f);
+		lights[i]->constantAtten = 1.0f;
+		lights[i]->linearAtten = 0.7f;
+		lights[i]->quadAtten = 1.8f;
+
+	}
 
 	// Load shaders and mesh
 	ObjectLoader::loadShaderProgram("Normal", "./Assets/Shaders/shader.vert", "./Assets/Shaders/gBuffer.frag");
@@ -47,11 +62,15 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/UI.frag");
 	ObjectLoader::loadShaderProgram("FreeType", "./Assets/Shaders/font.vert", "./Assets/Shaders/font.frag");
+	ObjectLoader::loadShaderProgram("Discard", "./Assets/Shaders/discard.vert", "./Assets/Shaders/discard.frag");
 
 
 	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
 	shaderOutline.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/Post.frag");
 	shaderLUT.load("./Assets/Shaders/Post.vert", "./Assets/Shaders/LUT.frag");
+
+	shaderDeferred.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/deferred.frag");
+
 	LUTTex = new Texture("./Assets/Textures/Warm_LUT_GDW.cube", true);
 	//LUTTexVal = new Texture("./Assets/Textures/newpinkfilter.cube", true);
 
@@ -103,7 +122,15 @@ void Game::initializeGame()
 
 	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad.obj");
 
-
+	//Road stuff things
+	ObjectLoader::loadMesh("Awning", "./Assets/Models/Awning.obj");
+	ObjectLoader::loadMesh("Bench", "./Assets/Models/Bench.obj");
+	ObjectLoader::loadMesh("Fire Hydrant", "./Assets/Models/Fire Hydrant.obj");
+	ObjectLoader::loadMesh("Road", "./Assets/Models/Road.obj");
+	ObjectLoader::loadMesh("Stop Sign", "./Assets/Models/Stop Sign.obj");
+	ObjectLoader::loadMesh("Street Light", "./Assets/Models/Street Light.obj");
+	ObjectLoader::loadMesh("Traffic Obstacle 1", "./Assets/Models/Traffic Obstacle 1.obj");
+	ObjectLoader::loadMesh("Traffic Obstacle 2", "./Assets/Models/Traffic Obstacle 2.obj");
 
 	ObjectLoader::loadMesh("TestBoi", "./Assets/Models/Animation/Fat Boi - Animated_", 20);
 
@@ -167,6 +194,16 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
 	ObjectLoader::loadTexture("Table", "./Assets/Textures/table texture.png");
 	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
+
+	//Some Road Textures
+	ObjectLoader::loadTexture("Awning", "./Assets/Textures/Awning.png");
+	ObjectLoader::loadTexture("Bench", "./Assets/Textures/Bench.png");
+	ObjectLoader::loadTexture("Fire Hydrant", "./Assets/Textures/Fire Hydrant.png");
+	ObjectLoader::loadTexture("Road", "./Assets/Textures/Road.png");
+	ObjectLoader::loadTexture("Stop Sign", "./Assets/Textures/Stop Sign.png");
+	ObjectLoader::loadTexture("Street Light", "./Assets/Textures/Street Light.png");
+	ObjectLoader::loadTexture("Traffic Obstacle", "./Assets/Textures/Traffic Obstacle.png");
+
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
 	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");
@@ -182,6 +219,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 	ObjectLoader::loadTexture("UiBackdrop", "./Assets/Textures/Fade_background.png");
+	ObjectLoader::loadTexture("Back", "./Assets/Textures/back.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
@@ -195,87 +233,55 @@ void Game::initializeGame()
 
 	//ui textures
 	ObjectLoader::loadTexture("Menu Picture", "./Assets//Textures/Menu Picture.png");
+	ObjectLoader::loadTexture("Scoreboard", "./Assets//Textures/Highscore.png");
 	ObjectLoader::loadTexture("Vert black bar", "./Assets/Textures/Vertical black bar.png");
 	ObjectLoader::loadTexture("start button", "./Assets/Textures/START button.png");
 	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
+	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
+	ObjectLoader::loadTexture("Title Screen", "./Assets/Textures/title screen.png");
+	ObjectLoader::loadTexture("Press Any Button", "./Assets/Textures/press any button.png");
+	ObjectLoader::loadTexture("Exit Button Hover", "./Assets/Textures/EXIT Button Hover.png");
+	ObjectLoader::loadTexture("EXTRAS button Hover", "./Assets/Textures/EXTRAS button Hover.png");
+	ObjectLoader::loadTexture("LEVEL SELECT button Hover", "./Assets/Textures/LEVEL SELECT button Hover.png");
+	ObjectLoader::loadTexture("START button Hover", "./Assets/Textures/START button Hover.png");
+	ObjectLoader::loadTexture("Horizontal black bar", "./Assets/Textures/Horizontal black bar.png");
+	ObjectLoader::loadTexture("Bam", "./Assets/Textures/Bam.png");
+	ObjectLoader::loadTexture("Bang", "./Assets/Textures/Bang.png");
+	ObjectLoader::loadTexture("Click 1", "./Assets/Textures/click 1.png");
+	ObjectLoader::loadTexture("Click 2", "./Assets/Textures/click 2.png");
+	ObjectLoader::loadTexture("Crash", "./Assets/Textures/Crash.png");
+	ObjectLoader::loadTexture("Credits Button Hover", "./Assets/Textures/Credits Button hover.png");
+	ObjectLoader::loadTexture("Credits Button", "./Assets/Textures/Credits Button.png");
+	ObjectLoader::loadTexture("Leaderboard Button hover", "./Assets/Textures/Leaderboard Button hover.png");
+	ObjectLoader::loadTexture("Leaderboard Button", "./Assets/Textures/Leaderboard Button.png");
+	ObjectLoader::loadTexture("Play Button", "./Assets/Textures/PLAY button.png");
+	ObjectLoader::loadTexture("Play Button Hover", "./Assets/Textures/PLAY button hover.png");
+	ObjectLoader::loadTexture("Ring", "./Assets/Textures/Ring.png");
+	ObjectLoader::loadTexture("Roar", "./Assets/Textures/Roar.png");
+	ObjectLoader::loadTexture("Woosh", "./Assets/Textures/Woosh.png");
+	ObjectLoader::loadTexture("Tutorial button hover", "./Assets/Textures/TUTORIAL button hover.png");
+	ObjectLoader::loadTexture("Tutorial button", "./Assets/Textures/TUTORIAL button.png");
+	ObjectLoader::loadTexture("Next", "./Assets/Textures/Next.png");
+	ObjectLoader::loadTexture("Next Level Button", "./Assets/Textures/Next level button.png");
+	ObjectLoader::loadTexture("Next Level Button Hover", "./Assets/Textures/Next level button hover.png");
+	ObjectLoader::loadTexture("Return Button Hover", "./Assets/Textures/Return button hover.png");
+	ObjectLoader::loadTexture("Return Button", "./Assets/Textures/Return button.png");
+	ObjectLoader::loadTexture("Replay Button", "./Assets/Textures/REPLAY button.png");
+	ObjectLoader::loadTexture("Replay Button Hover", "./Assets/Textures/REPLAY button hover.png");
+	ObjectLoader::loadTexture("Back Hover", "./Assets/Textures/Back Hover.png");
+	ObjectLoader::loadTexture("Next Hover", "./Assets/Textures/Next Hover.png");
+	ObjectLoader::loadTexture("Right Arrow Hover", "./Assets/Textures/Right Arrow Hover.png");
+	ObjectLoader::loadTexture("Right Arrow", "./Assets/Textures/Right Arrow.png");
+	ObjectLoader::loadTexture("Left Arrow", "./Assets/Textures/Left Arrow.png");
+	ObjectLoader::loadTexture("Left Arrow Hover", "./Assets/Textures/Left Arrow Hover.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
 	ObjectLoader::loadTexture("adambackground2", "./Assets//Textures/adam back2.png");
 	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/space.png");
 	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/shift.png");
-
-	//nutOmeter.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//nutOmeter.setMesh(ObjectLoader::getMesh("Plane"));
-	//nutOmeter.setTexture(ObjectLoader::getTexture("FullNut"));
-	//nutOmeter.addPhysicsBody(false);
-	//nutOmeter.setWorldPosition(vec3(0.0f, -6.0f, 0.0f));
-	//nutOmeter.setLocalRotationAngleZ(-3.14592f / 2.0f);
-	////nutOmeter.setLocalRotationAngleY(3.14592f);
-	//nutOmeter.setLocalScale(2.0f);
-
-	//time.setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//time.setMesh(ObjectLoader::getMesh("Plane"));
-	//time.setTexture(ObjectLoader::getTexture("Time"));
-	//time.addPhysicsBody(false);
-	//time.setWorldPosition(vec3(-13.5f, 7.5f, 0.0f));
-	//time.setLocalRotationAngleZ(-3.14592f / 2.0f);
-	////time.setLocalRotationAngleY(3.14592f);
-	//time.setLocalScale(2.0f);
-
-	//particleTrail = new ParticleEmitter;
-	//particleTrail->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//particleTrail->setMesh(ObjectLoader::getMesh("Plane"));
-	//particleTrail->setTexture(ObjectLoader::getTexture("Default"));
-	//particleTrail->addPhysicsBody(false);
-	//particleTrail->setWorldPosition(vec3(9.0f, 2.0f, -5.0f));
-	//particleTrail->setLocalScale(vec3(1, 1, 1));
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->texName = "Dust";
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->velocity0 = vec3(-0.1f, -0.01f, -0.01f);
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->velocity1 = vec3(-0.1f, -0.01f, 0.01f);
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->massRange = vec2(1.0f, 2.0f);
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
-
-	//// Visual Properties
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->lifeRange = vec2(0.8f, 1.0f);
-	//
-
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->initialize(50);
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->playing = false;
-
-	//jumpParticles = new ParticleEmitter;
-	//jumpParticles->setShaderProgram(ObjectLoader::getShaderProgram("Normal"));
-	//jumpParticles->setMesh(ObjectLoader::getMesh("Plane"));
-	//jumpParticles->setTexture(ObjectLoader::getTexture("Dust"));
-	//jumpParticles->addPhysicsBody(false);
-	//jumpParticles->setParent(&player);
-	//jumpParticles->setLocalPosition(vec3::Zero);
-	//jumpParticles->setLocalScale(vec3(0.5f));
-	//jumpParticles->setLocalRotationAngleY(90.0f);
-
-	// Physics properties
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->texName = "Dust";
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity0 = vec3(-0.1f, 0.01f, -0.01f);
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->velocity1 = vec3(0.1f, 0.02f, 0.01f);
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->massRange = vec2(1.0f, 2.0f);
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->emitterPosition = player.getWorldPosition();
-
-	// Visual Properties
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->lifeRange = vec2(0.08f, 0.1f);
-
-	//dynamic_cast<ParticleEmitter*>(jumpParticles)->initialize(5);
-
-
-	/*float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);*/
-	//camera.perspective(60.0f, aspect, 1.0f, 1000.0f);
-	////camera.orthographic(-10, 10, -10, 10, -100, 100);
-	//camera.setWorldPosition(vec3(0.0f, 4.0f, 5.0f));
-	//camera.setLocalRotationAngleX(camera.getLocalRotationAngleX() - 0.2f);
-
-	//UICamera.orthographic(-16, 16, 9, -9, -100, 100);
-	//UICamera.setWorldPosition(vec3::Zero);
 
 
 	// Load all UI animation files
@@ -287,39 +293,28 @@ void Game::initializeGame()
 
 	sceneManager = SceneManager::getInstance();
 
-	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
-	//sceneManager->saveScene();
-	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
-
+	
 	sceneManager->addScene(testScene);
 	sceneManager->loadOldFaithful(testScene->getName());
-	//sceneManager->loadMainMenu(testScene->getName());
 	_currentScene = sceneManager->getCurrentScene();
 
 
-	//SceneManager* sceneManager = SceneManager::getInstance();
-	//sceneManager->loadScenesFromFile("./Assets/Scenes/Scenes.db");
-	//sceneManager->saveScene();
-
-	//sceneManager->loadSceneFromFile("./Assets/Scenes/Scenes2.db", "Scene2");
-	//sceneManager->loadSceneFromFile("./Assets/Scenes/$$.db", "$$");
 	sceneManager->loadSceneFromFile("./Assets/Scenes/sceney.db", "sceney", true);
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", true, 1);
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
+
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
+
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 
-	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
+	sceneManager->loadScene("UITest");
+	_currentScene = sceneManager->getCurrentScene();
 
-	//Quaternion test = Quaternion(0.0f, 0.0f, toRadians(90.0f));
-	//test.getZ();
-
-	//SkeletalMesh testSkeleton;
-	////testSkeleton.loadFromFile("./Assets/FatBoi.dae");
-	//testSkeleton.loadFromFile("./Assets/ANIM_TEST.dae");
-	//testSkeleton._isSkeletal = true;
 
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
@@ -339,6 +334,31 @@ void Game::update()
 {
 	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
+	if (_currentScene->getName() == "UITest")
+	{
+		outline = false;
+		UICanvas* canvas = _currentScene->getUISystem()->getCanvas("Canvui");
+		UIImage* image = canvas->getImage("Start");
+		if (image->clicked())
+		{
+			image->setClicked(false);
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			outline = true;
+		}
+		else if (canvas->getImage("Exit")->clicked())
+		{
+			exit(0);
+		}
+		else if (canvas->getImage("Extras")->clicked())
+		{
+			
+		}
+		else if (canvas->getImage("LevelSelect")->clicked())
+		{
+			
+		}
+	}
 
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
@@ -349,20 +369,19 @@ void Game::update()
 
 	_currentScene->update(deltaTime);
 
-	//dynamic_cast<ParticleEmitter*>(particleTrail)->emitterPosition = player.getWorldPosition();
-
-
-	//particleTrail->getParent()->update(deltaTime);
-	//player.getParent()->update(deltaTime);
-	//spotLight->setPosition(vec3(player.getWorldPosition().x, 5.0f, player.getWorldPosition().z) + offse);
-	//nutOmeter.getParent()->update(deltaTime);
-	//time.getParent()->update(deltaTime);
-
 	counter += deltaTime;
 
-	//camera.setWorldPosition(MathLibCore::lerp(camera.getWorldPosition(), playerTransform->getWorldPosition() - offset, deltaTime * 3.0f));
-	//camera.update(deltaTime);
-	//UICamera.update(deltaTime);
+	
+	for (int i = 0; i < (int)lights.size(); ++i)
+	{
+		lights[i]->setLocalPosition(vec3(
+			sin(i + TotalGameTime) * 0.1f + ((i /64)),
+			sin(TotalGameTime) * 0.1f + (i / 64),
+			cos(i + TotalGameTime) * 0.1f + (i % 4)) * vec3(60, 40, -20) - vec3(30, 25, 0));
+		//lights[i]->setLocalPosition(vec3(0, 5, -5));
+	}
+	lights[lights.size() - 1]->setLocalPosition(vec3(0, 5, -5)); 
+
 }
 
 void Game::draw()
@@ -400,45 +419,6 @@ void Game::draw()
 
 	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
 	
-	//shaderGbuffer.bind();
-	//
-	//gbuffer.bindDepthAsTexture(0);
-	//gbuffer.bindColorAsTexture(0, 1);
-	//gbuffer.bindColorAsTexture(1, 2);
-	//gbuffer.bindResolution();
-	//frameBufferOutline.clear();
-	//frameBufferOutline.bind();
-	////glClear(GL_DEPTH_BUFFER_BIT);
-	//////_meshRendererSystem->draw(light, spotLight);
-	////_currentScene->draw();
-	//
-	//gbuffer.renderToFSQ();
-	////gbuffer.drawFSQ();
-	//frameBufferOutline.unbind();
-	//
-	//gbuffer.unbindTexture(2);
-	//gbuffer.unbindTexture(1);
-	//gbuffer.unbindTexture(0);
-	//shaderGbuffer.unBind();
-	//
-	//
-	//
-	//
-	//shaderOutline.bind();
-	//shaderOutline.sendUniform("outline", outline);
-	//frameBufferOutline.bindColorAsTexture(0, 0);
-	//glViewport(0, 0, 1900, 1000);
-	//
-	//frameBufferLUT.clear();
-	//frameBufferLUT.bind();
-	//
-	////frameBufferOutline.renderToFSQ();
-	//frameBufferOutline.drawFSQ();
-	//frameBufferLUT.unbind();
-	//
-	//frameBufferOutline.unbindTexture(0);//texture
-	//
-	//shaderOutline.unBind();
 	mat4 uProjInverse = camera->getProjection().getSlowInverse();
 
 	mat4 uViewInverse = cameraTrans->getView().getInverse();
@@ -459,14 +439,43 @@ void Game::draw()
 	frameBufferShadow.bindDepthAsTexture(16);
 
 	gbuffer.bindResolution();
-	glViewport(0, 0, 1900, 1000);
+	glViewport(0, 0, windowWidth, windowHeight);
 
 	frameBufferLUT.clear();
-	frameBufferLUT.bind();
 
 	//frameBufferOutline.renderToFSQ();
-	gbuffer.drawFSQ();
+	frameBufferLUT.renderToFSQ();
 	frameBufferLUT.unbind();
+
+	shaderDeferred.bind();
+	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+	 frameBufferLUT.bindColorAsTexture(0, 0);
+	if (deferred)
+	{
+		for (int i = 0; i < (int)lights.size(); ++i)
+		{
+			lights[i]->bind();
+			lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
+			lights[i]->update(0.0f);
+
+			TransformComponent transform;
+			transform.setLocalPosition(lights[i]->getLocalPosition());
+			transform.setLocalScale(lights[i]->radius);
+			transform.update(updateTimer->getElapsedTimeSeconds());
+			shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
+			shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
+			shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
+			shaderDeferred.sendUniform("uLightColor", lights[i]->color);
+			shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
+			shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
+			shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
+
+			frameBufferLUT.renderSphere();
+		}
+	}
+	
+	//gbuffer.drawFSQ();
+
 
 	//frameBufferUI.unbind();
 	toonRamp->unBind();
@@ -477,52 +486,22 @@ void Game::draw()
 
 	shaderOutline.unBind();
 
-
-
-	//shaderGbuffer.bind();
-	//gbuffer.bindDepthAsTexture(0);
-	//frameBufferLUT.bindColorAsTexture(0, 1);
-	//gbuffer.bindColorAsTexture(1, 2);
-	//glViewport(0, 0, 1900, 1000);
-	//
-	//frameBufferOutline.clear();
-	//frameBufferOutline.bind();
-	//
-	////frameBufferLUT.renderToFSQ();
-	//gbuffer.drawFSQ();
-	//
-	//frameBufferOutline.unbind();
-	//gbuffer.unbindTexture(2);
-	//frameBufferLUT.unbindTexture(1);
-	//gbuffer.unbindTexture(0);
-	//
-	//shaderGbuffer.unBind();
-
-
 	_currentScene->drawUI();
-	
 
-	
-	
 	shaderLUT.bind();
 
 	shaderLUT.sendUniform("lut", lut);
+	shaderLUT.sendUniform("totalGameTime", TotalGameTime);
+	shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
 	LUTTex->bind(30);
 	
 
 	frameBufferLUT.bindColorAsTexture(0, 0);
-	glViewport(0, 0, 1900, 1000);
+	glViewport(0, 0, windowWidth, windowHeight);
 	Framebuffer::drawFSQ();
 	
 	frameBufferLUT.unbindTexture(0);
-	shaderLUT.unBind();
-
-	//glDisable(GL_DEPTH_TEST);
-	//nutOmeter.draw(UICamera, light, spotLight, uiCameraInverse);
-	//time.draw(UICamera, light, spotLight, uiCameraInverse);
-
-	// Draw ImGui stuff
-	
+	shaderLUT.unBind();	
 
 	_currentScene->drawText();
 	_currentScene->imguiDraw();
@@ -538,13 +517,17 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	if (key == 'o')
 		outline = !outline;
 	if (key == 'r')
+	{
 		shaderOutline.reload();
+		shaderDeferred.reload();
+	}
 	if (key == 'v')
 		lut = !lut;
+
 	//if (key == '1')
-		//sceneManager->loadScene("tut");
-	//if (key == '1')
-	//	sceneManager->loadScene("");
+	//	sceneManager->loadScene("tut");
+	if (key == 'd')
+		deferred = !deferred;
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
@@ -578,4 +561,24 @@ void Game::mouseMoved(int x, int y)
 void Game::mouseWheel(int wheel, int direction, int x, int y)
 {
 	_currentScene->mouseWheel(wheel, direction, x, y);
+}
+
+void Game::reshapeWindow(int w, int h)
+{
+	windowWidth = w;
+	windowHeight = h;
+
+	float aspect = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+
+	camera->setPerspective(60.0f, aspect, 1.0f, 1000.0f);
+	glViewport(0, 0, w, h);
+	
+	frameBufferOutline.reshape(w, h);
+	frameBufferLUT.reshape(w, h);
+	gbuffer.reshape(w, h);
+	frameBufferUI.reshape(w, h);
+	ImGuiIO& io = ImGui::GetIO();
+	io.DisplaySize.x = static_cast<float>(windowWidth);
+	io.DisplaySize.y = static_cast<float>(windowHeight);
 }

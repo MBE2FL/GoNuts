@@ -5,7 +5,7 @@
 #include "Entity.h"
 
 //#define GRAVITY -16.2f
-#define EGRAVITY -9.81f
+#define EGRAVITY -16.81f
 
 //struct Collision
 //{
@@ -51,7 +51,7 @@ public:
 	void setActive(const bool active);
 
 private:
-	vec3 _force, _velocity, _maxVelocity = vec3(5.0f, 8.0f, 0), _acceleration, _impluseForce, _impluseAcceleration;
+	vec3 _force, _velocity, _maxVelocity = vec3(6.0f, 8.0f, 0), _acceleration, _impluseForce, _impluseAcceleration;
 	float _mass;
 	bool _useGravity = false;
 	bool _canJump = false;

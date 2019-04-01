@@ -143,7 +143,7 @@ void main()
 	//outColor.rgb = textureLookUp.rgb;
 	//outColor.rgb = texture(uSceneDepth, texOffset.xy).rrr;
 
-	vec4 worldPos = uViewInverse * position;
+	//vec4 worldPos = uViewInverse * position;
 	//if(worldPos == vec4(0)) discard;
 	
 	

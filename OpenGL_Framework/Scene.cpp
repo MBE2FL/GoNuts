@@ -21,7 +21,29 @@ Scene::Scene(const string & name, bool inGameUi)
 	_guiHelper = GUIHelper::getInstance();
 
 	if (_inGameUi)
-		init();
+		initInGameUi();
+}
+
+Scene::Scene(const string & name, bool ScoreboardUi, int forScoreboard)
+{
+	_name = name;
+	_scoreboardUi = ScoreboardUi;
+	_entityManager = new EntityManager();
+	_transformSystem = new TransformSystem(_entityManager);
+	_meshRendererSystem = new MeshRendererSystem(_entityManager);
+	_physicsSystem = new PhysicsSystem(_entityManager);
+	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
+
+	_uiSystem = new UISystem(_entityManager);
+	_uiCamera = _uiSystem->getCamera();
+
+	_score = new ScoreCounter;
+
+	_guiHelper = GUIHelper::getInstance();
+
+	if (_scoreboardUi)
+		initScoreboardUi();
 }
 
 Scene::Scene(const string & name)
@@ -38,16 +60,13 @@ Scene::Scene(const string & name)
 	_uiCamera = _uiSystem->getCamera();
 
 	_guiHelper = GUIHelper::getInstance();
-
-	if (_inGameUi)
-		init();
 }
 
 Scene::~Scene()
 {
 }
 
-void Scene::init()
+void Scene::initInGameUi()
 {
 	fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
 
@@ -65,6 +84,42 @@ void Scene::init()
 
 	_timeText->init();
 	_coinText->init();
+}
+
+void Scene::initScoreboardUi()
+{
+	fontTTF = FontManager::initNewFont("BADABB__.ttf", 65);
+
+	_levelName = new TextRenderer();
+	_levelName->fontface = fontTTF;
+	_levelName->text = std::string("level #");
+	_levelName->color = vec4(vec3::Zero, 1.0f);
+	_levelName->origin = vec3(800.0f, 800.0f, 2.0f);
+	_levelName->init();
+
+	for (int i = 0; i < 5; i++)
+	{
+		int a = 10000;
+		TextRenderer* temp = new TextRenderer();
+		temp->fontface = fontTTF;
+		temp->text = std::string("NAME: " + to_string(a));
+		temp->color = vec4(vec3::Zero, 1.0f);
+		temp->origin = vec3(370.0f, 750.0f - (i * 90), 2.0f);
+		_nameScore.push_back(temp);
+		_nameScore[i]->init();
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		int a = 10000;
+		TextRenderer* temp = new TextRenderer();
+		temp->fontface = fontTTF;
+		temp->text = std::string("TIME: " + to_string(a));
+		temp->color = vec4(vec3::Zero, 1.0f);
+		temp->origin = vec3(1050.0f, 750.0f - (i * 90), 2.0f);
+		_timeScore.push_back(temp);
+		_timeScore[i]->init();
+	}
 }
 
 void Scene::update(float deltaTime)
@@ -89,10 +144,9 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 	}
 
-	light->setPosition(_playerTransform->getLocalPosition() + vec3(0.0f, -0.5f, 0.0f));
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
-		front = true;
+		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = true;
 		_playerTransform->setWorldPosition(_playerTransform->getPlayerSpawnPosition());
 		_playerPhysicsBody->setVelocity(vec3(0.0f));
 		_playerTransform->setLocalScale(vec3(0.2f));
@@ -101,13 +155,13 @@ void Scene::update(float deltaTime)
 	_transformSystem->update(FIXED_DELTA_TIME);
 	_physicsSystem->update(FIXED_DELTA_TIME);
 
-	if (front)
+	if (_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -5.0f),//where we want to go with lerp
 			FIXED_DELTA_TIME * 3.0f));// lerp time
 	}
-	else if (!front)
+	else if (!_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front)
 	{
 		_playerTransform->setWorldPosition(MathUtils::lerp(_playerTransform->getWorldPosition(),//starting position for when it is pressed 
 			vec3(_playerTransform->getWorldPosition().x, _playerTransform->getWorldPosition().y, -8.0f),//where we want to go with lerp
@@ -133,28 +187,23 @@ void Scene::update(float deltaTime)
 	if (_playerSkeleton)
 		_playerSkeleton->update(deltaTime);
 
-	//Freetype stuff
-	//float rainbowSpeed = 2.5f;
-	//float rainbowFrequency = -0.01f;
-	if (_timeText && _coinText)
+
+	if (_inGameUi)
 	{
 		_timeText->update(deltaTime);
 		_coinText->update(deltaTime);
 		_coinText->text = std::string("COINS: " + to_string(_score->getCoinCount()));
 		_timeText->text = std::string("TIME: " + to_string(_score->getTotalGameTime()));
 	}
-	//for (size_t i = 0; i < _timeText.data.size(); ++i)
-	//{
-	//	float offsetAmount = (_timeText.data[i].pos.x + _timeText.data[i].pos.y) * rainbowFrequency + totalGameTime * rainbowSpeed;
-	//	_timeText.data[i].color = vec4(
-	//		sinf(offsetAmount),
-	//		sinf(offsetAmount + PI / 3.0f * 2.0f),
-	//		sinf(offsetAmount + PI / 3.0f * 4.0f),
-	//		1.0f);
-	//	_timeText.data[i].color += vec4(1.0f);
-	//	_timeText.data[i].color *= 0.5f;
-	//}
-	//ends
+
+	if (_scoreboardUi)
+	{
+		_levelName->update(deltaTime);
+		for (unsigned int i = 0; i < _nameScore.size(); i++)
+			_nameScore[i]->update(deltaTime);
+		for (unsigned int i = 0; i < _timeScore.size(); i++)
+			_timeScore[i]->update(deltaTime);
+	}
 
 	_uiSystem->update(deltaTime);
 }
@@ -241,13 +290,27 @@ void Scene::drawUI()
 
 void Scene::drawText()
 {
-	if (_timeText && _coinText)
+	if (_inGameUi)
 	{
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		_timeText->draw();
 		_coinText->draw();
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	if (_scoreboardUi)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		_levelName->draw();
+		for(unsigned int i = 0; i < _nameScore.size(); i++)
+			_nameScore[i]->draw();
+		for (unsigned int i = 0; i < _timeScore.size(); i++)
+			_timeScore[i]->draw();
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
@@ -516,118 +579,32 @@ void Scene::loadOldFaithful()
 
 
 
-	light = new Light();
-	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
-	light->setAmbient(vec3(0.7f));
-	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(0.6f));
-	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.5f));
-	light->setSpecularExp(100.0f);
-	light->setAttenuationConstant(1.0f);
-	light->setAttenuationLinear(0.1f);
-	light->setAttenuationQuadratic(0.01f);
+	//light = new Light();
+	//light->setPosition(vec3(4.0f, 3.0f, -4.0f));
+	//light->setAmbient(vec3(0.7f));
+	////light->setAmbient(vec3(0));
+	//light->setDiffuse(vec3(0.6f));
+	////light->setDiffuse(vec3(0));
+	//light->setSpecular(vec3(0.5f));
+	//light->setSpecularExp(100.0f);
+	//light->setAttenuationConstant(1.0f);
+	//light->setAttenuationLinear(0.1f);
+	//light->setAttenuationQuadratic(0.01f);
 
-	spotLight = new Light();
-	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
-	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(vec3(1));
-	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
-	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(0.1f);
-	spotLight->setAttenuationLinear(0.01f);
-	spotLight->setAttenuationQuadratic(0.01f);
+	//spotLight = new Light();
+	//spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
+	//spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
+	//spotLight->setDiffuse(vec3(1));
+	//spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
+	//spotLight->setSpecularExp(100.0f);
+	//spotLight->setAttenuationConstant(0.1f);
+	//spotLight->setAttenuationLinear(0.01f);
+	//spotLight->setAttenuationQuadratic(0.01f);
 }
 
 void Scene::loadMainMenu()
 {
-	EntityManager::setInstance(_entityManager);
-	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
-	_guiHelper->update();
-
-
-	float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-
-	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 4.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f);
-	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
-	EntityManager::setMainCamera(_mainCamera);
-
-	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 8, -5), -20, 20, -20, 20, -10, 600, "Shadow Camera");
-	_shadowCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _shadowCamera);
-	_shadowCameraTransform->setLocalRotation(vec3(0, -90, -5));
-	//_shadowCameraTransform->setLocalPosition(vec3(12, -5, 10));
-	EntityManager::setShadowCamera(_shadowCamera);
-
-	Entity* player = _entityFactory->createPlayer(vec3(-3.0f, 10.0f, -5.0f), vec3(0.2f));
-	_playerTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, player);
-	_playerPhysicsBody = _entityManager->getComponent<PhysicsBodyComponent*>(ComponentType::PhysicsBody, player);
-	EntityManager::setPlayerTransform(_playerTransform);
-
-	UICanvas* MainMenuCanvas = new UICanvas("Main Menu");
-
-	UIImage* background = new UIImage("Background", vec3(0.0f, 0.0f, 1.0f), vec3(1.5f, 0.8f, 1.0f));
-	background->setTexture(ObjectLoader::getTexture("Menu Picture"));
-	MainMenuCanvas->addImage(background);
-
-	UIImage*  blackVertBar = new UIImage("BlackVertBar", vec3(-5.0f, 10.0f, 0.0f), vec3(7.0f, 5.0f, 1.0f));
-	blackVertBar->setTexture(ObjectLoader::getTexture("Vert black bar"));
-	MainMenuCanvas->addImage(blackVertBar);
-
-	UIImage* start = new UIImage("Start", vec3(2.0f, 1.0f, 0.0f));
-	start->setTexture(ObjectLoader::getTexture("start button"));
-	MainMenuCanvas->addImage(start);
-
-	UIImage* levelSelect = new UIImage("LevelSelect", vec3(2.0f, 1.0f, 0.0f));
-	levelSelect->setTexture(ObjectLoader::getTexture("level select button"));
-	MainMenuCanvas->addImage(levelSelect);
-
-	UIImage* extras = new UIImage("Extras", vec3(2.0f, 1.0f, 0.0f));
-	extras->setTexture(ObjectLoader::getTexture("extras button"));
-	MainMenuCanvas->addImage(extras);
-
-	UIImage* exit = new UIImage("Exit", vec3(2.0f, 1.0f, 0.0f));
-	exit->setTexture(ObjectLoader::getTexture("exit button"));
-	MainMenuCanvas->addImage(extras);
-
-	UIKeyFrame* frame1 = new UIKeyFrame(0.0f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame2 = new UIKeyFrame(0.8f, vec3(2.0f, 1.0f, 0.0f), vec3(1.2f, 1.2f, 1.0f), Quaternion::Identity, 1.0f);
-	UIKeyFrame* frame3 = new UIKeyFrame(1.6f, vec3(2.0f, 1.0f, 0.0f), vec3::One, Quaternion::Identity, 1.0f);
-
-	vector<UIKeyFrame*> testVec;
-	testVec.push_back(frame1);
-	testVec.push_back(frame2);
-	testVec.push_back(frame3);
-
-	//UIAnimation* animu = new UIAnimation("test", testVec);
-
-	//testImage->getAnimator()->addAnimation(animu);
-
-	_uiSystem->addCanvas(MainMenuCanvas);
-
-
-
-	light = new Light();
-	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
-	light->setAmbient(vec3(0.7f));
-	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(0.6f));
-	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.5f));
-	light->setSpecularExp(100.0f);
-	light->setAttenuationConstant(1.0f);
-	light->setAttenuationLinear(0.1f);
-	light->setAttenuationQuadratic(0.01f);
-
-	spotLight = new Light();
-	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
-	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(vec3(1));
-	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
-	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(0.1f);
-	spotLight->setAttenuationLinear(0.01f);
-	spotLight->setAttenuationQuadratic(0.01f);
 }
 
 void Scene::loadScene()
@@ -662,28 +639,6 @@ void Scene::loadScene()
 
 	_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
 
-
-	light = new Light();
-	light->setPosition(vec3(4.0f, 3.0f, -4.0f));
-	light->setAmbient(vec3(0.7f));
-	//light->setAmbient(vec3(0));
-	light->setDiffuse(vec3(0.6f));
-	//light->setDiffuse(vec3(0));
-	light->setSpecular(vec3(0.5f));
-	light->setSpecularExp(100.0f);
-	light->setAttenuationConstant(1.0f);
-	light->setAttenuationLinear(0.1f);
-	light->setAttenuationQuadratic(0.01f);
-
-	spotLight = new Light();
-	spotLight->setPosition(vec3(-3.2f, 30.0f, -28.0f));
-	spotLight->setAmbient(vec3(1.0f, 1.0f, 1.0f));
-	spotLight->setDiffuse(vec3(1));
-	spotLight->setSpecular(vec3(1.0f, 0.1f, 0.1f));
-	spotLight->setSpecularExp(100.0f);
-	spotLight->setAttenuationConstant(0.1f);
-	spotLight->setAttenuationLinear(0.01f);
-	spotLight->setAttenuationQuadratic(0.01f);
 }
 
 void Scene::loadSceneFromFile(const string & path)
@@ -737,7 +692,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
-			_playerPhysicsBody->addForce(vec3(0, 350.0f, 0.0f));
+			_playerPhysicsBody->addForce(vec3(0, 450.0f, 0.0f));
 			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, -2000.0f, 7000.0f, 0.5f);
 		}
 		break;
@@ -810,14 +765,14 @@ void Scene::specialKeyDown(int key, int mouseX, int mouseY)
 	switch (key)
 	{
 	case GLUT_KEY_SHIFT_L:
-		if (front && !_playerPhysicsBody->getCanJump())
+		if (_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
-			front = false;
+			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = false;
 			_sound->playSound("shift", _sound->getActionChannel(), false);
 		}
-		else if (!front && !_playerPhysicsBody->getCanJump())
+		else if (!_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
-			front = true;
+			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = true;
 			_sound->playSound("shift", _sound->getActionChannel(), false);
 		}
 	};
@@ -1219,9 +1174,9 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 		" NOT NULL,"\
 		"Image      INT  REFERENCES UIImages(Name) ON DELETE SET NULL"\
 		" NOT NULL,"\
-		"Animations TEXT DEFAULT NULL,"\
-		"[Current Animation] TEXT DEFAULT NULL,"\
-		"[Anim Order]        TEXT DEFAULT NULL,"\
+		"Animations TEXT DEFAULT '' NOT NULL,"\
+		"[Current Animation] TEXT DEFAULT '' NOT NULL,"\
+		"[Anim Order]        TEXT DEFAULT '' NOT NULL,"\
 		"Active              BOOLEAN NOT NULL"\
 		" DEFAULT(FALSE)"\
 		"); ";
@@ -2071,7 +2026,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 				if (animator->getCurrentAnimation())
 					sql += ", '" + animator->getCurrentAnimation()->getName() + "'";
 				else
-					sql += ", NULL";
+					sql += ", ''";
 
 				// Save the animation order
 				// Only save the animations which are in both the animation stack, and the list of animations.
@@ -2100,10 +2055,10 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 					sql += "'";
 				}
 				else
-					sql += ", NULL";
+					sql += ", ''";
 			}
 			else
-				sql += ", NULL, NULL, NULL";
+				sql += ", '', '', ''";
 
 
 			// Save whether or not the animator is active
