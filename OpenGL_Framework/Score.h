@@ -1,10 +1,22 @@
 #pragma once
+#include <string>
+#include <vector>
+#include <fstream>
+
+using std::string;
+using std::vector;
+using std::ifstream;// is for reading
+using std::ofstream;//is for writing
+using std::getline;
+using std::to_string;
 
 struct ScoreCounter
 {
 	static int coinCount;
 	static int acornCount;
-	float totalGameTime = 0.0f;
+	static float totalGameTime;
+	string playerName;
+	
 
 	int getCoinCount() { return coinCount; }
 	void plusCoin() { coinCount++; }
@@ -17,4 +29,7 @@ struct ScoreCounter
 	float getTotalGameTime() { return totalGameTime; }
 	void setTotalGameTime(float deltaTime) { totalGameTime += deltaTime; }
 	void voidTotalGameTime() { totalGameTime = 0.0f; }
+
+	void writeScores(string file, vector<ScoreCounter*> scores);
+	vector<ScoreCounter*> readScores(string file);
 };
