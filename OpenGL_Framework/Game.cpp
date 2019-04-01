@@ -333,7 +333,8 @@ void Game::update()
 	if (_currentScene->getName() == "UITest")
 	{
 		outline = false;
-		UIImage* image = _currentScene->getUISystem()->getCanvas("Canvui")->getImage("Start");
+		UICanvas* canvas = _currentScene->getUISystem()->getCanvas("Canvui");
+		UIImage* image = canvas->getImage("Start");
 		if (image->clicked())
 		{
 			image->setClicked(false);
@@ -341,9 +342,17 @@ void Game::update()
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
 		}
-		else if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Exit")->clicked())
+		else if (canvas->getImage("Exit")->clicked())
 		{
 			exit(0);
+		}
+		else if (canvas->getImage("Extras")->clicked())
+		{
+			
+		}
+		else if (canvas->getImage("LevelSelect")->clicked())
+		{
+			
 		}
 	}
 
