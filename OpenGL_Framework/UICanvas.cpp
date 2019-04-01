@@ -135,6 +135,7 @@ void UICanvas::checkClick(int x, int y)
 	float maxX = 0.0f;
 	float maxY = 0.0f;
 	Bounds meshBounds;
+	y = 1000-y;
 
 	for (auto const& imageKV : _images)
 	{
@@ -147,7 +148,7 @@ void UICanvas::checkClick(int x, int y)
 		minX = centre.x - (scale.x * meshBounds.extends.x);
 		maxX = centre.x + (scale.x * meshBounds.extends.x);
 
-		minY = centre.y + (scale.y * meshBounds.extends.y);
+		minY = centre.y - (scale.y * meshBounds.extends.y);
 		maxY = centre.y + (scale.y * meshBounds.extends.y);
 
 
@@ -156,4 +157,11 @@ void UICanvas::checkClick(int x, int y)
 		else
 			image->setClicked(false);
 	}
+}
+
+UIImage * UICanvas::getImage(const string & name) const
+{
+	if (_images.find(name) != _images.end())
+		return _images.at(name);
+	return nullptr;
 }

@@ -68,6 +68,13 @@ unordered_map<string, UICanvas*> UISystem::getCanvases() const
 	return _canvases;
 }
 
+UICanvas * UISystem::getCanvas(const string & name) const
+{
+	if (_canvases.find(name) != _canvases.end())
+		return _canvases.at(name);
+	return nullptr;
+}
+
 void UISystem::init(EntityManager * entityManager)
 {
 	// Create a new entity.

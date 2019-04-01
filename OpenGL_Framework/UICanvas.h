@@ -22,6 +22,7 @@ public:
 	unordered_map<string, UIButton*> getButtons() const;
 	void applyCanvasAnim(const string& animName);
 	void checkClick(int x, int y);
+	UIImage* getImage(const string& name) const;
 
 private:
 	string _name;
