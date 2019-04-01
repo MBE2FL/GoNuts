@@ -278,7 +278,7 @@ void Framebuffer::initFrameBuffers()
 	FullScreenQuad.addVBO(uvData);
 	FullScreenQuad.createVAO();
 
-	Sphere.loadFromFile("./Assets/Models/sphere.obj");
+	Sphere.loadFromFile("./Assets/Models/unitCube.obj");
 
 	_IsInitFrameBuffers = true;
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_MaxColorAttachments);

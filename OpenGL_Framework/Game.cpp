@@ -452,13 +452,14 @@ void Game::draw()
 	frameBufferLUT.bindColorAsTexture(0, 0);
 	if (deferred)
 	{
+		TransformComponent transform;
 		for (int i = 0; i < (int)lights.size(); ++i)
 		{
 			lights[i]->bind();
 			lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
 			lights[i]->update(0.0f);
 
-			TransformComponent transform;
+			
 			transform.setLocalPosition(lights[i]->getLocalPosition());
 			transform.setLocalScale(lights[i]->radius);
 			transform.update(updateTimer->getElapsedTimeSeconds());
