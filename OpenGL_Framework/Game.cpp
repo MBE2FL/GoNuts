@@ -215,6 +215,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("FullNut", "./Assets/Textures/Nut_Final.png");
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 	ObjectLoader::loadTexture("UiBackdrop", "./Assets/Textures/Fade_background.png");
+	ObjectLoader::loadTexture("Back", "./Assets/Textures/back.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
@@ -235,6 +236,30 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
+	ObjectLoader::loadTexture("Title Screen", "./Assets/Textures/title screen.png");
+	ObjectLoader::loadTexture("Press Any Button", "./Assets/Textures/press any button.png");
+	ObjectLoader::loadTexture("Exit Button Hover", "./Assets/Textures/EXIT Button Hover.png");
+	ObjectLoader::loadTexture("EXTRAS button Hover", "./Assets/Textures/EXTRAS button Hover.png");
+	ObjectLoader::loadTexture("LEVEL SELECT button Hover", "./Assets/Textures/LEVEL SELECT button Hover.png");
+	ObjectLoader::loadTexture("START button Hover", "./Assets/Textures/START button Hover.png");
+	ObjectLoader::loadTexture("Horizontal black bar", "./Assets/Textures/Horizontal black bar.png");
+	ObjectLoader::loadTexture("Bam", "./Assets/Textures/Bam.png");
+	ObjectLoader::loadTexture("Bang", "./Assets/Textures/Bang.png");
+	ObjectLoader::loadTexture("Click 1", "./Assets/Textures/click 1.png");
+	ObjectLoader::loadTexture("Click 2", "./Assets/Textures/click 2.png");
+	ObjectLoader::loadTexture("Crash", "./Assets/Textures/Crash.png");
+	ObjectLoader::loadTexture("Credits Button Hover", "./Assets/Textures/Credits Button hover.png");
+	ObjectLoader::loadTexture("Credits Button", "./Assets/Textures/Credits Button.png");
+	ObjectLoader::loadTexture("Leaderboard Button hover", "./Assets/Textures/Leaderboard Button hover.png");
+	ObjectLoader::loadTexture("Leaderboard Button", "./Assets/Textures/Leaderboard Button.png");
+	ObjectLoader::loadTexture("Play Button", "./Assets/Textures/PLAY button.png");
+	ObjectLoader::loadTexture("Play Button Hover", "./Assets/Textures/PLAY button hover.png");
+	ObjectLoader::loadTexture("Ring", "./Assets/Textures/Ring.png");
+	ObjectLoader::loadTexture("Roar", "./Assets/Textures/Roar.png");
+	ObjectLoader::loadTexture("Woosh", "./Assets/Textures/Woosh.png");
+	ObjectLoader::loadTexture("Tutorial button hover", "./Assets/Textures/TUTORIAL button hover.png");
+	ObjectLoader::loadTexture("Tutorial button", "./Assets/Textures/TUTORIAL button.png");
+	ObjectLoader::loadTexture("Next", "./Assets/Textures/Next.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
@@ -422,6 +447,7 @@ void Game::draw()
 
 	shaderLUT.sendUniform("lut", lut);
 	shaderLUT.sendUniform("totalGameTime", TotalGameTime);
+	shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
 	LUTTex->bind(30);
 	
 

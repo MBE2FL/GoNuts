@@ -55,7 +55,7 @@ public:
 	virtual ~Collider();
 
 	void onCollisionEnter(Entity* self, Entity* other);
-	void onCollisionStay(Entity* self, Entity* other);
+	void onCollisionStay(Entity* self, Entity* other, float deltaTime);
 	void onCollisionExit(Entity* self, Entity* other);
 
 	virtual void update(TransformComponent* transform) = 0;
@@ -83,6 +83,10 @@ public:
 	vec3 _min;
 
 	bool beastMode = false;
+	bool screenShake = false;
+	float shakeTimer = 0.0f;
+	bool front = true;
+
 protected:
 	SoundComponent* _sound;
 
