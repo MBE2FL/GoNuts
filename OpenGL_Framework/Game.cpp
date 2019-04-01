@@ -448,7 +448,7 @@ void Game::draw()
 
 	shaderDeferred.bind();
 	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-	 frameBufferLUT.bindColorAsTexture(0, 0);
+	frameBufferLUT.bindColorAsTexture(0, 0);
 	if (deferred)
 	{
 		for (int i = 0; i < (int)lights.size(); ++i)
