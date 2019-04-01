@@ -260,6 +260,15 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Tutorial button hover", "./Assets/Textures/TUTORIAL button hover.png");
 	ObjectLoader::loadTexture("Tutorial button", "./Assets/Textures/TUTORIAL button.png");
 	ObjectLoader::loadTexture("Next", "./Assets/Textures/Next.png");
+	ObjectLoader::loadTexture("Next Level Button", "./Assets/Textures/Next level button.png");
+	ObjectLoader::loadTexture("Next Level Button Hover", "./Assets/Textures/Next level button hover.png");
+	ObjectLoader::loadTexture("Return Button Hover", "./Assets/Textures/Return button hover.png");
+	ObjectLoader::loadTexture("Return Button", "./Assets/Textures/Return button.png");
+	ObjectLoader::loadTexture("Replay Button", "./Assets/Textures/REPLAY button.png");
+	ObjectLoader::loadTexture("Replay Button Hover", "./Assets/Textures/REPLAY button hover.png");
+	ObjectLoader::loadTexture("Back Hover", "./Assets/Textures/Back Hover.png");
+	ObjectLoader::loadTexture("Next Hover", "./Assets/Textures/Next Hover.png");
+	ObjectLoader::loadTexture("Highscore", "./Assets/Textures/Highscore.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
