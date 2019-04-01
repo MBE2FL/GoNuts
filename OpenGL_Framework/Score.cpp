@@ -63,3 +63,15 @@ vector<ScoreCounter*> ScoreCounter::readScores(string file)
 	}
 	return temp;
 }
+
+void ScoreCounter::sortScores(vector<ScoreCounter*> &scores)
+{
+	sort(scores.begin(), scores.end(), [](ScoreCounter* a, ScoreCounter* b) -> bool
+	{
+		return a->totalGameTime < b->totalGameTime;
+	});
+	//vector of scores
+	//scores = read
+	//sort(scores)
+	//write (scores)
+}

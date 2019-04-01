@@ -743,7 +743,7 @@ TTag GUIHelper::charToTag(char* tag)
 		return TTag::Spike;
 	else if (strcmp(tag, "Checkpoint") == 0)
 		return TTag::Checkpoint;
-	else if (strcmp(tag, "Victorypoint") == 0)
+	else if (strcmp(tag, "VictoryPoint") == 0)
 		return TTag::VictoryPoint;
 	else if (strcmp(tag, "Generic") == 0)
 		return TTag::Generic;

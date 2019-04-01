@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
 using std::string;
 using std::vector;
@@ -9,6 +10,7 @@ using std::ifstream;// is for reading
 using std::ofstream;//is for writing
 using std::getline;
 using std::to_string;
+using std::sort;
 
 struct ScoreCounter
 {
@@ -32,4 +34,5 @@ struct ScoreCounter
 
 	void writeScores(string file, vector<ScoreCounter*> scores);
 	vector<ScoreCounter*> readScores(string file);
+	void sortScores(vector<ScoreCounter*> &scores);
 };
