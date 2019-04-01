@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "imgui/imgui.h"
+#include "UIImage.h"
 
 #include <string>
 
@@ -60,6 +62,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/UI.frag");
 	ObjectLoader::loadShaderProgram("FreeType", "./Assets/Shaders/font.vert", "./Assets/Shaders/font.frag");
+	ObjectLoader::loadShaderProgram("Discard", "./Assets/Shaders/discard.vert", "./Assets/Shaders/discard.frag");
 
 
 	shaderGbuffer.load("./Assets/Shaders/shader.vert", "./Assets/Shaders/PassThrough - Copy.frag");
@@ -333,15 +336,26 @@ void Game::update()
 	if (_currentScene->getName() == "UITest")
 	{
 		outline = false;
-		if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Start")->clicked())
+		UICanvas* canvas = _currentScene->getUISystem()->getCanvas("Canvui");
+		UIImage* image = canvas->getImage("Start");
+		if (image->clicked())
 		{
+			image->setClicked(false);
 			sceneManager->loadScene("tut");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
 		}
-		else if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Exit")->clicked())
+		else if (canvas->getImage("Exit")->clicked())
 		{
 			exit(0);
+		}
+		else if (canvas->getImage("Extras")->clicked())
+		{
+			
+		}
+		else if (canvas->getImage("LevelSelect")->clicked())
+		{
+			
 		}
 	}
 
@@ -562,5 +576,8 @@ void Game::reshapeWindow(int w, int h)
 	frameBufferOutline.reshape(w, h);
 	frameBufferLUT.reshape(w, h);
 	gbuffer.reshape(w, h);
-	frameBufferUI.reshape(w, h);	
+	frameBufferUI.reshape(w, h);
+	ImGuiIO& io = ImGui::GetIO();
+	io.DisplaySize.x = static_cast<float>(windowWidth);
+	io.DisplaySize.y = static_cast<float>(windowHeight);
 }
