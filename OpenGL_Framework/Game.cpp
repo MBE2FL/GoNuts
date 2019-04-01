@@ -25,16 +25,16 @@ void Game::initializeGame()
 	glEnable(GL_MULTISAMPLE);
 
 	Framebuffer::initFrameBuffers();
-	gbuffer.init(1900, 1000);
+	gbuffer.init(windowWidth, windowHeight);
 	//frameBufferOutline.addDepthTarget();
 	frameBufferOutline.addColorTarget(GL_RGB8);
-	frameBufferOutline.init(1900, 1000);
+	frameBufferOutline.init(windowWidth, windowHeight);
 
 	frameBufferLUT.addColorTarget(GL_RGB8);
-	frameBufferLUT.init(1900, 1000);
+	frameBufferLUT.init(windowWidth, windowHeight);
 
 	frameBufferUI.addColorTarget(GL_RGB8);
-	frameBufferUI.init(1900, 1000);
+	frameBufferUI.init(windowWidth, windowHeight);
 
 	frameBufferShadow.addDepthTarget();
 	frameBufferShadow.init(8192, 8192);
@@ -261,6 +261,15 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Tutorial button hover", "./Assets/Textures/TUTORIAL button hover.png");
 	ObjectLoader::loadTexture("Tutorial button", "./Assets/Textures/TUTORIAL button.png");
 	ObjectLoader::loadTexture("Next", "./Assets/Textures/Next.png");
+	ObjectLoader::loadTexture("Next Level Button", "./Assets/Textures/Next level button.png");
+	ObjectLoader::loadTexture("Next Level Button Hover", "./Assets/Textures/Next level button hover.png");
+	ObjectLoader::loadTexture("Return Button Hover", "./Assets/Textures/Return button hover.png");
+	ObjectLoader::loadTexture("Return Button", "./Assets/Textures/Return button.png");
+	ObjectLoader::loadTexture("Replay Button", "./Assets/Textures/REPLAY button.png");
+	ObjectLoader::loadTexture("Replay Button Hover", "./Assets/Textures/REPLAY button hover.png");
+	ObjectLoader::loadTexture("Back Hover", "./Assets/Textures/Back Hover.png");
+	ObjectLoader::loadTexture("Next Hover", "./Assets/Textures/Next Hover.png");
+	ObjectLoader::loadTexture("Highscore", "./Assets/Textures/Highscore.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
@@ -297,6 +306,10 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 
+	sceneManager->loadScene("UITest");
+	_currentScene = sceneManager->getCurrentScene();
+
+
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
 
@@ -315,6 +328,20 @@ void Game::update()
 {
 	Sound::engine.Update();
 	_currentScene = SceneManager::getInstance()->getCurrentScene();
+	if (_currentScene->getName() == "UITest")
+	{
+		outline = false;
+		if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Start")->clicked())
+		{
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			outline = true;
+		}
+		else if (_currentScene->getUISystem()->getCanvas("Canvui")->getImage("Exit")->clicked())
+		{
+			exit(0);
+		}
+	}
 
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
@@ -395,7 +422,7 @@ void Game::draw()
 	frameBufferShadow.bindDepthAsTexture(16);
 
 	gbuffer.bindResolution();
-	glViewport(0, 0, 1900, 1000);
+	glViewport(0, 0, windowWidth, windowHeight);
 
 	frameBufferLUT.clear();
 
@@ -453,7 +480,7 @@ void Game::draw()
 	
 
 	frameBufferLUT.bindColorAsTexture(0, 0);
-	glViewport(0, 0, 1900, 1000);
+	glViewport(0, 0, windowWidth, windowHeight);
 	Framebuffer::drawFSQ();
 	
 	frameBufferLUT.unbindTexture(0);
@@ -517,4 +544,21 @@ void Game::mouseMoved(int x, int y)
 void Game::mouseWheel(int wheel, int direction, int x, int y)
 {
 	_currentScene->mouseWheel(wheel, direction, x, y);
+}
+
+void Game::reshapeWindow(int w, int h)
+{
+	windowWidth = w;
+	windowHeight = h;
+
+	float aspect = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+
+	camera->setPerspective(60.0f, aspect, 1.0f, 1000.0f);
+	glViewport(0, 0, w, h);
+	
+	frameBufferOutline.reshape(w, h);
+	frameBufferLUT.reshape(w, h);
+	gbuffer.reshape(w, h);
+	frameBufferUI.reshape(w, h);	
 }

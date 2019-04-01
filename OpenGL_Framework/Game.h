@@ -44,6 +44,7 @@ public:
 	void mouseClicked(int button, int state, int x, int y);
 	void mouseMoved(int x, int y);
 	void mouseWheel(int wheel, int direction, int x, int y);
+	void reshapeWindow(int w, int h);
 
 	/* Data Members */
 	Timer *updateTimer	= nullptr;
@@ -52,6 +53,9 @@ public:
 	float drawTime = 0.0f;
 
 	vec3 offse = vec3(0,18,-25.882f);
+
+	int windowWidth = WINDOW_WIDTH;
+	int windowHeight = WINDOW_HEIGHT;
 
 private:
 
@@ -78,7 +82,7 @@ private:
 
 	Framebuffer frameBufferOutline;
 	Framebuffer frameBufferLUT;
-	GBuffer gbuffer;
+	GBuffer		gbuffer;
 
 	Framebuffer frameBufferShadow;
 

@@ -79,7 +79,11 @@ void MouseWheelCallbackFunction(int wheel, int direction, int x, int y)
 	theGame->mouseWheel(wheel, direction, x, y);
 	glutPostRedisplay();
 }
-
+void WindowReshapeCallbackFunction(int w, int h)
+{
+	/* Update our Window Properties */
+	theGame->reshapeWindow(w, h);
+}
 
 
 void CALLBACK OpenGLDebugCallback(
@@ -212,6 +216,7 @@ int main(int argc, char **argv)
 	glutMotionFunc(MouseMotionCallbackFunction);
 	glutMouseWheelFunc(MouseWheelCallbackFunction);
 	glutTimerFunc(1, TimerCallbackFunction, 0);
+	glutReshapeFunc(WindowReshapeCallbackFunction);
 
 	//InitOpenGLDebugCallback();
 
