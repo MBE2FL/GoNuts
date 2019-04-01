@@ -229,7 +229,7 @@ void Game::initializeGame()
 
 	//ui textures
 	ObjectLoader::loadTexture("Menu Picture", "./Assets//Textures/Menu Picture.png");
-	ObjectLoader::loadTexture("Scoreboard", "./Assets//Textures/Scoreboard.png");
+	ObjectLoader::loadTexture("Scoreboard", "./Assets//Textures/Highscore.png");
 	ObjectLoader::loadTexture("Vert black bar", "./Assets/Textures/Vertical black bar.png");
 	ObjectLoader::loadTexture("start button", "./Assets/Textures/START button.png");
 	ObjectLoader::loadTexture("level select button", "./Assets/Textures/LEVEL SELECT button.png");
@@ -268,7 +268,10 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Replay Button Hover", "./Assets/Textures/REPLAY button hover.png");
 	ObjectLoader::loadTexture("Back Hover", "./Assets/Textures/Back Hover.png");
 	ObjectLoader::loadTexture("Next Hover", "./Assets/Textures/Next Hover.png");
-	ObjectLoader::loadTexture("Highscore", "./Assets/Textures/Highscore.png");
+	ObjectLoader::loadTexture("Right Arrow Hover", "./Assets/Textures/Right Arrow Hover.png");
+	ObjectLoader::loadTexture("Right Arrow", "./Assets/Textures/Right Arrow.png");
+	ObjectLoader::loadTexture("Left Arrow", "./Assets/Textures/Left Arrow.png");
+	ObjectLoader::loadTexture("Left Arrow Hover", "./Assets/Textures/Left Arrow Hover.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
