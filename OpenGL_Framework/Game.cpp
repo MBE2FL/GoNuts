@@ -240,6 +240,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
+	ObjectLoader::loadTexture("UIcoin", "./Assets/Textures/UIcoin.png");
 	ObjectLoader::loadTexture("Title Screen", "./Assets/Textures/title screen.png");
 	ObjectLoader::loadTexture("Press Any Button", "./Assets/Textures/press any button.png");
 	ObjectLoader::loadTexture("Exit Button Hover", "./Assets/Textures/EXIT Button Hover.png");
