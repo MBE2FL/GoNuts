@@ -103,9 +103,11 @@ public:
 	void setPrimitiveType(GLenum type);
 
 	void createVAO(GLenum vboUsage = GL_STATIC_DRAW, GLenum iboUsage = GL_STATIC_DRAW);
+	void createParticleInstancedVAO(GLenum vboUsage = GL_STATIC_DRAW);
 	void reuploadVAO();
 
 	void draw() const;
+	void drawParticles(size_t numParticles) const;
 
 	void bind() const;
 	void unbind() const;

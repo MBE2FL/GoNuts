@@ -118,9 +118,6 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEmitter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -261,6 +258,7 @@
     <ClCompile Include="Score.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -315,9 +313,6 @@
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleEmitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
@@ -459,6 +454,12 @@
     </ClInclude>
     <ClInclude Include="Score.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>Header Files\EntitySystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEffect.h">
+      <Filter>Header Files\EntitySystem\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

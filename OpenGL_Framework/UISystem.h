@@ -21,7 +21,7 @@ public:
 	Entity* getCamera() const;
 	void checkClick(int x, int y);
 	unordered_map<string, UICanvas*> getCanvases() const;
-	UICanvas* getCanvas(const string & name)const;
+	UICanvas* getCanvas(const string& name) const;
 
 private:
 	unordered_map<string, UICanvas*> _canvases;

@@ -72,6 +72,7 @@ UICanvas * UISystem::getCanvas(const string & name) const
 {
 	if (_canvases.find(name) != _canvases.end())
 		return _canvases.at(name);
+
 	return nullptr;
 }
 

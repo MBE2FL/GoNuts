@@ -163,5 +163,6 @@ UIImage * UICanvas::getImage(const string & name) const
 {
 	if (_images.find(name) != _images.end())
 		return _images.at(name);
+
 	return nullptr;
 }

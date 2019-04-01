@@ -21,6 +21,8 @@
 #include "FmodWrapper.h"
 #include "Font.h"
 
+#include "ParticleEffect.h"
+
 #define WINDOW_WIDTH			1900
 #define WINDOW_HEIGHT			1000
 #define FRAMES_PER_SECOND		60
@@ -162,6 +164,8 @@ private:
 
 	UISystem* _uiSystem;
 	Entity* _uiCamera;
+
+	ParticleEffect* _particleEffect = nullptr;
 
 	SkeletalMesh* skeletalMeshTest = nullptr;
 	SkeletalMesh* skeletalMeshTestTwo = nullptr;
