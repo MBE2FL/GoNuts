@@ -377,7 +377,7 @@ void Game::update()
 		if (image->clicked())
 		{
 			image->setClicked(false);
-			sceneManager->loadScene("tut");
+			sceneManager->loadScene("Dialogue");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
 			_sound->stop();
@@ -396,6 +396,17 @@ void Game::update()
 			
 		}
 	}
+	if (_currentScene->getName() == "Dialogue")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+
 	if (_currentScene->getName() == "tut")
 	{
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
