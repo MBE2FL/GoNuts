@@ -169,6 +169,7 @@ private:
 	TransformComponent* _mainCameraTransform;
 	TransformComponent* _shadowCameraTransform;
 	SkeletalMesh* _playerSkeleton = nullptr;
+	SkeletalMesh* _birdSkeleton = nullptr;
 	Entity* _mainCamera;
 	Entity* _shadowCamera;
 	ScoreCounter* _score;

@@ -235,12 +235,13 @@ void Scene::update(float deltaTime)
 
 	if (_score->getAcornCount() > 18)
 	{
-		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
+		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getSkeletalMesh("SkeletalBeast"));
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
 		_playerTransform->setLocalScale(vec3(1.5f));
-		_playerTransform->setLocalRotationAngleX(0.0f);
+		_playerTransform->setLocalRotationAngleX(-90.0f);
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
+		_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
 	}
 
 	if (_playerTransform->getLocalPosition().y < -6.0f)
@@ -283,9 +284,15 @@ void Scene::update(float deltaTime)
 		//skeletalMeshTest->update(deltaTime);
 		skeletalMeshTestTwo->update(deltaTime);
 	}
-	if (_playerSkeleton)
+	if (_playerSkeleton && _entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode)
+		_playerSkeleton->update(deltaTime*2.f);
+	else if (_playerSkeleton)
 		_playerSkeleton->update(deltaTime);
 
+	if (_birdSkeleton)
+		_birdSkeleton->update(deltaTime);
+	
+	//EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, _birdSkeleton.getE);
 
 	if (_inGameUi)
 	{
@@ -760,6 +767,16 @@ void Scene::loadScene()
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
 	_guiHelper->update();
+
+	//_birdSkeleton = ObjectLoader::getSkeletalMesh("SkeletalBird");
+	Entity* entity = _entityFactory->createEmpty(vec3(-2.0f, 9.0f, -4.5f), vec3(1.2f), nullptr, "SkeletalBird");
+	_birdSkeleton = ObjectLoader::getSkeletalMesh("SkeletalBird");
+	_birdSkeleton->_isSkeletal = true;
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	vector<Texture*> textures = { ObjectLoader::getTexture("Beast Mode") };
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(_birdSkeleton, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
 
 	// Make sure both main and shadow cameras are initialized
 	if (!_mainCamera || !_mainCameraTransform)

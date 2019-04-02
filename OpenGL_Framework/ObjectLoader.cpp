@@ -85,6 +85,7 @@ void ObjectLoader::loadSkeletalMesh(const string & meshName, const string & arma
 		// Load mesh
 		SkeletalMesh* mesh = new SkeletalMesh();
 		mesh->setName(meshName);
+		mesh->_isSkeletal = true;
 		if (!mesh->loadFromFileNUT(armaturePath, animPath))
 		{
 			cout << "Model failed to load." << endl;
