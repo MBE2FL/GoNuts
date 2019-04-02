@@ -108,8 +108,16 @@ void Scene::initInGameUi()
 	_coinText->color = vec4(vec4::One);
 	_coinText->origin = vec3(10.0f, 980.0f, 0.0f);
 
+	fontTTF = FontManager::initNewFont("BADABB__.ttf", 40);
+	_acornText = new TextRenderer();
+	_acornText->fontface = fontTTF;
+	_acornText->text = std::string(to_string(_score->getAcornCount()));
+	_acornText->color = vec4(vec4::One);
+	_acornText->origin = vec3(940.0f, 130.0f, 0.0f);
+
 	_timeText->init();
 	_coinText->init();
+	_acornText->init();
 }
 
 void Scene::initScoreboardUi()
@@ -312,8 +320,10 @@ void Scene::update(float deltaTime)
 	{
 		_timeText->update(deltaTime);
 		_coinText->update(deltaTime);
+		_acornText->update(deltaTime);
 		_coinText->text = std::string("COINS: " + to_string(_score->getCoinCount()));
 		_timeText->text = std::string("TIME: " + to_string(_score->getTotalGameTime()));
+		_acornText->text = std::string(to_string(_score->getAcornCount()));
 	}
 
 	if (_scoreboardUi)
@@ -439,6 +449,7 @@ void Scene::drawText()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		_timeText->draw();
 		_coinText->draw();
+		_acornText->draw();
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}

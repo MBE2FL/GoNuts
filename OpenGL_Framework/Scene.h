@@ -137,6 +137,7 @@ private:
 	bool _inGameUi = false;
 	TextRenderer* _timeText;
 	TextRenderer* _coinText;
+	TextRenderer* _acornText;
 
 	//for the scoreboard
 	bool _scoreboardUi = false;
