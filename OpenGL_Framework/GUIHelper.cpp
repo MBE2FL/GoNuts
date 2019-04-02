@@ -1709,10 +1709,14 @@ void GUIHelper::drawParticleManagerEditor()
 	// Open particle manager editor window
 	ImGui::Begin("Particle Editor", &_showParticleManagerEditor);
 
+	static char buffer[164] = "";
+	ImGui::InputText("Effect Name", buffer, 164);
+
 	// Open particle spawn menu window
-	if (ImGui::Button("Spawn Particle System"))
+	if (ImGui::Button("Spawn Particle Effect"))
 	{
-		//_showSpawnUIElement = true;
+		ParticleEffect* effect = new ParticleEffect(buffer);
+		_particleManager->addEffect(effect);
 	}
 
 	//if (_showSpawnUIElement)
@@ -1743,6 +1747,10 @@ void GUIHelper::drawParticleEffects()
 		if (ImGui::CollapsingHeader(effectsKV.first.c_str()))
 		{
 			//_canvasShowImageProperty[canvasKV.second] = canvasKV.second;
+			bool active = effectsKV.second->isActive();
+			ImGui::Checkbox("Active", &active);
+			effectsKV.second->setActive(active);
+
 
 			_currentParticleEffect = effectsKV.second;
 			drawParticleEffectHierarchy(effectsKV.second);
@@ -1757,6 +1765,15 @@ void GUIHelper::drawParticleEffectHierarchy(ParticleEffect * particleEffect)
 	ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3.0f);
 
 	//ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	static char buffer[164] = "";
+	ImGui::InputText("System Name", buffer, 164);
+
+	if (ImGui::Button("Spawn System"))
+	{
+		ParticleSystem* system = new ParticleSystem(buffer, 0);
+		particleEffect->addSystem(system);
+	}
 
 	// Get all particle systems in the canvas.
 	unordered_map<string, ParticleSystem*> systems = particleEffect->getSystems();
@@ -1804,10 +1821,60 @@ void GUIHelper::drawParticleSystemEditor(bool * open)
 		return;
 	}
 
+	static int numParticles = 0;
+	ImGui::InputInt("Num Particles", &numParticles);
+	if (ImGui::Button("Spawn particles"))
+	{
+		for (int i = 0; i < numParticles; ++i)
+			_currentParticleSystem->spawnParticle();
+	}
+
 	if (ImGui::Button("Respawn Particles"))
 	{
 		_currentParticleSystem->respawnParticles();
 	}
+
+	bool active = _currentParticleSystem->isActive();
+	ImGui::Checkbox("Active", &active);
+	_currentParticleSystem->setActive(active);
+
+	bool loop = _currentParticleSystem->getLoop();
+	ImGui::Checkbox("Loop", &loop);
+	_currentParticleSystem->setLoop(loop);
+
+
+	// Textures
+	vector<Texture*> textures = ObjectLoader::getTextures();
+	static string currentTexName = _currentParticleSystem->getTexture() ? _currentParticleSystem->getTexture()->getName() : "";
+	static Texture* texture = nullptr;
+	if (ImGui::BeginCombo("Textures", currentTexName.c_str()))
+	{
+		vector<Texture*>::iterator it;
+		for (it = textures.begin(); it != textures.end(); it++)
+		{
+			string texName = (*it)->filename;
+
+			bool isSelected = (currentTexName == texName);
+
+			if (ImGui::Selectable(texName.c_str(), isSelected))
+			{
+				currentTexName = texName;
+				texture = *it;
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+	}
+
+	if (texture)
+	{
+		_currentParticleSystem->setTexture(texture);
+		texture = nullptr;
+	}
+
+
 
 	// Display fluid dynamics properties
 	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Fluid Dynamics Properties");
@@ -1881,11 +1948,11 @@ void GUIHelper::drawParticleSystemEditor(bool * open)
 	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Velocity To Add Over lifetime");
 
 	temp = _currentParticleSystem->getStartVelocity();
-	ImGui::DragFloat2("Start Velocity", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	ImGui::DragFloat2("Start Force", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 	_currentParticleSystem->setStartVelocity(temp);
 
 	temp = _currentParticleSystem->getEndVelocity();
-	ImGui::DragFloat2("End Velocity", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	ImGui::DragFloat2("End Force", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
 	_currentParticleSystem->setEndVelocity(temp);
 
 

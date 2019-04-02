@@ -105,25 +105,25 @@ void ParticleSystem::update(float deltaTime)
 			vec3 gravity = _gravity * particle->_density;	// Force of _gravity * density of current particle
 
 			float interValue = invLerp(particle->_currLifeTime, 0.0f, particle->_totalLifeTime);
-			vec3 extForce = lerp(particle->_startForce, particle->_endForce, interValue);
+			vec3 extVelocity = lerp(particle->_startVelocity, particle->_endVelocity, interValue);
 
-			particle->_force = pressureForce + viscosityForce + gravity + extForce; //+ vec3(static_cast<float>(rand() % 2), static_cast<float>(rand() % 2), 0.0f);		// Total force = force of pressure gradient + force of _gravity + external forces
+			particle->_force = pressureForce + viscosityForce + gravity; //+ vec3(static_cast<float>(rand() % 2), static_cast<float>(rand() % 2), 0.0f);		// Total force = force of pressure gradient + force of _gravity + external forces
 
 			vec3 totalAccel = (particle->_density > 0) ? (particle->_force / particle->_density) : 0.0f;
 
-			particle->_velocity += totalAccel * deltaTime;	// v = prevV + (force / density) * dt
+			particle->_velocity += totalAccel * deltaTime + extVelocity;	// v = prevV + (force / density) * dt
 
-			if (particle->_velocity.x > 50.0f)
-				particle->_velocity.x = 50.0f;
+			if (particle->_velocity.x > 600.0f)
+				particle->_velocity.x = 600.0f;
 
-			if (particle->_velocity.y > 50.0f)
-				particle->_velocity.y = 50.0f;
+			if (particle->_velocity.y > 600.0f)
+				particle->_velocity.y = 600.0f;
 
-			if (particle->_velocity.x < -50.0f)
-				particle->_velocity.x = -50.0f;
+			if (particle->_velocity.x < -600.0f)
+				particle->_velocity.x = -600.0f;
 
-			if (particle->_velocity.y < -50.0f)
-				particle->_velocity.y = -50.0f;
+			if (particle->_velocity.y < -600.0f)
+				particle->_velocity.y = -600.0f;
 
 			particle->transform->setLocalPosition(particle->transform->getWorldPosition() + particle->_velocity * deltaTime);	// p = prevP + (v * dt)
 
@@ -131,26 +131,6 @@ void ParticleSystem::update(float deltaTime)
 
 
 			particle->_force = vec3::Zero;
-
-
-
-
-			// Update the lifeTime of the particle, and check if it has expired.
-			particle->_currLifeTime += deltaTime;
-
-			if (particle->_currLifeTime >= particle->_totalLifeTime)
-			{
-				//if (getLoop())
-				//{
-				//	spawnParticle(particle);
-				//}
-				//else
-				//{
-				//	_particles.erase(std::find(_particles.begin(), _particles.end(), particle));
-				//	delete particle;
-				//	particle = nullptr;
-				//}
-			}
 		}
 
 
@@ -158,6 +138,32 @@ void ParticleSystem::update(float deltaTime)
 		
 		
 		// Clean up particles
+		// Update the lifeTime of the particle, and check if it has expired.
+		vector<Particle*>::iterator it;
+		Particle* particle = nullptr;
+		for (it = _particles.begin(); it != _particles.end();)
+		{
+			particle = *it;
+
+			particle->_currLifeTime += deltaTime;
+
+			if (particle->_currLifeTime >= particle->_totalLifeTime)
+			{
+				if (getLoop())
+				{
+					spawnParticle(particle);
+				}
+				else
+				{
+					it = _particles.erase(it);
+					delete particle;
+					particle = nullptr;
+					continue;
+				}
+			}
+
+			++it;
+		}
 	}
 }
 
@@ -243,6 +249,8 @@ void ParticleSystem::spawnParticle()
 	particle->transform->setLocalScale(scale);
 	particle->_mass = _particleMass;
 	particle->_totalLifeTime = lifetime;
+	particle->_startVelocity = _startVelocity;
+	particle->_endVelocity = _endVelocity;
 
 	_particles.push_back(particle);
 }
@@ -273,22 +281,29 @@ void ParticleSystem::spawnParticle(Particle * particle)
 	particle->_totalLifeTime = lifetime;
 	particle->_currLifeTime = 0.0f;
 	particle->_velocity = vec3::Zero;
+	particle->_startVelocity = _startVelocity;
+	particle->_endVelocity = _endVelocity;
 }
 
 void ParticleSystem::respawnParticles()
 {
-	size_t numParticles = _particles.size();
+	//size_t numParticles = _particles.size();
 	
+	//for (Particle* particle : _particles)
+	//{
+	//	delete particle;
+	//}
+
+	//_particles.clear();
+
+	//for (size_t i = 0; i < numParticles; ++i)
+	//{
+	//	spawnParticle();
+	//}
+
 	for (Particle* particle : _particles)
 	{
-		delete particle;
-	}
-
-	_particles.clear();
-
-	for (size_t i = 0; i < numParticles; ++i)
-	{
-		spawnParticle();
+		spawnParticle(particle);
 	}
 }
 
@@ -300,6 +315,22 @@ bool ParticleSystem::getLoop() const
 void ParticleSystem::setLoop(const bool loop)
 {
 	_loop = loop;
+}
+
+Texture * ParticleSystem::getTexture() const
+{
+	if (_particles.size() > 0)
+		return _particles.front()->renderer->getTexture(0);
+	else
+		return nullptr;
+}
+
+void ParticleSystem::setTexture(Texture * texture)
+{
+	for (Particle* particle : _particles)
+	{
+		particle->renderer->setTexture(0, texture);
+	}
 }
 
 float ParticleSystem::getMinLifetime() const
