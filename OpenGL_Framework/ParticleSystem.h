@@ -40,9 +40,8 @@ struct Particle
 	vec3 _force;
 	vec3 _velocity;
 
-
-	vec3 _startForce;
-	vec3 _endForce;
+	vec3 _startVelocity;
+	vec3 _endVelocity;
 
 	TransformComponent* transform;
 	MeshRendererComponent* renderer;
@@ -65,6 +64,8 @@ public:
 	void respawnParticles();
 	bool getLoop() const;
 	void setLoop(const bool loop);
+	Texture* getTexture() const;
+	void setTexture(Texture* texture);
 
 	float getMinLifetime() const;
 	void setMinLifetime(const float lifetime);
