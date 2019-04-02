@@ -52,6 +52,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 			_sound->playSound("coin", false);
 			_physicsBody->setUseGravity(true);
 			_score->plusCoin();
+			_score->totalGameTime -= 1.0f;
 		}
 
 		break;
