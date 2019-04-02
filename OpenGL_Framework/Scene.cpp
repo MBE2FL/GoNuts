@@ -217,7 +217,7 @@ void Scene::update(float deltaTime)
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
-	_uiSystem->draw();
+	//_uiSystem->draw();
 
 	if (_particleManager)
 	{
@@ -281,17 +281,29 @@ void Scene::drawShadow()
 
 void Scene::drawUI()
 {
-	if (_uiSystem)
-	{
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//if (_uiSystem)
+	//{
+	//	glDisable(GL_DEPTH_TEST);
+	//	glEnable(GL_BLEND);
+	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//
+	//	_uiSystem->draw();
+	//
+	//	glDisable(GL_BLEND);
+	//	glEnable(GL_DEPTH_TEST);
+	//}
+	
 
-		_uiSystem->draw();
+//	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-	}
+	_uiSystem->draw();
+
+	glDisable(GL_BLEND);
+//	glEnable(GL_DEPTH_TEST);
+
+
 }
 
 void Scene::drawText()
@@ -712,7 +724,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 450.0f, 0.0f));
-			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, -2000.0f, 7000.0f, 0.5f);
+			_sound->playSound("jumpGrunt", false, -2000.0f, 7000.0f, 0.5f);
 		}
 		break;
 	case 'c'://left control for sliding
@@ -787,12 +799,12 @@ void Scene::specialKeyDown(int key, int mouseX, int mouseY)
 		if (_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
 			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = false;
-			_sound->playSound("shift", _sound->getActionChannel(), false);
+			_sound->playSound("shift", false);
 		}
 		else if (!_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
 			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = true;
-			_sound->playSound("shift", _sound->getActionChannel(), false);
+			_sound->playSound("shift", false);
 		}
 	};
 }
