@@ -47,7 +47,12 @@ void UISystem::addCanvas(UICanvas * canvas)
 
 void UISystem::deleteCanvas(const string & name)
 {
-	_canvases.erase(name);
+	unordered_map<string, UICanvas*>::iterator it = _canvases.find(name);
+	if (it != _canvases.end())
+	{
+		delete it->second;
+		_canvases.erase(name);
+	}
 }
 
 Entity * UISystem::getCamera() const

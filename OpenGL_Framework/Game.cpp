@@ -323,16 +323,21 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
+	sceneManager->loadSceneFromFile("./Assets/Scenes/dialogue.db", "Dialogue", true, "hi");
+
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", true, 1);
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
+
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 
-	sceneManager->loadScene("UITest");
+	sceneManager->loadScene("UITest"); 
 	_currentScene = sceneManager->getCurrentScene();
 
 
@@ -349,6 +354,10 @@ void Game::initializeGame()
 	_sound->loadSound("coin", "coin collect.wav", false);
 	_sound->loadSound("Intro", "Intro.wav", false);
 
+	_sound->loadSound("fatboiQuip1", "fatboiQuip1.wav", true);
+	_sound->loadSound("fatboiQuip2", "fatboiQuip2.wav", true);
+	_sound->loadSound("birdmanTaunt1", "birdmanTaunt1.wav", true);
+	_sound->loadSound("birdmanTaunt2", "birdmanTaunt2.wav", true);
 
 	_sound->playSound("mainMenu", true, 0.5f);
 	

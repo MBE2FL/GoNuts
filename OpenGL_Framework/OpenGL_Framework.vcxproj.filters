@@ -65,6 +65,12 @@
     <Filter Include="Source Files\EntitySystem\Components\Animation\UI">
       <UniqueIdentifier>{cfb2ac35-298b-4a1c-8967-51b078e48d39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\EntitySystem\Components\Particles">
+      <UniqueIdentifier>{d1e0452f-0de5-41ae-a92f-7de29aec3974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntitySystem\Components\Particles">
+      <UniqueIdentifier>{fbf60462-8c3d-427c-a1e4-ddab130d4bb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -258,7 +264,15 @@
     <ClCompile Include="Score.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEffect.cpp" />
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\EntitySystem\Components\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEffect.cpp">
+      <Filter>Source Files\EntitySystem\Components\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>Source Files\EntitySystem\Components\Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -455,11 +469,14 @@
     <ClInclude Include="Score.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\EntitySystem\Components\Particles</Filter>
+    </ClInclude>
     <ClInclude Include="ParticleManager.h">
-      <Filter>Header Files\EntitySystem\Systems</Filter>
+      <Filter>Header Files\EntitySystem\Components\Particles</Filter>
     </ClInclude>
     <ClInclude Include="ParticleEffect.h">
-      <Filter>Header Files\EntitySystem\Components</Filter>
+      <Filter>Header Files\EntitySystem\Components\Particles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

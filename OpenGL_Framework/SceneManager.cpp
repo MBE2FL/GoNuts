@@ -38,8 +38,13 @@ void SceneManager::loadSceneFromFile(const string & path, const string & name, b
 void SceneManager::loadSceneFromFile(const string & path, const string & name, bool ScoreboardUi, int forscore)
 {
 	Scene* scene = new Scene(name, ScoreboardUi, forscore);
-	//EntityManager::setInstance(scene->getEntityManager());
-	//EntityFactory::getInstance()->setEntityManager();
+	scene->loadSceneFromFile(path);
+	_scenes.push_back(scene);
+}
+
+void SceneManager::loadSceneFromFile(const string & path, const string & name, bool ScoreboardUi, string fordialogue)
+{
+	Scene* scene = new Scene(name, ScoreboardUi, fordialogue);
 	scene->loadSceneFromFile(path);
 	_scenes.push_back(scene);
 }
