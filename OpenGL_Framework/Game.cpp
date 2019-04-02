@@ -122,6 +122,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+	ObjectLoader::loadMesh("Radio", "./Assets/Models/Radio.obj");
 
 	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
 
@@ -206,6 +207,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
 	ObjectLoader::loadTexture("Table", "./Assets/Textures/table texture.png");
 	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
+	ObjectLoader::loadTexture("Radio", "./Assets/Textures/Radio.png");
 
 	//Some Road Textures
 	ObjectLoader::loadTexture("Awning", "./Assets/Textures/Awning.png");
@@ -252,6 +254,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
+	ObjectLoader::loadTexture("UIcoin", "./Assets/Textures/UIcoin.png");
 	ObjectLoader::loadTexture("Title Screen", "./Assets/Textures/title screen.png");
 	ObjectLoader::loadTexture("Press Any Button", "./Assets/Textures/press any button.png");
 	ObjectLoader::loadTexture("Exit Button Hover", "./Assets/Textures/EXIT Button Hover.png");
@@ -288,6 +291,9 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Right Arrow", "./Assets/Textures/Right Arrow.png");
 	ObjectLoader::loadTexture("Left Arrow", "./Assets/Textures/Left Arrow.png");
 	ObjectLoader::loadTexture("Left Arrow Hover", "./Assets/Textures/Left Arrow Hover.png");
+	ObjectLoader::loadTexture("Coin Don't Have", "./Assets/Textures/coin don't have.png");
+	ObjectLoader::loadTexture("level select background", "./Assets/Textures/level select background.png");
+	ObjectLoader::loadTexture("level selection highlight", "./Assets/Textures/level selection highlight.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
@@ -331,14 +337,16 @@ void Game::initializeGame()
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
 
-	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	_sound->loadSound("mainMenu", "main menu music.wav", false);
+	_sound->loadSound("levelMusic1", "level music 1.wav", false);
+	_sound->loadSound("levelMusic2", "level music 2.wav", false);
 	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
 	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
 	_sound->loadSound("shift", "shift.wav", false);
 	_sound->loadSound("acorn", "acorn collect.wav", false);
 	_sound->loadSound("coin", "coin collect.wav", false);
 
-	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
+	_sound->playSound("mainMenu", true, 0.5f);
 
 }
 
@@ -357,6 +365,8 @@ void Game::update()
 			sceneManager->loadScene("tut");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
 		}
 		else if (canvas->getImage("Exit")->clicked())
 		{

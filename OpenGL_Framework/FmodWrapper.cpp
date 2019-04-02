@@ -150,6 +150,11 @@ FMOD::Channel * Sound::Play(bool loop)//bool is3D
 	return channel;
 }
 
+FMOD::Channel * Sound::getChannel()
+{
+	return channel;
+}
+
 void Sound::SetPosition(FMOD::Channel * thisChannel, FMOD_VECTOR newPos, FMOD_VECTOR newVel)
 {
 	//safety check to make sure the sound is playing
