@@ -300,8 +300,11 @@ void Game::initializeGame()
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
 	ObjectLoader::loadTexture("adambackground2", "./Assets//Textures/adam back2.png");
-	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/space.png");
-	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/shift.png");
+	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/spaceboard.png");
+	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/switchboard.png");
+	ObjectLoader::loadTexture("collect nut", "./Assets//Textures/nutboard.png");
+	ObjectLoader::loadTexture("collect coin", "./Assets//Textures/coinboard.png");
+	ObjectLoader::loadTexture("a to nut", "./Assets//Textures/anutboard.png");
 
 
 	// Load all UI animation files
@@ -335,6 +338,7 @@ void Game::initializeGame()
 	//REGAN LEVEL
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
+	sceneManager->loadSceneFromFile("./Assets/Scenes/lev 1.db", "lev 1", true);
 
 	sceneManager->loadScene("UITest"); 
 	_currentScene = sceneManager->getCurrentScene();
@@ -426,11 +430,12 @@ void Game::update()
 			_sound->stop();
 			_sound->playSound("levelMusic1", true, 0.3f);
 			sceneManager->loadScene("Level 1");
+			sceneManager->loadScene("lev 1");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
 		}
 	}
-	if (_currentScene->getName() == "Level 1")
+	if (_currentScene->getName() == "lev 1")
 	{
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
