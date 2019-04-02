@@ -235,12 +235,13 @@ void Scene::update(float deltaTime)
 
 	if (_score->getAcornCount() > 18)
 	{
-		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getMesh("Beast Mode"));
+		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getSkeletalMesh("SkeletalBeast"));
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
 		_playerTransform->setLocalScale(vec3(1.5f));
-		_playerTransform->setLocalRotationAngleX(0.0f);
+		_playerTransform->setLocalRotationAngleX(-90.0f);
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
+		_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
 	}
 
 	if (_playerTransform->getLocalPosition().y < -6.0f)
@@ -283,7 +284,9 @@ void Scene::update(float deltaTime)
 		//skeletalMeshTest->update(deltaTime);
 		skeletalMeshTestTwo->update(deltaTime);
 	}
-	if (_playerSkeleton)
+	if (_playerSkeleton && _entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode)
+		_playerSkeleton->update(deltaTime*2.f);
+	else if (_playerSkeleton)
 		_playerSkeleton->update(deltaTime);
 
 
