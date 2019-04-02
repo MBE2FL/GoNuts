@@ -155,6 +155,9 @@ private:
 	bool four = false;
 	bool font = false;
 
+	float beastTimer = 0.0f;
+	bool beastModeActive = false;
+
 	SoundComponent* _sound;
 	string _name;
 	string _filename;

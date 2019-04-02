@@ -233,8 +233,9 @@ void Scene::update(float deltaTime)
 		_particleManager->update(FIXED_DELTA_TIME);
 	}
 
-	if (_score->getAcornCount() > 18)
+	if (beastModeActive)
 	{
+		beastTimer += deltaTime;
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getSkeletalMesh("SkeletalBeast"));
 		_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("Beast Mode"));
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("Beast Mode")->getMeshBounds());
@@ -243,6 +244,19 @@ void Scene::update(float deltaTime)
 		_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = true;
 		_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
 	}
+
+	//if (beastTimer > 15.0f)
+	//{
+	//	beastModeActive = false;
+	//	beastTimer = 0.0f;
+	//	_playerTransform->setLocalScale(vec3(0.2f));
+	//	_playerTransform->setLocalRotationAngleX(-90.0f);
+	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getSkeletalMesh("SkeletalBoiTwo"));
+	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("FatBoi"));
+	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("FatBoi")->getMeshBounds());
+	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = false;
+	//	_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
+	//}
 
 	if (_playerTransform->getLocalPosition().y < -6.0f)
 	{
@@ -884,10 +898,17 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		break;
 	case 'p':
 		//skeletalTest = !skeletalTest;
-		ObjectLoader::getShaderProgram("SkeletalAnim")->reload();
+		//ObjectLoader::getShaderProgram("SkeletalAnim")->reload();
 		break;
 	case 'b':
-		skeletalMeshTestTwo->getAnimator()->nextFrame();
+		//skeletalMeshTestTwo->getAnimator()->nextFrame();
+		break;
+	case 'a':
+		if (_score->getAcornCount() >= 10)
+		{
+			beastModeActive = true;
+			_score->acornCount -= 10;
+		}
 		break;
 	}
 
