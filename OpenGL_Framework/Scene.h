@@ -21,7 +21,8 @@
 #include "FmodWrapper.h"
 #include "Font.h"
 
-#include "ParticleEffect.h"
+#include "ParticleManager.h"
+//#include "ParticleSystem.h"
 
 #define WINDOW_WIDTH			1900
 #define WINDOW_HEIGHT			1000
@@ -110,6 +111,7 @@ public:
 	void loadSceneFromFile(const string& path);
 	EntityManager* getEntityManager() const;
 	UISystem* getUISystem() const;
+	ParticleManager* getParticleManager() const;
 
 	void keyboardDown(unsigned char key, int mouseX, int mouseY);
 	void keyboardUp(unsigned char key, int mouseX, int mouseY);
@@ -178,7 +180,7 @@ private:
 	UISystem* _uiSystem;
 	Entity* _uiCamera;
 
-	ParticleEffect* _particleEffect = nullptr;
+	ParticleManager* _particleManager = nullptr;
 
 	SkeletalMesh* skeletalMeshTest = nullptr;
 	SkeletalMesh* skeletalMeshTestTwo = nullptr;

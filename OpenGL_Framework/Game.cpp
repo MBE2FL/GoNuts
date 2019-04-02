@@ -329,12 +329,15 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
 
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
+
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 
-	sceneManager->loadScene("UITest");
+	sceneManager->loadScene("UITest"); 
 	_currentScene = sceneManager->getCurrentScene();
 
 
