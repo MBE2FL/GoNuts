@@ -97,11 +97,13 @@ private:
 	Texture* LUTTexVal;
 	Texture* toonRamp;
 
+	vector<Texture*> introVec;
+
 	SceneManager* sceneManager;
 
 
 	vector<Light*> lights;
-	Mesh* sphere;
+	Mesh* UIMesh;
 
 	vec4* color = new vec4[2000];
 	vec4* position = new vec4[2000];
@@ -111,4 +113,9 @@ private:
 
 	bool lut = true;
 	bool deferred = false;
+	bool gameStart = false;
+	bool soundbool = false;
+
+	float frameTime = 0.0f;
+	int frameNum = 24;
 };

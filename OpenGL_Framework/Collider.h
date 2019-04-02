@@ -6,6 +6,7 @@
 #include "Score.h"
 
 class Scene;
+class SceneManager;
 
 enum class TTag
 {
@@ -73,12 +74,6 @@ public:
 	TTag getTag() const;
 	void setTag(const TTag tag);
 
-	// Testing function pointers
-	//typedef void(*onCollision)(Entity* self, Entity* other);
-	//onCollision onCollisionEnter;
-	//onCollision onCollisionStay;
-	//onCollision onCollisionExit;
-
 	vec3 _max;
 	vec3 _min;
 
@@ -86,10 +81,13 @@ public:
 	bool screenShake = false;
 	float shakeTimer = 0.0f;
 	bool front = true;
+	bool victor = false;
 
 protected:
 	SoundComponent* _sound;
 
+	Scene* _currentScene;
+	SceneManager* sceneManager;
 	Bounds* _bounds;
 	vec3 _contactOffset;
 	bool _enabled;

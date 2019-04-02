@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <iostream>
+#include "MathLib/MathLibCore.h"
 
 using std::vector;
 using std::string;
@@ -16,15 +17,18 @@ class SoundComponent
 public:
 	static SoundComponent* getInstance();
 	void loadSound(string soundName, string soundfile, bool is3D);
+	void stop();
+	void stop2();
 	Sound* getSound(string soundName);
-	void playSound(string soundName, FMOD::Channel* channel, bool loops, float volume = 1.0f);
-	void playSound(string soundName, FMOD::Channel* channel, bool loops, float freqMin, float freqMax, float volume = 1.0f);
+	void playSound(string soundName, bool loops, float volume = 1.0f);
+	void playSound2(string soundName, bool loops, float volume = 1.0f);
+	void play3dSound(string soundName, bool loops,vec3 position, float volume = 1.0f);
+	void playSound(string soundName, bool loops, float freqMin, float freqMax, float volume = 1.0f);
 	void setFrequencyRange(FMOD::Channel* channel, float freqMin, float freqMax);
 	void setFrequency(FMOD::Channel* channel, float frequency);
 
-	FMOD::Channel* getBGChannel();
-	FMOD::Channel* getPlayerChannel();
-	FMOD::Channel* getActionChannel();
+	void setLposition(vec3 position);
+	FMOD::Channel* getSoundChannel();
 
 private:
 	SoundComponent() {};
@@ -32,8 +36,10 @@ private:
 
 	unordered_map<string, Sound*> _sounds;
 
-	FMOD::Channel* backGroundChannel;//background music
-	FMOD::Channel* playerChannel;// for the sounds player makes directly (grunts)
-	FMOD::Channel* actionChannel;//shifting between z axis
+	Listener listener;
+
+	FMOD::Channel* _channel;
+	FMOD::Channel* _channel2;
+	FMOD::Channel* _channel3D;
 
 };

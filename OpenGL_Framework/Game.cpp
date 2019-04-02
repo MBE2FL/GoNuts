@@ -76,6 +76,18 @@ void Game::initializeGame()
 
 	toonRamp = new Texture("./Assets/Textures/toon1.png");
 
+	Texture* introTex;
+	for (int i = 1000; i < 1246; i++)
+	{
+		string file = "./Assets/Textures/Into stills/Panel ";
+		file += std::to_string(i);
+		file += +".jpg";
+		introTex = new Texture(file);
+		introVec.push_back(introTex);
+	}
+	UIMesh = new Mesh();
+	UIMesh->loadFromFile("./Assets/Models/UIQuad.obj");
+
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
@@ -110,6 +122,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Raccoon", "./Assets/Models/raccoon_unwrap.obj");
 	ObjectLoader::loadMesh("Squirrel", "./Assets/Models/squirrel_unwrap.obj");
 	ObjectLoader::loadMesh("Vent", "./Assets/Models/vent.obj");
+	ObjectLoader::loadMesh("Radio", "./Assets/Models/Radio.obj");
 
 	ObjectLoader::loadMesh("Rooftop Door", "./Assets/Models/rooftopdoor.obj");
 
@@ -194,6 +207,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Squirrel", "./Assets/Textures/squirrel_texture.png");
 	ObjectLoader::loadTexture("Table", "./Assets/Textures/table texture.png");
 	ObjectLoader::loadTexture("Vent", "./Assets/Textures/Vent_Texture.png");
+	ObjectLoader::loadTexture("Radio", "./Assets/Textures/Radio.png");
 
 	//Some Road Textures
 	ObjectLoader::loadTexture("Awning", "./Assets/Textures/Awning.png");
@@ -220,6 +234,8 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 	ObjectLoader::loadTexture("UiBackdrop", "./Assets/Textures/Fade_background.png");
 	ObjectLoader::loadTexture("Back", "./Assets/Textures/back.png");
+	ObjectLoader::loadTexture("Dialogue", "./Assets/Textures/Talking.png");
+	ObjectLoader::loadTexture("Space Press", "./Assets/Textures/space press.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
@@ -240,6 +256,7 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("extras button", "./Assets/Textures/EXTRAS button.png");
 	ObjectLoader::loadTexture("exit button", "./Assets/Textures/EXIT Button.png");
 	ObjectLoader::loadTexture("UI Nut", "./Assets/Textures/nut.png");
+	ObjectLoader::loadTexture("UIcoin", "./Assets/Textures/UIcoin.png");
 	ObjectLoader::loadTexture("Title Screen", "./Assets/Textures/title screen.png");
 	ObjectLoader::loadTexture("Press Any Button", "./Assets/Textures/press any button.png");
 	ObjectLoader::loadTexture("Exit Button Hover", "./Assets/Textures/EXIT Button Hover.png");
@@ -276,6 +293,9 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Right Arrow", "./Assets/Textures/Right Arrow.png");
 	ObjectLoader::loadTexture("Left Arrow", "./Assets/Textures/Left Arrow.png");
 	ObjectLoader::loadTexture("Left Arrow Hover", "./Assets/Textures/Left Arrow Hover.png");
+	ObjectLoader::loadTexture("Coin Don't Have", "./Assets/Textures/coin don't have.png");
+	ObjectLoader::loadTexture("level select background", "./Assets/Textures/level select background.png");
+	ObjectLoader::loadTexture("level selection highlight", "./Assets/Textures/level selection highlight.png");
 
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
@@ -306,9 +326,14 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
+	sceneManager->loadSceneFromFile("./Assets/Scenes/dialogue.db", "Dialogue", true, "hi");
+
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", true, 1);
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
+
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
@@ -316,21 +341,31 @@ void Game::initializeGame()
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 	sceneManager->loadSceneFromFile("./Assets/Scenes/lev 1.db", "lev 1", true);
 
-	sceneManager->loadScene("UITest");
+	sceneManager->loadScene("UITest"); 
 	_currentScene = sceneManager->getCurrentScene();
 
 
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
 
-	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	_sound->loadSound("mainMenu", "main menu music.wav", false);
+	_sound->loadSound("levelMusic1", "level music 1.wav", false);
+	_sound->loadSound("levelMusic2", "level music 2.wav", false);
 	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
 	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
 	_sound->loadSound("shift", "shift.wav", false);
 	_sound->loadSound("acorn", "acorn collect.wav", false);
 	_sound->loadSound("coin", "coin collect.wav", false);
+	_sound->loadSound("Intro", "Intro.wav", false);
 
-	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
+	_sound->loadSound("fatboiQuip1", "fatboiQuip1.wav", true);
+	_sound->loadSound("fatboiQuip2", "fatboiQuip2.wav", true);
+	_sound->loadSound("birdmanTaunt1", "birdmanTaunt1.wav", true);
+	_sound->loadSound("birdmanTaunt2", "birdmanTaunt2.wav", true);
+
+	_sound->playSound("mainMenu", true, 0.5f);
+	
+	
 
 }
 
@@ -346,9 +381,11 @@ void Game::update()
 		if (image->clicked())
 		{
 			image->setClicked(false);
-			sceneManager->loadScene("tut");
+			sceneManager->loadScene("Dialogue");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
 		}
 		else if (canvas->getImage("Exit")->clicked())
 		{
@@ -361,6 +398,47 @@ void Game::update()
 		else if (canvas->getImage("LevelSelect")->clicked())
 		{
 			
+		}
+	}
+	if (_currentScene->getName() == "Dialogue")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+
+	if (_currentScene->getName() == "tut")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("Level 2");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "Level 2")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("Level 1");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "Level 1")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("UITest");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
 		}
 	}
 
@@ -392,124 +470,159 @@ void Game::draw()
 {
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
-	TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
-
-	gbuffer.clear();
-	gbuffer.setViewport();
-	gbuffer.bind();
-
-	//_currentScene->drawUI();
-	_currentScene->draw();
-
-	gbuffer.unbind();
-
-	frameBufferShadow.clear();
-	frameBufferShadow.setViewport();
-	frameBufferShadow.bind();
-	_currentScene->drawShadow();
-	frameBufferShadow.unbind();
-
-	mat4 biasMat4 = mat4(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.5f, 0.0f,
-		0.5f, 0.5f, 0.5f, 1.0f);
-
-	CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
-
-	TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
-
-	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
-	
-	mat4 uProjInverse = camera->getProjection().getSlowInverse();
-
-	mat4 uViewInverse = cameraTrans->getView().getInverse();
-	TransformComponent* playerTrans = _currentScene->getPlayTrans();
-
-	shaderOutline.bind();
-	shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
-	shaderOutline.sendUniform("outline", outline);
-	shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-	shaderOutline.sendUniformMat4("uViewInverse", uViewInverse.data, false);
-	shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
-
-	gbuffer.bindColorAsTexture(0, 0);
-	gbuffer.bindColorAsTexture(1, 1);
-	gbuffer.bindDepthAsTexture(2);
-
-	toonRamp->bind(5);
-	frameBufferShadow.bindDepthAsTexture(16);
-
-	gbuffer.bindResolution();
-	glViewport(0, 0, windowWidth, windowHeight);
-
-	frameBufferLUT.clear();
-
-	//frameBufferOutline.renderToFSQ();
-	frameBufferLUT.renderToFSQ();
-	frameBufferLUT.unbind();
-
-	shaderDeferred.bind();
-	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-	frameBufferLUT.bindColorAsTexture(0, 0);
-	if (deferred)
+	if (gameStart)
 	{
-		for (int i = 0; i < (int)lights.size(); ++i)
+		CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+		TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
+
+		gbuffer.clear();
+		gbuffer.setViewport();
+		gbuffer.bind();
+
+		//_currentScene->drawUI();
+		_currentScene->draw();
+
+		gbuffer.unbind();
+
+		frameBufferShadow.clear();
+		frameBufferShadow.setViewport();
+		frameBufferShadow.bind();
+		_currentScene->drawShadow();
+		frameBufferShadow.unbind();
+
+		mat4 biasMat4 = mat4(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.5f, 0.0f,
+			0.5f, 0.5f, 0.5f, 1.0f);
+
+		CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
+
+		TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
+
+		mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
+
+		mat4 uProjInverse = camera->getProjection().getSlowInverse();
+
+		mat4 uViewInverse = cameraTrans->getView().getInverse();
+		TransformComponent* playerTrans = _currentScene->getPlayTrans();
+
+		shaderOutline.bind();
+		shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
+		shaderOutline.sendUniform("outline", outline);
+		shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+		shaderOutline.sendUniformMat4("uViewInverse", uViewInverse.data, false);
+		shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
+
+		gbuffer.bindColorAsTexture(0, 0);
+		gbuffer.bindColorAsTexture(1, 1);
+		gbuffer.bindDepthAsTexture(2);
+
+		toonRamp->bind(5);
+		frameBufferShadow.bindDepthAsTexture(16);
+
+		gbuffer.bindResolution();
+		glViewport(0, 0, windowWidth, windowHeight);
+
+		frameBufferLUT.clear();
+
+		//frameBufferOutline.renderToFSQ();
+		frameBufferLUT.renderToFSQ();
+		frameBufferLUT.unbind();
+
+		shaderDeferred.bind();
+		shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+		frameBufferLUT.bindColorAsTexture(0, 0);
+		if (deferred)
 		{
-			lights[i]->bind();
-			lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
-			lights[i]->update(0.0f);
-
 			TransformComponent transform;
-			transform.setLocalPosition(lights[i]->getLocalPosition());
-			transform.setLocalScale(lights[i]->radius);
-			transform.update(updateTimer->getElapsedTimeSeconds());
-			shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
-			shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
-			shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
-			shaderDeferred.sendUniform("uLightColor", lights[i]->color);
-			shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
-			shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
-			shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
+			for (int i = 0; i < (int)lights.size(); ++i)
+			{
+				lights[i]->bind();
+				lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
+				lights[i]->update(0.0f);
 
-			frameBufferLUT.renderSphere();
+
+				transform.setLocalPosition(lights[i]->getLocalPosition());
+				transform.setLocalScale(lights[i]->radius);
+				transform.update(updateTimer->getElapsedTimeSeconds());
+				shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
+				shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
+				shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
+				shaderDeferred.sendUniform("uLightColor", lights[i]->color);
+				shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
+				shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
+				shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
+
+				frameBufferLUT.renderSphere();
+			}
 		}
+
+		//gbuffer.drawFSQ();
+
+
+		//frameBufferUI.unbind();
+		toonRamp->unBind();
+
+		gbuffer.unbindTexture(2);//texture
+		gbuffer.unbindTexture(1);//texture
+		gbuffer.unbindTexture(0);//texture
+
+		shaderOutline.unBind();
+
+		_currentScene->drawUI();
+
+		shaderLUT.bind();
+
+		shaderLUT.sendUniform("lut", lut);
+		shaderLUT.sendUniform("totalGameTime", TotalGameTime);
+		shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
+		shaderLUT.sendUniform("Flip", false);
+		LUTTex->bind(30);
+
+
+		frameBufferLUT.bindColorAsTexture(0, 0);
+		glViewport(0, 0, windowWidth, windowHeight);
+		Framebuffer::drawFSQ();
+
+		frameBufferLUT.unbindTexture(0);
+		shaderLUT.unBind();
+
+		_currentScene->drawText();
+		_currentScene->imguiDraw();
+		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	}
-	
-	//gbuffer.drawFSQ();
+	else
+	{
+		shaderLUT.bind();
 
+		shaderLUT.sendUniform("lut", lut);
+		shaderLUT.sendUniform("totalGameTime", 0.0f);
+		shaderLUT.sendUniform("screenShake", false);
+		shaderLUT.sendUniform("Flip", true);
+		LUTTex->bind(30);
 
-	//frameBufferUI.unbind();
-	toonRamp->unBind();
+		introVec[frameNum]->bind(0);
+		glViewport(0, 0, windowWidth, windowHeight);
+		Framebuffer::drawFSQ();
 
-	gbuffer.unbindTexture(2);//texture
-	gbuffer.unbindTexture(1);//texture
-	gbuffer.unbindTexture(0);//texture
+		
+		shaderLUT.unBind();
+		
+		if (!soundbool) {
+			_sound->playSound2("Intro", false, 0.5f);
+			soundbool = true;
+		}
 
-	shaderOutline.unBind();
-
-	_currentScene->drawUI();
-
-	shaderLUT.bind();
-
-	shaderLUT.sendUniform("lut", lut);
-	shaderLUT.sendUniform("totalGameTime", TotalGameTime);
-	shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
-	LUTTex->bind(30);
-	
-
-	frameBufferLUT.bindColorAsTexture(0, 0);
-	glViewport(0, 0, windowWidth, windowHeight);
-	Framebuffer::drawFSQ();
-	
-	frameBufferLUT.unbindTexture(0);
-	shaderLUT.unBind();	
-
-	_currentScene->drawText();
-	_currentScene->imguiDraw();
-	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
+		if (frameTime > 1.f / 24.f)
+		{
+			frameTime -= 1.f / 24.f;
+			frameNum++;
+		}
+		if (frameNum >= 245)
+			gameStart = true;
+		frameTime += FIXED_DELTA_TIME;
+	}
 	glutSwapBuffers();
 	drawTime = 0.0f;
 }
@@ -524,6 +637,14 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 		shaderOutline.reload();
 		shaderDeferred.reload();
+
+		sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
+
+		sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
+
+
+		sceneManager->loadScene("UITest");
+		_currentScene = sceneManager->getCurrentScene();
 	}
 	if (key == 'v')
 		lut = !lut;
@@ -532,6 +653,18 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	//	sceneManager->loadScene("tut");
 	if (key == 'd')
 		deferred = !deferred;
+	if (key == 'l')
+	{
+		gameStart = !gameStart;
+		frameNum = 0;
+		if (gameStart)
+		{
+			soundbool = true;
+			_sound->stop2();
+		}
+		else
+			soundbool = false;
+	}
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

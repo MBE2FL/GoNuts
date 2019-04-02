@@ -129,6 +129,8 @@ xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
     <ClCompile Include="MeshRendererSystem.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="ParticleEffect.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PhysicsBodyComponent.cpp" />
     <ClCompile Include="MeshRendererComponent.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
@@ -160,6 +162,7 @@ xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="ParticleEffect.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="SoundComponent.h" />
