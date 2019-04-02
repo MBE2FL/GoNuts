@@ -332,7 +332,6 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
 
-
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", true);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
@@ -384,8 +383,6 @@ void Game::update()
 			sceneManager->loadScene("Dialogue");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
-			_sound->stop();
-			_sound->playSound("levelMusic1", true, 0.3f);
 		}
 		else if (canvas->getImage("Exit")->clicked())
 		{
@@ -405,6 +402,8 @@ void Game::update()
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
 			sceneManager->loadScene("tut");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
@@ -416,6 +415,8 @@ void Game::update()
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
+			_sound->stop();
+			_sound->playSound("levelMusic2", true, 0.5f);
 			sceneManager->loadScene("Level 2");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
@@ -426,6 +427,9 @@ void Game::update()
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
+			sceneManager->loadScene("Level 1");
 			sceneManager->loadScene("lev 1");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
