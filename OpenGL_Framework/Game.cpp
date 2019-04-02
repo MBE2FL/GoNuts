@@ -558,25 +558,6 @@ void Game::draw()
 	}
 	else
 	{
-		//float deltaTime = updateTimer->getElapsedTimeSeconds();
-		
-		//TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
-		//CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
-		//
-		//TransformComponent transform;// = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
-		//transform.setLocalPosition(vec3(0,0,-5.f));
-		//transform.setLocalScale(100.0f);
-		//transform.update(deltaTime);
-		////UIMesh = meshRenderer->getMesh();
-		//ShaderProgram* shaderProgram = &shaderLUT;
-		//
-		//shaderProgram->bind();
-		//shaderProgram->sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
-		//shaderProgram->sendUniformMat4("uView", cameraTrans->getView().data, false);
-		//shaderProgram->sendUniformMat4("uProj", camera->getProjection().data, false);
-
-
-
 		shaderLUT.bind();
 
 		shaderLUT.sendUniform("lut", lut);
@@ -584,7 +565,6 @@ void Game::draw()
 		shaderLUT.sendUniform("screenShake", false);
 		shaderLUT.sendUniform("Flip", true);
 		LUTTex->bind(30);
-
 
 		introVec[frameNum]->bind(0);
 		glViewport(0, 0, windowWidth, windowHeight);
@@ -596,7 +576,6 @@ void Game::draw()
 		if (!soundbool) {
 			_sound->playSound2("Intro", false, 0.5f);
 			soundbool = true;
-			
 		}
 
 		if (frameTime > 1.f / 24.f)
