@@ -422,12 +422,12 @@ void Game::update()
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
-			sceneManager->loadScene("Level 1");
+			sceneManager->loadScene("lev 1");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
 		}
 	}
-	if (_currentScene->getName() == "Level 1")
+	if (_currentScene->getName() == "lev 1")
 	{
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
