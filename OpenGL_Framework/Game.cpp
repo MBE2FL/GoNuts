@@ -377,7 +377,7 @@ void Game::update()
 		if (image->clicked())
 		{
 			image->setClicked(false);
-			sceneManager->loadScene("tut");
+			sceneManager->loadScene("Dialogue");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
 			_sound->stop();
@@ -396,13 +396,45 @@ void Game::update()
 			
 		}
 	}
+	if (_currentScene->getName() == "Dialogue")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+
 	if (_currentScene->getName() == "tut")
 	{
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
-			sceneManager->loadScene("Scoreboard");
+			sceneManager->loadScene("Level 2");
 			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "Level 2")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("Level 1");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "Level 1")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("UITest");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
 		}
 	}
 
@@ -601,6 +633,14 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 		shaderOutline.reload();
 		shaderDeferred.reload();
+
+		sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
+
+		sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
+
+
+		sceneManager->loadScene("UITest");
+		_currentScene = sceneManager->getCurrentScene();
 	}
 	if (key == 'v')
 		lut = !lut;

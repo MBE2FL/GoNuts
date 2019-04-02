@@ -212,7 +212,10 @@ void Scene::initDialogue()
 		two = false;
 		three = false;
 		four = false;
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, getPlayTrans()->getEntity());
+		col->victor = true;
 	}
+	
 }
 
 void Scene::update(float deltaTime)
