@@ -327,14 +327,16 @@ void Game::initializeGame()
 	_sound = SoundComponent::getInstance();
 	//start to play the sound and save it to a channel so it can be refferenced later
 
-	_sound->loadSound("bgSound", "SpeedRunners_Soundtrack_Level_Music_1.mp3", false);
+	_sound->loadSound("mainMenu", "main menu music.wav", false);
+	_sound->loadSound("levelMusic1", "level music 1.wav", false);
+	_sound->loadSound("levelMusic2", "level music 2.wav", false);
 	_sound->loadSound("jumpGrunt", "jump grunt.wav", false);
 	_sound->loadSound("landingGrunt", "landing grunt.wav", false);
 	_sound->loadSound("shift", "shift.wav", false);
 	_sound->loadSound("acorn", "acorn collect.wav", false);
 	_sound->loadSound("coin", "coin collect.wav", false);
 
-	_sound->playSound("bgSound", _sound->getBGChannel(), true, 0.05f);
+	_sound->playSound("mainMenu", true, 0.5f);
 
 }
 
@@ -353,6 +355,8 @@ void Game::update()
 			sceneManager->loadScene("tut");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
 		}
 		else if (canvas->getImage("Exit")->clicked())
 		{

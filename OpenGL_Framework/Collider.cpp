@@ -32,7 +32,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
 		if (otherCollider->getTag() == TTag::Player)
 		{
-			_sound->playSound("acorn", _sound->getActionChannel(), false);
+			_sound->playSound("acorn", false);
 			_physicsBody->setUseGravity(true);
 			_score->plusAcorn();
 		}
@@ -49,7 +49,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		Collider* otherCollider = entityManager->getComponent<Collider*>(ComponentType::Collider, other);
 		if (otherCollider->getTag() == TTag::Player)
 		{
-			_sound->playSound("coin", _sound->getActionChannel(), false);
+			_sound->playSound("coin", false);
 			_physicsBody->setUseGravity(true);
 			_score->plusCoin();
 		}
@@ -76,14 +76,14 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		{
 			float xSpeed = otherBody->getVelocity().x;
 			otherBody->addImpluseForce(vec3(-xSpeed*1.2f, 0.0f, 0.0f));
-			_sound->playSound("landingGrunt", _sound->getPlayerChannel(), false, 0.5f);
+			_sound->playSound("landingGrunt", false, 0.5f);
 		}
 		if (otherCollider->_min.y < thisCollider->_max.y - 0.2f
 			&& otherCollider->_min.z < thisCollider->_max.y
 			&& otherCollider->getTag() == TTag::Player)
 		{
 			otherCollider->front = true;
-			_sound->playSound("landingGrunt", _sound->getPlayerChannel(), false, 0.5f);
+			_sound->playSound("landingGrunt", false, 0.5f);
 		}
 
 		if (otherCollider->getTag() == TTag::Player && otherCollider->beastMode)

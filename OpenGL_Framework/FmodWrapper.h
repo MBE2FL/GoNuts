@@ -57,6 +57,7 @@ public:
 	~Sound();
 	bool			 Load(const char* fileName, bool fmod3D = true);
 	FMOD::Channel*	 Play(bool loop);
+	FMOD::Channel*	 getChannel();
 	static void		 SetPosition(FMOD::Channel* thisChannel, FMOD_VECTOR newPos, FMOD_VECTOR newVel = { 0.0f, 0.0f, 0.0f });
 	static void		 SetFalloffLinear(FMOD::Channel* thisChannel);
 	static void		 SetFalloffInverse(FMOD::Channel* thisChannel);
