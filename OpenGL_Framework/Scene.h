@@ -84,11 +84,13 @@ class Scene
 public:
 	Scene(const string& name, bool inGameUi);
 	Scene(const string& name, bool ScoreboardUi, int forScoreboard);
+	Scene(const string& name, bool dialogueUi, string forDialogue);
 	Scene(const string& name);
 	~Scene();
 
 	void initInGameUi();
 	void initScoreboardUi();
+	void initDialogue();
 
 	void update(float deltaTime);
 	void draw();
@@ -141,6 +143,17 @@ private:
 	TextRenderer* _levelName;
 	vector <TextRenderer*> _nameScore;
 	vector <TextRenderer*> _timeScore;
+
+	//for the dialogue
+	bool _dialogueUi = false;
+	TextRenderer* _cheeksText;
+	TextRenderer* _birdText;
+	int increment = 0;
+	bool one = false;
+	bool two = false;
+	bool three = false;
+	bool four = false;
+	bool font = false;
 
 	SoundComponent* _sound;
 	string _name;

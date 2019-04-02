@@ -302,8 +302,11 @@ void Game::initializeGame()
 	//REGAN TEXTURES
 	ObjectLoader::loadTexture("adambackground", "./Assets//Textures/adam back3.png");
 	ObjectLoader::loadTexture("adambackground2", "./Assets//Textures/adam back2.png");
-	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/space.png");
-	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/shift.png");
+	ObjectLoader::loadTexture("jump tut", "./Assets//Textures/spaceboard.png");
+	ObjectLoader::loadTexture("switch tut", "./Assets//Textures/switchboard.png");
+	ObjectLoader::loadTexture("collect nut", "./Assets//Textures/nutboard.png");
+	ObjectLoader::loadTexture("collect coin", "./Assets//Textures/coinboard.png");
+	ObjectLoader::loadTexture("a to nut", "./Assets//Textures/anutboard.png");
 
 
 	// Load all UI animation files
@@ -325,17 +328,22 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/UITest.db", "UITest", false);
 
+	sceneManager->loadSceneFromFile("./Assets/Scenes/dialogue.db", "Dialogue", true, "hi");
+
 	sceneManager->loadSceneFromFile("./Assets/Scenes/Scoreboard.db", "Scoreboard", true, 1);
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/GROUND.db", "Ground", false);
+
+	sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", true);
 
 	//sceneManager->loadSceneFromFile("./Assets/Scenes/Level Fun.db", "Level ");
 	//REGAN LEVEL
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
+	sceneManager->loadSceneFromFile("./Assets/Scenes/lev 1.db", "lev 1", true);
 
-	//sceneManager->loadScene("UITest"); TODO
-	//_currentScene = sceneManager->getCurrentScene();
+	sceneManager->loadScene("UITest"); 
+	_currentScene = sceneManager->getCurrentScene();
 
 
 	_sound = SoundComponent::getInstance();
@@ -351,6 +359,10 @@ void Game::initializeGame()
 	_sound->loadSound("coin", "coin collect.wav", false);
 	_sound->loadSound("Intro", "Intro.wav", false);
 
+	_sound->loadSound("fatboiQuip1", "fatboiQuip1.wav", true);
+	_sound->loadSound("fatboiQuip2", "fatboiQuip2.wav", true);
+	_sound->loadSound("birdmanTaunt1", "birdmanTaunt1.wav", true);
+	_sound->loadSound("birdmanTaunt2", "birdmanTaunt2.wav", true);
 
 	_sound->playSound("mainMenu", true, 0.5f);
 	
@@ -370,11 +382,9 @@ void Game::update()
 		if (image->clicked())
 		{
 			image->setClicked(false);
-			sceneManager->loadScene("tut");
+			sceneManager->loadScene("Dialogue");
 			_currentScene = sceneManager->getCurrentScene();
 			outline = true;
-			_sound->stop();
-			_sound->playSound("levelMusic1", true, 0.3f);
 		}
 		else if (canvas->getImage("Exit")->clicked())
 		{
@@ -389,13 +399,52 @@ void Game::update()
 			
 		}
 	}
+	if (_currentScene->getName() == "Dialogue")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
+			sceneManager->loadScene("tut");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+
 	if (_currentScene->getName() == "tut")
 	{
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
-			sceneManager->loadScene("Scoreboard");
+			_sound->stop();
+			_sound->playSound("levelMusic2", true, 0.5f);
+			sceneManager->loadScene("Level 2");
 			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "Level 2")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			_sound->stop();
+			_sound->playSound("levelMusic1", true, 0.3f);
+			sceneManager->loadScene("Level 1");
+			sceneManager->loadScene("lev 1");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "lev 1")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("UITest");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
 		}
 	}
 
@@ -551,25 +600,6 @@ void Game::draw()
 	}
 	else
 	{
-		//float deltaTime = updateTimer->getElapsedTimeSeconds();
-		
-		//TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
-		//CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
-		//
-		//TransformComponent transform;// = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
-		//transform.setLocalPosition(vec3(0,0,-5.f));
-		//transform.setLocalScale(100.0f);
-		//transform.update(deltaTime);
-		////UIMesh = meshRenderer->getMesh();
-		//ShaderProgram* shaderProgram = &shaderLUT;
-		//
-		//shaderProgram->bind();
-		//shaderProgram->sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
-		//shaderProgram->sendUniformMat4("uView", cameraTrans->getView().data, false);
-		//shaderProgram->sendUniformMat4("uProj", camera->getProjection().data, false);
-
-
-
 		shaderLUT.bind();
 
 		shaderLUT.sendUniform("lut", lut);
@@ -577,7 +607,6 @@ void Game::draw()
 		shaderLUT.sendUniform("screenShake", false);
 		shaderLUT.sendUniform("Flip", true);
 		LUTTex->bind(30);
-
 
 		introVec[frameNum]->bind(0);
 		glViewport(0, 0, windowWidth, windowHeight);
@@ -589,7 +618,6 @@ void Game::draw()
 		if (!soundbool) {
 			_sound->playSound2("Intro", false, 0.5f);
 			soundbool = true;
-			
 		}
 
 		if (frameTime > 1.f / 24.f)
@@ -615,6 +643,14 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 		shaderOutline.reload();
 		shaderDeferred.reload();
+
+		sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
+
+		sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
+
+
+		sceneManager->loadScene("UITest");
+		_currentScene = sceneManager->getCurrentScene();
 	}
 	if (key == 'v')
 		lut = !lut;

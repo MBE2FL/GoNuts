@@ -50,6 +50,26 @@ Scene::Scene(const string & name, bool ScoreboardUi, int forScoreboard)
 		initScoreboardUi();
 }
 
+Scene::Scene(const string & name, bool dialogueUi, string forDialogue)
+{
+	_name = name;
+	_dialogueUi = dialogueUi;
+	_entityManager = new EntityManager();
+	_transformSystem = new TransformSystem(_entityManager);
+	_meshRendererSystem = new MeshRendererSystem(_entityManager);
+	_physicsSystem = new PhysicsSystem(_entityManager);
+	_entityFactory = EntityFactory::getInstance();
+	_sound = SoundComponent::getInstance();
+
+	_uiSystem = new UISystem(_entityManager);
+	_uiCamera = _uiSystem->getCamera();
+
+	_guiHelper = GUIHelper::getInstance();
+
+	if (_dialogueUi)
+		initScoreboardUi();
+}
+
 Scene::Scene(const string & name)
 {
 	_name = name;
@@ -128,12 +148,85 @@ void Scene::initScoreboardUi()
 	}
 }
 
+void Scene::initDialogue()
+{
+	if (increment == 0 && !font)
+	{
+		fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
+		font = true;
+		_sound->setLposition(vec3::One);
+	}
+
+	if (increment == 1 && !one)
+	{
+		_cheeksText = new TextRenderer();
+		_cheeksText->fontface = fontTTF;
+		_cheeksText->text = std::string("Let them go birdMan!!!");
+		_cheeksText->color = vec4(vec3::Zero, 1.0f);
+		_cheeksText->origin = vec3(645.0f, 895.0f, 10.0f);
+		_cheeksText->init();
+		_sound->play3dSound("fatboiQuip1", false, vec3(-5.0f, 1.0f, 0.0f), 4.0f);
+		one = true;
+	}
+
+	if (increment == 3 && !three)
+	{
+		_cheeksText = new TextRenderer();
+		_cheeksText->fontface = fontTTF;
+		_cheeksText->text = std::string("I've stopped you before I can do it again!!!");
+		_cheeksText->color = vec4(vec3::Zero, 1.0f);
+		_cheeksText->origin = vec3(645.0f, 895.0f, 2.0f);
+		_cheeksText->init();
+		_sound->play3dSound("fatboiQuip2", false, vec3(-5.0f, 1.0f, 0.0f), 4.0f);
+		three = true;
+	}
+
+	if (increment == 2 && !two)
+	{
+		_birdText = new TextRenderer();
+		_birdText->fontface = fontTTF;
+		_birdText->text = std::string("Too late Cheeks! soon these Squirrels\n will be mine and you can't stop me!");
+		_birdText->color = vec4(vec3::Zero, 1.0f);
+		_birdText->origin = vec3(470.0f, 334.0f, 2.0f);
+		_birdText->init();
+		_sound->play3dSound("birdmanTaunt1", false, vec3(6.0f, 1.0f, 0.0f), 4.0f);
+		two = true;
+	}
+
+	if (increment == 4 && !four)
+	{
+		_birdText = new TextRenderer();
+		_birdText->fontface = fontTTF;
+		_birdText->text = std::string("You can't stop me,\n if you can't catch me HAHAHAHA!");
+		_birdText->color = vec4(vec3::Zero, 1.0f);
+		_birdText->origin = vec3(470.0f, 334.0f, 2.0f);
+		_sound->play3dSound("birdmanTaunt2", false, vec3(6.0f, 1.0f, 0.0f), 4.0f);
+		_birdText->init();
+		four = true;
+	}
+
+	if (increment >= 5)
+	{
+		increment = 0;
+		one = false;
+		two = false;
+		three = false;
+		four = false;
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, getPlayTrans()->getEntity());
+		col->victor = true;
+	}
+	
+}
+
 void Scene::update(float deltaTime)
 {
 	_score->setTotalGameTime(deltaTime);
 
 	if (_uiSystem)
 		_uiSystem->update(deltaTime);
+
+	if (_dialogueUi && increment > 0)
+		initDialogue();
 
 	if (_particleManager)
 	{
@@ -209,6 +302,16 @@ void Scene::update(float deltaTime)
 			_nameScore[i]->update(deltaTime);
 		for (unsigned int i = 0; i < _timeScore.size(); i++)
 			_timeScore[i]->update(deltaTime);
+	}
+
+	if (_dialogueUi && increment > 0)
+	{
+		_cheeksText->update(deltaTime);
+	}
+
+	if (_dialogueUi && increment > 1)
+	{
+		_birdText->update(deltaTime);
 	}
 
 	_uiSystem->update(deltaTime);
@@ -329,6 +432,20 @@ void Scene::drawText()
 			_nameScore[i]->draw();
 		for (unsigned int i = 0; i < _timeScore.size(); i++)
 			_timeScore[i]->draw();
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	if (_dialogueUi && increment > 0)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		_cheeksText->draw();
+
+		if(increment > 1)
+			_birdText->draw();
+
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
@@ -721,6 +838,11 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 	case 32://space bar to jump
 
+		if (_dialogueUi)
+		{
+			increment++;
+			break;
+		}
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 450.0f, 0.0f));

@@ -57,6 +57,17 @@ void SoundComponent::playSound2(string soundName, bool loops, float volume)
 	Sound::SetVolume(_channel2, volume);
 }
 
+void SoundComponent::play3dSound(string soundName, bool loops,vec3 position, float volume)
+{
+	_channel3D = _sounds[soundName]->Play(loops);
+	Sound::SetVolume(_channel3D, volume);
+	FMOD_VECTOR a;
+	a.x = position.x;
+	a.y = position.y;
+	a.z = position.z;
+	Sound::SetPosition(_channel3D, a);
+}
+
 void SoundComponent::playSound(string soundName, bool loops, float freqMin, float freqMax, float volume)
 {
 	_channel = _sounds[soundName]->Play(loops);
@@ -76,6 +87,13 @@ void SoundComponent::setFrequencyRange(FMOD::Channel * channel, float freqMin, f
 void SoundComponent::setFrequency(FMOD::Channel * channel, float frequency)
 {
 	channel->setFrequency(frequency);
+}
+
+void SoundComponent::setLposition(vec3 position)
+{
+	listener.pos.x = position.x;
+	listener.pos.y = position.y;
+	listener.pos.z = position.z;
 }
 
 FMOD::Channel * SoundComponent::getSoundChannel()
