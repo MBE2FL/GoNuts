@@ -105,6 +105,17 @@ void GUIHelper::drawMenuBar()
 			ImGui::EndMenu();
 		}
 
+		// UI menu options.
+		if (ImGui::BeginMenu("Particles"))
+		{
+			if (ImGui::MenuItem("Particle Editor"))
+			{
+				_showParticleManagerEditor = !_showParticleManagerEditor;
+			}
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::Text("				%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::EndMainMenuBar();
@@ -149,6 +160,9 @@ void GUIHelper::drawMenuBar()
 
 	if (_showUIAnimationEditor)
 		drawUIAnimationEditor();
+
+	if (_showParticleManagerEditor)
+		drawParticleManagerEditor();
 }
 
 void GUIHelper::update()
@@ -156,6 +170,7 @@ void GUIHelper::update()
 	_entityManager = EntityManager::getInstance();
 	_entityFactory = EntityFactory::getInstance();
 	_uiSystem = _sceneManager->getCurrentScene()->getUISystem();
+	_particleManager = _sceneManager->getCurrentScene()->getParticleManager();
 }
 
 bool GUIHelper::getPhysicsDebugEnabled() const
@@ -583,7 +598,7 @@ void GUIHelper::drawPhysicsBody(PhysicsBodyComponent * physicsBody)
 	ImGui::DragFloat("Mass", &mass);
 	physicsBody->setMass(mass);
 
-	// Set if the physics body should use gravity or not.
+	// Set if the physics body should use _gravity or not.
 	bool useGravity = physicsBody->getUseGravity();
 	ImGui::Checkbox("Use Gravity", &useGravity);
 	physicsBody->setUseGravity(useGravity);
@@ -1105,7 +1120,7 @@ void GUIHelper::drawCanvases()
 	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Canvases");
 	ImGui::Spacing();
 
-	// Draw each canvases' UI hierarchy
+	// Draw each systems' UI hierarchy
 	unordered_map<string, UICanvas*> canvases = _uiSystem->getCanvases();
 
 	for (auto const& canvasKV : canvases)
@@ -1687,4 +1702,217 @@ void GUIHelper::propertyUIAnimationEditor(UIAnimation * anim, bool * open)
 
 
 	ImGui::End();
+}
+
+void GUIHelper::drawParticleManagerEditor()
+{
+	// Open particle manager editor window
+	ImGui::Begin("Particle Editor", &_showParticleManagerEditor);
+
+	// Open particle spawn menu window
+	if (ImGui::Button("Spawn Particle System"))
+	{
+		//_showSpawnUIElement = true;
+	}
+
+	//if (_showSpawnUIElement)
+	//	SpawnUIElement();
+
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+
+	drawParticleEffects();
+
+
+	ImGui::End();
+}
+
+void GUIHelper::drawParticleEffects()
+{
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Particle Systems");
+	ImGui::Spacing();
+
+	// Draw each systems' UI hierarchy
+	unordered_map<string, ParticleEffect*> effects = _particleManager->getEffects();
+
+	for (auto const& effectsKV : effects)
+	{
+		if (ImGui::CollapsingHeader(effectsKV.first.c_str()))
+		{
+			//_canvasShowImageProperty[canvasKV.second] = canvasKV.second;
+
+			_currentParticleEffect = effectsKV.second;
+			drawParticleEffectHierarchy(effectsKV.second);
+		}
+	}
+
+	ImGui::Separator();
+}
+
+void GUIHelper::drawParticleEffectHierarchy(ParticleEffect * particleEffect)
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3.0f);
+
+	//ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	// Get all particle systems in the canvas.
+	unordered_map<string, ParticleSystem*> systems = particleEffect->getSystems();
+
+
+	// Display all the particle systems
+	for (auto const& systemKV : systems)
+	{
+		ParticleSystem* system = systemKV.second;
+
+		if (ImGui::TreeNode(system->getName().c_str()))
+		{
+			// Edit this particle system
+			if (ImGui::SmallButton("Edit"))
+			{
+				_showParticleSystemEditor = true;
+				_currentParticleSystem = system;
+			}
+			// Delete this particle system
+			if (ImGui::SmallButton("Delete"))
+			{
+				// Remove the particle system from particle manager
+				_currentParticleEffect->deleteSystem(system->getName());
+				ImGui::TreePop();
+				return;
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+	// Open property editor for the current UIImage.
+	//if (_showUIPropertyEditor)
+	if (_showParticleSystemEditor)
+		drawParticleSystemEditor(&_showParticleSystemEditor);
+
+	ImGui::PopStyleVar();
+}
+
+void GUIHelper::drawParticleSystemEditor(bool * open)
+{
+	if (!_currentParticleSystem || !ImGui::Begin(_currentParticleSystem->getName().c_str(), open))
+	{
+		ImGui::End();
+		return;
+	}
+
+	if (ImGui::Button("Respawn Particles"))
+	{
+		_currentParticleSystem->respawnParticles();
+	}
+
+	// Display fluid dynamics properties
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Fluid Dynamics Properties");
+
+	float tempFloat = _currentParticleSystem->getSmoothWidth();
+	ImGui::DragFloat("Smooth Width", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setSmoothWidth(tempFloat);
+
+	tempFloat = _currentParticleSystem->getGasConstant();
+	ImGui::DragFloat("Gas Constant", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setGasConstant(tempFloat);
+
+	tempFloat = _currentParticleSystem->getRestDensity();
+	ImGui::DragFloat("Rest Density", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setRestDensity(tempFloat);
+
+	vec3 temp = _currentParticleSystem->getGravity();
+	ImGui::DragFloat2("Gravity", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setGravity(temp);
+
+	tempFloat = _currentParticleSystem->getViscosityConst();
+	ImGui::DragFloat("Viscosity Const", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setViscosityConst(tempFloat);
+
+	tempFloat = _currentParticleSystem->getParticleMass();
+	ImGui::DragFloat("Particle Mass", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setParticleMass(tempFloat);
+
+
+
+	// Display min/max lifetime properties
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Min - Max Lifetime Range");
+
+	tempFloat = _currentParticleSystem->getMinLifetime();
+	ImGui::DragFloat("Min Lifetime", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setMinLifetime(tempFloat);
+
+	tempFloat = _currentParticleSystem->getMaxLifetime();
+	ImGui::DragFloat("Max Lifetime", &tempFloat, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setMaxLifetime(tempFloat);
+
+
+
+	// Display min/max spawn properties
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Min - Max Spawn Range");
+
+	temp = _currentParticleSystem->getMinSpawnPos();
+	ImGui::DragFloat2("Min Spawn Pos", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setMinSpawnPos(temp);
+
+	temp = _currentParticleSystem->getMaxSpawnPos();
+	ImGui::DragFloat2("Max Spawn Pos", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setMaxSpawnPos(temp);
+
+
+
+	// Display start/end scale properties
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Scale Over lifetime");
+
+	temp = _currentParticleSystem->getStartScale();
+	ImGui::DragFloat2("Start Scale", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setStartScale(temp);
+
+	temp = _currentParticleSystem->getEndScale();
+	ImGui::DragFloat2("End Scale", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setEndScale(temp);
+
+
+
+	// Display start/end velocity properties
+	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Velocity To Add Over lifetime");
+
+	temp = _currentParticleSystem->getStartVelocity();
+	ImGui::DragFloat2("Start Velocity", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setStartVelocity(temp);
+
+	temp = _currentParticleSystem->getEndVelocity();
+	ImGui::DragFloat2("End Velocity", &temp.x, 0.2f, NULL, NULL, "%.1f", 1.0f);
+	_currentParticleSystem->setEndVelocity(temp);
+
+
+	drawParticles();
+
+	ImGui::End();
+}
+
+void GUIHelper::drawParticles()
+{
+	vector<Particle*> particles = _currentParticleSystem->getParticles();
+	size_t particleCount = 0;
+
+	for (Particle* particle : particles)
+	{
+		if (ImGui::TreeNode(("Particle #" + to_string(particleCount)).c_str()))
+		{
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), ("Density: " + to_string(particle->_density)).c_str());
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), ("Pressure: " + to_string(particle->_pressure)).c_str());
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), ("Mass: " + to_string(particle->_mass)).c_str());
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), ("Lifetime: " + to_string(particle->_totalLifeTime)).c_str());
+			
+
+
+			ImGui::TreePop();
+		}
+
+		++particleCount;
+	}
 }

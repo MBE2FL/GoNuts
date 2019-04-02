@@ -16,6 +16,8 @@ Scene::Scene(const string & name, bool inGameUi)
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
+	_particleManager = new ParticleManager();
+
 	_score = new ScoreCounter;
 
 	_guiHelper = GUIHelper::getInstance();
@@ -38,6 +40,8 @@ Scene::Scene(const string & name, bool ScoreboardUi, int forScoreboard)
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
+	_particleManager = new ParticleManager();
+
 	_score = new ScoreCounter;
 
 	_guiHelper = GUIHelper::getInstance();
@@ -58,6 +62,8 @@ Scene::Scene(const string & name)
 
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
+
+	_particleManager = new ParticleManager();
 
 	_guiHelper = GUIHelper::getInstance();
 }
@@ -129,9 +135,9 @@ void Scene::update(float deltaTime)
 	if (_uiSystem)
 		_uiSystem->update(deltaTime);
 
-	if (_particleEffect)
+	if (_particleManager)
 	{
-		_particleEffect->update(deltaTime);
+		_particleManager->update(FIXED_DELTA_TIME);
 	}
 
 	if (_score->getAcornCount() > 18)
@@ -213,13 +219,13 @@ void Scene::draw()
 	_meshRendererSystem->draw(light, spotLight);
 	//_uiSystem->draw();
 
-	if (_particleEffect)
+	if (_particleManager)
 	{
 		CameraComponent* cam = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, _uiCamera);
 		TransformComponent* camTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _uiCamera);
 		mat4 camView = camTrans->getView();
 		mat4 camProj = cam->getProjection();
-		_particleEffect->draw(camView, camProj);
+		_particleManager->draw(camView, camProj);
 	}
 
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -587,7 +593,15 @@ void Scene::loadOldFaithful()
 	_uiSystem->addCanvas(testCanvas);
 
 
-	_particleEffect = new ParticleEffect(60);
+	ParticleSystem* particleSystem;
+	particleSystem = new ParticleSystem("ParticleTest", 60);
+	particleSystem->setActive(true);
+
+	ParticleEffect* particleEffect = new ParticleEffect("ParticleEffect");
+	particleEffect->setActive(true);
+
+	particleEffect->addSystem(particleSystem);
+	_particleManager->addEffect(particleEffect);
 
 
 
@@ -685,6 +699,11 @@ EntityManager * Scene::getEntityManager() const
 UISystem * Scene::getUISystem() const
 {
 	return _uiSystem;
+}
+
+ParticleManager * Scene::getParticleManager() const
+{
+	return _particleManager;
 }
 
 void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)

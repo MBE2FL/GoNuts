@@ -49,6 +49,8 @@ private:
 	bool _showSpawnUIElement = false;
 	bool _showSpawnUICanvas = false;
 	bool _showUIAnimationEditor = false;
+	bool _showParticleManagerEditor = false;
+	bool _showParticleSystemEditor = false;
 
 	TransformComponent* _currentTransform = nullptr;
 	UIImage* _currentUIImage = nullptr;
@@ -57,6 +59,9 @@ private:
 	EntityFactory* _entityFactory = nullptr;
 	SceneManager* _sceneManager = nullptr;
 	UISystem* _uiSystem = nullptr;
+	ParticleManager* _particleManager = nullptr;
+	ParticleEffect* _currentParticleEffect = nullptr;
+	ParticleSystem* _currentParticleSystem = nullptr;
 
 	GUIHelper();
 	void drawMenuBar();
@@ -82,6 +87,11 @@ private:
 	void drawUIAnimator(UIAnimator* animator);
 	void drawUIAnimationEditor();
 	void propertyUIAnimationEditor(UIAnimation* anim, bool* open);
+	void drawParticleManagerEditor();
+	void drawParticleEffects();
+	void drawParticleEffectHierarchy(ParticleEffect* particleEffect);
+	void drawParticleSystemEditor(bool* open);
+	void drawParticles();
 
 	unordered_map<UICanvas*, bool> _canvasShowImageProperty;
 };

@@ -12,10 +12,10 @@ PhysicsBodyComponent::~PhysicsBodyComponent()
 
 void PhysicsBodyComponent::update(float deltaTime, TransformComponent * transform)
 {
-	vec3 gravity(0.0f, EGRAVITY, 0.0f);
+	vec3 _gravity(0.0f, EGRAVITY, 0.0f);
 
 	if(_useGravity)
-		_force += gravity;
+		_force += _gravity;
 
 	//if (_velocity.x > 0.0f)
 	//	addForce(vec3(1.0f*EGRAVITY, 0.0f, 0.0f));
