@@ -417,8 +417,8 @@ void Game::update()
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
-			_sound->stop();
-			_sound->playSound("levelMusic2", true, 0.5f);
+			//_sound->stop();
+			//_sound->playSound("levelMusic2", true, 0.5f);
 			sceneManager->loadScene("Level 2");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
@@ -429,8 +429,8 @@ void Game::update()
 		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
 		if (col->victor)
 		{
-			_sound->stop();
-			_sound->playSound("levelMusic1", true, 0.3f);
+			//_sound->stop();
+			//_sound->playSound("levelMusic1", true, 0.3f);
 			sceneManager->loadScene("Level 1");
 			sceneManager->loadScene("lev 1");
 			_currentScene = sceneManager->getCurrentScene();
