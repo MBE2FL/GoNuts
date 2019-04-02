@@ -76,6 +76,18 @@ void Game::initializeGame()
 
 	toonRamp = new Texture("./Assets/Textures/toon1.png");
 
+	Texture* introTex;
+	for (int i = 1000; i < 1246; i++)
+	{
+		string file = "./Assets/Textures/Into stills/Panel ";
+		file += std::to_string(i);
+		file += +".jpg";
+		introTex = new Texture(file);
+		introVec.push_back(introTex);
+	}
+	UIMesh = new Mesh();
+	UIMesh->loadFromFile("./Assets/Models/UIQuad.obj");
+
 	ObjectLoader::loadMesh("Acorn", "./Assets/Models/acorn.obj");
 	ObjectLoader::loadMesh("Background", "./Assets/Models/background.obj");
 	ObjectLoader::loadMesh("Billboard", "./Assets/Models/Billboard_Unwrapped.obj");
@@ -335,8 +347,12 @@ void Game::initializeGame()
 	_sound->loadSound("shift", "shift.wav", false);
 	_sound->loadSound("acorn", "acorn collect.wav", false);
 	_sound->loadSound("coin", "coin collect.wav", false);
+	_sound->loadSound("Intro", "Intro.wav", false);
+
 
 	_sound->playSound("mainMenu", true, 0.5f);
+	
+	
 
 }
 
@@ -371,6 +387,15 @@ void Game::update()
 			
 		}
 	}
+	if (_currentScene->getName() == "tut")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("Scoreboard");
+			_currentScene = sceneManager->getCurrentScene();
+		}
+	}
 
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
@@ -400,125 +425,180 @@ void Game::draw()
 {
 	// Completely clear the Back-Buffer before doing any work.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
-	TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
-
-	gbuffer.clear();
-	gbuffer.setViewport();
-	gbuffer.bind();
-
-	//_currentScene->drawUI();
-	_currentScene->draw();
-
-	gbuffer.unbind();
-
-	frameBufferShadow.clear();
-	frameBufferShadow.setViewport();
-	frameBufferShadow.bind();
-	_currentScene->drawShadow();
-	frameBufferShadow.unbind();
-
-	mat4 biasMat4 = mat4(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.5f, 0.0f,
-		0.5f, 0.5f, 0.5f, 1.0f);
-
-	CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
-
-	TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
-
-	mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
-	
-	mat4 uProjInverse = camera->getProjection().getSlowInverse();
-
-	mat4 uViewInverse = cameraTrans->getView().getInverse();
-	TransformComponent* playerTrans = _currentScene->getPlayTrans();
-
-	shaderOutline.bind();
-	shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
-	shaderOutline.sendUniform("outline", outline);
-	shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-	shaderOutline.sendUniformMat4("uViewInverse", uViewInverse.data, false);
-	shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
-
-	gbuffer.bindColorAsTexture(0, 0);
-	gbuffer.bindColorAsTexture(1, 1);
-	gbuffer.bindDepthAsTexture(2);
-
-	toonRamp->bind(5);
-	frameBufferShadow.bindDepthAsTexture(16);
-
-	gbuffer.bindResolution();
-	glViewport(0, 0, windowWidth, windowHeight);
-
-	frameBufferLUT.clear();
-
-	//frameBufferOutline.renderToFSQ();
-	frameBufferLUT.renderToFSQ();
-	frameBufferLUT.unbind();
-
-	shaderDeferred.bind();
-	shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
-	frameBufferLUT.bindColorAsTexture(0, 0);
-	if (deferred)
+	if (gameStart)
 	{
-		TransformComponent transform;
-		for (int i = 0; i < (int)lights.size(); ++i)
+		CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+		TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
+
+		gbuffer.clear();
+		gbuffer.setViewport();
+		gbuffer.bind();
+
+		//_currentScene->drawUI();
+		_currentScene->draw();
+
+		gbuffer.unbind();
+
+		frameBufferShadow.clear();
+		frameBufferShadow.setViewport();
+		frameBufferShadow.bind();
+		_currentScene->drawShadow();
+		frameBufferShadow.unbind();
+
+		mat4 biasMat4 = mat4(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.5f, 0.0f,
+			0.5f, 0.5f, 0.5f, 1.0f);
+
+		CameraComponent* shadowCamera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getShadowCamera());
+
+		TransformComponent* shadowcameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getShadowCamera());
+
+		mat4 ViewToShadowClip = biasMat4 * shadowCamera->getProjection() * shadowcameraTrans->getView() * cameraTrans->getView().getInverse();
+
+		mat4 uProjInverse = camera->getProjection().getSlowInverse();
+
+		mat4 uViewInverse = cameraTrans->getView().getInverse();
+		TransformComponent* playerTrans = _currentScene->getPlayTrans();
+
+		shaderOutline.bind();
+		shaderOutline.sendUniformMat4("uViewToShadow", ViewToShadowClip.data, false);
+		shaderOutline.sendUniform("outline", outline);
+		shaderOutline.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+		shaderOutline.sendUniformMat4("uViewInverse", uViewInverse.data, false);
+		shaderOutline.sendUniform("POS", playerTrans->getLocalPosition());
+
+		gbuffer.bindColorAsTexture(0, 0);
+		gbuffer.bindColorAsTexture(1, 1);
+		gbuffer.bindDepthAsTexture(2);
+
+		toonRamp->bind(5);
+		frameBufferShadow.bindDepthAsTexture(16);
+
+		gbuffer.bindResolution();
+		glViewport(0, 0, windowWidth, windowHeight);
+
+		frameBufferLUT.clear();
+
+		//frameBufferOutline.renderToFSQ();
+		frameBufferLUT.renderToFSQ();
+		frameBufferLUT.unbind();
+
+		shaderDeferred.bind();
+		shaderDeferred.sendUniformMat4("uProjInverse", uProjInverse.data, false);
+		frameBufferLUT.bindColorAsTexture(0, 0);
+		if (deferred)
 		{
-			lights[i]->bind();
-			lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
-			lights[i]->update(0.0f);
+			TransformComponent transform;
+			for (int i = 0; i < (int)lights.size(); ++i)
+			{
+				lights[i]->bind();
+				lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
+				lights[i]->update(0.0f);
 
-			
-			transform.setLocalPosition(lights[i]->getLocalPosition());
-			transform.setLocalScale(lights[i]->radius);
-			transform.update(updateTimer->getElapsedTimeSeconds());
-			shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
-			shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
-			shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
-			shaderDeferred.sendUniform("uLightColor", lights[i]->color);
-			shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
-			shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
-			shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
 
-			frameBufferLUT.renderSphere();
+				transform.setLocalPosition(lights[i]->getLocalPosition());
+				transform.setLocalScale(lights[i]->radius);
+				transform.update(updateTimer->getElapsedTimeSeconds());
+				shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
+				shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
+				shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
+				shaderDeferred.sendUniform("uLightColor", lights[i]->color);
+				shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
+				shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
+				shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
+
+				frameBufferLUT.renderSphere();
+			}
 		}
+
+		//gbuffer.drawFSQ();
+
+
+		//frameBufferUI.unbind();
+		toonRamp->unBind();
+
+		gbuffer.unbindTexture(2);//texture
+		gbuffer.unbindTexture(1);//texture
+		gbuffer.unbindTexture(0);//texture
+
+		shaderOutline.unBind();
+
+		_currentScene->drawUI();
+
+		shaderLUT.bind();
+
+		shaderLUT.sendUniform("lut", lut);
+		shaderLUT.sendUniform("totalGameTime", TotalGameTime);
+		shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
+		shaderLUT.sendUniform("Flip", false);
+		LUTTex->bind(30);
+
+
+		frameBufferLUT.bindColorAsTexture(0, 0);
+		glViewport(0, 0, windowWidth, windowHeight);
+		Framebuffer::drawFSQ();
+
+		frameBufferLUT.unbindTexture(0);
+		shaderLUT.unBind();
+
+		_currentScene->drawText();
+		_currentScene->imguiDraw();
+		// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
 	}
-	
-	//gbuffer.drawFSQ();
+	else
+	{
+		//float deltaTime = updateTimer->getElapsedTimeSeconds();
+		
+		//TransformComponent* cameraTrans = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, EntityManager::getInstance()->getMainCamera());
+		//CameraComponent* camera = EntityManager::getInstance()->getComponent<CameraComponent*>(ComponentType::Camera, EntityManager::getInstance()->getMainCamera());
+		//
+		//TransformComponent transform;// = EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, meshRenderer->getEntity());
+		//transform.setLocalPosition(vec3(0,0,-5.f));
+		//transform.setLocalScale(100.0f);
+		//transform.update(deltaTime);
+		////UIMesh = meshRenderer->getMesh();
+		//ShaderProgram* shaderProgram = &shaderLUT;
+		//
+		//shaderProgram->bind();
+		//shaderProgram->sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
+		//shaderProgram->sendUniformMat4("uView", cameraTrans->getView().data, false);
+		//shaderProgram->sendUniformMat4("uProj", camera->getProjection().data, false);
 
 
-	//frameBufferUI.unbind();
-	toonRamp->unBind();
 
-	gbuffer.unbindTexture(2);//texture
-	gbuffer.unbindTexture(1);//texture
-	gbuffer.unbindTexture(0);//texture
+		shaderLUT.bind();
 
-	shaderOutline.unBind();
+		shaderLUT.sendUniform("lut", lut);
+		shaderLUT.sendUniform("totalGameTime", 0.0f);
+		shaderLUT.sendUniform("screenShake", false);
+		shaderLUT.sendUniform("Flip", true);
+		LUTTex->bind(30);
 
-	_currentScene->drawUI();
 
-	shaderLUT.bind();
+		introVec[frameNum]->bind(0);
+		glViewport(0, 0, windowWidth, windowHeight);
+		Framebuffer::drawFSQ();
 
-	shaderLUT.sendUniform("lut", lut);
-	shaderLUT.sendUniform("totalGameTime", TotalGameTime);
-	shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
-	LUTTex->bind(30);
-	
+		
+		shaderLUT.unBind();
+		
+		if (!soundbool) {
+			_sound->playSound2("Intro", false, 0.5f);
+			soundbool = true;
+			
+		}
 
-	frameBufferLUT.bindColorAsTexture(0, 0);
-	glViewport(0, 0, windowWidth, windowHeight);
-	Framebuffer::drawFSQ();
-	
-	frameBufferLUT.unbindTexture(0);
-	shaderLUT.unBind();	
-
-	_currentScene->drawText();
-	_currentScene->imguiDraw();
-	// Commit the Back-Buffer to swap with the Front-Buffer and be displayed on the monitor.
+		if (frameTime > 1.f / 24.f)
+		{
+			frameTime -= 1.f / 24.f;
+			frameNum++;
+		}
+		if (frameNum >= 245)
+			gameStart = true;
+		frameTime += FIXED_DELTA_TIME;
+	}
 	glutSwapBuffers();
 	drawTime = 0.0f;
 }
@@ -541,6 +621,18 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	//	sceneManager->loadScene("tut");
 	if (key == 'd')
 		deferred = !deferred;
+	if (key == 'l')
+	{
+		gameStart = !gameStart;
+		frameNum = 0;
+		if (gameStart)
+		{
+			soundbool = true;
+			_sound->stop2();
+		}
+		else
+			soundbool = false;
+	}
 }
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)

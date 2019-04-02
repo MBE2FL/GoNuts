@@ -31,6 +31,11 @@ void SoundComponent::stop()
 	_channel->stop();
 }
 
+void SoundComponent::stop2()
+{
+	_channel2->stop();
+}
+
 Sound* SoundComponent::getSound(string soundName)
 {
 	if (_sounds.find(soundName) != _sounds.end())
@@ -44,6 +49,12 @@ void SoundComponent::playSound(string soundName, bool loops, float volume)
 	//Sound* temp = getSound(soundName);
 	_channel = _sounds[soundName]->Play(loops);
 	Sound::SetVolume(_channel, volume);
+}
+
+void SoundComponent::playSound2(string soundName, bool loops, float volume)
+{
+	_channel2 = _sounds[soundName]->Play(loops);
+	Sound::SetVolume(_channel2, volume);
 }
 
 void SoundComponent::playSound(string soundName, bool loops, float freqMin, float freqMax, float volume)

@@ -1,10 +1,11 @@
 #version 420 //Version of OpenGL we're using. - 4.2
 
-uniform sampler2D uSceneTex; 
+layout(binding = 0) uniform sampler2D uSceneTex; 
 layout(binding = 30) uniform sampler3D uLUTTex;
 
 uniform bool lut = true;
 uniform bool screenShake = false;
+uniform bool Flip = false;
 
 uniform float totalGameTime;
 uniform float uAmount = 1.0f;
@@ -17,6 +18,10 @@ void main()
 	if (screenShake)
 	{
 		texOffest.y = texOffest.y + sin(totalGameTime * 50) * 0.01;
+	}
+	if (Flip)
+	{
+		texOffest.y = 1 - texOffest.y;
 	}
 	vec4 source = texture(uSceneTex, texOffest);
 	
