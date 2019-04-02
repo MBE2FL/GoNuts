@@ -222,6 +222,8 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Time", "./Assets/Textures/Time.png");
 	ObjectLoader::loadTexture("UiBackdrop", "./Assets/Textures/Fade_background.png");
 	ObjectLoader::loadTexture("Back", "./Assets/Textures/back.png");
+	ObjectLoader::loadTexture("Dialogue", "./Assets/Textures/Talking.png");
+	ObjectLoader::loadTexture("Space Press", "./Assets/Textures/space press.png");
 
 	ObjectLoader::loadTexture("Water", "./Assets/Textures/water.png");
 	ObjectLoader::loadTexture("Toon1", "./Assets/Textures/toon.png");
