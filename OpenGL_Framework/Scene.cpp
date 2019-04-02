@@ -163,7 +163,7 @@ void Scene::initDialogue()
 		_cheeksText->fontface = fontTTF;
 		_cheeksText->text = std::string("Let them go birdMan!!!");
 		_cheeksText->color = vec4(vec3::Zero, 1.0f);
-		_cheeksText->origin = vec3(645.0f, 895.0f, 2.0f);
+		_cheeksText->origin = vec3(645.0f, 895.0f, 10.0f);
 		_cheeksText->init();
 		_sound->play3dSound("fatboiQuip1", false, vec3(-5.0f, 1.0f, 0.0f), 4.0f);
 		one = true;
