@@ -289,6 +289,10 @@ void Scene::update(float deltaTime)
 	else if (_playerSkeleton)
 		_playerSkeleton->update(deltaTime);
 
+	if (_birdSkeleton)
+		_birdSkeleton->update(deltaTime);
+	
+	//EntityManager::getInstance()->getComponent<TransformComponent*>(ComponentType::Transform, _birdSkeleton.getE);
 
 	if (_inGameUi)
 	{
@@ -763,6 +767,16 @@ void Scene::loadScene()
 	_entityFactory->setEntityManager();	// Optimize how entity factory and gui helper get updated instances
 
 	_guiHelper->update();
+
+	//_birdSkeleton = ObjectLoader::getSkeletalMesh("SkeletalBird");
+	Entity* entity = _entityFactory->createEmpty(vec3(-2.0f, 9.0f, -4.5f), vec3(1.2f), nullptr, "SkeletalBird");
+	_birdSkeleton = ObjectLoader::getSkeletalMesh("SkeletalBird");
+	_birdSkeleton->_isSkeletal = true;
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
+	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
+	vector<Texture*> textures = { ObjectLoader::getTexture("Beast Mode") };
+	MeshRendererComponent* meshRenderer = new MeshRendererComponent(_birdSkeleton, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
+	_entityManager->addComponent(meshRenderer, entity);
 
 	// Make sure both main and shadow cameras are initialized
 	if (!_mainCamera || !_mainCameraTransform)
