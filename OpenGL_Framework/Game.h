@@ -114,7 +114,8 @@ private:
 	bool lut = true;
 	bool deferred = false;
 	bool gameStart = false;
+	bool soundbool = false;
 
 	float frameTime = 0.0f;
-	int frameNum = 0;
+	int frameNum = 24;
 };

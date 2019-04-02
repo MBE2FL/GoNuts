@@ -166,6 +166,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		_currentScene = SceneManager::getInstance()->getCurrentScene();
  		if (otherCol->getTag() == TTag::Player)
 		{
+			otherCol->victor = true;
 			if (_currentScene->getName() == "tut")
 			{
 				//sceneManager->loadScene("Scoreboard");

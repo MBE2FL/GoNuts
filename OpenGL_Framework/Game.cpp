@@ -345,8 +345,12 @@ void Game::initializeGame()
 	_sound->loadSound("shift", "shift.wav", false);
 	_sound->loadSound("acorn", "acorn collect.wav", false);
 	_sound->loadSound("coin", "coin collect.wav", false);
+	_sound->loadSound("Intro", "Intro.wav", false);
+
 
 	_sound->playSound("mainMenu", true, 0.5f);
+	
+	
 
 }
 
@@ -379,6 +383,15 @@ void Game::update()
 		else if (canvas->getImage("LevelSelect")->clicked())
 		{
 			
+		}
+	}
+	if (_currentScene->getName() == "tut")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			sceneManager->loadScene("Scoreboard");
+			_currentScene = sceneManager->getCurrentScene();
 		}
 	}
 
@@ -568,6 +581,12 @@ void Game::draw()
 
 		
 		shaderLUT.unBind();
+		
+		if (!soundbool) {
+			_sound->playSound2("Intro", false, 0.5f);
+			soundbool = true;
+			
+		}
 
 		if (frameTime > 1.f / 24.f)
 		{
@@ -604,6 +623,13 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 		gameStart = !gameStart;
 		frameNum = 0;
+		if (gameStart)
+		{
+			soundbool = true;
+			_sound->stop2();
+		}
+		else
+			soundbool = false;
 	}
 }
 

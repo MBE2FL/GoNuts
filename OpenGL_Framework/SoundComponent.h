@@ -17,8 +17,10 @@ public:
 	static SoundComponent* getInstance();
 	void loadSound(string soundName, string soundfile, bool is3D);
 	void stop();
+	void stop2();
 	Sound* getSound(string soundName);
 	void playSound(string soundName, bool loops, float volume = 1.0f);
+	void playSound2(string soundName, bool loops, float volume = 1.0f);
 	void playSound(string soundName, bool loops, float freqMin, float freqMax, float volume = 1.0f);
 	void setFrequencyRange(FMOD::Channel* channel, float freqMin, float freqMax);
 	void setFrequency(FMOD::Channel* channel, float frequency);
@@ -35,5 +37,6 @@ private:
 	unordered_map<string, Sound*> _sounds;
 
 	FMOD::Channel* _channel;
+	FMOD::Channel* _channel2;
 
 };

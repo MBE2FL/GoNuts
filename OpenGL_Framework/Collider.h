@@ -81,6 +81,7 @@ public:
 	bool screenShake = false;
 	float shakeTimer = 0.0f;
 	bool front = true;
+	bool victor = false;
 
 protected:
 	SoundComponent* _sound;
