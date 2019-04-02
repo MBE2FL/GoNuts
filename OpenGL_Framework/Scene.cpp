@@ -154,6 +154,7 @@ void Scene::initDialogue()
 	{
 		fontTTF = FontManager::initNewFont("BADABB__.ttf", 64);
 		font = true;
+		_sound->setLposition(vec3::One);
 	}
 
 	if (increment == 1 && !one)
@@ -164,6 +165,7 @@ void Scene::initDialogue()
 		_cheeksText->color = vec4(vec3::Zero, 1.0f);
 		_cheeksText->origin = vec3(645.0f, 895.0f, 2.0f);
 		_cheeksText->init();
+		_sound->play3dSound("fatboiQuip1", false, vec3(-5.0f, 1.0f, 0.0f), 4.0f);
 		one = true;
 	}
 
@@ -175,6 +177,7 @@ void Scene::initDialogue()
 		_cheeksText->color = vec4(vec3::Zero, 1.0f);
 		_cheeksText->origin = vec3(645.0f, 895.0f, 2.0f);
 		_cheeksText->init();
+		_sound->play3dSound("fatboiQuip2", false, vec3(-5.0f, 1.0f, 0.0f), 4.0f);
 		three = true;
 	}
 
@@ -184,8 +187,9 @@ void Scene::initDialogue()
 		_birdText->fontface = fontTTF;
 		_birdText->text = std::string("Too late Cheeks! soon these Squirrels\n will be mine and you can't stop me!");
 		_birdText->color = vec4(vec3::Zero, 1.0f);
-		_birdText->origin = vec3(520.0f, 354.0f, 2.0f);
+		_birdText->origin = vec3(470.0f, 334.0f, 2.0f);
 		_birdText->init();
+		_sound->play3dSound("birdmanTaunt1", false, vec3(6.0f, 1.0f, 0.0f), 4.0f);
 		two = true;
 	}
 
@@ -195,13 +199,20 @@ void Scene::initDialogue()
 		_birdText->fontface = fontTTF;
 		_birdText->text = std::string("You can't stop me,\n if you can't catch me HAHAHAHA!");
 		_birdText->color = vec4(vec3::Zero, 1.0f);
-		_birdText->origin = vec3(520.0f, 354.0f, 2.0f);
+		_birdText->origin = vec3(470.0f, 334.0f, 2.0f);
+		_sound->play3dSound("birdmanTaunt2", false, vec3(6.0f, 1.0f, 0.0f), 4.0f);
 		_birdText->init();
 		four = true;
 	}
 
 	if (increment >= 5)
-		_dialogueUi = false;
+	{
+		increment = 0;
+		one = false;
+		two = false;
+		three = false;
+		four = false;
+	}
 }
 
 void Scene::update(float deltaTime)
