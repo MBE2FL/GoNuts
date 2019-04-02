@@ -171,6 +171,7 @@ void TextRenderer::init()
 
 void TextRenderer::update(float deltaTime)
 {
+
 	time += deltaTime;
 	
 	float x = 0.0f;
