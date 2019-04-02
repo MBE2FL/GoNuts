@@ -26,6 +26,16 @@ void SoundComponent::loadSound(string soundName, string soundfile, bool is3D)
 	}
 }
 
+void SoundComponent::stop()
+{
+	_channel->stop();
+}
+
+void SoundComponent::stop2()
+{
+	_channel2->stop();
+}
+
 Sound* SoundComponent::getSound(string soundName)
 {
 	if (_sounds.find(soundName) != _sounds.end())
@@ -34,28 +44,33 @@ Sound* SoundComponent::getSound(string soundName)
 	return nullptr;
 }
 
-void SoundComponent::playSound(string soundName, FMOD::Channel * channel, bool loops, float volume)
+void SoundComponent::playSound(string soundName, bool loops, float volume)
 {
-	Sound* temp = getSound(soundName);
-	channel = temp->Play(loops);
-	Sound::SetVolume(channel, volume);
+	//Sound* temp = getSound(soundName);
+	_channel = _sounds[soundName]->Play(loops);
+	Sound::SetVolume(_channel, volume);
 }
 
-void SoundComponent::playSound(string soundName, FMOD::Channel * channel, bool loops, float freqMin, float freqMax, float volume)
+void SoundComponent::playSound2(string soundName, bool loops, float volume)
 {
-	Sound* temp = getSound(soundName);
-	channel = temp->Play(loops);
-	setFrequencyRange(channel, freqMin, freqMax);
-	Sound::SetVolume(channel, volume);
+	_channel2 = _sounds[soundName]->Play(loops);
+	Sound::SetVolume(_channel2, volume);
+}
+
+void SoundComponent::playSound(string soundName, bool loops, float freqMin, float freqMax, float volume)
+{
+	_channel = _sounds[soundName]->Play(loops);
+	setFrequencyRange(_channel, freqMin, freqMax);
+	Sound::SetVolume(_channel, volume);
 }
 
 void SoundComponent::setFrequencyRange(FMOD::Channel * channel, float freqMin, float freqMax)
 {
 	float frequency = 0.0f;
-	channel->getFrequency(&frequency);
+	_channel->getFrequency(&frequency);
 	frequency += (float(rand()) / float(RAND_MAX))*(freqMax - freqMin) + freqMin;
-	cout << frequency << endl;
-	channel->setFrequency(frequency);
+	//cout << frequency << endl;
+	_channel->setFrequency(frequency);
 }
 
 void SoundComponent::setFrequency(FMOD::Channel * channel, float frequency)
@@ -63,17 +78,7 @@ void SoundComponent::setFrequency(FMOD::Channel * channel, float frequency)
 	channel->setFrequency(frequency);
 }
 
-FMOD::Channel * SoundComponent::getBGChannel()
+FMOD::Channel * SoundComponent::getSoundChannel()
 {
-	return backGroundChannel;
-}
-
-FMOD::Channel * SoundComponent::getPlayerChannel()
-{
-	return playerChannel;
-}
-
-FMOD::Channel * SoundComponent::getActionChannel()
-{
-	return actionChannel;
+	return _channel;
 }

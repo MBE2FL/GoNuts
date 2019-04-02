@@ -89,7 +89,12 @@ void UICanvas::addButton(UIButton* button)
 
 void UICanvas::deleteImage(const string & name)
 {
-	_images.erase(name);
+	unordered_map<string, UIImage*>::iterator it = _images.find(name);
+	if (it != _images.end())
+	{
+		delete it->second;
+		_images.erase(name);
+	}
 }
 
 string UICanvas::getName() const

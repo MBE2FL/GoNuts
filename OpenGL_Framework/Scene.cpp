@@ -16,6 +16,8 @@ Scene::Scene(const string & name, bool inGameUi)
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
+	_particleManager = new ParticleManager();
+
 	_score = new ScoreCounter;
 
 	_guiHelper = GUIHelper::getInstance();
@@ -38,6 +40,8 @@ Scene::Scene(const string & name, bool ScoreboardUi, int forScoreboard)
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
 
+	_particleManager = new ParticleManager();
+
 	_score = new ScoreCounter;
 
 	_guiHelper = GUIHelper::getInstance();
@@ -58,6 +62,8 @@ Scene::Scene(const string & name)
 
 	_uiSystem = new UISystem(_entityManager);
 	_uiCamera = _uiSystem->getCamera();
+
+	_particleManager = new ParticleManager();
 
 	_guiHelper = GUIHelper::getInstance();
 }
@@ -129,9 +135,9 @@ void Scene::update(float deltaTime)
 	if (_uiSystem)
 		_uiSystem->update(deltaTime);
 
-	if (_particleEffect)
+	if (_particleManager)
 	{
-		_particleEffect->update(deltaTime);
+		_particleManager->update(FIXED_DELTA_TIME);
 	}
 
 	if (_score->getAcornCount() > 18)
@@ -211,15 +217,15 @@ void Scene::update(float deltaTime)
 void Scene::draw()
 {
 	_meshRendererSystem->draw(light, spotLight);
-	_uiSystem->draw();
+	//_uiSystem->draw();
 
-	if (_particleEffect)
+	if (_particleManager)
 	{
 		CameraComponent* cam = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, _uiCamera);
 		TransformComponent* camTrans = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _uiCamera);
 		mat4 camView = camTrans->getView();
 		mat4 camProj = cam->getProjection();
-		_particleEffect->draw(camView, camProj);
+		_particleManager->draw(camView, camProj);
 	}
 
 	if (_guiHelper->getPhysicsDebugEnabled())
@@ -275,17 +281,29 @@ void Scene::drawShadow()
 
 void Scene::drawUI()
 {
-	if (_uiSystem)
-	{
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//if (_uiSystem)
+	//{
+	//	glDisable(GL_DEPTH_TEST);
+	//	glEnable(GL_BLEND);
+	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//
+	//	_uiSystem->draw();
+	//
+	//	glDisable(GL_BLEND);
+	//	glEnable(GL_DEPTH_TEST);
+	//}
+	
 
-		_uiSystem->draw();
+//	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-	}
+	_uiSystem->draw();
+
+	glDisable(GL_BLEND);
+//	glEnable(GL_DEPTH_TEST);
+
+
 }
 
 void Scene::drawText()
@@ -575,7 +593,15 @@ void Scene::loadOldFaithful()
 	_uiSystem->addCanvas(testCanvas);
 
 
-	_particleEffect = new ParticleEffect(60);
+	ParticleSystem* particleSystem;
+	particleSystem = new ParticleSystem("ParticleTest", 60);
+	particleSystem->setActive(true);
+
+	ParticleEffect* particleEffect = new ParticleEffect("ParticleEffect");
+	particleEffect->setActive(true);
+
+	particleEffect->addSystem(particleSystem);
+	_particleManager->addEffect(particleEffect);
 
 
 
@@ -675,6 +701,11 @@ UISystem * Scene::getUISystem() const
 	return _uiSystem;
 }
 
+ParticleManager * Scene::getParticleManager() const
+{
+	return _particleManager;
+}
+
 void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -693,7 +724,7 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		if (!sliding && _playerPhysicsBody->getCanJump())
 		{
 			_playerPhysicsBody->addForce(vec3(0, 450.0f, 0.0f));
-			_sound->playSound("jumpGrunt", _sound->getPlayerChannel(), false, -2000.0f, 7000.0f, 0.5f);
+			_sound->playSound("jumpGrunt", false, -2000.0f, 7000.0f, 0.5f);
 		}
 		break;
 	case 'c'://left control for sliding
@@ -768,12 +799,12 @@ void Scene::specialKeyDown(int key, int mouseX, int mouseY)
 		if (_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
 			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = false;
-			_sound->playSound("shift", _sound->getActionChannel(), false);
+			_sound->playSound("shift", false);
 		}
 		else if (!_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front && !_playerPhysicsBody->getCanJump())
 		{
 			_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->front = true;
-			_sound->playSound("shift", _sound->getActionChannel(), false);
+			_sound->playSound("shift", false);
 		}
 	};
 }
