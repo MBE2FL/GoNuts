@@ -16,15 +16,17 @@ class SoundComponent
 public:
 	static SoundComponent* getInstance();
 	void loadSound(string soundName, string soundfile, bool is3D);
+	void stop();
 	Sound* getSound(string soundName);
-	void playSound(string soundName, FMOD::Channel* channel, bool loops, float volume = 1.0f);
-	void playSound(string soundName, FMOD::Channel* channel, bool loops, float freqMin, float freqMax, float volume = 1.0f);
+	void playSound(string soundName, bool loops, float volume = 1.0f);
+	void playSound(string soundName, bool loops, float freqMin, float freqMax, float volume = 1.0f);
 	void setFrequencyRange(FMOD::Channel* channel, float freqMin, float freqMax);
 	void setFrequency(FMOD::Channel* channel, float frequency);
 
-	FMOD::Channel* getBGChannel();
-	FMOD::Channel* getPlayerChannel();
-	FMOD::Channel* getActionChannel();
+	//FMOD::Channel* getBGChannel();
+	//FMOD::Channel* getPlayerChannel();
+	//FMOD::Channel* getActionChannel();
+	FMOD::Channel* getSoundChannel();
 
 private:
 	SoundComponent() {};
@@ -32,8 +34,6 @@ private:
 
 	unordered_map<string, Sound*> _sounds;
 
-	FMOD::Channel* backGroundChannel;//background music
-	FMOD::Channel* playerChannel;// for the sounds player makes directly (grunts)
-	FMOD::Channel* actionChannel;//shifting between z axis
+	FMOD::Channel* _channel;
 
 };
