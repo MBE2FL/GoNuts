@@ -17,7 +17,7 @@ void UIAnimator::addAnimation(UIAnimation * anim)
 	if (_animations.find(name) != _animations.end())
 	{
 		cout << "Animation with name: " << name << " already exists!" << endl;
-		//system("pause");
+		////system("pause");
 	}
 	_animations[name] = anim;
 }
@@ -30,7 +30,7 @@ void UIAnimator::removeAnimation(const string & name)
 	else
 	{
 		cout << "Animation with name: " << name << " does not exist!" << endl;
-		system("pause");
+		//system("pause");
 	}
 
 	// Stop playing the current animation if it is the one being removed

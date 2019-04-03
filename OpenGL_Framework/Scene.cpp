@@ -258,11 +258,12 @@ void Scene::update(float deltaTime)
 	//	beastModeActive = false;
 	//	beastTimer = 0.0f;
 	//	_playerTransform->setLocalScale(vec3(0.2f));
-	//	_playerTransform->setLocalRotationAngleX(-90.0f);
+	//	_playerTransform->setLocalRotationAngleX(0.0f);
 	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setMesh(ObjectLoader::getSkeletalMesh("SkeletalBoiTwo"));
 	//	_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->setTexture(0, ObjectLoader::getTexture("FatBoi"));
 	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->setBounds(ObjectLoader::getMesh("FatBoi")->getMeshBounds());
 	//	_entityManager->getComponent<Collider*>(ComponentType::Collider, _playerTransform->getEntity())->beastMode = false;
+	//	_playerTransform->setLocalRotationAngleX(-90.0f);
 	//	_playerSkeleton = dynamic_cast<SkeletalMesh*>(_entityManager->getComponent<MeshRendererComponent*>(ComponentType::MeshRenderer, _playerTransform->getEntity())->getMesh());
 	//}
 
@@ -799,7 +800,7 @@ void Scene::loadScene()
 	_birdSkeleton->_isSkeletal = true;
 	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleX(-90.0f);
 	_entityManager->getComponent<TransformComponent*>(ComponentType::Transform, entity)->setLocalRotationAngleY(90.0f);
-	vector<Texture*> textures = { ObjectLoader::getTexture("Beast Mode") };
+	vector<Texture*> textures = { ObjectLoader::getTexture("bird") };
 	MeshRendererComponent* meshRenderer = new MeshRendererComponent(_birdSkeleton, ObjectLoader::getShaderProgram("SkeletalAnim"), textures);
 	_entityManager->addComponent(meshRenderer, entity);
 
@@ -915,10 +916,10 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		//skeletalMeshTestTwo->getAnimator()->nextFrame();
 		break;
 	case 'a':
-		if (_score->getAcornCount() >= 10)
+		if (_score->getAcornCount() >= 15)
 		{
 			beastModeActive = true;
-			_score->acornCount -= 10;
+			_score->acornCount -= 15;
 		}
 		break;
 	}
@@ -1065,7 +1066,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create Entities table!. " << errMsg << endl;
-		system("pause");
+		//////system("pause");;
 	}
 	else
 		cout << "Successfully created Entities table." << endl;
@@ -1114,7 +1115,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create Transforms table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");
 	}
 	else
 		cout << "Successfully created Transforms table." << endl;
@@ -1144,7 +1145,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create Cameras table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");
 	}
 	else
 		cout << "Successfully created Cameras table." << endl;
@@ -1169,7 +1170,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create Mesh Renderers table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");
 	}
 	else
 		cout << "Successfully created Mesh Renderers table." << endl;
@@ -1205,7 +1206,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create Physics Bodies table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");
 	}
 	else
 		cout << "Successfully created Physics Bodies table." << endl;
@@ -1247,7 +1248,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create Colliders table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 	else
 		cout << "Successfully created Colliders table." << endl;
@@ -1265,7 +1266,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create UISystem table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 	else
 		cout << "Successfully created UISystem table." << endl;
@@ -1288,7 +1289,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create UICanvases table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 	else
 		cout << "Successfully created UICanvases table." << endl;
@@ -1316,7 +1317,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create UIImages table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 	else
 		cout << "Successfully created UIImages table." << endl;
@@ -1363,7 +1364,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create UITransforms table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 	else
 		cout << "Successfully created UITransforms table." << endl;
@@ -1389,7 +1390,7 @@ void Scene::createTables(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not create UIAnimators table!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 	else
 		cout << "Successfully created UIAnimators table." << endl;
@@ -1486,7 +1487,7 @@ void Scene::saveTransforms(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into Transforms!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1550,7 +1551,7 @@ void Scene::saveCameras(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into Cameras!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1631,7 +1632,7 @@ void Scene::saveMeshRenderers(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into Mesh Renderers!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1685,7 +1686,7 @@ void Scene::savePhysicsBodies(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into Physics Bodies!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1741,7 +1742,7 @@ void Scene::saveColliders(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into Colliders!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1827,7 +1828,7 @@ void Scene::saveEntities(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into Entities!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1843,7 +1844,7 @@ void Scene::saveUISystem(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not delete UISystem!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -1853,7 +1854,7 @@ void Scene::saveUISystem(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not Vacuum!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -1872,7 +1873,7 @@ void Scene::saveUISystem(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into UISystem!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1888,7 +1889,7 @@ void Scene::saveCanvases(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not delete UICanvases!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -1898,7 +1899,7 @@ void Scene::saveCanvases(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not Vacuum!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -1960,7 +1961,7 @@ void Scene::saveCanvases(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Could not insert element into UICanvases!. " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 		}
 	}
 }
@@ -1976,7 +1977,7 @@ void Scene::saveImages(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not delete UIImages!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -1986,7 +1987,7 @@ void Scene::saveImages(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not Vacuum!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -2041,7 +2042,7 @@ void Scene::saveImages(sqlite3 * db, char * errMsg)
 			if (exit != SQLITE_OK)
 			{
 				cerr << "Could not insert element into UIImages!. " << errMsg << endl;
-				system("pause");
+				////system("pause");;
 			}
 		}
 	}
@@ -2058,7 +2059,7 @@ void Scene::saveUITransforms(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not delete UITransforms!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -2068,7 +2069,7 @@ void Scene::saveUITransforms(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not Vacuum!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -2146,7 +2147,7 @@ void Scene::saveUITransforms(sqlite3 * db, char * errMsg)
 			if (exit != SQLITE_OK)
 			{
 				cerr << "Could not insert element into UITransforms!. " << errMsg << endl;
-				system("pause");
+				////system("pause");;
 			}
 		}
 	}
@@ -2163,7 +2164,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not delete UIAnimators!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -2173,7 +2174,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Could not Vacuum!. " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 	}
 
 
@@ -2274,7 +2275,7 @@ void Scene::saveUIAnimators(sqlite3 * db, char * errMsg)
 			if (exit != SQLITE_OK)
 			{
 				cerr << "Could not insert element into UIAnimators!. " << errMsg << endl;
-				system("pause");
+				////system("pause");;
 			}
 		}
 	}
@@ -2495,7 +2496,7 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Failed to select rows from Entities! " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 		return;
 	}
 
@@ -2516,7 +2517,7 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 		if (exit != SQLITE_OK)
 		{
 			cerr << "Failed to select rows from Transforms! " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 			return;
 		}
 		else
@@ -2566,7 +2567,7 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 			else
 			{
 				cerr << "Unkown camera tried to load!" << endl;
-				system("pause");
+				////system("pause");;
 			}
 		}
 
@@ -2784,7 +2785,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 	//if (exit != SQLITE_OK)
 	//{
 	//	cerr << "Failed to select rows from UISystem! " << errMsg << endl;
-	//	system("pause");
+	//	////system("pause");;
 	//	return;
 	//}
 
@@ -2800,7 +2801,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Failed to select rows from UISystem! " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 		return;
 	}
 
@@ -2816,7 +2817,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Failed to select rows from UIImages! " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 		return;
 	}
 
@@ -2832,7 +2833,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Failed to select rows from UITransforms! " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 		return;
 	}
 
@@ -2848,7 +2849,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 	if (exit != SQLITE_OK)
 	{
 		cerr << "Failed to select rows from UIAnimators! " << errMsg << endl;
-		system("pause");
+		////system("pause");;
 		return;
 	}
 
@@ -2867,7 +2868,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 		else
 		{
 			cerr << "Failed to match an UIImage with an UIAnimator! " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 			return;
 		}
 
@@ -2883,7 +2884,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 		else
 		{
 			cerr << "Failed to match an UIImage with an UITransform! " << errMsg << endl;
-			system("pause");
+			////system("pause");;
 			return;
 		}
 
@@ -2910,7 +2911,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 			else
 			{
 				cerr << "Failed to match an UIImage with an UICanvas! " << endl;
-				system("pause");
+				////system("pause");;
 				continue;
 			}
 
@@ -2926,7 +2927,7 @@ void Scene::loadUI(sqlite3 * db, char * errMsg)
 		//	else
 		//	{
 		//		cerr << "Failed to match an UIButton with an UICanvas! " << errMsg << endl;
-		//		system("pause");
+		//		////system("pause");;
 		//		continue;
 		//	}
 

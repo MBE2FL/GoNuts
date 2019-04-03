@@ -103,7 +103,7 @@ void UIAnimation::loadAllAnimsInFile()
 	if (!dir)
 	{
 		cerr << "UI Animation path: <" << UI_ANIM_DIR << "> does not exist!" << endl;
-		system("pause");
+		//system("pause");
 		return;
 	}
 
@@ -122,7 +122,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (!file.is_open())
 		{
 			cerr << "Could not open UI animation file with name: <" << entry->d_name << ">!" << endl;
-			system("pause");
+			//system("pause");
 			continue;
 		}
 
@@ -135,7 +135,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (line.empty())
 		{
 			cerr << "UI animation file file does not contain a name section!" << endl;
-			system("pause");
+			//system("pause");
 			return;
 		}
 
@@ -144,7 +144,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (line.empty())
 		{
 			cerr << "UI animation file file does not contain a name!" << endl;
-			system("pause");
+			//system("pause");
 			return;
 		}
 
@@ -159,7 +159,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (line.empty())
 		{
 			cerr << "UI animation file file does not contain a loop section!" << endl;
-			system("pause");
+			//system("pause");
 			return;
 		}
 
@@ -168,7 +168,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (line.empty())
 		{
 			cerr << "UI animation file file does not contain a loop!" << endl;
-			system("pause");
+			//system("pause");
 			return;
 		}
 
@@ -181,7 +181,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (line.empty())
 		{
 			cerr << "UI animation file file does not contain a key frame section!" << endl;
-			system("pause");
+			//system("pause");
 			return;
 		}
 
@@ -190,7 +190,7 @@ void UIAnimation::loadAllAnimsInFile()
 		if (line.empty())
 		{
 			cerr << "UI animation file file does not contain any key frames!" << endl;
-			system("pause");
+			//system("pause");
 			return;
 		}
 
@@ -304,7 +304,7 @@ void UIAnimation::loadAllAnimsInFile()
 				else
 				{
 					cerr << "Found unknown element in UI keyframe!" << endl;
-					system("pause");
+					//system("pause");
 				}
 			}
 
@@ -392,7 +392,7 @@ UIAnimation * UIAnimation::getAnimation(const string & name)
 	else
 	{
 		cerr << "UI Animation with name: " << name << " could not be found!" << endl;
-		//system("pause");
+		////system("pause");
 		return nullptr;
 	}
 }
@@ -409,7 +409,7 @@ void UIAnimation::addAnimation(UIAnimation * animation)
 	if (_animations.find(name) != _animations.end())
 	{
 		cerr << "UI Animation with name: <" << name << "> already exists!" << endl;
-		system("pause");
+		//system("pause");
 	}
 
 	_animations[name] = animation;

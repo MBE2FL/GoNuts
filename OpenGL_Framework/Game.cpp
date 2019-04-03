@@ -220,6 +220,11 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("Street Light", "./Assets/Textures/Street Light.png");
 	ObjectLoader::loadTexture("Traffic Obstacle", "./Assets/Textures/Traffic Obstacle.png");
 
+
+	ObjectLoader::loadTexture("bird", "./Assets/Textures/bird.png");
+
+
+
 	//UI Textures
 	ObjectLoader::loadTexture("Nut0", "./Assets/Textures/Nut_0.png");
 	ObjectLoader::loadTexture("Nut10", "./Assets/Textures/Nut_10.png");

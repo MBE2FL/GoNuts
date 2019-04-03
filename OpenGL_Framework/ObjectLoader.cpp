@@ -25,7 +25,7 @@ void ObjectLoader::loadShaderProgram(const string & shaderProgramName, const str
 		if (!shaderProgram->load(vertFile, fragFile))
 		{
 			cout << "Shaders failed to initialize." << endl;
-			system("pause");
+			//system("pause");
 			exit(0);
 		}
 
@@ -36,7 +36,7 @@ void ObjectLoader::loadShaderProgram(const string & shaderProgramName, const str
 
 	// Mesh already exists with shaderProgramName
 	cout << "Shaders with name, " << shaderProgramName << ", already exists." << endl;
-	system("pause");
+	//system("pause");
 	exit(0);
 }
 
@@ -51,7 +51,7 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file)
 		if (!mesh->loadFromFile(file))
 		{
 			cout << "Model failed to load." << endl;
-			system("pause");
+			//system("pause");
 			exit(0);
 		}
 
@@ -62,7 +62,7 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file)
 
 	// Mesh already exists with meshName
 	cout << "Model with name, " << meshName << ", already exists." << endl;
-	system("pause");
+	//system("pause");
 	exit(0);
 }
 
@@ -89,7 +89,7 @@ void ObjectLoader::loadSkeletalMesh(const string & meshName, const string & arma
 		if (!mesh->loadFromFileNUT(armaturePath, animPath))
 		{
 			cout << "Model failed to load." << endl;
-			system("pause");
+			//system("pause");
 			exit(0);
 		}
 
@@ -100,7 +100,7 @@ void ObjectLoader::loadSkeletalMesh(const string & meshName, const string & arma
 
 	// Mesh already exists with meshName
 	cout << "Model with name, " << meshName << ", already exists." << endl;
-	system("pause");
+	//system("pause");
 	exit(0);
 }
 
@@ -116,7 +116,7 @@ void ObjectLoader::loadTexture(const string & texName, const string & file)
 		if (!texture->load(file))
 		{
 			cout << "Shaders failed to initialize." << endl;
-			system("pause");
+			//system("pause");
 			exit(0);
 		}
 
@@ -127,7 +127,7 @@ void ObjectLoader::loadTexture(const string & texName, const string & file)
 
 	// Mesh already exists with shaderProgramName
 	cout << "Shaders with name, " << texName << ", already exists." << endl;
-	system("pause");
+	//system("pause");
 	exit(0);
 }
 

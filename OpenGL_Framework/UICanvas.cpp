@@ -68,7 +68,7 @@ void UICanvas::addImage(UIImage * image)
 	if (_images.find(name) != _images.end())
 	{
 		cout << "Image with name: " << name << "already exists!" << endl;
-		system("pause");
+		//system("pause");
 	}
 
 	_images[name] = image;
@@ -81,7 +81,7 @@ void UICanvas::addButton(UIButton* button)
 	if (_images.find(name) != _images.end())
 	{
 		cout << "Image with name: " << name << "already exists!" << endl;
-		system("pause");
+		//system("pause");
 	}
 
 	_images[name] = button;

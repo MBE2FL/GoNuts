@@ -22,7 +22,7 @@ void SoundComponent::loadSound(string soundName, string soundfile, bool is3D)
 	else
 	{
 		cout << "sound: " + soundName + " already exists" << endl;
-		system("pause");
+		////////system("pause");
 	}
 }
 

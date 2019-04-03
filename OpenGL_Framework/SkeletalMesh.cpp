@@ -1753,7 +1753,7 @@ void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int
 	if (joint->getIndex() != *index)
 	{
 		cerr << "Skin joint index does not match joint hierarchy index!" << endl;
-		system("pause");
+		//system("pause");
 		exit(0);
 	}
 
@@ -1852,7 +1852,7 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 
 	//	if (_skinJoints.find(jointID) == _skinJoints.end())
 	//	{
-	//		system("pause");
+	//		//system("pause");
 	//		exit(0);
 	//	}
 	//}
@@ -1863,7 +1863,7 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 
 		if (_skinJoints.find(subJointID) == _skinJoints.end())
 		{
-			system("pause");
+			//system("pause");
 			exit(0);
 		}
 		else
@@ -1896,7 +1896,7 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 
 		//	if (_skinJoints.find(jointID) == _skinJoints.end())
 		//	{
-		//		system("pause");
+		//		//system("pause");
 		//		exit(0);
 		//	}
 		//}
@@ -1907,7 +1907,7 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 
 			if (_skinJoints.find(jointID) == _skinJoints.end())
 			{
-				system("pause");
+				//system("pause");
 				exit(0);
 			}
 		}
@@ -1932,7 +1932,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (!file.is_open())
 	{
 		cerr << "Could not open armature SMD file!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 
@@ -1944,7 +1944,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Armature SMD file does not contain a nodes (joint) section!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 	// Load in the joints, and their hierarchy.
@@ -1957,7 +1957,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Armature SMD file does not contain a skeleton (bind pose) section!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 	// Load in the bind poses.
@@ -1970,7 +1970,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Armature SMD file does not contain a triangles section!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 	// Load in the bind poses.
@@ -1986,7 +1986,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (!file.is_open())
 	{
 		cerr << "Could not open animation SMD file!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 
@@ -1996,7 +1996,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Animation SMD file does not contain a nodes (joint) section!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 	// Load in joints, and create joint animations for each joint.
@@ -2010,7 +2010,7 @@ bool SkeletalMesh::loadFromFileSMD(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Animation SMD file does not contain a skeleton (animation poses) section!" << endl;
-		system("pause");
+		//system("pause");
 		return false;
 	}
 	// Load in the animation poses.
@@ -2168,7 +2168,7 @@ void SkeletalMesh::loadBindPosesSMD(string & line, ifstream & file)
 			else
 			{
 				cerr << "Error parsing in bind pose!" << endl;
-				system("pause");
+				//system("pause");
 			}
 		}
 
@@ -2346,7 +2346,7 @@ void SkeletalMesh::loadTrianglesSMD(string & line, ifstream & file)
 						break;
 					default:
 						cerr << "Error while loading in joint ids and weights!" << endl;
-						system("pause");
+						//system("pause");
 						break;
 					}
 				}
@@ -2361,7 +2361,7 @@ void SkeletalMesh::loadTrianglesSMD(string & line, ifstream & file)
 			else
 			{
 				cerr << "Error parsing in triangle!" << endl;
-				system("pause");
+				//system("pause");
 			}
 		}
 
@@ -2408,7 +2408,7 @@ void SkeletalMesh::createJointAnims(string & line, ifstream & file, unordered_ma
 		if (_joints[jointIndex]->getName() != jointName)
 		{
 			cerr << "Animation joint index does not match armature joint index!" << endl;
-			system("pause");
+			//system("pause");
 			exit(-1);
 		}
 
@@ -2530,7 +2530,7 @@ void SkeletalMesh::loadAnimSMD(string & line, ifstream & file, const float fps, 
 			else
 			{
 				cerr << "Error parsing in animation pose!" << endl;
-				system("pause");
+				//system("pause");
 			}
 		}
 
@@ -2561,7 +2561,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	if (!file.is_open())
 	{
 		cerr << "Could not open armature NUT file!" << endl;
-		system("pause");
+		//system("pause");
 		exit(-1);
 	}
 
@@ -2573,7 +2573,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Armature NUT file does not contain a bones (joint) section!" << endl;
-		system("pause");
+		//system("pause");
 		exit(-1);
 	}
 	// Load in the joints, and their hierarchy.
@@ -2586,7 +2586,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Armature NUT file does not contain a bind pose section!" << endl;
-		system("pause");
+		//system("pause");
 		exit(-1);
 	}
 	// Load in the bind poses.
@@ -2599,7 +2599,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Armature NUT file does not contain a Triangles section!" << endl;
-		system("pause");
+		//system("pause");
 		exit(-1);
 	}
 	// Load in the triangles.
@@ -2615,7 +2615,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	if (!file.is_open())
 	{
 		cerr << "Could not open animation NUT file!" << endl;
-		system("pause");
+		//system("pause");
 		exit(-1);
 	}
 
@@ -2626,7 +2626,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	if (line.empty())
 	{
 		cerr << "Animation NUT file does not joint animation section!" << endl;
-		system("pause");
+		//system("pause");
 		exit(-1);
 	}
 	// Load in joint animations.
@@ -2790,7 +2790,7 @@ void SkeletalMesh::loadBindPosesNUT(string & line, ifstream & file)
 			else
 			{
 				cerr << "Error parsing in bind pose!" << endl;
-				system("pause");
+				//system("pause");
 			}
 		}
 
@@ -2971,7 +2971,7 @@ void SkeletalMesh::loadTrianglesNUT(string & line, ifstream & file)
 						break;
 					default:
 						cerr << "Error while loading in joint ids and weights!" << endl;
-						system("pause");
+						//system("pause");
 						break;
 					}
 				}
@@ -2986,7 +2986,7 @@ void SkeletalMesh::loadTrianglesNUT(string & line, ifstream & file)
 			else
 			{
 				cerr << "Error parsing in triangle!" << endl;
-				system("pause");
+				//system("pause");
 			}
 		}
 
@@ -3106,7 +3106,7 @@ void SkeletalMesh::createJointAnimsNUT(string & line, ifstream & file)
 				else
 				{
 					cerr << "Error parsing in animation pose!" << endl;
-					system("pause");
+					//system("pause");
 				}
 			}
 
