@@ -47,7 +47,7 @@ void Game::initializeGame()
 	{
 		lights.push_back(new Light());
 		lights[i]->init();
-		lights[i]->color = vec4(1.f,1.f,0,1.f);//vec4(1.f, 0.8f, 0.3f, 1.0f);
+		lights[i]->color = vec4(0.5f, 0.5f,0, 0.5f);//vec4(1.f, 0.8f, 0.3f, 1.0f);
 		lights[i]->constantAtten = 1.0f;
 		lights[i]->linearAtten = 0.7f;
 		lights[i]->quadAtten = 1.8f;
@@ -546,24 +546,22 @@ void Game::draw()
 		frameBufferLUT.bindColorAsTexture(0, 0);
 		if (deferred)
 		{
-			TransformComponent transform;
 			for (int i = 0; i < (int)lights.size(); ++i)
 			{
 				lights[i]->bind();
 				lights[i]->position = cameraTrans->getView() * vec4(lights[i]->getLocalPosition(), 1.0f);
+				lights[i]->setLocalPosition(lights[i]->getLocalPosition());
+				lights[i]->setLocalScale(lights[i]->radius);
 				lights[i]->update(0.0f);
 
-
-				transform.setLocalPosition(lights[i]->getLocalPosition());
-				transform.setLocalScale(lights[i]->radius);
-				transform.update(updateTimer->getElapsedTimeSeconds());
-				shaderDeferred.sendUniformMat4("uModel", transform.getLocalToWorldMatrix().data, false);
+				shaderDeferred.sendUniformMat4("uModel", lights[i]->getLocalToWorldMatrix().data, false);
 				shaderDeferred.sendUniformMat4("uView", cameraTrans->getView().data, false);
 				shaderDeferred.sendUniformMat4("uProj", camera->getProjection().data, false);
 				shaderDeferred.sendUniform("uLightColor", lights[i]->color);
 				shaderDeferred.sendUniform("uLightPosition", lights[i]->position);
 				shaderDeferred.sendUniform("uLightDirection", lights[i]->direction);
-				shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
+				shaderDeferred.sendUniform("uLightAttenuation", vec4(lights[i]->constantAtten, 
+					lights[i]->linearAtten, lights[i]->quadAtten, lights[i]->radius));
 
 				frameBufferLUT.renderSphere();
 			}
@@ -587,7 +585,9 @@ void Game::draw()
 
 		shaderLUT.sendUniform("lut", lut);
 		shaderLUT.sendUniform("totalGameTime", TotalGameTime);
-		shaderLUT.sendUniform("screenShake", EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, playerTrans->getEntity())->screenShake);
+		shaderLUT.sendUniform("screenShake", 
+			EntityManager::getInstance()->getComponent<Collider*>
+			(ComponentType::Collider, playerTrans->getEntity())->screenShake);
 		shaderLUT.sendUniform("Flip", false);
 		LUTTex->bind(30);
 
