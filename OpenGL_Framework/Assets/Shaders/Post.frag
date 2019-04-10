@@ -1,12 +1,3 @@
-/*
-===========================================================================
-
-SpeedStorm Shader Source Code
-Copyright (C) 2015-2017 Stephen Thompson
-
-===========================================================================
-*/
-
 #version 420 //Version of OpenGL we're using. - 4.2
 
 uniform vec4 lightPosition;
@@ -120,7 +111,7 @@ void main()
 	vec3 shadowAmount = vec3(1.0);
 	//vec3 shadowAmount = texture(uTexLightColor, shadowCoord.xy).rgb;
 	// shadowAmount is multiplied into the diffuse and specular equations, meaning there will be no lighting if shadowAmount is 0!
-	if(shadowDepth < shadowCoord.z - 0.001)
+	if(shadowDepth < shadowCoord.z - 0.0001)
 	{
 		shadowAmount = vec3(0.0);
 	}
