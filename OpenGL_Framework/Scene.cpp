@@ -916,10 +916,10 @@ void Scene::keyboardDown(unsigned char key, int mouseX, int mouseY)
 		//skeletalMeshTestTwo->getAnimator()->nextFrame();
 		break;
 	case 'a':
-		if (_score->getAcornCount() >= 15)
+		if (_score->getAcornCount() >= 10)
 		{
 			beastModeActive = true;
-			_score->acornCount -= 15;
+			_score->acornCount -= 10;
 		}
 		break;
 	}
