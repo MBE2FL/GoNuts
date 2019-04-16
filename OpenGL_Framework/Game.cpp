@@ -346,6 +346,7 @@ void Game::initializeGame()
 
 	sceneManager->loadSceneFromFile("./Assets/Scenes/tut.db", "tut", true);
 	sceneManager->loadSceneFromFile("./Assets/Scenes/lev 1.db", "lev 1", true);
+	sceneManager->loadSceneFromFile("./Assets/Scenes/NEW TUTORIAL LEVEL.db", "NEW TUTORIAL LEVEL", true);
 
 	sceneManager->loadScene("UITest"); 
 	_currentScene = sceneManager->getCurrentScene();
