@@ -414,6 +414,18 @@ void Game::update()
 		{
 			_sound->stop();
 			_sound->playSound("levelMusic1", true, 0.3f);
+			sceneManager->loadScene("NEW TUTORIAL LEVEL");
+			_currentScene = sceneManager->getCurrentScene();
+			col->victor = false;
+		}
+	}
+	if (_currentScene->getName() == "NEW TUTORIAL LEVEL")
+	{
+		Collider* col = EntityManager::getInstance()->getComponent<Collider*>(ComponentType::Collider, _currentScene->getPlayTrans()->getEntity());
+		if (col->victor)
+		{
+			//_sound->stop();
+			//_sound->playSound("levelMusic2", true, 0.5f);
 			sceneManager->loadScene("tut");
 			_currentScene = sceneManager->getCurrentScene();
 			col->victor = false;
