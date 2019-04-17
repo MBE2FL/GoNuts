@@ -313,6 +313,8 @@ void Game::initializeGame()
 	ObjectLoader::loadTexture("collect coin", "./Assets//Textures/coinboard.png");
 	ObjectLoader::loadTexture("a to nut", "./Assets//Textures/anutboard.png");
 
+	ObjectLoader::loadTexture("birdman face", "./Assets//Textures/birdman face.png");
+
 
 	// Load all UI animation files
 	UIAnimation::loadAllAnimsInFile();
