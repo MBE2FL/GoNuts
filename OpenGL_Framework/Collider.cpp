@@ -81,6 +81,7 @@ void Collider::onCollisionEnter(Entity * self, Entity * other)
 		}
 		if (otherCollider->_min.y < thisCollider->_max.y - 0.2f
 			&& otherCollider->_min.z < thisCollider->_max.y
+			&& otherCollider->_max.x - (otherCollider->_max.x - otherCollider->_min.x) * 0.5 > thisCollider->_min.x
 			&& otherCollider->getTag() == TTag::Player)
 		{
 			otherCollider->front = true;
@@ -235,6 +236,12 @@ void Collider::onCollisionStay(Entity * self, Entity * other, float deltaTime)
 					otherCol->screenShake = false;
 					otherCol->shakeTimer = 0.0f;
 
+				}
+
+				if (otherCol->_max.y < _max.y)
+				{
+					otherBody->setUseGravity(true);
+					otherBody->setCanJump(false);
 				}
 
 			}

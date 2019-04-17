@@ -50,13 +50,10 @@ void main()
 
 	float NdotL = dot(normal, lightDir);
 
-	// If the normal is facing the light
-	
 	// Normalized vector pointing towards the camera
 	vec3 eye = normalize(-position.xyz);
 	
 	// Calculate attenuation (falloff)
-	// Add a small number to avoid divide by zero.
 	float attenuation = 1.0 /(uLightAttenuation.x + dist * uLightAttenuation.y + dist * dist * uLightAttenuation.z);
 
 	NdotL = NdotL * 0.5 + 0.5;
