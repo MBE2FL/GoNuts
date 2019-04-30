@@ -1842,6 +1842,10 @@ void GUIHelper::drawParticleSystemEditor(bool * open)
 	ImGui::Checkbox("Loop", &loop);
 	_currentParticleSystem->setLoop(loop);
 
+	bool isFluid = _currentParticleSystem->getIsFluid();
+	ImGui::Checkbox("Is Fluid", &isFluid);
+	_currentParticleSystem->setIsFluid(isFluid);
+
 
 	// Textures
 	vector<Texture*> textures = ObjectLoader::getTextures();

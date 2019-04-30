@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "MathLib/MathLibCore.h"
+#include "UniformBuffer.h"
 
 
 using MathUtils::toDegrees;
@@ -33,6 +34,7 @@ public:
 	float getAspectRatio() const;
 	float getNear() const;
 	float getFar() const;
+	UniformBuffer* getUBO() const;
 
 private:
 	ProjectionType _projType = ProjectionType::Perspective;
@@ -43,4 +45,5 @@ private:
 	float _aspectRatio;
 	float _near;
 	float _far;
+	UniformBuffer* _ubo;
 };

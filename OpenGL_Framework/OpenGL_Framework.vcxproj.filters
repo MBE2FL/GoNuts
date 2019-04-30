@@ -273,6 +273,7 @@
     <ClCompile Include="ParticleManager.cpp">
       <Filter>Source Files\EntitySystem\Components\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="InstVertexBufferObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transform.h">
@@ -477,6 +478,9 @@
     </ClInclude>
     <ClInclude Include="ParticleEffect.h">
       <Filter>Header Files\EntitySystem\Components\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="InstVertexBufferObject.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

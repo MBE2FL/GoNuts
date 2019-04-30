@@ -171,6 +171,7 @@ private:
 	TransformComponent* _playerTransform;
 	PhysicsBodyComponent* _playerPhysicsBody;
 	TransformComponent* _mainCameraTransform;
+	CameraComponent* _mainCameraComp;
 	TransformComponent* _shadowCameraTransform;
 	SkeletalMesh* _playerSkeleton = nullptr;
 	SkeletalMesh* _birdSkeleton = nullptr;

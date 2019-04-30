@@ -61,6 +61,7 @@ void Game::initializeGame()
 	ObjectLoader::loadShaderProgram("BBox", "./Assets/Shaders/BBox.vert", "./Assets/Shaders/BBox.frag");
 	ObjectLoader::loadShaderProgram("SkeletalAnim", "./Assets/Shaders/SkeletalAnim.vert", "./Assets/Shaders/gBuffer.frag");
 	ObjectLoader::loadShaderProgram("UIShader", "./Assets/Shaders/shader.vert", "./Assets/Shaders/UI.frag");
+	ObjectLoader::loadShaderProgram("InstancedShader", "./Assets/Shaders/InstancedPassThrough.vert", "./Assets/Shaders/UI.frag");
 	ObjectLoader::loadShaderProgram("FreeType", "./Assets/Shaders/font.vert", "./Assets/Shaders/font.frag");
 	ObjectLoader::loadShaderProgram("Discard", "./Assets/Shaders/discard.vert", "./Assets/Shaders/discard.frag");
 
@@ -134,6 +135,7 @@ void Game::initializeGame()
 	ObjectLoader::loadMesh("Building Top 4", "./Assets/Models/Building_Top4.obj");
 
 	ObjectLoader::loadMesh("UIQuad", "./Assets/Models/UIQuad.obj");
+	ObjectLoader::loadMesh("ParticleQuad", "./Assets/Models/ParticleQuad.obj", true);
 
 	//Road stuff things
 	ObjectLoader::loadMesh("Awning", "./Assets/Models/Awning.obj");
@@ -663,6 +665,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	{
 		shaderOutline.reload();
 		shaderDeferred.reload();
+		ObjectLoader::getShaderProgram("InstancedShader")->reload();
 
 		sceneManager->loadSceneFromFile("./Assets/Scenes/Level 2.db", "Level 2", false);
 

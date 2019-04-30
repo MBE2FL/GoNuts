@@ -336,7 +336,7 @@ void MeshRendererSystem::drawHelper(const vector<MeshRendererComponent*>& drawLi
 		//	meshRenderer->getAnimation()->animate(shaderProgram, _physicsBody->getVelocity().x / 7.5f);
 		//}
 
-		mesh->vao.draw();
+		mesh->vao->draw();
 
 		// Unbind all the textures.
 		vector<Texture*>::reverse_iterator revIt;

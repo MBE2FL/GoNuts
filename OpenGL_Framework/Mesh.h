@@ -12,6 +12,7 @@
 
 #include "Collider.h"
 #include "VertexBufferObject.h"
+#include "InstVertexBufferObject.h"
 
 
 #define CHAR_BUFFER_SIZE 128
@@ -69,7 +70,7 @@ struct MeshFace
 class Mesh
 {
 public:
-	Mesh();
+	Mesh(bool instanced = false);
 	~Mesh();
 
 	// Load a mesh, and send it to OpenGL
@@ -96,7 +97,7 @@ public:
 	GLuint VBO_Normals = GL_NONE;
 	GLuint VAO = GL_NONE;
 
-	VertexArrayObject vao;
+	VertexArrayObject* vao;
 
 	// TEST VArialbe
 	bool _isSkeletal = false;
@@ -118,6 +119,8 @@ protected:
 	std::vector<vec4> dataColor;
 
 	bool _IsLoaded = false;
+
+	bool _isInstanced;
 
 	void computeMinMax(const vec3& vertex);
 };

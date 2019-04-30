@@ -34,6 +34,14 @@ void ParticleEffect::draw(mat4 & camView, mat4 & camProj)
 	}
 }
 
+void ParticleEffect::addToDrawList(vector<Particle*>& drawList) const
+{
+	for (const auto& systemKV : _systems)
+	{
+		systemKV.second->addToDrawList(drawList);
+	}
+}
+
 void ParticleEffect::addSystem(ParticleSystem * system)
 {
 	string name = system->getName();
@@ -72,4 +80,16 @@ void ParticleEffect::setActive(const bool active)
 unordered_map<string, ParticleSystem*> ParticleEffect::getSystems() const
 {
 	return _systems;
+}
+
+size_t ParticleEffect::getNumParticles() const
+{
+	size_t numParticles = 0;
+
+	for (const auto& systemKV : _systems)
+	{
+		numParticles += systemKV.second->getNumParticles();
+	}
+	
+	return numParticles;
 }
