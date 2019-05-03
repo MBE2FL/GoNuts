@@ -7,11 +7,11 @@ mat4 mat4::Identity = mat4();
 std::ostream & operator<<(std::ostream & out, const mat4& source)
 {
 	//Row
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
 		out << "| ";
 		//Column
-		for (int j = 0; j < 4; j++)
+		for (int j = 0; j < 4; ++j)
 		{
 			out << source.data[j * 4 + i] << ' ';
 		}
@@ -45,7 +45,7 @@ mat4::mat4(const float & other1, const float & other2, const float & other3, con
 
 mat4::mat4(const mat4 & other)
 {
-	for (size_t i = 0; i < 16; i++)
+	for (size_t i = 0; i < 16; ++i)
 	{
 		data[i] = other.data[i];
 	}

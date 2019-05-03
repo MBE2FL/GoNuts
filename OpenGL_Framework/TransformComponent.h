@@ -53,6 +53,7 @@ public:
 	mat4 getLocalRotationMatrix() const;
 	mat4 getOrbitRotationMatrix() const;
 	mat4 getLocalToWorldMatrix() const;
+	mat4& getLocalToWorldMatrixRef();
 	mat4 getView() const;
 
 	vec3 getWorldPosition() const;

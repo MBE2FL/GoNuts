@@ -5,6 +5,10 @@ CameraComponent::CameraComponent()
 {
 	_type = ComponentType::Camera;
 	setPerspective(60.0f, 1.0f, 0.1f, 100.0f);
+
+	_ubo = new UniformBuffer(sizeof(mat4) * 2);
+	_ubo->setName("MainCameraUBO");
+	_ubo->bind(11);
 }
 
 CameraComponent::CameraComponent(ProjectionType projType)
@@ -13,6 +17,10 @@ CameraComponent::CameraComponent(ProjectionType projType)
 		setPerspective(60.0f, 1.0f, 0.1f, 100.0f);
 	else
 		setOrthographic(-10.0f, 10.0f, 10.0f, 10.0f, -100.0f, 100.0f);
+
+	_ubo = new UniformBuffer(sizeof(mat4) * 2);
+	_ubo->setName("MainCameraUBO");
+	_ubo->bind(11);
 }
 
 CameraComponent::~CameraComponent()
@@ -87,4 +95,9 @@ float CameraComponent::getNear() const
 float CameraComponent::getFar() const
 {
 	return _far;
+}
+
+UniformBuffer* CameraComponent::getUBO() const
+{
+	return _ubo;
 }

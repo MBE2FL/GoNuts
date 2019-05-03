@@ -26,7 +26,7 @@ void ObjectLoader::loadShaderProgram(const string & shaderProgramName, const str
 		{
 			cout << "Shaders failed to initialize." << endl;
 			//system("pause");
-			exit(0);
+			//exit(0);
 		}
 
 		// Store mesh for later use
@@ -37,22 +37,22 @@ void ObjectLoader::loadShaderProgram(const string & shaderProgramName, const str
 	// Mesh already exists with shaderProgramName
 	cout << "Shaders with name, " << shaderProgramName << ", already exists." << endl;
 	//system("pause");
-	exit(0);
+	//exit(0);
 }
 
-void ObjectLoader::loadMesh(const string & meshName, const string & file)
+void ObjectLoader::loadMesh(const string & meshName, const string & file, bool instanced)
 {
 	// No mesh with meshName currently exists
 	if (_meshes.count(meshName) == 0)
 	{
 		// Load mesh
-		Mesh* mesh = new Mesh();
+		Mesh* mesh = new Mesh(instanced);
 		mesh->setName(meshName);
 		if (!mesh->loadFromFile(file))
 		{
 			cout << "Model failed to load." << endl;
 			//system("pause");
-			exit(0);
+			//exit(0);
 		}
 
 		// Store mesh for later use
@@ -63,7 +63,7 @@ void ObjectLoader::loadMesh(const string & meshName, const string & file)
 	// Mesh already exists with meshName
 	cout << "Model with name, " << meshName << ", already exists." << endl;
 	//system("pause");
-	exit(0);
+	//exit(0);
 }
 
 void ObjectLoader::loadMesh(const string & meshName, const string & file, const int totalObjs)
@@ -90,7 +90,7 @@ void ObjectLoader::loadSkeletalMesh(const string & meshName, const string & arma
 		{
 			cout << "Model failed to load." << endl;
 			//system("pause");
-			exit(0);
+			//exit(0);
 		}
 
 		// Store mesh for later use
@@ -101,7 +101,7 @@ void ObjectLoader::loadSkeletalMesh(const string & meshName, const string & arma
 	// Mesh already exists with meshName
 	cout << "Model with name, " << meshName << ", already exists." << endl;
 	//system("pause");
-	exit(0);
+	//exit(0);
 }
 
 void ObjectLoader::loadTexture(const string & texName, const string & file)
@@ -117,7 +117,7 @@ void ObjectLoader::loadTexture(const string & texName, const string & file)
 		{
 			cout << "Shaders failed to initialize." << endl;
 			//system("pause");
-			exit(0);
+			//exit(0);
 		}
 
 		// Store mesh for later use
@@ -128,7 +128,7 @@ void ObjectLoader::loadTexture(const string & texName, const string & file)
 	// Mesh already exists with shaderProgramName
 	cout << "Shaders with name, " << texName << ", already exists." << endl;
 	//system("pause");
-	exit(0);
+	//exit(0);
 }
 
 ShaderProgram * ObjectLoader::getShaderProgram(const string & shaderProgramName)

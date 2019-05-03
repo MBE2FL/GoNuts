@@ -1,12 +1,20 @@
 #include "Mesh.h"
 
 
-Mesh::Mesh()
+Mesh::Mesh(bool instanced)
 {
+	if (!instanced)
+		vao = new VertexArrayObject();
+	else
+		vao = new InstVertexArrayObject();
+
+	_isInstanced = instanced;
 }
 
 Mesh::~Mesh()
 {
+	delete vao;
+	vao = nullptr;
 }
 
 //bool Mesh::loadFromFile(const string & path)
@@ -284,7 +292,7 @@ void Mesh::uploadToGPU()
 		posAttrib.elementType = GL_FLOAT;
 		posAttrib.numElementsPerAttribute = 4;
 		posAttrib.numElements = numTris * 3 * posAttrib.numElementsPerAttribute;
-		vao.addVBO(posAttrib);
+		vao->addVBO(posAttrib);
 	}
 
 	if (dataTexture.size() > 0)
@@ -296,7 +304,7 @@ void Mesh::uploadToGPU()
 		textureAttrib.elementType = GL_FLOAT;
 		textureAttrib.numElementsPerAttribute = 4;
 		textureAttrib.numElements = numTris * 3 * textureAttrib.numElementsPerAttribute;
-		vao.addVBO(textureAttrib);
+		vao->addVBO(textureAttrib);
 	}
 
 	if (dataNormal.size() > 0)
@@ -308,7 +316,7 @@ void Mesh::uploadToGPU()
 		normalAttrib.elementType = GL_FLOAT;
 		normalAttrib.numElementsPerAttribute = 4;
 		normalAttrib.numElements = numTris * 3 * normalAttrib.numElementsPerAttribute;
-		vao.addVBO(normalAttrib);
+		vao->addVBO(normalAttrib);
 	}
 
 	if (dataColor.size() > 0)
@@ -320,10 +328,14 @@ void Mesh::uploadToGPU()
 		colorAttrib.elementType = GL_FLOAT;
 		colorAttrib.numElementsPerAttribute = 4;
 		colorAttrib.numElements = numTris * 3 * colorAttrib.numElementsPerAttribute;
-		vao.addVBO(colorAttrib);
+		vao->addVBO(colorAttrib);
 	}
 
-	vao.createVAO();
+	if (!_isInstanced)
+		vao->createVAO();
+	else
+		dynamic_cast<InstVertexArrayObject*>(vao)->createVAO();
+
 	_IsLoaded = true;
 }
 

@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63B56134-FF26-44B6-BBC4-BF01AA3F55BA}</ProjectGuid>
     <RootNamespace>OpenGL_Framework</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -118,6 +118,7 @@ xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
     <ClCompile Include="include\MathLib\vec3.cpp" />
     <ClCompile Include="include\MathLib\vec4.cpp" />
     <ClCompile Include="include\TinyXML\tinyxml2.cpp" />
+    <ClCompile Include="InstVertexBufferObject.cpp" />
     <ClCompile Include="Joint.cpp" />
     <ClCompile Include="JointAnimation.cpp" />
     <ClCompile Include="JointTransform.cpp" />
@@ -161,6 +162,7 @@ xcopy /Y /S /E ".\Assets" "$(SolutionDir)$(Configuration)\Assets"</Command>
     <ClInclude Include="Animator.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="InstVertexBufferObject.h" />
     <ClInclude Include="ParticleEffect.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="ParticleManager.h" />

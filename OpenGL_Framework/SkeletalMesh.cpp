@@ -34,6 +34,7 @@ struct SkinJoint
 };
 
 SkeletalMesh::SkeletalMesh()
+	: Mesh()
 {
 	// Create new animator
 	_animator = new Animator(this);
@@ -109,7 +110,7 @@ void SkeletalMesh::uploadToGPU()
 		posAttrib.elementType = GL_FLOAT;
 		posAttrib.numElementsPerAttribute = 4;
 		posAttrib.numElements = numTris * 3 * posAttrib.numElementsPerAttribute;
-		vao.addVBO(posAttrib);
+		vao->addVBO(posAttrib);
 	}
 
 	if (dataTexture.size() > 0)
@@ -121,7 +122,7 @@ void SkeletalMesh::uploadToGPU()
 		textureAttrib.elementType = GL_FLOAT;
 		textureAttrib.numElementsPerAttribute = 4;
 		textureAttrib.numElements = numTris * 3 * textureAttrib.numElementsPerAttribute;
-		vao.addVBO(textureAttrib);
+		vao->addVBO(textureAttrib);
 	}
 
 	if (dataNormal.size() > 0)
@@ -133,7 +134,7 @@ void SkeletalMesh::uploadToGPU()
 		normalAttrib.elementType = GL_FLOAT;
 		normalAttrib.numElementsPerAttribute = 4;
 		normalAttrib.numElements = numTris * 3 * normalAttrib.numElementsPerAttribute;
-		vao.addVBO(normalAttrib);
+		vao->addVBO(normalAttrib);
 	}
 
 	if (_jointIdsPerVertex.size() > 0)
@@ -145,7 +146,7 @@ void SkeletalMesh::uploadToGPU()
 		jointIDSAttrib.elementType = GL_INT;
 		jointIDSAttrib.numElementsPerAttribute = 4;
 		jointIDSAttrib.numElements = numTris * 3 * jointIDSAttrib.numElementsPerAttribute;
-		vao.addVBO(jointIDSAttrib);
+		vao->addVBO(jointIDSAttrib);
 	}
 
 	
@@ -178,7 +179,7 @@ void SkeletalMesh::uploadToGPU()
 		jointWeightsAttrib.elementType = GL_FLOAT;
 		jointWeightsAttrib.numElementsPerAttribute = 4;
 		jointWeightsAttrib.numElements = numTris * 3 * jointWeightsAttrib.numElementsPerAttribute;
-		vao.addVBO(jointWeightsAttrib);
+		vao->addVBO(jointWeightsAttrib);
 	}
 
 	//if (dataVertex.size() > 0)
@@ -249,7 +250,7 @@ void SkeletalMesh::uploadToGPU()
 	//}
 
 
-	vao.createVAO();
+	vao->createVAO();
 	_IsLoaded = true;
 }
 
@@ -1754,7 +1755,7 @@ void SkeletalMesh::loadJointHierarchyHelper(XMLElement * jointNode, unsigned int
 	{
 		cerr << "Skin joint index does not match joint hierarchy index!" << endl;
 		//system("pause");
-		exit(0);
+		//exit(0);
 	}
 
 	// Retrieve this joint's name.
@@ -1864,7 +1865,7 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 		if (_skinJoints.find(subJointID) == _skinJoints.end())
 		{
 			//system("pause");
-			exit(0);
+			//exit(0);
 		}
 		else
 		{
@@ -1908,7 +1909,7 @@ void SkeletalMesh::loadJointHierarchyHelperTwo(tinyxml2::XMLElement * jointNode)
 			if (_skinJoints.find(jointID) == _skinJoints.end())
 			{
 				//system("pause");
-				exit(0);
+				//exit(0);
 			}
 		}
 
@@ -2409,7 +2410,7 @@ void SkeletalMesh::createJointAnims(string & line, ifstream & file, unordered_ma
 		{
 			cerr << "Animation joint index does not match armature joint index!" << endl;
 			//system("pause");
-			exit(-1);
+			//exit(-1);
 		}
 
 
@@ -2562,7 +2563,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	{
 		cerr << "Could not open armature NUT file!" << endl;
 		//system("pause");
-		exit(-1);
+		//exit(-1);
 	}
 
 	string line;
@@ -2574,7 +2575,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	{
 		cerr << "Armature NUT file does not contain a bones (joint) section!" << endl;
 		//system("pause");
-		exit(-1);
+		//exit(-1);
 	}
 	// Load in the joints, and their hierarchy.
 	loadJointsNUT(line, file);
@@ -2587,7 +2588,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	{
 		cerr << "Armature NUT file does not contain a bind pose section!" << endl;
 		//system("pause");
-		exit(-1);
+		//exit(-1);
 	}
 	// Load in the bind poses.
 	loadBindPosesNUT(line, file);
@@ -2600,7 +2601,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	{
 		cerr << "Armature NUT file does not contain a Triangles section!" << endl;
 		//system("pause");
-		exit(-1);
+		//exit(-1);
 	}
 	// Load in the triangles.
 	loadTrianglesNUT(line, file);
@@ -2616,7 +2617,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	{
 		cerr << "Could not open animation NUT file!" << endl;
 		//system("pause");
-		exit(-1);
+		//exit(-1);
 	}
 
 	// Find the nodes (joint) section of the NUT file.
@@ -2627,7 +2628,7 @@ bool SkeletalMesh::loadFromFileNUT(const string & armaturePath, const string & a
 	{
 		cerr << "Animation NUT file does not joint animation section!" << endl;
 		//system("pause");
-		exit(-1);
+		//exit(-1);
 	}
 	// Load in joint animations.
 	createJointAnimsNUT(line, file);

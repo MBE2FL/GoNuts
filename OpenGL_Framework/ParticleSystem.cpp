@@ -2,18 +2,18 @@
 #include <math.h>
 
 
-ParticleSystem::ParticleSystem(const string & name, const size_t numParticles)
+ParticleSystem::ParticleSystem(const string& name, const size_t numParticles)
 {
 	_name = name;
 
-	// Create particles
-	//Particle* particle = nullptr;
+
+	vector<Texture*> textures;
+	textures.push_back(ObjectLoader::getTexture("Dust"));
+	renderer = new MeshRendererComponent(ObjectLoader::getMesh("ParticleQuad"), ObjectLoader::getShaderProgram("InstancedShader"), textures);
+
 
 	for (size_t i = 0; i < numParticles; ++i)
 	{
-		//particle = new Particle();
-		//_particles.push_back(particle);
-
 		spawnParticle();
 	}
 }
@@ -25,118 +25,132 @@ ParticleSystem::~ParticleSystem()
 		delete particle;
 		particle = nullptr;
 	}
+
+	delete renderer;
+	renderer = nullptr;
 }
 
 void ParticleSystem::update(float deltaTime)
 {
 	if (_active)
 	{
-		vector<Particle*> neighbours;
-
-		// Calculate the densities of all the particles
-		for (Particle* particle : _particles)
+		if (_isFluid)
 		{
-			// Reset density from previous frame
-			particle->_density = 0.0f;
-			particle->_pressure = 0.0f;
+			vector<Particle*> neighbours;
 
-
-			// Get all neighbouring particles
-			neighbours = getNeighbours(particle);
-
-
-			// Calculate the density for the current particle
-			float dist = 0.0f;
-			for (Particle* neighbour : neighbours)
+			// Calculate the densities of all the particles
+			for (Particle* particle : _particles)
 			{
-				if (neighbour == particle) // TODO Remove once getNeighbours has been improved
-					continue;
+				// Reset density from previous frame
+				particle->_density = 0.0f;
+				particle->_pressure = 0.0f;
 
-				dist = (neighbour->transform->getWorldPosition() - particle->transform->getWorldPosition()).length();
 
-				if (dist <= _smoothWidth)
-					particle->_density += neighbour->_mass * poly6Kernel(dist); // TODO poly6Kernel could just be passed in dist sqaured
+				// Get all neighbouring particles
+				neighbours = getNeighbours(particle);
+
+
+				// Calculate the density for the current particle
+				float dist = 0.0f;
+				for (Particle* neighbour : neighbours)
+				{
+					if (neighbour == particle) // TODO Remove once getNeighbours has been improved
+						continue;
+
+					dist = (neighbour->transform->getWorldPosition() - particle->transform->getWorldPosition()).length();
+
+					if (dist <= _smoothWidth)
+						particle->_density += neighbour->_mass * poly6Kernel(dist); // TODO poly6Kernel could just be passed in dist sqaured
+				}
+
+
+				// Calculate the pressure for the current particle
+				particle->_pressure = _gasConstant * (particle->_density - _restDensity);
 			}
+
 
 
 			// Calculate the pressure for the current particle
-			particle->_pressure = _gasConstant * (particle->_density - _restDensity);
-		}
-
-
-
-		// Calculate the pressure for the current particle
-		for (Particle* particle : _particles)
-		{
-			// Get all neighbouring particles
-			neighbours = getNeighbours(particle);
-
-
-			// Calculate the acceleration, due to pressure, for the current particle
-			vec3 pressureForce;
-			float pressureGrad = 0.0f;
-			vec3 dir;
-			float dist = 0.0f;
-			vec3 viscosityForce;
-
-
-			for (Particle* neighbour : neighbours)
+			for (Particle* particle : _particles)
 			{
-				if (neighbour == particle) // TODO Remove once getNeighbours has been improved
-					continue;
+				// Get all neighbouring particles
+				neighbours = getNeighbours(particle);
 
-				dir = neighbour->transform->getWorldPosition() - particle->transform->getWorldPosition();
-				dist = dir.length();
-				dir /= dist;
 
-				if (dist <= _smoothWidth)
+				// Calculate the acceleration, due to pressure, for the current particle
+				vec3 pressureForce;
+				float pressureGrad = 0.0f;
+				vec3 dir;
+				float dist = 0.0f;
+				vec3 viscosityForce;
+
+
+				for (Particle* neighbour : neighbours)
 				{
-					// Calculate pressure force
-					pressureGrad = -neighbour->_mass * ((particle->_pressure + neighbour->_pressure) / 2.0f * neighbour->_density) * spikyKernel(dist);
-					pressureForce += dir * pressureGrad;
+					if (neighbour == particle) // TODO Remove once getNeighbours has been improved
+						continue;
 
-					// Calculate viscosity force
-					viscosityForce += _viscosityConst * neighbour->_mass * ((neighbour->_velocity - particle->_velocity) / neighbour->_density) * viscosityKernel(dist);
+					dir = neighbour->transform->getWorldPosition() - particle->transform->getWorldPosition();
+					dist = dir.length();
+					dir /= dist;
+
+					if (dist <= _smoothWidth)
+					{
+						// Calculate pressure force
+						pressureGrad = -neighbour->_mass * ((particle->_pressure + neighbour->_pressure) / 2.0f * neighbour->_density) * spikyKernel(dist);
+						pressureForce += dir * pressureGrad;
+
+						// Calculate viscosity force
+						viscosityForce += _viscosityConst * neighbour->_mass * ((neighbour->_velocity - particle->_velocity) / neighbour->_density) * viscosityKernel(dist);
+					}
 				}
+
+
+				// Update the position of the current particle
+				vec3 gravity = _gravity * particle->_density;	// Force of _gravity * density of current particle
+
+				float interValue = invLerp(particle->_currLifeTime, 0.0f, particle->_totalLifeTime);
+				vec3 extVelocity = lerp(particle->_startVelocity, particle->_endVelocity, interValue);
+
+				particle->_force = pressureForce + viscosityForce + gravity; //+ vec3(static_cast<float>(rand() % 2), static_cast<float>(rand() % 2), 0.0f);		// Total force = force of pressure gradient + force of _gravity + external forces
+
+				vec3 totalAccel = (particle->_density > 0) ? (particle->_force / particle->_density) : 0.0f;
+
+				particle->_velocity += totalAccel * deltaTime + extVelocity;	// v = prevV + (force / density) * dt
+
+				if (particle->_velocity.x > 600.0f)
+					particle->_velocity.x = 600.0f;
+
+				if (particle->_velocity.y > 600.0f)
+					particle->_velocity.y = 600.0f;
+
+				if (particle->_velocity.x < -600.0f)
+					particle->_velocity.x = -600.0f;
+
+				if (particle->_velocity.y < -600.0f)
+					particle->_velocity.y = -600.0f;
+
+				particle->transform->setLocalPosition(particle->transform->getWorldPosition() + particle->_velocity * deltaTime);	// p = prevP + (v * dt)
+
+				particle->transform->update(deltaTime);
+
+
+				particle->_force = vec3::Zero;
 			}
 
 
-			// Update the position of the current particle
-			vec3 gravity = _gravity * particle->_density;	// Force of _gravity * density of current particle
 
-			float interValue = invLerp(particle->_currLifeTime, 0.0f, particle->_totalLifeTime);
-			vec3 extVelocity = lerp(particle->_startVelocity, particle->_endVelocity, interValue);
-
-			particle->_force = pressureForce + viscosityForce + gravity; //+ vec3(static_cast<float>(rand() % 2), static_cast<float>(rand() % 2), 0.0f);		// Total force = force of pressure gradient + force of _gravity + external forces
-
-			vec3 totalAccel = (particle->_density > 0) ? (particle->_force / particle->_density) : 0.0f;
-
-			particle->_velocity += totalAccel * deltaTime + extVelocity;	// v = prevV + (force / density) * dt
-
-			if (particle->_velocity.x > 600.0f)
-				particle->_velocity.x = 600.0f;
-
-			if (particle->_velocity.y > 600.0f)
-				particle->_velocity.y = 600.0f;
-
-			if (particle->_velocity.x < -600.0f)
-				particle->_velocity.x = -600.0f;
-
-			if (particle->_velocity.y < -600.0f)
-				particle->_velocity.y = -600.0f;
-
-			particle->transform->setLocalPosition(particle->transform->getWorldPosition() + particle->_velocity * deltaTime);	// p = prevP + (v * dt)
-
-			particle->transform->update(deltaTime);
-
-
-			particle->_force = vec3::Zero;
+		}
+		else
+		{
+			for (Particle* particle : _particles)
+			{
+				particle->transform->update(deltaTime);
+			}
 		}
 
 
 
-		
-		
 		// Clean up particles
 		// Update the lifeTime of the particle, and check if it has expired.
 		vector<Particle*>::iterator it;
@@ -172,36 +186,45 @@ void ParticleSystem::draw(mat4 & camView, mat4 & camProj)
 	Mesh* mesh = nullptr;
 	ShaderProgram* shaderProgram = nullptr;
 	Texture* texture = nullptr;
-	TransformComponent* transform = nullptr;
+	vector<mat4> transforms;
+
+	transforms.reserve(_particles.size());
 
 	for (Particle* particle : _particles)
 	{
-		mesh = particle->renderer->getMesh();
-		shaderProgram = particle->renderer->getShaderProgram();
-		texture = particle->renderer->getTexture(0);
-		transform = particle->transform;
-
-
-		// Bind and send all the uniforms to the shader program.
-		shaderProgram->bind();
-		shaderProgram->sendUniformMat4("uModel", transform->getLocalToWorldMatrix().data, false);
-		shaderProgram->sendUniformMat4("uView", camView.data, false);
-		shaderProgram->sendUniformMat4("uProj", camProj.data, false);
-
-
-		// Bind the texture.
-		texture->bind(0);
-
-		// Bind the mesh.
-		mesh->vao.draw();
-
-		// Unbind the texture.
-		texture->unBind(0);
-
-
-		// Unbind the shader program.
-		shaderProgram->unBind();
+		transforms.push_back(particle->transform->getLocalToWorldMatrixRef());
 	}
+
+
+	mesh = renderer->getMesh();
+	shaderProgram = renderer->getShaderProgram();
+	texture = renderer->getTexture(0);
+
+
+	// Bind and send all the uniforms to the shader program.
+	shaderProgram->bind();
+	//shaderProgram->sendUniformMat4("uModel", transform->getLocalToWorldMatrix().data, false);
+	shaderProgram->sendUniformMat4("uView", camView.data, false);
+	shaderProgram->sendUniformMat4("uProj", camProj.data, false);
+
+
+	// Bind the texture.
+	texture->bind(0);
+
+	// Bind the mesh.
+	dynamic_cast<InstVertexArrayObject*>(mesh->vao)->draw(_particles.size(), transforms);
+
+	// Unbind the texture.
+	texture->unBind(0);
+
+
+	// Unbind the shader program.
+	shaderProgram->unBind();
+}
+
+void ParticleSystem::addToDrawList(vector<Particle*> & drawList) const
+{
+	drawList.insert(drawList.end(), _particles.begin(), _particles.end());
 }
 
 string ParticleSystem::getName() const
@@ -288,7 +311,7 @@ void ParticleSystem::spawnParticle(Particle * particle)
 void ParticleSystem::respawnParticles()
 {
 	//size_t numParticles = _particles.size();
-	
+
 	//for (Particle* particle : _particles)
 	//{
 	//	delete particle;
@@ -317,20 +340,19 @@ void ParticleSystem::setLoop(const bool loop)
 	_loop = loop;
 }
 
-Texture * ParticleSystem::getTexture() const
+Texture* ParticleSystem::getTexture() const
 {
-	if (_particles.size() > 0)
-		return _particles.front()->renderer->getTexture(0);
-	else
-		return nullptr;
+	return renderer->getTexture(0);
 }
 
 void ParticleSystem::setTexture(Texture * texture)
 {
-	for (Particle* particle : _particles)
-	{
-		particle->renderer->setTexture(0, texture);
-	}
+	renderer->setTexture(0, texture);
+}
+
+size_t ParticleSystem::getNumParticles() const
+{
+	return _particles.size();
 }
 
 float ParticleSystem::getMinLifetime() const
@@ -411,6 +433,16 @@ vec3 ParticleSystem::getEndVelocity() const
 void ParticleSystem::setEndVelocity(const vec3 & velocity)
 {
 	_endVelocity = velocity;
+}
+
+bool ParticleSystem::getIsFluid() const
+{
+	return _isFluid;
+}
+
+void ParticleSystem::setIsFluid(const bool isFluid)
+{
+	_isFluid = isFluid;
 }
 
 float ParticleSystem::getSmoothWidth() const

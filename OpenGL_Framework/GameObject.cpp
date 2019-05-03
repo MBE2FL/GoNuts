@@ -139,7 +139,7 @@ void GameObject::loadShaderProgram(const string & vertFile, const string & fragF
 	{
 		cout << "Shaders failed to initialize." << endl;
 		system("pause");
-		exit(0);
+		//exit(0);
 	}
 }
 
@@ -150,7 +150,7 @@ void GameObject::loadMesh(const string & file)
 	{
 		cout << "Model failed to load." << endl;
 		system("pause");
-		exit(0);
+		//exit(0);
 	}
 }
 

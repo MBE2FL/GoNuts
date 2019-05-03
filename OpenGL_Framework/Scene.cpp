@@ -228,6 +228,11 @@ void Scene::initDialogue()
 
 void Scene::update(float deltaTime)
 {
+	UniformBuffer* camUBO = _mainCameraComp->getUBO();
+	camUBO->sendMatrix(_mainCameraTransform->getView(), 0);
+	camUBO->sendMatrix(_mainCameraComp->getProjection(), sizeof(mat4));
+
+
 	_score->setTotalGameTime(deltaTime);
 
 	if (_uiSystem)
@@ -645,6 +650,7 @@ void Scene::loadOldFaithful()
 
 	_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 5.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f, "Main Camera");
 	_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
+	_mainCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, _mainCamera);
 	EntityManager::setMainCamera(_mainCamera);
 
 
@@ -811,6 +817,7 @@ void Scene::loadScene()
 
 		_mainCamera = _entityFactory->createPerspectiveCamera(vec3(0.0f, 5.0f, 5.0f), 60.0f, aspect, 1.0f, 1000.0f, "Main Camera");
 		_mainCameraTransform = _entityManager->getComponent<TransformComponent*>(ComponentType::Transform, _mainCamera);
+		_mainCameraComp = _entityManager->getComponent<CameraComponent*>(ComponentType::Camera, _mainCamera);
 		EntityManager::setMainCamera(_mainCamera);
 	}
 	_shadowCamera = _entityFactory->createOrthographicCamera(vec3(-15, 20, -5), -20, 20, -20, 80, -10, 600, "Shadow Camera");
@@ -2551,6 +2558,7 @@ void Scene::loadEntities(sqlite3 * db, char * errMsg)
 			{
 				_mainCamera = entity;
 				_mainCameraTransform = transform;
+				_mainCameraComp = camera;
 			}
 			// UI camera
 			else if (transform->getName().find("UI Camera") != string::npos)

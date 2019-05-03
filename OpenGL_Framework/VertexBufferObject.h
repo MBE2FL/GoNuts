@@ -90,7 +90,7 @@ class VertexArrayObject
 {
 public:
 	VertexArrayObject();
-	~VertexArrayObject();
+	virtual ~VertexArrayObject();
 
 	int addVBO(VertexBufferData descriptor);
 	int addIBO(IndexBufferData descriptor);
@@ -102,19 +102,17 @@ public:
 	GLenum getPrimitiveType() const; 
 	void setPrimitiveType(GLenum type);
 
-	void createVAO(GLenum vboUsage = GL_STATIC_DRAW, GLenum iboUsage = GL_STATIC_DRAW);
-	void createParticleInstancedVAO(GLenum vboUsage = GL_STATIC_DRAW);
+	virtual void createVAO(GLenum vboUsage = GL_STATIC_DRAW, GLenum iboUsage = GL_STATIC_DRAW);
 	void reuploadVAO();
 
-	void draw() const;
-	void drawParticles(size_t numParticles) const;
+	virtual void draw() const;
 
 	void bind() const;
 	void unbind() const;
 
 	void destroy();
 
-private:
+protected:
 	GLuint vaoHandle; // Handle for the VAO itself
 	GLenum primitiveType; // How the primitive is drawn Ex GL_TRIANGLE/GL_LINE/GL_POINT
 	GLenum vboUsageType;

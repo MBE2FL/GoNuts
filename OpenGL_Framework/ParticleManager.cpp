@@ -53,4 +53,25 @@ void ParticleManager::draw(mat4 & camView, mat4 & camProj)
 	{
 		effectKV.second->draw(camView, camProj);
 	}
+
+
+	//// Get the total number of particles in the game
+	//size_t numParticles = 0;
+
+	//for (auto const& effectKV : _effects)
+	//{
+	//	numParticles += effectKV.second->getNumParticles();
+	//}
+
+	//// Create a vector, and reserve enough space for all the particles
+	//vector<Particle*> drawList;
+	//drawList.reserve(numParticles);
+
+	//// Add all the particles to a single vector
+	//for (auto const& effectKV : _effects)
+	//{
+	//	effectKV.second->addToDrawList(drawList);
+	//}
+
+
 }

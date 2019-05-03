@@ -179,7 +179,7 @@ void Framebuffer::renderSphere() const
 	setViewport();
 	bind();
 	//Sphere.
-	Sphere.vao.draw();
+	Sphere.vao->draw();
 	unbind();
 }
 

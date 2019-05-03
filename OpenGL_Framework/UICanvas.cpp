@@ -48,7 +48,7 @@ void UICanvas::draw(mat4 & camView, mat4 & camProj)
 		texture->bind(0);
 
 		// Bind the mesh.
-		mesh->vao.draw();
+		mesh->vao->draw();
 
 		// Unbind the texture.
 		texture->unBind(0);

@@ -15,18 +15,11 @@ struct Particle
 	Particle()
 	{
 		transform = new TransformComponent();
-
-		vector<Texture*> textures;
-		textures.push_back(ObjectLoader::getTexture("Dust"));
-		renderer = new MeshRendererComponent(ObjectLoader::getMesh("UIQuad"), ObjectLoader::getShaderProgram("UIShader"), textures);
 	};
 	~Particle()
 	{
 		delete transform;
 		transform = nullptr;
-
-		delete renderer;
-		renderer = nullptr;
 	};
 
 
@@ -44,7 +37,6 @@ struct Particle
 	vec3 _endVelocity;
 
 	TransformComponent* transform;
-	MeshRendererComponent* renderer;
 };
 
 class ParticleSystem
@@ -55,6 +47,7 @@ public:
 
 	void update(float deltaTime);
 	void draw(mat4 & camView, mat4 & camProj);
+	void addToDrawList(vector<Particle*>& drawList) const;
 	string getName() const;
 	bool isActive() const;
 	void setActive(const bool active);
@@ -66,6 +59,7 @@ public:
 	void setLoop(const bool loop);
 	Texture* getTexture() const;
 	void setTexture(Texture* texture);
+	size_t getNumParticles() const;
 
 	float getMinLifetime() const;
 	void setMinLifetime(const float lifetime);
@@ -87,6 +81,8 @@ public:
 	vec3 getEndVelocity() const;
 	void setEndVelocity(const vec3& velocity);
 
+	bool getIsFluid() const;
+	void setIsFluid(const bool isFluid);
 	float getSmoothWidth() const;
 	void setSmoothWidth(const float smoothWidth);
 	float getGasConstant() const;
@@ -105,6 +101,7 @@ private:
 	string _name;
 	bool _active = false;
 	bool _loop = false;
+	MeshRendererComponent* renderer;
 
 	float _minLifetime = 0.0f;
 	float _maxLifetime = 0.0f;
@@ -120,6 +117,7 @@ private:
 
 
 	// Fluid Dynamics
+	bool _isFluid = false;
 	float _smoothWidth = 120.0f;
 	float _gasConstant = 2000.f;
 	float _restDensity = 1000.0f;

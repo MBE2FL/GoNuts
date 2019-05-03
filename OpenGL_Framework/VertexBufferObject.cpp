@@ -137,68 +137,6 @@ void VertexArrayObject::createVAO(GLenum vboUsage, GLenum iboUsage)
 	this->unbind();
 }
 
-void VertexArrayObject::createParticleInstancedVAO(GLenum vboUsage)
-{
-	if (vaoHandle)
-	{
-		destroy();
-	}
-
-	vboUsageType = vboUsage;
-
-	// Create and bind VAO handle.
-	glGenVertexArrays(1, &vaoHandle);
-	this->bind();
-
-
-	// Create VBO handles
-	auto numberOfBuffers = vboData.size();
-	vboHandles.resize(numberOfBuffers);
-
-	glGenBuffers(numberOfBuffers, &vboHandles[0]);
-
-	for (size_t i = 0; i < numberOfBuffers; ++i)
-	{
-		VertexBufferData* attrib = &vboData[i];
-
-		attrib->numVertices = attrib->numElements / attrib->numElementsPerAttribute;
-
-		// Use next 4 attribute locations for particle instanced model matrices
-		if (attrib->attributeType == INSTANCED_COL_0)
-		{
-			// For each particles model matrix
-			size_t vec4Size = sizeof(vec4);
-			glEnableVertexAttribArray(INSTANCED_COL_0);
-			glVertexAttribPointer(INSTANCED_COL_0, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(0));
-			glEnableVertexAttribArray(INSTANCED_COL_1);
-			glVertexAttribPointer(INSTANCED_COL_1, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(vec4Size));
-			glEnableVertexAttribArray(INSTANCED_COL_2);
-			glVertexAttribPointer(INSTANCED_COL_2, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(2 * vec4Size));
-			glEnableVertexAttribArray(INSTANCED_COL_3);
-			glVertexAttribPointer(INSTANCED_COL_3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(3 * vec4Size));
-
-
-			glVertexAttribDivisor(INSTANCED_COL_0, 1);
-			glVertexAttribDivisor(INSTANCED_COL_1, 1);
-			glVertexAttribDivisor(INSTANCED_COL_2, 1);
-			glVertexAttribDivisor(INSTANCED_COL_3, 1);
-		}
-
-		// Use a single attribute location
-		glEnableVertexAttribArray(attrib->attributeType);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[i]);
-		glBufferData(GL_ARRAY_BUFFER, attrib->numElements * attrib->sizeOfElement, attrib->data, vboUsage);
-
-		glVertexAttribPointer(attrib->attributeType, attrib->numElementsPerAttribute, attrib->elementType, GL_FALSE, 0, reinterpret_cast<void*>(0));
-	}
-
-
-	// Cleanup
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
-	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-	this->unbind();
-}
-
 void VertexArrayObject::reuploadVAO()
 {
 	if (vboUsageType == GL_DYNAMIC_DRAW)
@@ -236,18 +174,6 @@ void VertexArrayObject::draw() const
 			glDrawElements(primitiveType, iboData.numIndices, iboData.elementType, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
 		}
-
-		this->unbind();
-	}
-}
-
-void VertexArrayObject::drawParticles(size_t numParticles) const
-{
-	if (vaoHandle)
-	{
-		this->bind();
-
-		glDrawArraysInstanced(primitiveType, 0, vboData[0].numVertices, numParticles);
 
 		this->unbind();
 	}
