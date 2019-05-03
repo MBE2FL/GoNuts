@@ -26,6 +26,8 @@ void Game::initializeGame()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 
+	glutFullScreenToggle();
+
 	Framebuffer::initFrameBuffers();
 	gbuffer.init(windowWidth, windowHeight);
 	//frameBufferOutline.addDepthTarget();
